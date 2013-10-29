@@ -10,3 +10,8 @@ local.properties
 .classpath
 .project
 .externalToolBuilders/
+
+*.tmp
+*~
+*.orig
+*.swp
