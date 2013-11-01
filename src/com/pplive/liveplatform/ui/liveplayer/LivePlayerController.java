@@ -1,26 +1,21 @@
 package com.pplive.liveplatform.ui.liveplayer;
 
-import java.util.Formatter;
-import java.util.Locale;
-
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.ppmedia.widget.MediaPlayerControl;
+import android.ppmedia.widget.MediaController;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
-public class MediaController extends RelativeLayout {
-    private MediaPlayerControl mPlayer;
-    private View mRoot;
+import com.pplive.liveplatform.util.TimeUtil;
+
+public class LivePlayerController extends MediaController {
 
     private boolean mShowing;
     private boolean mDragging;
@@ -33,23 +28,18 @@ public class MediaController extends RelativeLayout {
     private static final int FADE_OUT = 1;
     private static final int SHOW_PROGRESS = 2;
 
-    StringBuilder mFormatBuilder;
-    Formatter mFormatter;
-
-    public MediaController(Context context) {
-        this(context, null);
+    public LivePlayerController(Context context) {
+        super(context);
     }
 
-    public MediaController(Context context, AttributeSet attrs) {
+    public LivePlayerController(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mRoot = this;
     }
 
     @Override
     public void onFinishInflate() {
-        if (mRoot != null) {
-            initControllerView(mRoot);
-        }
+        super.onFinishInflate();
+        initControllerView(mRoot);
     }
 
     private void initControllerView(View v) {
@@ -70,31 +60,32 @@ public class MediaController extends RelativeLayout {
             }
             mProgress.setMax(1000);
         }
-
-        mFormatBuilder = new StringBuilder();
-        mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
     }
 
+    @Override
     public void setMediaPlayer(MediaPlayerControl player) {
-        mPlayer = player;
+        super.setMediaPlayer(player);
+        updatePausePlay();
+    }
+
+    @Override
+    protected void doPauseResume() {
+        super.doPauseResume();
         updatePausePlay();
     }
 
     /**
-     * Show the controller on screen. It will go away automatically after 3
-     * seconds of inactivity.
+     * Show the controller on screen. It will go away automatically after 3 seconds of inactivity.
      */
     public void show() {
         show(sDefaultTimeout);
     }
 
     /**
-     * Show the controller on screen. It will go away automatically after
-     * 'timeout' milliseconds of inactivity.
+     * Show the controller on screen. It will go away automatically after 'timeout' milliseconds of inactivity.
      * 
      * @param timeout
-     *            The timeout in milliseconds. Use 0 to show the controller
-     *            until hide() is called.
+     *            The timeout in milliseconds. Use 0 to show the controller until hide() is called.
      */
     public void show(int timeout) {
         if (!mShowing) {
@@ -123,7 +114,7 @@ public class MediaController extends RelativeLayout {
      * Remove the controller from the screen.
      */
     public void hide() {
-
+        //TODO
         if (mShowing) {
             mHandler.removeMessages(SHOW_PROGRESS);
             mShowing = false;
@@ -166,16 +157,16 @@ public class MediaController extends RelativeLayout {
         }
 
         if (mEndTime != null)
-            mEndTime.setText(stringForTime(duration));
+            mEndTime.setText(TimeUtil.stringForTime(duration));
         if (mCurrentTime != null)
-            mCurrentTime.setText(stringForTime(position));
+            mCurrentTime.setText(TimeUtil.stringForTime(position));
 
         return position;
     }
 
     /**
-     * Disable pause or seek buttons if the stream cannot be paused or seeked.
-     * This requires the control interface to be a MediaPlayerControlExt
+     * Disable pause or seek buttons if the stream cannot be paused or seeked. This requires the control interface to be
+     * a MediaPlayerControlExt
      */
     private void disableUnsupportedButtons() {
         try {
@@ -203,26 +194,13 @@ public class MediaController extends RelativeLayout {
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        show(sDefaultTimeout);
-        return true;
-    }
-
-    @Override
-    public boolean onTrackballEvent(MotionEvent ev) {
-        show(sDefaultTimeout);
-        return false;
-    }
-
-    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         int keyCode = event.getKeyCode();
         final boolean uniqueDown = event.getRepeatCount() == 0 && event.getAction() == KeyEvent.ACTION_DOWN;
-        if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
-                || keyCode == KeyEvent.KEYCODE_SPACE) {
+        if (keyCode == KeyEvent.KEYCODE_HEADSETHOOK || keyCode == KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE || keyCode == KeyEvent.KEYCODE_SPACE) {
             if (uniqueDown) {
                 doPauseResume();
-                show(sDefaultTimeout);
+                show();
                 if (mPauseButton != null) {
                     mPauseButton.requestFocus();
                 }
@@ -232,18 +210,18 @@ public class MediaController extends RelativeLayout {
             if (uniqueDown && !mPlayer.isPlaying()) {
                 mPlayer.start();
                 updatePausePlay();
-                show(sDefaultTimeout);
+                show();
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
             if (uniqueDown && mPlayer.isPlaying()) {
                 mPlayer.pause();
                 updatePausePlay();
-                show(sDefaultTimeout);
+                show();
             }
             return true;
-        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP
-                || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE || keyCode == KeyEvent.KEYCODE_CAMERA) {
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP || keyCode == KeyEvent.KEYCODE_VOLUME_MUTE
+                || keyCode == KeyEvent.KEYCODE_CAMERA) {
             // don't show the controls for volume adjustment
             return super.dispatchKeyEvent(event);
         } else if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU) {
@@ -253,7 +231,7 @@ public class MediaController extends RelativeLayout {
             return true;
         }
 
-        show(sDefaultTimeout);
+        show();
         return super.dispatchKeyEvent(event);
     }
 
@@ -266,18 +244,9 @@ public class MediaController extends RelativeLayout {
     private View.OnClickListener mPauseListener = new View.OnClickListener() {
         public void onClick(View v) {
             doPauseResume();
-            show(sDefaultTimeout);
+            show();
         }
     };
-
-    private void doPauseResume() {
-        if (mPlayer.isPlaying()) {
-            mPlayer.pause();
-        } else {
-            mPlayer.start();
-        }
-        updatePausePlay();
-    }
 
     // There are two scenarios that can trigger the seekbar listener to trigger:
     //
@@ -319,14 +288,14 @@ public class MediaController extends RelativeLayout {
             long newposition = (duration * progress) / 1000L;
             mPlayer.seekTo((int) newposition);
             if (mCurrentTime != null)
-                mCurrentTime.setText(stringForTime((int) newposition));
+                mCurrentTime.setText(TimeUtil.stringForTime((int) newposition));
         }
 
         public void onStopTrackingTouch(SeekBar bar) {
             mDragging = false;
             setProgress();
             updatePausePlay();
-            show(sDefaultTimeout);
+            show();
 
             // Ensure that progress is properly updated in the future,
             // the call to show() does not guarantee this because it is a
@@ -334,20 +303,4 @@ public class MediaController extends RelativeLayout {
             mHandler.sendEmptyMessage(SHOW_PROGRESS);
         }
     };
-
-    // FIXME: move to util
-    private String stringForTime(int timeMs) {
-        int totalSeconds = timeMs / 1000;
-
-        int seconds = totalSeconds % 60;
-        int minutes = (totalSeconds / 60) % 60;
-        int hours = totalSeconds / 3600;
-
-        mFormatBuilder.setLength(0);
-        if (hours > 0) {
-            return mFormatter.format("%d:%02d:%02d", hours, minutes, seconds).toString();
-        } else {
-            return mFormatter.format("%02d:%02d", minutes, seconds).toString();
-        }
-    }
 }
