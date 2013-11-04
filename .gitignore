@@ -18,6 +18,6 @@ local.properties
 *.swp
 
 # Dev
-libs/armeabi/
-libs/android.ppmedia.jar
-libs/MeetSDK.jar
+# libs/armeabi/
+# libs/android.ppmedia.jar
+# libs/MeetSDK.jar
