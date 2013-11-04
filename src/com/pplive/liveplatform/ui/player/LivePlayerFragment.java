@@ -1,10 +1,9 @@
-package com.pplive.liveplatform.ui.liveplayer;
+package com.pplive.liveplatform.ui.player;
 
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.ppmedia.MediaPlayer;
-import android.ppmedia.widget.VideoView;
+import android.pplive.media.player.MeetVideoView;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -19,7 +18,7 @@ import com.pplive.liveplatform.R;
 public class LivePlayerFragment extends Fragment implements OnTouchListener {
     static final String TAG = "LivePlayerFragment";
 
-    private VideoView mVideoView;
+    private MeetVideoView mVideoView;
 
     private LivePlayerController mController;
 
@@ -36,9 +35,9 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        View layout = inflater.inflate(R.layout.live_player_fragment, container, false);
+        View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
-        mVideoView = (VideoView) layout.findViewById(R.id.live_player_videoview);
+        mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         layout.setOnTouchListener(this);
         return layout;
     }
@@ -88,15 +87,15 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         super.onDestroy();
     }
 
-    private VideoView.OnPreparedListener mPreparedListener = new VideoView.OnPreparedListener() {
+    private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
         @Override
-        public void onPrepared(MediaPlayer arg0) {
+        public void onPrepared() {
             mVideoView.start();
             mController.show();
         }
     };
 
-    private VideoView.OnCompletionListener mCompletionListener = new VideoView.OnCompletionListener() {
+    private MeetVideoView.OnCompletionListener mCompletionListener = new MeetVideoView.OnCompletionListener() {
         public void onCompletion() {
             mVideoView.stopPlayback();
             if (mOnCompletionListener != null) {
@@ -105,7 +104,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         }
     };
 
-    private VideoView.OnErrorListener mErrorListener = new VideoView.OnErrorListener() {
+    private MeetVideoView.OnErrorListener mErrorListener = new MeetVideoView.OnErrorListener() {
         public boolean onError(int what, int extra) {
             mVideoView.stopPlayback();
             if (mOnErrorListener != null) {
@@ -156,7 +155,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         @Override
         public boolean onDoubleTap(MotionEvent event) {
             Log.d(TAG, "onDoubleTap");
-            mVideoView.setDisplayType((mVideoView.getDisplayType() + 1) % 4);
+            mVideoView.switchDisplayMode();
             return true;
         }
     });

@@ -7,7 +7,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.liveplayer.LivePlayerFragment;
+import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 
 public class LivePlayerActivity extends FragmentActivity {
     static final String TAG = "LivePlayerActivity";
@@ -21,7 +21,7 @@ public class LivePlayerActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        setContentView(R.layout.live_player_activity);
+        setContentView(R.layout.activity_live_player);
         mLivePlayerFragment = (LivePlayerFragment) getSupportFragmentManager().findFragmentById(R.id.live_player_fragment);
     }
 

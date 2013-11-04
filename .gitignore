@@ -20,3 +20,4 @@ local.properties
 # Dev
 libs/armeabi/
 libs/android.ppmedia.jar
+libs/MeetSDK.jar

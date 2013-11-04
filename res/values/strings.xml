@@ -4,4 +4,7 @@
     <string name="app_name">MainActivity</string>
     <string name="hello_world">Hello World</string>
     <string name="blank"></string>
+    
+    <!-- For Test -->
+    <string name="test_homepage_column">原创</string>
 </resources>

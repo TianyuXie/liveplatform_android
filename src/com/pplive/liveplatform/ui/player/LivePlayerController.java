@@ -1,9 +1,9 @@
-package com.pplive.liveplatform.ui.liveplayer;
+package com.pplive.liveplatform.ui.player;
 
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.ppmedia.widget.MediaController;
+import android.pplive.media.player.MediaController;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
