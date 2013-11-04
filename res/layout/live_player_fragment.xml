@@ -5,12 +5,12 @@
     android:layout_height="fill_parent"
     android:gravity="center" >
 
-    <android.ppmedia.widget.VideoView
+    <android.pplive.media.player.MeetVideoView
         android:id="@+id/live_player_videoview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" >
-    </android.ppmedia.widget.VideoView>
+    </android.pplive.media.player.MeetVideoView>
 
     <include
         android:id="@+id/live_player_controller"
