@@ -16,8 +16,7 @@
         android:id="@+id/live_player_controller"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        layout="@layout/live_player_controller"
-        android:visibility="invisible" >
+        layout="@layout/live_player_controller" >
     </include>
 
 </RelativeLayout>

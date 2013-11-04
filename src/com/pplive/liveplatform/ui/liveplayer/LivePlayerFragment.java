@@ -3,16 +3,20 @@ package com.pplive.liveplatform.ui.liveplayer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.ppmedia.MediaPlayer;
 import android.ppmedia.widget.VideoView;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
 import com.pplive.liveplatform.R;
 
-public class LivePlayerFragment extends Fragment {
+public class LivePlayerFragment extends Fragment implements OnTouchListener {
     static final String TAG = "LivePlayerFragment";
 
     private VideoView mVideoView;
@@ -35,22 +39,22 @@ public class LivePlayerFragment extends Fragment {
         View layout = inflater.inflate(R.layout.live_player_fragment, container, false);
         mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mVideoView = (VideoView) layout.findViewById(R.id.live_player_videoview);
+        layout.setOnTouchListener(this);
         return layout;
     }
 
     public void setupPlayer(Intent intent) {
         Uri uri = intent.getData();
-        uri = Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
+        // uri =
+        // Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
+        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
         mVideoView.setVideoURI(uri);
+        mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);
         mVideoView.setOnErrorListener(mErrorListener);
         mController.setMediaPlayer(mVideoView);
     }
 
-    public void playVideo() {
-        mVideoView.start();
-    }
-    
     @Override
     public void onStart() {
         super.onStart();
@@ -83,6 +87,14 @@ public class LivePlayerFragment extends Fragment {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
     }
+
+    private VideoView.OnPreparedListener mPreparedListener = new VideoView.OnPreparedListener() {
+        @Override
+        public void onPrepared(MediaPlayer arg0) {
+            mVideoView.start();
+            mController.show();
+        }
+    };
 
     private VideoView.OnCompletionListener mCompletionListener = new VideoView.OnCompletionListener() {
         public void onCompletion() {
@@ -118,4 +130,35 @@ public class LivePlayerFragment extends Fragment {
     public void setOnErrorListener(OnErrorListener l) {
         this.mOnErrorListener = l;
     }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.d(TAG, "onTouch");
+        if (mDoubleTapListener.onTouchEvent(event)) {
+            return true;
+        }
+        return false;
+    }
+
+    private GestureDetector mDoubleTapListener = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.d(TAG, "onSingleTap");
+            mController.switchVisibility();
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent event) {
+            Log.d(TAG, "onDoubleTap");
+            mVideoView.setDisplayType((mVideoView.getDisplayType() + 1) % 4);
+            return true;
+        }
+    });
+
 }

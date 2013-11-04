@@ -3,4 +3,21 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
+    <SeekBar
+        android:id="@+id/player_seekbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/play_pause_button"
+        android:layout_marginLeft="60dp"
+        android:layout_marginRight="60dp" />
+
+    <ImageButton
+        android:id="@id/play_pause_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/blank"
+        android:src="@drawable/tmp_player_pause" />
+
 </com.pplive.liveplatform.ui.liveplayer.LivePlayerController>

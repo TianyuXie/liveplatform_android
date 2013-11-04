@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Basic -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#FFFF0000</color>
+    <color name="green">#FF008000</color>
+    <color name="yellow">#FFFFFF00</color>
+    <color name="saffron_yellow">#FF9900</color>
+    <color name="dim_gray">#FF545454</color>
+    <color name="true_gray">#FF808080</color>
+    <color name="title_blue">#36a0ec</color>
+    <color name="fancy_blue">#FFD7D7D7</color>
+    <color name="light_blue">#0090FF</color>
+    <color name="light_white">#9d9d9d</color>
+    <color name="orange">#FFA500</color>
+
+</resources>

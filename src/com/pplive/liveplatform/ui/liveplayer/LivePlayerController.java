@@ -13,19 +13,25 @@ import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.TimeUtil;
 
 public class LivePlayerController extends MediaController {
 
     private boolean mShowing;
+
     private boolean mDragging;
 
-    private ProgressBar mProgress;
+    private ProgressBar mPlayerProgressBar;
+
     private TextView mEndTime, mCurrentTime;
-    private ImageButton mPauseButton;
+
+    private ImageButton mPlayPauseButton;
 
     private static final int sDefaultTimeout = 3000;
+
     private static final int FADE_OUT = 1;
+
     private static final int SHOW_PROGRESS = 2;
 
     public LivePlayerController(Context context) {
@@ -44,21 +50,19 @@ public class LivePlayerController extends MediaController {
 
     private void initControllerView(View v) {
         // TODO
-        // mPauseButton = (ImageButton)
-        // v.findViewById(com.android.internal.R.id.pause);
-        if (mPauseButton != null) {
-            mPauseButton.requestFocus();
-            mPauseButton.setOnClickListener(mPauseListener);
+        mPlayPauseButton = (ImageButton) v.findViewById(R.id.play_pause_button);
+        if (mPlayPauseButton != null) {
+            mPlayPauseButton.requestFocus();
+            mPlayPauseButton.setOnClickListener(mPauseListener);
         }
 
-        // mProgress = (ProgressBar)
-        // v.findViewById(com.android.internal.R.id.mediacontroller_progress);
-        if (mProgress != null) {
-            if (mProgress instanceof SeekBar) {
-                SeekBar seeker = (SeekBar) mProgress;
+        mPlayerProgressBar = (ProgressBar) v.findViewById(R.id.player_seekbar);
+        if (mPlayerProgressBar != null) {
+            if (mPlayerProgressBar instanceof SeekBar) {
+                SeekBar seeker = (SeekBar) mPlayerProgressBar;
                 seeker.setOnSeekBarChangeListener(mSeekListener);
             }
-            mProgress.setMax(1000);
+            mPlayerProgressBar.setMax(1000);
         }
     }
 
@@ -72,6 +76,15 @@ public class LivePlayerController extends MediaController {
     protected void doPauseResume() {
         super.doPauseResume();
         updatePausePlay();
+    }
+
+    public boolean switchVisibility() {
+        if (mShowing) {
+            hide();
+        } else {
+            show();
+        }
+        return mShowing;
     }
 
     /**
@@ -90,10 +103,11 @@ public class LivePlayerController extends MediaController {
     public void show(int timeout) {
         if (!mShowing) {
             setProgress();
-            if (mPauseButton != null) {
-                mPauseButton.requestFocus();
+            if (mPlayPauseButton != null) {
+                mPlayPauseButton.requestFocus();
             }
             disableUnsupportedButtons();
+            mRoot.setVisibility(VISIBLE);
             mShowing = true;
         }
         updatePausePlay();
@@ -114,8 +128,8 @@ public class LivePlayerController extends MediaController {
      * Remove the controller from the screen.
      */
     public void hide() {
-        //TODO
         if (mShowing) {
+            mRoot.setVisibility(View.GONE);
             mHandler.removeMessages(SHOW_PROGRESS);
             mShowing = false;
         }
@@ -146,14 +160,14 @@ public class LivePlayerController extends MediaController {
         }
         int position = mPlayer.getCurrentPosition();
         int duration = mPlayer.getDuration();
-        if (mProgress != null) {
+        if (mPlayerProgressBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
                 long pos = 1000L * position / duration;
-                mProgress.setProgress((int) pos);
+                mPlayerProgressBar.setProgress((int) pos);
             }
             int percent = mPlayer.getBufferPercentage();
-            mProgress.setSecondaryProgress(percent * 10);
+            mPlayerProgressBar.setSecondaryProgress(percent * 10);
         }
 
         if (mEndTime != null)
@@ -170,11 +184,12 @@ public class LivePlayerController extends MediaController {
      */
     private void disableUnsupportedButtons() {
         try {
-            if (mPauseButton != null && !mPlayer.canPause()) {
-                mPauseButton.setEnabled(false);
+            if (mPlayPauseButton != null && !mPlayer.canPause()) {
+                mPlayPauseButton.setEnabled(false);
             }
         } catch (IncompatibleClassChangeError ex) {
-            // We were given an old version of the interface, that doesn't have
+            // We were given an old version of the interface, that doesn't
+            // have
             // the canPause/canSeekXYZ methods. This is OK, it just means we
             // assume the media can be paused and seeked, and so we don't
             // disable the buttons.
@@ -183,11 +198,11 @@ public class LivePlayerController extends MediaController {
 
     @Override
     public void setEnabled(boolean enabled) {
-        if (mPauseButton != null) {
-            mPauseButton.setEnabled(enabled);
+        if (mPlayPauseButton != null) {
+            mPlayPauseButton.setEnabled(enabled);
         }
-        if (mProgress != null) {
-            mProgress.setEnabled(enabled);
+        if (mPlayerProgressBar != null) {
+            mPlayerProgressBar.setEnabled(enabled);
         }
         disableUnsupportedButtons();
         super.setEnabled(enabled);
@@ -201,8 +216,8 @@ public class LivePlayerController extends MediaController {
             if (uniqueDown) {
                 doPauseResume();
                 show();
-                if (mPauseButton != null) {
-                    mPauseButton.requestFocus();
+                if (mPlayPauseButton != null) {
+                    mPlayPauseButton.requestFocus();
                 }
             }
             return true;
@@ -236,9 +251,13 @@ public class LivePlayerController extends MediaController {
     }
 
     private void updatePausePlay() {
-        if (mRoot == null || mPauseButton == null)
+        if (mRoot == null || mPlayPauseButton == null)
             return;
-        // TODO
+        if (mPlayer.isPlaying()) {
+            mPlayPauseButton.setImageResource(R.drawable.tmp_player_pause);
+        } else {
+            mPlayPauseButton.setImageResource(R.drawable.tmp_player_play);
+        }
     }
 
     private View.OnClickListener mPauseListener = new View.OnClickListener() {
@@ -248,17 +267,20 @@ public class LivePlayerController extends MediaController {
         }
     };
 
-    // There are two scenarios that can trigger the seekbar listener to trigger:
+    // There are two scenarios that can trigger the seekbar listener to
+    // trigger:
     //
     // The first is the user using the touchpad to adjust the posititon of the
-    // seekbar's thumb. In this case onStartTrackingTouch is called followed by
+    // seekbar's thumb. In this case onStartTrackingTouch is called followed
+    // by
     // a number of onProgressChanged notifications, concluded by
     // onStopTrackingTouch.
     // We're setting the field "mDragging" to true for the duration of the
     // dragging
     // session to avoid jumps in the position in case of ongoing playback.
     //
-    // The second scenario involves the user operating the scroll ball, in this
+    // The second scenario involves the user operating the scroll ball, in
+    // this
     // case there WON'T BE onStartTrackingTouch/onStopTrackingTouch
     // notifications,
     // we will simply apply the updated position without suspending regular
@@ -279,7 +301,8 @@ public class LivePlayerController extends MediaController {
 
         public void onProgressChanged(SeekBar bar, int progress, boolean fromuser) {
             if (!fromuser) {
-                // We're not interested in programmatically generated changes to
+                // We're not interested in programmatically generated changes
+                // to
                 // the progress bar's position.
                 return;
             }

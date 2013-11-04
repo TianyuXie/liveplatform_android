@@ -11,7 +11,7 @@ import com.pplive.liveplatform.ui.liveplayer.LivePlayerFragment;
 
 public class LivePlayerActivity extends FragmentActivity {
     static final String TAG = "LivePlayerActivity";
-    
+
     private LivePlayerFragment mLivePlayerFragment;
 
     @Override
@@ -30,7 +30,6 @@ public class LivePlayerActivity extends FragmentActivity {
         super.onStart();
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setupPlayer(getIntent());
-        mLivePlayerFragment.playVideo();
     }
 
     @Override
