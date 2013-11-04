@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.liveplayer;
+package com.pplive.liveplatform.ui.player;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -35,7 +35,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        View layout = inflater.inflate(R.layout.live_player_fragment, container, false);
+        View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         layout.setOnTouchListener(this);

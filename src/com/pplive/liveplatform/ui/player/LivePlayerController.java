@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.liveplayer;
+package com.pplive.liveplatform.ui.player;
 
 import android.content.Context;
 import android.os.Handler;
