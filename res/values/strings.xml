@@ -8,5 +8,6 @@
     <string name="test_homepage_column">原创</string>
     <string name="test_go_player">Go LivePlayer</string>
     <string name="test_go_recorder">Go LiveRecorder</string>
+    <string name="test_switch_camera">Switch</string>
     
 </resources>
