@@ -4,7 +4,15 @@
     <string name="app_name">MainActivity</string>
     <string name="hello_world">Hello World</string>
     <string name="blank"></string>
-    
+
+    <!-- Program -->
+    <string name="program_live">Live</string>
+    <string name="program_going">即将开播</string>
+
     <!-- For Test -->
     <string name="test_homepage_column">原创</string>
+    <string name="test_program_name">萌货集锦之喵星人</string>
+    <string name="test_program_owner">尼克1990</string>
+    <string name="test_program_views">123</string>
+
 </resources>

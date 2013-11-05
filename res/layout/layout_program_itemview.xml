@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <ImageView
+        android:id="@+id/imageview_program_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:adjustViewBounds="true"
+        android:background="@color/dim_gray"
+        android:contentDescription="@string/blank" />
+
+    <LinearLayout
+        android:id="@+id/layout_program_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/imageview_program_preview"
+        android:layout_alignTop="@id/imageview_program_preview"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/textview_program_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="6dp"
+            android:text="@string/program_going"
+            android:textColor="@color/fancy_blue"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textview_program_timedown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black"
+            android:padding="3dp"
+            android:text="@string/program_live"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/divider_program_below_image"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+        android:layout_below="@id/imageview_program_preview"
+        android:background="@color/fancy_blue"
+        android:orientation="horizontal" />
+
+    <RelativeLayout
+        android:id="@+id/layout_program_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider_program_below_image"
+        android:background="@color/black"
+        android:padding="8dp" >
+
+        <TextView
+            android:id="@+id/textview_program_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="5dp"
+            android:text="@string/test_program_name"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textview_program_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textview_program_name"
+            android:text="@string/test_program_owner"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/imageview_program_views"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/program_views_bg"
+            android:contentDescription="@string/blank"
+            android:gravity="center"
+            android:text="@string/test_program_views"
+            android:textColor="@color/program_views_text" />
+    </RelativeLayout>
+
+</RelativeLayout>
