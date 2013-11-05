@@ -32,7 +32,7 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
     private boolean mPreviewing = false;
     private boolean mConfigured = false;
 
-    private LiveMediaRecoder mRecord;
+    private LiveMediaRecoder mMediaRecorder;
     private boolean mRecording = false;
 
     private Button mBtnRecord;
@@ -129,6 +129,28 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
             mPreviewing = false;
         }
     }
+    
+    private void startRecording() {
+        if (!mRecording) {
+            mMediaRecorder = new LiveMediaRecoder(getApplicationContext(), mCamera);
+
+            mMediaRecorder.start();
+
+            mRecording = true;
+            
+            mBtnRecord.setText(R.string.test_stop_record);
+        }
+    }
+    
+    private void stopRecording() {
+        if (mRecording) {
+            mMediaRecorder.stop();
+
+            mRecording = false;
+            
+            mBtnRecord.setText(R.string.test_start_record);
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -147,6 +169,10 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
     }
 
     public void onClickBtnCameraSwitcher(View v) {
+        if (mRecording) {
+            stopRecording();
+        }
+        
         stopPreview();
 
         mCurrentCameraId = (mCurrentCameraId + 1) % mNumberofCameras;
@@ -159,18 +185,9 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
     public void onClickBtnMediaRecord(View v) {
         if (null != mCamera) {
             if (!mRecording) {
-                mBtnRecord.setText(R.string.test_stop_record);
-
-                mRecord = new LiveMediaRecoder(getApplicationContext(), mCamera);
-                mRecord.start();
-
-                mRecording = true;
+                startRecording();
             } else {
-                mBtnRecord.setText(R.string.test_start_record);
-
-                mRecord.stop();
-
-                mRecording = false;
+                stopRecording();
             }
         }
     }

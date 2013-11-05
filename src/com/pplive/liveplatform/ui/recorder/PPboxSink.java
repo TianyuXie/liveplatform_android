@@ -197,18 +197,23 @@ public class PPboxSink {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
         camera.setPreviewCallbackWithBuffer(null);
         
-        // TODO:
+        // TODO: DEBUG
 //        camera.stopPreview();
     }
 
     public void close() {
-        camera.release();
+//        camera.release();
 
-        audio.release();
+        // TODO: DEBUG
+//        audio.release();
 
         PPBOX.CaptureDestroy(capture);
+        
+        video_stream.stop();
+//        audio_stream.stop();
 
         video_stream = null;
         audio_stream = null;

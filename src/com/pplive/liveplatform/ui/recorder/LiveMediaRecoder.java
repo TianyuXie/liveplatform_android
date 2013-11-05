@@ -17,8 +17,8 @@ public class LiveMediaRecoder {
     }
     
     public void start() {
-        
         if (null != mCapture) {
+            
             mCapture.start();
         }
     }
@@ -26,6 +26,7 @@ public class LiveMediaRecoder {
     public void stop() {
         if (null != mCapture) {
             mCapture.stop();
+            mCapture.close();
         }
     }
 }
