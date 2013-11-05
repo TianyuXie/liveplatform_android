@@ -19,16 +19,19 @@ public class MainActivity extends Activity {
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_go_player:
-                Intent intent = new Intent(getApplicationContext(), LivePlayerActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.btn_go_recorder:
-                intent = new Intent(getApplicationContext(), LiveRecorderActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
+        case R.id.btn_go_player:
+            Intent intent = new Intent(getApplicationContext(), LivePlayerActivity.class);
+            startActivity(intent);
+            break;
+        case R.id.btn_go_recorder:
+            intent = new Intent(getApplicationContext(), LiveRecorderActivity.class);
+            startActivity(intent);
+            break;
+        case R.id.btn_go_homepage:
+            intent = new Intent(getApplicationContext(), HomepageActivity.class);
+            startActivity(intent);
+        default:
+            break;
         }
     }
 }

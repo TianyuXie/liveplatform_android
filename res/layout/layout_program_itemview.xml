@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:padding="5dp" >
 
     <ImageView
         android:id="@+id/imageview_program_preview"
         android:layout_width="fill_parent"
-        android:layout_height="200dp"
+        android:layout_height="150dp"
         android:adjustViewBounds="true"
         android:background="@color/dim_gray"
         android:contentDescription="@string/blank" />
@@ -57,13 +58,13 @@
         android:padding="8dp" >
 
         <TextView
-            android:id="@+id/textview_program_name"
+            android:id="@+id/textview_program_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="5dp"
-            android:text="@string/test_program_name"
+            android:text="@string/test_program_title"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -72,19 +73,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/textview_program_name"
+            android:layout_below="@id/textview_program_title"
             android:text="@string/test_program_owner"
             android:textSize="13sp" />
 
         <TextView
-            android:id="@+id/imageview_program_views"
+            android:id="@+id/textview_program_viewcount"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:background="@drawable/program_views_bg"
             android:contentDescription="@string/blank"
             android:gravity="center"
-            android:text="@string/test_program_views"
+            android:text="@string/test_program_viewcount"
             android:textColor="@color/program_views_text" />
     </RelativeLayout>
 
