@@ -225,7 +225,7 @@ public class PPboxStream {
             }
         }
     }
-    
+
     public void stop() {
         if (null != encoder) {
             encoder.stop();
@@ -289,7 +289,7 @@ public class PPboxStream {
                 sample.buffer = out_buffers[index];
 
                 // TOBO: DEBUG
-//                writeBuffer(sample.buffer, buffer_info.size);
+                //                writeBuffer(sample.buffer, buffer_info.size);
 
                 //sample.context = (((long)sample.itrack << 16) | ((long)index)) + 1;
                 PPBOX.CapturePutSample(capture, sample);

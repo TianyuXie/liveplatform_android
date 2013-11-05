@@ -55,15 +55,15 @@ public class PPboxSink {
         capture = PPBOX.CaptureCreate("andriod", url);
 
         // TODO: DEBUG
-//        camera = Camera.open();
-        
-//        Camera.Parameters p = camera.getParameters();
-//        p.setPreviewFormat(ImageFormat.NV21);
+        //        camera = Camera.open();
+
+        //        Camera.Parameters p = camera.getParameters();
+        //        p.setPreviewFormat(ImageFormat.NV21);
         // List<int[]> fps_ranges = p.getSupportedPreviewFpsRange();
         // p.setPreviewFpsRange(5000, 15000);
-//        Camera.Size size = min_size(p.getSupportedPreviewSizes());
-//        p.setPreviewSize(size.width, size.height);
-//        camera.setParameters(p);
+        //        Camera.Size size = min_size(p.getSupportedPreviewSizes());
+        //        p.setPreviewSize(size.width, size.height);
+        //        camera.setParameters(p);
 
         audio = get_audio_record();
 
@@ -139,7 +139,7 @@ public class PPboxSink {
         });
 
         //TODO: DEBUG
-//        camera.startPreview();
+        //        camera.startPreview();
 
         audio_thread = new Thread() {
             @Override
@@ -197,23 +197,23 @@ public class PPboxSink {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
+
         camera.setPreviewCallbackWithBuffer(null);
-        
+
         // TODO: DEBUG
-//        camera.stopPreview();
+        //        camera.stopPreview();
     }
 
     public void close() {
-//        camera.release();
+        //        camera.release();
 
         // TODO: DEBUG
-//        audio.release();
+        //        audio.release();
 
         PPBOX.CaptureDestroy(capture);
-        
+
         video_stream.stop();
-//        audio_stream.stop();
+        //        audio_stream.stop();
 
         video_stream = null;
         audio_stream = null;

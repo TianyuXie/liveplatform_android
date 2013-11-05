@@ -6,7 +6,6 @@ import android.annotation.TargetApi;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.os.Build;
 
@@ -92,14 +91,14 @@ public class CameraManager {
         };
         mCameraOpeningTask.execute();
     }
-    
+
     public int getNumberOfCameras() {
         return Constant.LARGER_THAN_OR_EQUAL_GINGERBREAD ? Camera.getNumberOfCameras() : DEFAULT_NUMBER_OF_CAMERAS;
     }
-    
+
     public Camera.Size getMiniSize(Parameters params) {
         List<Camera.Size> sizes = params.getSupportedPreviewSizes();
-        
+
         Camera.Size ms = sizes.get(0);
         for (Camera.Size s : sizes) {
             if (s.width >= 320 && (ms.width < 320 || s.width < ms.width || s.height < ms.height)) {
