@@ -26,5 +26,14 @@
         android:layout_centerVertical="true"
         android:onClick="onClick"
         android:text="@string/test_start_record" />
+    
+    <RelativeLayout 
+        android:id="@+id/footer_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/live_record_footer_bar_bg" >
+        
+    </RelativeLayout>
 
 </RelativeLayout>
