@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">MainActivity</string>
+    <string name="app_name">PP直播</string>
     <string name="hello_world">Hello World</string>
     <string name="blank"></string>
 
@@ -14,5 +14,8 @@
     <string name="test_program_name">萌货集锦之喵星人</string>
     <string name="test_program_owner">尼克1990</string>
     <string name="test_program_views">123</string>
+    <string name="test_go_player">Go LivePlayer</string>
+    <string name="test_go_recorder">Go LiveRecorder</string>
+    <string name="test_switch_camera">Switch</string>
 
 </resources>
