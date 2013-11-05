@@ -3,18 +3,28 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.pplive.liveplatform.ui.recorder.Preview
+    <SurfaceView
         android:id="@+id/preview_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
     <Button
-        android:id="@+id/btn_camera_switcher"
+        android:id="@+id/btn_camera_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:onClick="onClick"
         android:text="@string/test_switch_camera" />
+
+    <Button
+        android:id="@+id/btn_media_record"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:onClick="onClick"
+        android:text="@string/test_start_record" />
 
 </RelativeLayout>

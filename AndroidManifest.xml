@@ -9,11 +9,10 @@
         android:targetSdkVersion="18" >
     </uses-sdk>
 
-    <!-- Access to Internet -->
+    
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <!-- MODIFY_AUDIO_SETTINGS is needed to use audio effects such as environmental reverb -->
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <!-- SDCard write -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- optional -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -39,14 +38,14 @@
             android:name=".ui.LivePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name=".ui.LiveRecorderActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
