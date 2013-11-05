@@ -51,19 +51,23 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
 
         mBtnRecord = (Button) findViewById(R.id.btn_media_record);
     }
-
+    
     @Override
-    protected void onResume() {
-        super.onResume();
-
+    protected void onStart() {
+        super.onStart();
+        
         mCamera = CameraManager.getInstance().open(mCurrentCameraId);
 
         startPreview();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
+        
+        if (mRecording) {
+            stopRecording();
+        }
 
         stopPreview();
     }
