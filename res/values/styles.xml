@@ -11,4 +11,10 @@
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
+    <style name="togglebutton_notext">
+        <item name="android:text">@string/blank</item>
+        <item name="android:textOn">@string/blank</item>
+        <item name="android:textOff">@string/blank</item>
+    </style>
+
 </resources>

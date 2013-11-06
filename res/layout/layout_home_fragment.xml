@@ -4,40 +4,41 @@
     android:layout_height="fill_parent" >
 
     <com.pplive.liveplatform.ui.widget.TitleBar
-        android:id="@+id/titlebar_homepage"
+        android:id="@+id/titlebar_home"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="45dp"
         android:layout_alignParentTop="true"
         android:background="@color/dim_gray" />
 
     <LinearLayout
-        android:id="@+id/layout_homepage_class"
+        android:id="@+id/layout_home_nav"
         android:layout_width="fill_parent"
         android:layout_height="30dp"
-        android:layout_below="@id/titlebar_homepage"
+        android:layout_below="@id/titlebar_home"
         android:background="@color/fancy_blue"
         android:orientation="horizontal" >
 
         <TextView
-            android:id="@+id/textview_homepage_class"
+            android:id="@+id/textview_home_catalog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:text="@string/test_homepage_column"
+            android:text="@string/test_home_column"
             android:textColor="@color/black"
             android:textSize="16sp" />
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/scrollview_homepage"
+    <LinearLayout
+        android:id="@+id/layout_home_body"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/layout_homepage_class"
-        android:background="@color/black" >
-    </ScrollView>
+        android:layout_below="@id/layout_home_nav"
+        android:background="@color/black"
+        android:orientation="vertical" >
+    </LinearLayout>
 
     <ImageButton
-        android:id="@+id/imagebutton_homepage_loading"
+        android:id="@+id/btn_home_loading"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"

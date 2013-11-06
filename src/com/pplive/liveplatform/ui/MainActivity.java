@@ -14,7 +14,6 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     public void onClick(View v) {
@@ -27,11 +26,12 @@ public class MainActivity extends Activity {
             intent = new Intent(getApplicationContext(), LiveRecorderActivity.class);
             startActivity(intent);
             break;
-        case R.id.btn_go_homepage:
-            intent = new Intent(getApplicationContext(), HomepageActivity.class);
+        case R.id.btn_go_home:
+            intent = new Intent(getApplicationContext(), HomeActivity.class);
             startActivity(intent);
         default:
             break;
         }
     }
+
 }

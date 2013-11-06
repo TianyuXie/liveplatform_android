@@ -7,7 +7,7 @@
     <ImageView
         android:id="@+id/imageview_program_preview"
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="120dp"
         android:adjustViewBounds="true"
         android:background="@color/dim_gray"
         android:contentDescription="@string/blank" />

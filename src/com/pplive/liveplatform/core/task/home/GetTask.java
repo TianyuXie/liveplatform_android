@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.task.homepage;
+package com.pplive.liveplatform.core.task.home;
 
 import java.io.IOException;
 

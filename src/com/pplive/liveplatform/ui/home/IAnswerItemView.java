@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.homepage;
+package com.pplive.liveplatform.ui.home;
 
 import android.content.Context;
 import android.view.View;
