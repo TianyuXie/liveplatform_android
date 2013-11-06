@@ -14,21 +14,24 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
     }
 
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_go_player:
-                Intent intent = new Intent(getApplicationContext(), LivePlayerActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.btn_go_recorder:
-                intent = new Intent(getApplicationContext(), LiveRecorderActivity.class);
-                startActivity(intent);
-                break;
-            default:
-                break;
+        case R.id.btn_go_player:
+            Intent intent = new Intent(getApplicationContext(), LivePlayerActivity.class);
+            startActivity(intent);
+            break;
+        case R.id.btn_go_recorder:
+            intent = new Intent(getApplicationContext(), LiveRecorderActivity.class);
+            startActivity(intent);
+            break;
+        case R.id.btn_go_home:
+            intent = new Intent(getApplicationContext(), HomeActivity.class);
+            startActivity(intent);
+        default:
+            break;
         }
     }
+
 }
