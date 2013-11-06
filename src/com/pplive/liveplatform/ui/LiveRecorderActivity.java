@@ -2,24 +2,26 @@ package com.pplive.liveplatform.ui;
 
 import java.io.IOException;
 
-import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.ColorFilter;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.recorder.CameraManager;
 import com.pplive.liveplatform.ui.recorder.LiveMediaRecoder;
 
-public class LiveRecorderActivity extends Activity implements View.OnClickListener, SurfaceHolder.Callback {
+public class LiveRecorderActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
     private static final String TAG = LiveRecorderActivity.class.getSimpleName();
 
@@ -36,11 +38,13 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
     private boolean mRecording = false;
 
     private Button mBtnRecord;
+    
+    private RelativeLayout mFooterBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         setContentView(R.layout.activity_live_recorder);
@@ -50,6 +54,10 @@ public class LiveRecorderActivity extends Activity implements View.OnClickListen
         mSurfaceHolder.addCallback(this);
 
         mBtnRecord = (Button) findViewById(R.id.btn_media_record);
+        
+        mFooterBar = (RelativeLayout) findViewById(R.id.footer_bar);
+        mFooterBar.getBackground().setAlpha(200);
+        mFooterBar.getBackground().setColorFilter(new ColorFilter());
     }
     
     @Override

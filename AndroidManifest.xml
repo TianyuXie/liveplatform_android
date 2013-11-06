@@ -47,6 +47,7 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
     </application>
