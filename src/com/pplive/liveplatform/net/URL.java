@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.net;
 
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -16,21 +17,23 @@ public class URL implements Serializable {
     
     public static final String HTTPS = "https://";
     
+    public static final String RTMP = "rtmp://";
+    
+    public static final String RTSP = "rtsp://";
+    
     public static final String CONTENT = "content://";
     
     public static final String FILE = "file://";
     
-    public static final String URI = "uri://";
+    private final String mProtocol;
     
-    private String mProtocol;
+    private final String mHost;
     
-    private String mHost;
+    private final int mPort;
     
-    private int mPort;
+    private final String mPath;
     
-    private String mPath;
-    
-    private Map<String, Object> mParams;
+    private final Map<String, Object> mParams;
     
     public URL() {
         this(null);
@@ -48,6 +51,10 @@ public class URL implements Serializable {
         this(null, host, port, path);
     }
     
+    public URL(String protocol, String host, String path) {
+        this(protocol, host, -1, path);
+    }
+    
     public URL(String protocol, String host, int port, String path) {
         mProtocol = protocol;
         mHost = host;
@@ -57,12 +64,12 @@ public class URL implements Serializable {
         mParams = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
     }
     
-    public <T> void addParameter(String key, T value) {
+    public final <T> void addParameter(String key, T value) {
         mParams.put(key, value);
     }
     
     @Override
-    public String toString() {
+    public final String toString() {
         StringBuilder sb = new StringBuilder(); 
         
         if (!TextUtils.isEmpty(mProtocol)) {
@@ -77,8 +84,6 @@ public class URL implements Serializable {
             sb.append(String.format(":%d", mPort));
         }
         
-        sb.append("/");
-        
         if (!TextUtils.isEmpty(mPath)) {
             sb.append(mPath);
         }
@@ -91,7 +96,4 @@ public class URL implements Serializable {
         return sb.toString();
     }
     
-    public static void main(String[] args) {
-        URL url = new URL(host)
-    }
 }
