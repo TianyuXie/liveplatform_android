@@ -17,12 +17,18 @@ public class SideBar extends LinearLayout {
 
     private Animation mHideAnimation;
 
+    private boolean inAnimation;
+
+    private boolean isShowing;
+
     public SideBar(Context context, AttributeSet attrs) {
         super(context, attrs);
         LayoutInflater inflater = LayoutInflater.from(context);
         mRoot = inflater.inflate(R.layout.widget_sidebar, this);
-        mShowAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(), R.anim.sidebar_show);
-        mHideAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(), R.anim.sidebar_hide);
+        mShowAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(),
+                R.anim.sidebar_show);
+        mHideAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(),
+                R.anim.sidebar_hide);
     }
 
     public SideBar(Context context) {
@@ -30,17 +36,31 @@ public class SideBar extends LinearLayout {
     }
 
     public void hide(boolean gone) {
-        if (mRoot.getVisibility() == VISIBLE) {
+        if (!inAnimation && isShowing) {
             startAnimation(mHideAnimation);
             mRoot.setVisibility(gone ? GONE : INVISIBLE);
+            isShowing = false;
         }
     }
 
     public void show() {
-        if (mRoot.getVisibility() != VISIBLE) {
+        if (!inAnimation && !isShowing) {
             mRoot.setVisibility(VISIBLE);
+            isShowing = true;
             startAnimation(mShowAnimation);
         }
+    }
+
+    @Override
+    public void startAnimation(Animation animation) {
+        inAnimation = true;
+        super.startAnimation(animation);
+    }
+
+    @Override
+    protected void onAnimationEnd() {
+        super.onAnimationEnd();
+        inAnimation = false;
     }
 
 }

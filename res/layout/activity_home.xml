@@ -5,12 +5,19 @@
     android:layout_height="fill_parent"
     android:background="@drawable/home_bg" >
 
-    <LinearLayout
+    <com.pplive.liveplatform.ui.widget.FragmentContainer
         android:id="@+id/layout_home_fragment_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
-    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_home_fragment"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+        </LinearLayout>
+    </com.pplive.liveplatform.ui.widget.FragmentContainer>
 
     <com.pplive.liveplatform.ui.widget.SideBar
         android:id="@+id/sidebar_home"

@@ -5,45 +5,58 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.view.MotionEvent;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.home.HomeFragment;
+import com.pplive.liveplatform.ui.widget.FragmentContainer;
 import com.pplive.liveplatform.ui.widget.SideBar;
 
 public class HomeActivity extends FragmentActivity {
     static final String TAG = "HomepageActivity";
 
-    private Animation scaleAnimation;
-
-    private Animation scalebackAnimation;
-
-    private View mFragmentContainer;
+    private FragmentContainer mFragmentContainer;
 
     private SideBar mSideBar;
+
+    private GestureDetector mGestureDetector;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setContentView(R.layout.activity_home);
 
-        scalebackAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_anim_back);
-
-        scaleAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.scale_anim);
-
-        mFragmentContainer = findViewById(R.id.layout_home_fragment_container);
-
+        mFragmentContainer = (FragmentContainer) findViewById(R.id.layout_home_fragment_container);
         mSideBar = (SideBar) findViewById(R.id.sidebar_home);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Fragment homepageFragment = new HomeFragment();
-        fragmentTransaction.add(R.id.layout_home_fragment_container, homepageFragment);
+        fragmentTransaction.add(R.id.layout_home_fragment, homepageFragment);
         fragmentTransaction.commit();
+
+        mGestureDetector = new GestureDetector(getApplicationContext(),
+                new GestureDetector.SimpleOnGestureListener() {
+
+                    @Override
+                    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+                            float distanceY) {
+                        if (mFragmentContainer != null && mSideBar != null) {
+                            if (!mFragmentContainer.isSlided()) {
+                                mFragmentContainer.slide();
+                                mSideBar.show();
+                            } else {
+                                mFragmentContainer.slideBack();
+                                mSideBar.hide(true);
+                            }
+                            return true;
+                        }
+                        return super.onScroll(e1, e2, distanceX, distanceY);
+                    }
+
+                });
     }
 
     @Override
@@ -78,30 +91,38 @@ public class HomeActivity extends FragmentActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        Log.d("Tween", "onKeyDown");
-        return true;
+        switch (keyCode) {
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+            return true;
+        case KeyEvent.KEYCODE_VOLUME_UP:
+            return true;
+        default:
+            return super.onKeyDown(keyCode, event);
+        }
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        Log.d("Tween", "onKeyUp");
         switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
-            Log.d("Tween", "onKeyDown - KEYCODE_DPAD_DOWN");
-            mFragmentContainer.startAnimation(scaleAnimation);
-            mFragmentContainer.setEnabled(false);
+            mFragmentContainer.slide();
             mSideBar.show();
-            break;
+            return true;
         case KeyEvent.KEYCODE_VOLUME_UP:
-            Log.d("Tween", "onKeyDown - KEYCODE_DPAD_LEFT");
-            mFragmentContainer.startAnimation(scalebackAnimation);
-            mFragmentContainer.setEnabled(true);
+            mFragmentContainer.slideBack();
             mSideBar.hide(true);
-            break;
+            return true;
         default:
-            break;
+            return super.onKeyUp(keyCode, event);
         }
-        return true;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        if (mGestureDetector.onTouchEvent(ev)) {
+            return true;
+        }
+        return super.dispatchTouchEvent(ev);
     }
 
 }
