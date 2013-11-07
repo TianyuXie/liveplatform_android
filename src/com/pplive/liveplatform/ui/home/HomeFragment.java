@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -24,13 +25,23 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.GetTask;
 import com.pplive.liveplatform.ui.home.program.ProgramView;
+import com.pplive.liveplatform.ui.widget.TitleBar;
+import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
+import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
+import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
     static final String TAG = "HomepageFragment";
 
     private Dialog mRefreshDialog;
 
     private LinearLayout mContainer;
+
+    private TitleBar mTitleBar;
+
+    private Callback mCallbackLisnter;
+
+    private boolean mSlided;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,10 +52,13 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        View layout = inflater.inflate(R.layout.layout_home_fragment, container, false);
+        InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (LinearLayout) layout.findViewById(R.id.layout_home_body);
+        mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
+        mTitleBar.setCallbackListener(titleBarCallbackListner);
         mRefreshDialog = new Dialog(getActivity(), R.style.homepage_refresh_dialog);
         mRefreshDialog.setContentView(R.layout.dialog_refresh);
+        layout.setGestureDetector(new InterceptDetector(getActivity(), onGestureListener));
         return layout;
     }
 
@@ -115,4 +129,66 @@ public class HomeFragment extends Fragment {
             }
         }
     };
+
+    @Override
+    public void onSlide() {
+        mSlided = true;
+        mTitleBar.setMenuButtonHighlight(true);
+    }
+
+    @Override
+    public void onSlideBack() {
+        mSlided = false;
+        mTitleBar.setMenuButtonHighlight(false);
+    }
+
+    private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.d(TAG, "onDown");
+            return mSlided;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.d(TAG, "onSingleTapUp");
+            if (mSlided) {
+                if (mCallbackLisnter != null) {
+                    mCallbackLisnter.doSlideBack();
+                }
+                return true;
+            } else {
+                return false;
+            }
+
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            Log.d(TAG, "onShowPress");
+            if (mSlided && mCallbackLisnter != null) {
+                mCallbackLisnter.doSlideBack();
+            }
+        }
+    };
+
+    public interface Callback {
+        public void doSlide();
+
+        public void doSlideBack();
+    }
+
+    public void setCallbackListener(Callback listener) {
+        this.mCallbackLisnter = listener;
+    }
+
+    private TitleBar.Callback titleBarCallbackListner = new TitleBar.Callback() {
+        @Override
+        public void doSlide() {
+            if (mCallbackLisnter != null) {
+                mCallbackLisnter.doSlide();
+            }
+        }
+    };
+
 }

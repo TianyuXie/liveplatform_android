@@ -9,8 +9,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
-public class SideBar extends LinearLayout {
+public class SideBar extends LinearLayout implements SlidableContainer.OnSlideListener {
     private View mRoot;
 
     private Animation mShowAnimation;
@@ -25,10 +26,8 @@ public class SideBar extends LinearLayout {
         super(context, attrs);
         LayoutInflater inflater = LayoutInflater.from(context);
         mRoot = inflater.inflate(R.layout.widget_sidebar, this);
-        mShowAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(),
-                R.anim.sidebar_show);
-        mHideAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(),
-                R.anim.sidebar_hide);
+        mShowAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(), R.anim.sidebar_show);
+        mHideAnimation = AnimationUtils.loadAnimation(context.getApplicationContext(), R.anim.sidebar_hide);
     }
 
     public SideBar(Context context) {
@@ -63,4 +62,13 @@ public class SideBar extends LinearLayout {
         inAnimation = false;
     }
 
+    @Override
+    public void onSlide() {
+        show();
+    }
+
+    @Override
+    public void onSlideBack() {
+        hide(true);
+    }
 }
