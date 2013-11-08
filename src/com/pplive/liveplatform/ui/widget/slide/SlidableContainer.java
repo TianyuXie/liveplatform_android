@@ -5,8 +5,10 @@ import java.util.Collection;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
+import android.view.animation.DecelerateInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
@@ -45,6 +47,8 @@ public abstract class SlidableContainer extends LinearLayout {
 
         mSlideAnimationSet = new AnimationSet(true);
         mSlideBackAnimationSet = new AnimationSet(true);
+        mSlideAnimationSet.setInterpolator(new DecelerateInterpolator());
+        mSlideBackAnimationSet.setInterpolator(new DecelerateInterpolator());
         mSlideAnimationSet.setDuration(SLIDE_DURATION);
         mSlideBackAnimationSet.setDuration(SLIDE_DURATION);
 
@@ -64,12 +68,14 @@ public abstract class SlidableContainer extends LinearLayout {
 
     @Override
     public void startAnimation(Animation animation) {
+        Log.d(TAG, "startAnimation");
         mAnimating = true;
         super.startAnimation(animation);
     }
 
     @Override
     protected void onAnimationEnd() {
+        Log.d(TAG, "onAnimationEnd");
         mAnimating = false;
         super.onAnimationEnd();
     }
@@ -115,6 +121,10 @@ public abstract class SlidableContainer extends LinearLayout {
         if (listener != null) {
             mOnSlideListeners.remove(listener);
         }
+    }
+
+    public void clearOnSlideListeners() {
+        mOnSlideListeners.clear();
     }
 
     private void notifySlide() {

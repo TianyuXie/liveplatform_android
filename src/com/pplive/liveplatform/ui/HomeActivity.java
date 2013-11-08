@@ -45,7 +45,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
+        mFragmentContainer.clearOnSlideListeners();
         super.onDestroy();
     }
 

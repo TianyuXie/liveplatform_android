@@ -25,10 +25,13 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.GetTask;
 import com.pplive.liveplatform.ui.home.program.ProgramView;
+import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
+import com.pplive.liveplatform.util.ConfigUtil;
+import com.pplive.liveplatform.util.KeyUtil;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
     static final String TAG = "HomepageFragment";
@@ -39,9 +42,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private TitleBar mTitleBar;
 
-    private Callback mCallbackLisnter;
+    private Callback mCallbackListener;
 
     private boolean mSlided;
+
+    private LoadingButton mStatusButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (LinearLayout) layout.findViewById(R.id.layout_home_body);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
+        mStatusButton = (LoadingButton) layout.findViewById(R.id.btn_home_status);
+        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
+        mStatusButton.setAnimation(R.anim.home_status_rotate);
         mTitleBar.setCallbackListener(titleBarCallbackListner);
         mRefreshDialog = new Dialog(getActivity(), R.style.homepage_refresh_dialog);
         mRefreshDialog.setContentView(R.layout.dialog_refresh);
@@ -67,6 +75,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStart();
         Log.d(TAG, "onStart");
         startTask();
+        mStatusButton.startLoading("正在加载");
     }
 
     private void startTask() {
@@ -76,7 +85,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         task.addTaskCancelListener(getOnTaskCancelListner);
         task.addTaskFailedListener(getTaskFailedListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetTask.KEY_URL, "http://42.96.137.0:33677/");
+        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_HOME_TEST_URL));
         mRefreshDialog.show();
         task.execute(taskContext);
     }
@@ -96,6 +105,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 pv.updateData(jsonElement);
                 mContainer.removeAllViews();
                 mContainer.addView(pv.getView());
+                mStatusButton.showLoadingResult("已加载20条");
             }
         }
     };
@@ -134,12 +144,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onSlide() {
         mSlided = true;
         mTitleBar.setMenuButtonHighlight(true);
+        mStatusButton.hide();
     }
 
     @Override
     public void onSlideBack() {
         mSlided = false;
         mTitleBar.setMenuButtonHighlight(false);
+        mStatusButton.show();
     }
 
     private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
@@ -153,8 +165,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public boolean onSingleTapUp(MotionEvent e) {
             Log.d(TAG, "onSingleTapUp");
             if (mSlided) {
-                if (mCallbackLisnter != null) {
-                    mCallbackLisnter.doSlideBack();
+                if (mCallbackListener != null) {
+                    mCallbackListener.doSlideBack();
                 }
                 return true;
             } else {
@@ -166,8 +178,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onShowPress(MotionEvent e) {
             Log.d(TAG, "onShowPress");
-            if (mSlided && mCallbackLisnter != null) {
-                mCallbackLisnter.doSlideBack();
+            if (mSlided && mCallbackListener != null) {
+                mCallbackListener.doSlideBack();
             }
         }
     };
@@ -179,14 +191,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     }
 
     public void setCallbackListener(Callback listener) {
-        this.mCallbackLisnter = listener;
+        this.mCallbackListener = listener;
     }
 
     private TitleBar.Callback titleBarCallbackListner = new TitleBar.Callback() {
         @Override
         public void doSlide() {
-            if (mCallbackLisnter != null) {
-                mCallbackLisnter.doSlide();
+            if (mCallbackListener != null) {
+                mCallbackListener.doSlide();
             }
         }
     };

@@ -51,18 +51,18 @@ public class GetTask extends Task {
 
         TaskContext context = params[0];
 
-        TaskResult result = new TaskResult(TaskStatus.Failed);
         String data = null;
         try {
-            data = HttpUtil.getUrl((String) context.get(KEY_URL));
+            data = HttpUtil.getFromUrl((String) context.get(KEY_URL), "application/javascript");
         } catch (IOException e) {
             return new TaskResult(TaskStatus.Failed, "GET Error");
         }
         if (data == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
+
+        TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_RESULT, data);
-        result.setStatus(TaskStatus.Finished);
         result.setContext(context);
 
         if (isCancel) {

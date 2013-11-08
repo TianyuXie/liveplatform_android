@@ -24,8 +24,6 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 public class HttpUtil {
-    private static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.79 Safari/537.";
-
     private static final String CHARSET = HTTP.UTF_8;
 
     private static HttpClient httpClient;
@@ -36,7 +34,7 @@ public class HttpUtil {
             HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
             HttpProtocolParams.setContentCharset(params, CHARSET);
             HttpProtocolParams.setUseExpectContinue(params, true);
-            HttpProtocolParams.setUserAgent(params, USER_AGENT);
+            HttpProtocolParams.setUserAgent(params, ConfigUtil.getString(KeyUtil.HTTP_USER_AGENT));
             ConnManagerParams.setTimeout(params, 2000);
             HttpConnectionParams.setConnectionTimeout(params, 10000);
             HttpConnectionParams.setSoTimeout(params, 20000);
@@ -53,18 +51,18 @@ public class HttpUtil {
 
     public static HttpGet getHttpGetRequest(String url, String mime) {
         HttpGet request = new HttpGet(url);
-        request.addHeader("User-Agent", USER_AGENT);
+        request.addHeader("User-Agent", ConfigUtil.getString(KeyUtil.HTTP_USER_AGENT));
         request.addHeader("Accept", mime);
         request.addHeader("Connection", "Keep-Alive");
         return request;
     }
 
-    public static String getUrl(String url) throws IOException {
+    public static String getFromUrl(String url, String mime) throws IOException {
         if (httpClient == null) {
             httpClient = getHttpClient();
         }
         String html = null;
-        HttpGet httpget = HttpUtil.getHttpGetRequest(url, "application/javascript");
+        HttpGet httpget = HttpUtil.getHttpGetRequest(url, mime);
         HttpResponse responce = httpClient.execute(httpget);
         int resStatus = responce.getStatusLine().getStatusCode();
         if (resStatus == HttpStatus.SC_OK) {
