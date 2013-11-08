@@ -2,7 +2,9 @@ package com.pplive.liveplatform.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -17,6 +19,8 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.widget.attr.ISelfHidable;
 
 public class LoadingButton extends RelativeLayout implements ISelfHidable {
+    static final String TAG = "LoadingButton";
+    
     private ViewGroup mRoot;
 
     private Button mBaseButton;
@@ -69,18 +73,18 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
         setText(getContext().getResources().getString(resid));
     }
 
-    public void setTextSize(float size) {
-        mStatusTextView.setTextSize(size);
-    }
-
-    public void setTextSize(int unit, float size) {
-        mStatusTextView.setTextSize(unit, size);
-    }
-
     public void setBackgroundResource(int normal, int loading) {
         mNormalBackgroundRes = normal;
         mLoadingBackgroundRes = loading;
         mBaseButton.setBackgroundResource(normal);
+    }
+
+    public void setAnimationResource(int resid) {
+        mAnimImageView.setBackgroundResource(resid);
+    }
+
+    public void setAnimationResource(Drawable drawable) {
+        mAnimImageView.setBackground(drawable);
     }
 
     public void setAnimation(int id) {
@@ -89,6 +93,10 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
 
     public void setAnimation(Animation animation) {
         mAnimation = animation;
+    }
+
+    public void startLoading() {
+        startLoading("");
     }
 
     public void startLoading(int resid) {
@@ -100,9 +108,14 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
             mLoading = true;
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(VISIBLE);
+            Log.d("anim", "startAnimation");
             mAnimImageView.startAnimation(mAnimation);
             mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
         }
+    }
+
+    public void showLoadingResult() {
+        showLoadingResult("");
     }
 
     public void showLoadingResult(int id) {

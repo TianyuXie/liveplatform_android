@@ -14,6 +14,6 @@ public class DisplayUtil {
     }
 
     public static int getWidthPx(Context context) {
-        return context.getResources().getDisplayMetrics().widthPixels;
+        return context.getApplicationContext().getResources().getDisplayMetrics().widthPixels;
     }
 }

@@ -63,6 +63,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mStatusButton = (LoadingButton) layout.findViewById(R.id.btn_home_status);
         mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
         mStatusButton.setAnimation(R.anim.home_status_rotate);
+        mStatusButton.setAnimationResource(R.drawable.home_status_btn_anim);
         mTitleBar.setCallbackListener(titleBarCallbackListner);
         mRefreshDialog = new Dialog(getActivity(), R.style.homepage_refresh_dialog);
         mRefreshDialog.setContentView(R.layout.dialog_refresh);
@@ -105,7 +106,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 pv.updateData(jsonElement);
                 mContainer.removeAllViews();
                 mContainer.addView(pv.getView());
-                mStatusButton.showLoadingResult("已加载20条");
+                mStatusButton.finishLoading();
             }
         }
     };

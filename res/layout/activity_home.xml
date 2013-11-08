@@ -13,12 +13,17 @@
     </com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer>
 
     <com.pplive.liveplatform.ui.widget.SideBar
-        android:id="@+id/sidebar_home"
+        android:id="@+id/home_sidebar"
         android:layout_width="60dp"
         android:layout_height="fill_parent"
         android:layout_margin="20dp"
-        android:visibility="gone"
-        android:clickable="true" >
-    </com.pplive.liveplatform.ui.widget.SideBar>
+        android:clickable="true"
+        android:visibility="gone" />
+
+    <com.pplive.liveplatform.ui.widget.AnimDoor
+        android:id="@+id/home_animdoor"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="false"/>
 
 </RelativeLayout>

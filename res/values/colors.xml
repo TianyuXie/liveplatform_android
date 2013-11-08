@@ -19,5 +19,8 @@
     <!-- Program -->
     <color name="program_views_text">#FF5AC7FF</color>
     <color name="program_views_bg">#FF001E33</color>
+    
+    <!-- Home -->
+    <color name="home_fragment_body_bg">#FF1A1A1A</color>
 
 </resources>

@@ -32,7 +32,7 @@ public abstract class SlidableContainer extends LinearLayout {
 
     private boolean mAnimating;
 
-    private int mAnimX;
+    private float mAnimX;
 
     private Collection<OnSlideListener> mOnSlideListeners;
 
@@ -43,7 +43,7 @@ public abstract class SlidableContainer extends LinearLayout {
     public SlidableContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mAnimX = Math.round(DisplayUtil.dp2px(context, SLIDE_DP) - (1.0f - SCALE_PERCENT) * DisplayUtil.getWidthPx(context));
+        mAnimX = DisplayUtil.dp2px(context, SLIDE_DP) - (1.0f - SCALE_PERCENT) * DisplayUtil.getWidthPx(context);
 
         mSlideAnimationSet = new AnimationSet(true);
         mSlideBackAnimationSet = new AnimationSet(true);
@@ -94,7 +94,7 @@ public abstract class SlidableContainer extends LinearLayout {
         notifySlideBack();
     }
 
-    protected int getAnimX() {
+    protected float getAnimX() {
         return mAnimX;
     }
 
