@@ -19,7 +19,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
-import com.pplive.sdk.PPBOX;
+import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PPboxStream {
@@ -67,15 +67,20 @@ public class PPboxStream {
 
     private int in_size;
 
-    private PPBOX.StreamInfo stream_info;
+    private MediaSDK.StreamInfo stream_info;
 
-    private PPBOX.Sample sample;
+    private MediaSDK.Sample sample;
 
     private String stream_type;
+    
+    private boolean is_ready = false;
+    
+    private OnConfiguredListener mOnConfiguredListener;
 
     private static PPboxStream[] streams = new PPboxStream[2];
 
-    public PPboxStream(long capture, int itrack, Camera camera) {
+    public PPboxStream(long capture, int itrack, Camera camera, OnConfiguredListener listener) {
+        mOnConfiguredListener = listener;
         stream_type = "Video";
 
         this.capture = capture;
@@ -91,55 +96,52 @@ public class PPboxStream {
             //MediaCodecInfo codec = find_codec("video/avc");
             //MediaCodecInfo.CodecCapabilities capabilities = codec.getCapabilitiesForType("video/avc");
             //int[] clr_fmts = capabilities.colorFormats;
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", size.width, size.height);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, 200000);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, 15);
-            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 5);
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
-            encoder = MediaCodec.createEncoderByType("video/avc");
+            MediaFormat format = MediaCodecManager.getInstance().getSupportedEncodingMediaFormat(MediaCodecManager.MIME_TYPE_VIDEO_AVC, size);
+            //            MediaFormat format = MediaFormat.createVideoFormat("video/avc", size.width, size.height);
+            //            format.setInteger(MediaFormat.KEY_BIT_RATE, 200000);
+            //            format.setInteger(MediaFormat.KEY_FRAME_RATE, 15);
+            //            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 5);
+            //            format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
+            encoder = MediaCodec.createEncoderByType(MediaCodecManager.MIME_TYPE_VIDEO_AVC);
             encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
 
         in_size = pic_size(p);
 
-        stream_info = new PPBOX.StreamInfo();
-        stream_info.type = fourcc("VIDE");
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.sub_type = fourcc("AVC1");
-        } else {
-            stream_info.sub_type = pic_format(p.getPreviewFormat());
-        }
+        stream_info = new MediaSDK.StreamInfo();
+        //        stream_info.type = fourcc("VIDE");
+        //        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+        //            stream_info.sub_type = fourcc("AVC1");
+        //        } else {
+        //            stream_info.sub_type = pic_format(p.getPreviewFormat());
+        //        }
         stream_info.time_scale = 1000 * 1000;
         stream_info.bitrate = 0;
         stream_info.__union0 = p.getPreviewSize().width;
         stream_info.__union1 = p.getPreviewSize().height;
-        stream_info.__union2 = 0;
-        stream_info.__union3 = 1;
+        stream_info.__union2 = MediaCodecManager.FRAME_RATE;
+        stream_info.__union3 = 0;
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.format_type = 2;
             stream_info.format_size = 0;
             stream_info.format_buffer = ByteBuffer.allocateDirect(0);
         } else {
-            stream_info.format_type = 0;
             stream_info.format_size = 0;
             stream_info.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-        PPBOX.CaptureSetStream(capture, itrack, stream_info);
+//        MediaSDK.CaptureSetStream(capture, itrack, stream_info);
 
-        sample = new PPBOX.Sample();
+        sample = new MediaSDK.Sample();
         sample.itrack = itrack;
         sample.flags = 0;
         sample.time = 0;
-        sample.decode_time = 0;
         sample.composite_time_delta = 0;
-        sample.duration = 0;
         sample.size = in_size;
         sample.buffer = null;
-        sample.context = 0;
     }
 
-    public PPboxStream(long capture, int itrack, AudioRecord audio) {
+    public PPboxStream(long capture, int itrack, AudioRecord audio, OnConfiguredListener listener) {
+        mOnConfiguredListener = listener;
         stream_type = "Audio";
 
         this.capture = capture;
@@ -153,20 +155,14 @@ public class PPboxStream {
 
             MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", audio.getSampleRate(), audio.getChannelCount());
             format.setInteger(MediaFormat.KEY_BIT_RATE, 16000);
-            format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectELD);
+     //       format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectELD);
             encoder = MediaCodec.createEncoderByType("audio/mp4a-latm");
             encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
 
         in_size = frame_size(1024, audio.getChannelConfiguration(), audio.getAudioFormat());
 
-        stream_info = new PPBOX.StreamInfo();
-        stream_info.type = fourcc("AUDI");
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.sub_type = fourcc("MP4A");
-        } else {
-            stream_info.sub_type = fourcc("PCM0");
-        }
+        stream_info = new MediaSDK.StreamInfo();
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
             stream_info.time_scale = 1000 * 1000;
         } else {
@@ -178,32 +174,23 @@ public class PPboxStream {
         stream_info.__union2 = audio.getSampleRate();
         stream_info.__union3 = 1024;
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.format_type = 0;
             stream_info.format_size = 0;
             stream_info.format_buffer = ByteBuffer.allocateDirect(0);
             ;
         } else {
-            stream_info.format_type = 0;
             stream_info.format_size = 0;
             stream_info.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-        PPBOX.CaptureSetStream(capture, itrack, stream_info);
+//        MediaSDK.CaptureSetStream(capture, itrack, stream_info);
 
-        sample = new PPBOX.Sample();
+        sample = new MediaSDK.Sample();
         sample.itrack = itrack;
         sample.flags = 0;
         sample.time = 0;
-        sample.decode_time = 0;
         sample.composite_time_delta = 0;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            sample.duration = 0;
-        } else {
-            sample.duration = stream_info.__union3;
-        }
         sample.size = in_size;
         sample.buffer = null;
-        sample.context = 0;
     }
 
     public void start() {
@@ -257,29 +244,34 @@ public class PPboxStream {
 
     public void put(InBuffer buffer) {
         put2(buffer);
-        sample.decode_time += sample.duration;
+        //        sample.time += sample.duration;
     }
 
     public void put(long time, InBuffer buffer) {
-        sample.decode_time = time;
+        sample.time = time;
         put2(buffer);
     }
 
     private void put2(InBuffer buffer) {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            encoder.queueInputBuffer(buffer.index(), 0, in_size, sample.decode_time, 0);
+            encoder.queueInputBuffer(buffer.index(), 0, in_size, sample.time, 0);
             buffer.byte_buffer().clear();
             int index = encoder.dequeueOutputBuffer(buffer_info, 0);
             if (index >= 0) {
-                sample.decode_time = buffer_info.presentationTimeUs;
+                sample.time = buffer_info.presentationTimeUs;
                 sample.flags = 0;
                 if (buffer_info.flags != 0) {
                     if (buffer_info.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
-                        System.out.println("Codec Config " + " itrack: " + sample.itrack + " size: " + buffer_info.size);
+                        Log.d(TAG, "Codec Config " + " itrack: " + sample.itrack + " size: " + buffer_info.size);
                         stream_info.format_size = buffer_info.size;
                         stream_info.format_buffer = out_buffers[index];
-                        PPBOX.CaptureSetStream(capture, sample.itrack, stream_info);
+                        MediaSDK.CaptureSetStream(capture, sample.itrack, stream_info);
                         encoder.releaseOutputBuffer(index, false);
+                        
+                        if (null != mOnConfiguredListener) {
+                            mOnConfiguredListener.onConfigured();
+                        }
+                        
                         return;
                     } else {
                         sample.flags = 1;
@@ -289,19 +281,22 @@ public class PPboxStream {
                 sample.buffer = out_buffers[index];
 
                 // TOBO: DEBUG
-                //                writeBuffer(sample.buffer, buffer_info.size);
+//                writeBuffer(sample.buffer, buffer_info.size);
 
                 //sample.context = (((long)sample.itrack << 16) | ((long)index)) + 1;
-                PPBOX.CapturePutSample(capture, sample);
+                Log.d(TAG, "is_ready: " + is_ready);
+                if (is_ready) {
+                    MediaSDK.CapturePutSample(capture, sample);
+                }
 
                 encoder.releaseOutputBuffer(index, false);
 
-                Log.d(TAG, String.format("[%s] decode_time: %s; size: %s", stream_type, sample.decode_time, sample.size));
+                Log.d(TAG, String.format("[%s] time: %s; size: %s", stream_type, sample.time, sample.size));
             }
         } else {
             sample.buffer = buffer.byte_buffer();
-            sample.context = (((long) sample.itrack << 16) | ((long) buffer.index())) + 1;
-            PPBOX.CapturePutSample(capture, sample);
+            //            sample.context = (((long) sample.itrack << 16) | ((long) buffer.index())) + 1;
+            MediaSDK.CapturePutSample(capture, sample);
         }
     }
 
@@ -355,9 +350,13 @@ public class PPboxStream {
             }
         }
     }
-
+    
     public void drop() {
-        sample.decode_time += sample.duration;
+        //        sample.decode_time += sample.duration;
+    }
+    
+    public void setReady(boolean ready) {
+        is_ready = ready;
     }
 
     private boolean free_sample2(int index) {
@@ -443,5 +442,9 @@ public class PPboxStream {
         }
         System.out.println("Not Found codec for mine type " + mineType);
         return null;
+    }
+    
+    interface OnConfiguredListener {
+        public void onConfigured();
     }
 }

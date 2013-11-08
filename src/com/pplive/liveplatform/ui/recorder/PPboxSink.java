@@ -10,13 +10,17 @@ import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.pplive.sdk.PPBOX;
+import com.pplive.liveplatform.ui.recorder.PPboxStream.OnConfiguredListener;
+import com.pplive.sdk.MediaSDK;
+import com.pplive.sdk.MediaSDK.Download_Callback;
+import com.pplive.thirdparty.BreakpadUtil;
 
 public class PPboxSink {
+    
+    private static final String TAG = PPboxSink.class.getSimpleName();
 
     private long capture;
 
@@ -29,8 +33,26 @@ public class PPboxSink {
     private PPboxStream audio_stream;
 
     private Thread audio_thread;
+    
+    private int configured_stream = 0;
+    
+    public OnConfiguredListener mOnConfiguredListener = new OnConfiguredListener() {
+        
+        @Override
+        public void onConfigured() {
+            configured_stream++;
+            
+            if (configured_stream >= 2 && video_stream != null & audio_stream != null) {
+                video_stream.setReady(true);
+                audio_stream.setReady(true);
+            }
+        }
+    };
 
     public static void init(Context c) {
+        BreakpadUtil.registerBreakpad(new File("/sdcard/pplog"));
+        
+        
         File cacheDirFile = c.getCacheDir();
         // String cacheDir = cacheDirFile.getAbsolutePath();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
@@ -39,12 +61,11 @@ public class PPboxSink {
         File tmpDirFile = new File(tmpDir);
         tmpDirFile.mkdir();
 
-        PPBOX.libPath = libDir;
+        MediaSDK.libPath = libDir;
         // cacheDir.getAbsolutePath();
-        PPBOX.logPath = tmpDir;
-        PPBOX.logLevel = PPBOX.LEVEL_TRACE;
-        PPBOX.load();
-        PPBOX.StartEngine("161", "12", "111");
+        MediaSDK.logPath = tmpDir;
+        MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
+        MediaSDK.startP2PEngine("161", "12", "111");
     }
 
     public PPboxSink(Camera camera) {
@@ -52,7 +73,13 @@ public class PPboxSink {
     }
 
     public void open(String url) {
-        capture = PPBOX.CaptureCreate("andriod", url);
+        capture = MediaSDK.CaptureOpen("pprecord://record", "rtmp", url, new Download_Callback() {
+            
+            @Override
+            public void invoke(long err) {
+                Log.d(TAG, "err:  " + err);
+            }
+        });
 
         // TODO: DEBUG
         //        camera = Camera.open();
@@ -67,29 +94,29 @@ public class PPboxSink {
 
         audio = get_audio_record();
 
-        PPBOX.CaptureConfigData config = new PPBOX.CaptureConfigData();
+        MediaSDK.CaptureConfigData config = new MediaSDK.CaptureConfigData();
 
         // TODO: Debug
-        config.stream_count = 1;
-        config.flags = 1; // multi_thread
-        config.get_sample_buffers = null;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            config.free_sample = null;
-        } else {
-            config.free_sample = new PPBOX.FreeSampleCallBack() {
-                @Override
-                public boolean invoke(long context) {
-                    return PPboxStream.free_sample(context);
-                }
-            };
-        }
+        config.stream_count = 2;
+        config.thread_count = 2; // multi_thread
+        config.sort_type = 1;
+//        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+//            config.free_sample = null;
+//        } else {
+//            config.free_sample = new PPBOX.FreeSampleCallBack() {
+//                @Override
+//                public boolean invoke(long context) {
+//                    return PPboxStream.free_sample(context);
+//                }
+//            };
+//        }
 
-        PPBOX.CaptureInit(capture, config);
+        MediaSDK.CaptureInit(capture, config);
 
-        video_stream = new PPboxStream(capture, 0, camera);
+        video_stream = new PPboxStream(capture, 0, camera, mOnConfiguredListener);
 
         // TODO: Debug
-        // audio_stream = new PpboxStream(capture, 1, audio);
+        audio_stream = new PPboxStream(capture, 1, audio, mOnConfiguredListener);
     }
 
     public void preview(SurfaceHolder holder) {
@@ -108,7 +135,7 @@ public class PPboxSink {
         camera.addCallbackBuffer(video_buffer);
 
         // TODO: Debug
-        // audio_stream.start();
+        audio_stream.start();
 
         camera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
             private final long time_scale = 1000 * 1000 * 1000;
@@ -130,16 +157,12 @@ public class PPboxSink {
                     video_stream.put(time / 1000, buffer);
                 }
                 if (time >= next_time) {
-                    System.out.println("video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
-                            + num_drop);
+                    System.out.println("video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "+ num_drop);
                     next_time += 5 * time_scale;
                 }
                 camera.addCallbackBuffer(data);
             }
         });
-
-        //TODO: DEBUG
-        //        camera.startPreview();
 
         audio_thread = new Thread() {
             @Override
@@ -150,7 +173,7 @@ public class PPboxSink {
         audio_thread.setPriority(Thread.MAX_PRIORITY);
 
         // TODO: Debug
-        // audio_thread.start();
+        audio_thread.start();
     }
 
     private void audio_read_thread() {
@@ -167,8 +190,7 @@ public class PPboxSink {
         while (!Thread.interrupted()) {
             long time = System.nanoTime() - start_time;
             if (time >= next_time) {
-                System.out.println("audio " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
-                        + num_drop);
+                Log.d(TAG, "audio " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "+ num_drop);
                 next_time += 5 * time_scale;
             }
             ++num_total;
@@ -182,10 +204,11 @@ public class PPboxSink {
             }
             int read = audio.read(buffer.byte_buffer(), read_size);
             if (read != read_size) {
-                System.out.println("audio.read failed. read = " + read);
+                Log.d(TAG, "audio.read failed. read = " + read);
                 break;
             }
-            audio_stream.put(buffer);
+            
+            audio_stream.put(time / 1000, buffer);
         }
         audio.stop();
     }
@@ -210,10 +233,10 @@ public class PPboxSink {
         // TODO: DEBUG
         //        audio.release();
 
-        PPBOX.CaptureDestroy(capture);
+        MediaSDK.CaptureDestroy(capture);
 
         video_stream.stop();
-        //        audio_stream.stop();
+        audio_stream.stop();
 
         video_stream = null;
         audio_stream = null;
@@ -221,30 +244,38 @@ public class PPboxSink {
 
     private static int[] sampleRates = new int[] { 8000, 11025, 22050, 44100 };
     private static short[] channelConfigs = new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO };
-    private static short[] audioFormats = new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT };
+    private static short[] audioFormats = new short[] { AudioFormat.ENCODING_PCM_16BIT };
 
     private AudioRecord get_audio_record() {
         for (int sampleRate : sampleRates) {
             for (short channelConfig : channelConfigs) {
                 for (short audioFormat : audioFormats) {
                     try {
-                        System.out.println("Attempting rate " + sampleRate + "Hz, channel: " + channelConfig + ", bits: " + audioFormat);
+                        Log.d(TAG, "Attempting rate " + sampleRate + "Hz, channel: " + channelConfig + ", bits: " + audioFormat);
                         int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
 
                         if (bufferSize == AudioRecord.ERROR_BAD_VALUE) {
                             continue;
                         }
+                        
+                        Log.d(TAG, "bufferSize: " + bufferSize);
+                        
+
                         bufferSize = PPboxStream.frame_size(1024, channelConfig, audioFormat) * 16;
                         // check if we can instantiate and have a success
                         AudioRecord recorder = new AudioRecord(AudioSource.DEFAULT, sampleRate, channelConfig, audioFormat, bufferSize);
-
+                        
+                        Log.d(TAG, "state: " + recorder.getState());
+                        
                         if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
-                            System.out.println("Supported. buffer size: " + bufferSize);
+                            Log.d(TAG, "Supported. buffer size: " + bufferSize);
                             return recorder;
                         }
+                        
+                        Log.d(TAG, "release audio recorder");
                         recorder.release();
                     } catch (Exception e) {
-                        System.out.println("Exception, keep trying." + e);
+                        Log.d(TAG, "Exception, keep trying." + e);
                     }
                 }
             }

@@ -29,7 +29,7 @@ public class CameraManager {
     private AsyncTask<Void, Void, Camera> mCameraOpeningTask;
 
     private CameraManager() {
-    }
+    };
 
     public Camera open(final int facing) {
         Camera camera = null;
