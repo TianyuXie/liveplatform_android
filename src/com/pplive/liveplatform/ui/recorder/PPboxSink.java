@@ -13,7 +13,6 @@ import android.media.MediaRecorder.AudioSource;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.pplive.liveplatform.ui.recorder.PPboxStream.OnConfiguredListener;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 import com.pplive.thirdparty.BreakpadUtil;
@@ -34,20 +33,22 @@ public class PPboxSink {
 
     private Thread audio_thread;
     
-    private int configured_stream = 0;
+    private long start_time;
     
-    public OnConfiguredListener mOnConfiguredListener = new OnConfiguredListener() {
-        
-        @Override
-        public void onConfigured() {
-            configured_stream++;
-            
-            if (configured_stream >= 2 && video_stream != null & audio_stream != null) {
-                video_stream.setReady(true);
-                audio_stream.setReady(true);
-            }
-        }
-    };
+//    private int configured_stream = 0;
+    
+//    public OnConfiguredListener mOnConfiguredListener = new OnConfiguredListener() {
+//        
+//        @Override
+//        public void onConfigured() {
+//            configured_stream++;
+//            
+//            if (configured_stream >= 2 && video_stream != null & audio_stream != null) {
+//                video_stream.setReady(true);
+//                audio_stream.setReady(true);
+//            }
+//        }
+//    };
 
     public static void init(Context c) {
         BreakpadUtil.registerBreakpad(new File("/sdcard/pplog"));
@@ -112,11 +113,13 @@ public class PPboxSink {
 //        }
 
         MediaSDK.CaptureInit(capture, config);
-
-        video_stream = new PPboxStream(capture, 0, camera, mOnConfiguredListener);
+        
+        start_time = System.nanoTime();
+        
+        video_stream = new PPboxStream(capture, 0, camera);
 
         // TODO: Debug
-        audio_stream = new PPboxStream(capture, 1, audio, mOnConfiguredListener);
+        audio_stream = new PPboxStream(capture, 1, audio);
     }
 
     public void preview(SurfaceHolder holder) {
@@ -139,7 +142,6 @@ public class PPboxSink {
 
         camera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
             private final long time_scale = 1000 * 1000 * 1000;
-            private long start_time = System.nanoTime();
             private int num_total = 0;
             private int num_drop = 0;
             private long next_time = 5 * time_scale;
@@ -179,7 +181,6 @@ public class PPboxSink {
     private void audio_read_thread() {
         final long time_scale = 1000 * 1000 * 1000;
         final int read_size = audio_stream.buffer_size();
-        final long start_time = System.nanoTime();
         int num_total = 0;
         int num_drop = 0;
         long next_time = 5 * time_scale;

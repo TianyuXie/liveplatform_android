@@ -73,14 +73,13 @@ public class PPboxStream {
 
     private String stream_type;
     
-    private boolean is_ready = false;
-    
-    private OnConfiguredListener mOnConfiguredListener;
+    //    private boolean is_ready = false;
+
+    //    private OnConfiguredListener mOnConfiguredListener;
 
     private static PPboxStream[] streams = new PPboxStream[2];
 
-    public PPboxStream(long capture, int itrack, Camera camera, OnConfiguredListener listener) {
-        mOnConfiguredListener = listener;
+    public PPboxStream(long capture, int itrack, Camera camera) {
         stream_type = "Video";
 
         this.capture = capture;
@@ -129,7 +128,7 @@ public class PPboxStream {
             stream_info.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-//        MediaSDK.CaptureSetStream(capture, itrack, stream_info);
+        MediaSDK.CaptureSetStream(capture, itrack, stream_info);
 
         sample = new MediaSDK.Sample();
         sample.itrack = itrack;
@@ -140,8 +139,7 @@ public class PPboxStream {
         sample.buffer = null;
     }
 
-    public PPboxStream(long capture, int itrack, AudioRecord audio, OnConfiguredListener listener) {
-        mOnConfiguredListener = listener;
+    public PPboxStream(long capture, int itrack, AudioRecord audio) {
         stream_type = "Audio";
 
         this.capture = capture;
@@ -155,7 +153,7 @@ public class PPboxStream {
 
             MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", audio.getSampleRate(), audio.getChannelCount());
             format.setInteger(MediaFormat.KEY_BIT_RATE, 16000);
-     //       format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectELD);
+            //       format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectELD);
             encoder = MediaCodec.createEncoderByType("audio/mp4a-latm");
             encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
@@ -182,7 +180,7 @@ public class PPboxStream {
             stream_info.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-//        MediaSDK.CaptureSetStream(capture, itrack, stream_info);
+        MediaSDK.CaptureSetStream(capture, itrack, stream_info);
 
         sample = new MediaSDK.Sample();
         sample.itrack = itrack;
@@ -267,11 +265,11 @@ public class PPboxStream {
                         stream_info.format_buffer = out_buffers[index];
                         MediaSDK.CaptureSetStream(capture, sample.itrack, stream_info);
                         encoder.releaseOutputBuffer(index, false);
-                        
-                        if (null != mOnConfiguredListener) {
-                            mOnConfiguredListener.onConfigured();
-                        }
-                        
+
+                        //                        if (null != mOnConfiguredListener) {
+                        //                            mOnConfiguredListener.onConfigured();
+                        //                        }
+
                         return;
                     } else {
                         sample.flags = 1;
@@ -281,13 +279,10 @@ public class PPboxStream {
                 sample.buffer = out_buffers[index];
 
                 // TOBO: DEBUG
-//                writeBuffer(sample.buffer, buffer_info.size);
+                //                writeBuffer(sample.buffer, buffer_info.size);
 
                 //sample.context = (((long)sample.itrack << 16) | ((long)index)) + 1;
-                Log.d(TAG, "is_ready: " + is_ready);
-                if (is_ready) {
-                    MediaSDK.CapturePutSample(capture, sample);
-                }
+                MediaSDK.CapturePutSample(capture, sample);
 
                 encoder.releaseOutputBuffer(index, false);
 
@@ -350,13 +345,9 @@ public class PPboxStream {
             }
         }
     }
-    
+
     public void drop() {
         //        sample.decode_time += sample.duration;
-    }
-    
-    public void setReady(boolean ready) {
-        is_ready = ready;
     }
 
     private boolean free_sample2(int index) {
@@ -443,8 +434,8 @@ public class PPboxStream {
         System.out.println("Not Found codec for mine type " + mineType);
         return null;
     }
-    
-    interface OnConfiguredListener {
-        public void onConfigured();
-    }
+
+    //    interface OnConfiguredListener {
+    //        public void onConfigured();
+    //    }
 }
