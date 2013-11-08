@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.recorder;
 
+
+
 public class Cycle<A> {
 
     private A[] elems;

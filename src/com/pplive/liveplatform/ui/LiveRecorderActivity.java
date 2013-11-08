@@ -38,6 +38,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     private boolean mRecording = false;
 
     private Button mBtnRecord;
+    private Button mBtnSwitchFlashMode;
     
     private RelativeLayout mFooterBar;
 
@@ -169,18 +170,21 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         Log.d(TAG, "onClick");
 
         switch (v.getId()) {
-        case R.id.btn_camera_switch:
+        case R.id.btn_switch_camera:
             onClickBtnCameraSwitcher(v);
             break;
         case R.id.btn_media_record:
             onClickBtnMediaRecord(v);
+            break;
+        case R.id.btn_switch_flash_mode:
+            onClickBtnSwitchFlashMode(v);
             break;
         default:
             break;
         }
     }
 
-    public void onClickBtnCameraSwitcher(View v) {
+    private void onClickBtnCameraSwitcher(View v) {
         if (mRecording) {
             stopRecording();
         }
@@ -194,7 +198,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         startPreview();
     }
 
-    public void onClickBtnMediaRecord(View v) {
+    private void onClickBtnMediaRecord(View v) {
         if (null != mCamera) {
             if (!mRecording) {
                 startRecording();
@@ -202,6 +206,10 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
                 stopRecording();
             }
         }
+    }
+    
+    private void onClickBtnSwitchFlashMode(View v) {
+        
     }
 
 }

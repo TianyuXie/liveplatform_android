@@ -11,8 +11,6 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.AudioRecord;
 import android.media.MediaCodec;
-import android.media.MediaCodecInfo;
-import android.media.MediaCodecList;
 import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Build.VERSION;
