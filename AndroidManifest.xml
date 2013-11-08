@@ -50,7 +50,7 @@
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
         <activity
-            android:name=".ui.HomepageActivity"
+            android:name=".ui.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:launchMode="singleInstance"

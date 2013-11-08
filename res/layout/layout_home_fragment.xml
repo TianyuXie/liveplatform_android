@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
@@ -37,13 +38,13 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/btn_home_loading"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+    <com.pplive.liveplatform.ui.widget.LoadingButton
+        android:id="@+id/btn_home_status"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp"
-        android:contentDescription="@string/blank" />
+        live:textSize="12sp" />
 
-</RelativeLayout>
+</com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout>

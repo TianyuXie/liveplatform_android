@@ -45,7 +45,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
-            android:button="@drawable/sidebar_game_btn_bg"/>
+            android:button="@drawable/sidebar_game_btn_bg" />
 
         <RadioButton
             android:id="@+id/btn_sidebar_sport"

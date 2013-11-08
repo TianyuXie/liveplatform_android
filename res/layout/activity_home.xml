@@ -5,19 +5,20 @@
     android:layout_height="fill_parent"
     android:background="@drawable/home_bg" >
 
-    <LinearLayout
+    <com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer
         android:id="@+id/layout_home_fragment_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:orientation="vertical" >
-    </LinearLayout>
+    </com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer>
 
     <com.pplive.liveplatform.ui.widget.SideBar
         android:id="@+id/sidebar_home"
         android:layout_width="60dp"
         android:layout_height="fill_parent"
         android:layout_margin="20dp"
-        android:visibility="gone" >
+        android:visibility="gone"
+        android:clickable="true" >
     </com.pplive.liveplatform.ui.widget.SideBar>
 
 </RelativeLayout>
