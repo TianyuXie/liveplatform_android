@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -262,7 +263,8 @@ public class PPboxStream {
 
     private int mWritedBufferCount = 0;
 
-    private void writeBuffer(ByteBuffer buffer, int size) {
+    @SuppressLint("SdCardPath")
+	private void writeBuffer(ByteBuffer buffer, int size) {
 
         if (mWritedBufferCount++ < 10) {
 

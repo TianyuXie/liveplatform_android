@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.recorder.CameraManager;
@@ -38,7 +39,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     private boolean mRecording = false;
 
     private Button mBtnRecord;
-    private Button mBtnSwitchFlashMode;
+    private ToggleButton mBtnSwitchFlashMode;
     
     private RelativeLayout mFooterBar;
 
@@ -55,6 +56,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         mSurfaceHolder.addCallback(this);
 
         mBtnRecord = (Button) findViewById(R.id.btn_media_record);
+        mBtnSwitchFlashMode = (ToggleButton)findViewById(R.id.btn_switch_flash_mode);
         
         mFooterBar = (RelativeLayout) findViewById(R.id.footer_bar);
         mFooterBar.getBackground().setAlpha(200);
@@ -125,6 +127,19 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             }
         }
     }
+    
+    private boolean setFlashMode(boolean isFlashOn) {
+        Log.d(TAG, "isFlashOn: " + isFlashOn + "; Status: " + mBtnSwitchFlashMode.getText());
+        
+        if (null != mCamera) {
+            Camera.Parameters params = mCamera.getParameters();
+            params.setFlashMode(isFlashOn? Camera.Parameters.FLASH_MODE_TORCH : Camera.Parameters.FLASH_MODE_OFF);
+            
+            mCamera.setParameters(params);
+        }
+        
+        return isFlashOn;
+    }
 
     private void startPreview() {
         if (mConfigured && !mPreviewing && null != mCamera) {
@@ -150,8 +165,6 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             mMediaRecorder.start();
 
             mRecording = true;
-            
-            mBtnRecord.setText(R.string.test_stop_record);
         }
     }
     
@@ -160,8 +173,6 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             mMediaRecorder.stop();
 
             mRecording = false;
-            
-            mBtnRecord.setText(R.string.test_start_record);
         }
     }
 
@@ -205,11 +216,16 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             } else {
                 stopRecording();
             }
+            
+            mBtnSwitchFlashMode.setChecked(mRecording);
         }
     }
     
     private void onClickBtnSwitchFlashMode(View v) {
+        boolean isFlashOn = mBtnSwitchFlashMode.isChecked();
         
+        isFlashOn = setFlashMode(isFlashOn);
+        mBtnSwitchFlashMode.setChecked(isFlashOn);
     }
 
 }

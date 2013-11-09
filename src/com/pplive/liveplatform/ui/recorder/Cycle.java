@@ -8,6 +8,7 @@ public class Cycle<A> {
     private int read_index;
     private int write_index;
 
+    @SuppressWarnings("unchecked")
     public Cycle(int cap) {
         elems = (A[]) new Object[cap + 1];
         read_index = write_index = 0;

@@ -9,19 +9,21 @@
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
-    
-    <ToggleButton 
+    <ToggleButton
         android:id="@+id/btn_switch_flash_mode"
+        style="@android:style/Widget.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/btn_switch_camera"
         android:layout_alignTop="@+id/btn_switch_camera"
-        android:textOn="@string/test_flash_mode_on"
-        android:textOff="@string/test_flash_mode_off"
-        android:onClick="onClick"/>
-    
+        android:layout_toLeftOf="@+id/btn_switch_camera"
+        android:checked="false"
+        android:onClick="onClick"
+        android:textOff="@string/test_flash_mode_on"
+        android:textOn="@string/test_flash_mode_off" />
+
     <Button
         android:id="@+id/btn_switch_camera"
+        style="@android:style/Widget.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -29,14 +31,17 @@
         android:onClick="onClick"
         android:text="@string/test_switch_camera" />
 
-    <Button
+    <ToggleButton
         android:id="@+id/btn_media_record"
+        style="@android:style/Widget.Button.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:checked="false"
         android:onClick="onClick"
-        android:text="@string/test_start_record" />
+        android:textOff="@string/test_start_record"
+        android:textOn="@string/test_stop_record" />
 
     <RelativeLayout
         android:id="@+id/footer_bar"
@@ -51,21 +56,6 @@
             android:layout_centerInParent="true"
             android:imeOptions="flagNoExtractUi"
             android:inputType="text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_2"
-            android:text="TextView1" />
-
-        <TextView
-            android:id="@+id/tv_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="TextView2" />
     </RelativeLayout>
 
 </RelativeLayout>
