@@ -13,8 +13,6 @@ import com.pplive.liveplatform.R;
 public class TitleBar extends LinearLayout {
     private ToggleButton mMenuButton;
 
-    private Callback mCallbackLister;
-
     public TitleBar(Context context) {
         this(context, null);
     }
@@ -24,28 +22,13 @@ public class TitleBar extends LinearLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.widget_titlebar, this);
         mMenuButton = (ToggleButton) root.findViewById(R.id.btn_titlebar_menu);
-        mMenuButton.setOnClickListener(menuButtonOnClickListener);
     }
 
-    private View.OnClickListener menuButtonOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (mCallbackLister != null) {
-                mCallbackLister.doSlide();
-            }
-        }
-    };
+    public void setMenuButtonOnClickListener(View.OnClickListener menuButtonOnClickListener) {
+        mMenuButton.setOnClickListener(menuButtonOnClickListener);
+    }
 
     public void setMenuButtonHighlight(boolean isOn) {
         mMenuButton.setChecked(isOn);
     }
-
-    public interface Callback {
-        public void doSlide();
-    }
-
-    public void setCallbackListener(Callback listener) {
-        this.mCallbackLister = listener;
-    }
-
 }

@@ -25,7 +25,6 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.GetTask;
 import com.pplive.liveplatform.ui.home.program.ProgramView;
-import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
@@ -46,8 +45,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private boolean mSlided;
 
-    private LoadingButton mStatusButton;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,11 +57,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (LinearLayout) layout.findViewById(R.id.layout_home_body);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
-        mStatusButton = (LoadingButton) layout.findViewById(R.id.btn_home_status);
-        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
-        mStatusButton.setAnimation(R.anim.home_status_rotate);
-        mStatusButton.setAnimationResource(R.drawable.home_status_btn_anim);
-        mTitleBar.setCallbackListener(titleBarCallbackListner);
+        mTitleBar.setMenuButtonOnClickListener(menuButtonOnClickListener);
         mRefreshDialog = new Dialog(getActivity(), R.style.homepage_refresh_dialog);
         mRefreshDialog.setContentView(R.layout.dialog_refresh);
         layout.setGestureDetector(new InterceptDetector(getActivity(), onGestureListener));
@@ -76,7 +69,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStart();
         Log.d(TAG, "onStart");
         startTask();
-        mStatusButton.startLoading("正在加载");
     }
 
     private void startTask() {
@@ -86,7 +78,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         task.addTaskCancelListener(getOnTaskCancelListner);
         task.addTaskFailedListener(getTaskFailedListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_HOME_TEST_URL));
+        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_FAKE_SERVER2));
         mRefreshDialog.show();
         task.execute(taskContext);
     }
@@ -106,7 +98,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 pv.updateData(jsonElement);
                 mContainer.removeAllViews();
                 mContainer.addView(pv.getView());
-                mStatusButton.finishLoading();
             }
         }
     };
@@ -145,14 +136,12 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onSlide() {
         mSlided = true;
         mTitleBar.setMenuButtonHighlight(true);
-        mStatusButton.hide();
     }
 
     @Override
     public void onSlideBack() {
         mSlided = false;
         mTitleBar.setMenuButtonHighlight(false);
-        mStatusButton.show();
     }
 
     private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
@@ -195,9 +184,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         this.mCallbackListener = listener;
     }
 
-    private TitleBar.Callback titleBarCallbackListner = new TitleBar.Callback() {
+    private View.OnClickListener menuButtonOnClickListener = new View.OnClickListener() {
         @Override
-        public void doSlide() {
+        public void onClick(View v) {
             if (mCallbackListener != null) {
                 mCallbackListener.doSlide();
             }

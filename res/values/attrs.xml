@@ -3,6 +3,25 @@
 
     <declare-styleable name="LoadingButton">
         <attr name="textSize" format="dimension" />
+        <attr name="text" format="string" />
+        <attr name="normal_background" format="reference" />
+        <attr name="loading_background" format="reference" />
+        <attr name="anim_background" format="reference" />
+        <attr name="animation" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="AnimDoor">
+        <attr name="left_src" format="reference" />
+        <attr name="right_src" format="reference" />
+        <attr name="factor" format="float" />
+    </declare-styleable>
+    <declare-styleable name="SideBar">
+        <attr name="anim_show" format="reference" />
+        <attr name="anim_hide" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="SlidableContainer">
+        <attr name="duration" format="integer" />
+        <attr name="distance" format="dimension" />
+        <attr name="scale_percent" format="float" />
     </declare-styleable>
 
 </resources>

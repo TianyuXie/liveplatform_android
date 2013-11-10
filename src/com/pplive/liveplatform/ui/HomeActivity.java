@@ -11,6 +11,7 @@ import android.view.MotionEvent;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.home.HomeFragment;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
+import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.SideBar;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
@@ -18,6 +19,8 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     static final String TAG = "HomepageActivity";
 
     private AnimDoor mAnimDoor;
+
+    private LoadingButton mStatusButton;
 
     private SlidableContainer mFragmentContainer;
 
@@ -33,8 +36,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mFragmentContainer = (SlidableContainer) findViewById(R.id.layout_home_fragment_container);
         mSideBar = (SideBar) findViewById(R.id.home_sidebar);
         mAnimDoor = (AnimDoor) findViewById(R.id.home_animdoor);
-        mAnimDoor.setDoorResource(R.drawable.animdoor_left, R.drawable.animdoor_right);
-        mAnimDoor.setFactor(1.075f);
+        mStatusButton = (LoadingButton) findViewById(R.id.btn_home_status);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -71,6 +73,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
+        mStatusButton.startLoading();
     }
 
     @Override

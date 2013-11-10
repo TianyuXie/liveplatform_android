@@ -2,9 +2,7 @@ package com.pplive.liveplatform.ui.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -20,7 +18,7 @@ import com.pplive.liveplatform.ui.widget.attr.ISelfHidable;
 
 public class LoadingButton extends RelativeLayout implements ISelfHidable {
     static final String TAG = "LoadingButton";
-    
+
     private ViewGroup mRoot;
 
     private Button mBaseButton;
@@ -53,15 +51,51 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
         mAnimImageView = (ImageView) mRoot.findViewById(R.id.image_loading_anim);
         mStatusTextView = (TextView) mRoot.findViewById(R.id.textview_loading_status);
 
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LoadingButton);
-        float size = typedArray.getDimensionPixelSize(R.styleable.LoadingButton_textSize, 20);
-        typedArray.recycle();
+        /* default values */
+        mNormalText = "";
+        mNormalBackgroundRes = -1;
+        mLoadingBackgroundRes = -1;
 
-        mStatusTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, size);
+        int id = 0;
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.LoadingButton);
+        int n = a.getIndexCount();
+        for (int i = 0; i < n; i++) {
+            int attr = a.getIndex(i);
+            switch (attr) {
+            case R.styleable.LoadingButton_textSize:
+                mStatusTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimensionPixelSize(attr, 20));
+                break;
+            case R.styleable.LoadingButton_text:
+                mNormalText = a.getText(attr);
+                mStatusTextView.setText(mNormalText);
+                break;
+            case R.styleable.LoadingButton_normal_background:
+                mNormalBackgroundRes = a.getResourceId(attr, -1);
+                if (mNormalBackgroundRes > 0) {
+                    mBaseButton.setBackgroundResource(mNormalBackgroundRes);
+                }
+                break;
+            case R.styleable.LoadingButton_loading_background:
+                mLoadingBackgroundRes = a.getResourceId(attr, -1);
+                break;
+            case R.styleable.LoadingButton_anim_background:
+                id = a.getResourceId(attr, -1);
+                if (id > 0) {
+                    mAnimImageView.setBackgroundResource(id);
+                }
+                break;
+            case R.styleable.LoadingButton_animation:
+                id = a.getResourceId(attr, -1);
+                if (id > 0) {
+                    mAnimation = AnimationUtils.loadAnimation(context, id);
+                }
+                break;
+            }
+        }
+        a.recycle();
 
         mAnimImageView.setVisibility(INVISIBLE);
         mShowing = (getVisibility() == VISIBLE);
-        mNormalText = "";
     }
 
     public void setText(CharSequence text) {
@@ -76,15 +110,15 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
     public void setBackgroundResource(int normal, int loading) {
         mNormalBackgroundRes = normal;
         mLoadingBackgroundRes = loading;
-        mBaseButton.setBackgroundResource(normal);
+        if (normal > 0) {
+            mBaseButton.setBackgroundResource(normal);
+        }
     }
 
     public void setAnimationResource(int resid) {
-        mAnimImageView.setBackgroundResource(resid);
-    }
-
-    public void setAnimationResource(Drawable drawable) {
-        mAnimImageView.setBackground(drawable);
+        if (resid > 0) {
+            mAnimImageView.setBackgroundResource(resid);
+        }
     }
 
     public void setAnimation(int id) {
@@ -108,9 +142,10 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
             mLoading = true;
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(VISIBLE);
-            Log.d("anim", "startAnimation");
             mAnimImageView.startAnimation(mAnimation);
-            mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
+            if (mLoadingBackgroundRes > 0) {
+                mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
+            }
         }
     }
 
@@ -128,7 +163,9 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
-            mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
+            if (mLoadingBackgroundRes > 0) {
+                mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
+            }
         }
     }
 
@@ -139,7 +176,9 @@ public class LoadingButton extends RelativeLayout implements ISelfHidable {
             mAnimImageView.clearAnimation();
         }
         mStatusTextView.setText(mNormalText);
-        mBaseButton.setBackgroundResource(mNormalBackgroundRes);
+        if (mNormalBackgroundRes > 0) {
+            mBaseButton.setBackgroundResource(mNormalBackgroundRes);
+        }
     }
 
     @Override

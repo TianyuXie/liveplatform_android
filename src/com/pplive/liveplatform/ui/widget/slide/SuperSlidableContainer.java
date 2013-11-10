@@ -20,8 +20,8 @@ public class SuperSlidableContainer extends SlidableContainer {
 
     public SuperSlidableContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mScrollX = Math.round(getAnimX() / SCALE_PERCENT);
-        mStayAnimation = new ScaleAnimation(SCALE_PERCENT, SCALE_PERCENT, SCALE_PERCENT, SCALE_PERCENT, Animation.RELATIVE_TO_SELF, 1.0f,
+        mScrollX = Math.round(getAnimX() / mScalePercent);
+        mStayAnimation = new ScaleAnimation(mScalePercent, mScalePercent, mScalePercent, mScalePercent, Animation.RELATIVE_TO_SELF, 1.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f);
         mStayAnimation.setDuration(1);
         mStayAnimation.setFillAfter(true);

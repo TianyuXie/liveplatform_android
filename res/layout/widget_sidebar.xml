@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btn_sidebar_user_icon"
         android:layout_centerHorizontal="true"
-        android:text="@string/test_titlebar_title" />
+        android:text="@string/test_titlebar_title"
+        android:textColor="@color/white" />
 
     <RadioGroup
         android:layout_width="wrap_content"
