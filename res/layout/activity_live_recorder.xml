@@ -11,7 +11,7 @@
 
     <ToggleButton
         android:id="@+id/btn_switch_flash_mode"
-        style="@android:style/Widget.Button.Small"
+        style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/btn_switch_camera"
@@ -23,7 +23,7 @@
 
     <Button
         android:id="@+id/btn_switch_camera"
-        style="@android:style/Widget.Button.Small"
+        style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -33,7 +33,7 @@
 
     <ToggleButton
         android:id="@+id/btn_media_record"
-        style="@android:style/Widget.Button.Small"
+        style="@android:style/Widget.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -43,19 +43,77 @@
         android:textOff="@string/test_start_record"
         android:textOn="@string/test_stop_record" />
 
-    <RelativeLayout
-        android:id="@+id/footer_bar"
+    <LinearLayout
+        android:id="@+id/bottom_bar_container"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:drawable/screen_background_light_transparent" >
+        android:layout_height="60dp"
+        android:layout_above="@+id/calendar_pick_container"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_back"
+            style="@android:style/Widget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test_back" />
 
         <EditText
-            android:layout_width="80dp"
+            android:id="@+id/edit_program_schedule"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text" />
-    </RelativeLayout>
+            android:layout_weight="0.5"
+            android:singleLine="true"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/edit_program_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:focusable="false"
+            android:inputType="text"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/btn_share_program"
+            style="@android:style/Widget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/test_share_program" />
+
+        <Button
+            android:id="@+id/btn_add_program"
+            style="@android:style/Widget.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onClick"
+            android:text="@string/test_edit_program" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/calendar_pick_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <DatePicker
+            android:id="@+id/date_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:calendarViewShown="false" />
+
+        <TimePicker
+            android:id="@+id/time_picker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </RelativeLayout>
