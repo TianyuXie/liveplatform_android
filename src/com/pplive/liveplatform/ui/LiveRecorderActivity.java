@@ -9,15 +9,19 @@ import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ListAdapter;
 import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
@@ -26,6 +30,7 @@ import com.pplive.liveplatform.ui.recorder.CameraManager;
 import com.pplive.liveplatform.ui.recorder.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
+import com.pplive.liveplatform.ui.widget.HorizontalListView;
 
 public class LiveRecorderActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
@@ -55,6 +60,8 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     private DateTimePicker mDateTimePacker;
     private DatePicker mDatePicker;
     private TimePicker mTimePicker;
+    
+    private HorizontalListView mHorizontalListView;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +109,35 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         mCalendarPicker = findViewById(R.id.calendar_pick_container);
         
         mEditProgramSchedule.setText(String.format("%d/%d/%d %d:%d", mDateTimePacker.getYear(), mDateTimePacker.getMonth(), mDateTimePacker.getDayOfMonth(), mDateTimePacker.getCurrentHour(), mDateTimePacker.getCurrentMinute()));
+        
+        mHorizontalListView = (HorizontalListView) findViewById(R.id.program_list_view);
+        mHorizontalListView.setAdapter(new BaseAdapter() {
+            
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_record_program_itemview, null);
+                
+                return view;
+            }
+            
+            @Override
+            public long getItemId(int position) {
+                // TODO Auto-generated method stub
+                return position;
+            }
+            
+            @Override
+            public Object getItem(int position) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+            
+            @Override
+            public int getCount() {
+                // TODO Auto-generated method stub
+                return 40;
+            }
+        });
     }
 
     @Override

@@ -65,6 +65,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
+            android:focusable="false"
+            android:inputType="none"
             android:singleLine="true"
             android:visibility="gone" />
 
@@ -115,5 +117,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    
+    <com.pplive.liveplatform.ui.widget.HorizontalListView
+        android:id="@+id/program_list_view"
+        android:layout_width="fill_parent"
+        android:layout_height="80dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/black"/>
 
 </RelativeLayout>
