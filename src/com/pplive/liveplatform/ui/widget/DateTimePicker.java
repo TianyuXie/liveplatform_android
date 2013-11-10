@@ -23,9 +23,7 @@ public class DateTimePicker {
             
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                if (null != mOnDateTimeChangedListener) {
-                    mOnDateTimeChangedListener.onDateTimeChanged(getYear(), getMonth(), getDayOfMonth(), getCurrentHour(), getCurrentMinute());
-                }
+                onDateTimeChanged();
             }
         });
         
@@ -34,11 +32,17 @@ public class DateTimePicker {
             
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
-                if (null != mOnDateTimeChangedListener) {
-                    mOnDateTimeChangedListener.onDateTimeChanged(getYear(), getMonth(), getDayOfMonth(), getCurrentHour(), getCurrentMinute());
-                }
+                onDateTimeChanged();
             }
         });
+        
+        onDateTimeChanged();
+    }
+    
+    private void onDateTimeChanged() {
+        if (null != mOnDateTimeChangedListener) {
+            mOnDateTimeChangedListener.onDateTimeChanged(getYear(), getMonth(), getDayOfMonth(), getCurrentHour(), getCurrentMinute());
+        }
     }
     
     public int getYear() {

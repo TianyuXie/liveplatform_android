@@ -108,8 +108,6 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         
         mCalendarPicker = findViewById(R.id.calendar_pick_container);
         
-        mEditProgramSchedule.setText(String.format("%d/%d/%d %d:%d", mDateTimePacker.getYear(), mDateTimePacker.getMonth(), mDateTimePacker.getDayOfMonth(), mDateTimePacker.getCurrentHour(), mDateTimePacker.getCurrentMinute()));
-        
         mHorizontalListView = (HorizontalListView) findViewById(R.id.program_list_view);
         mHorizontalListView.setAdapter(new BaseAdapter() {
             
