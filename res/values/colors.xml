@@ -28,5 +28,5 @@
     <color name="home_fragment_body_bg">#FF1A1A1A</color>
     
     <!-- Search -->
-    <color name="searchbar_text_bg">#FF19A0FF</color>
+    <color name="searchbar_text_bg">#FF001E33</color>
 </resources>

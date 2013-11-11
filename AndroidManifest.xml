@@ -9,10 +9,10 @@
         android:targetSdkVersion="18" >
     </uses-sdk>
 
-    
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" /> <!-- optional -->
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+   <!-- optional -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
@@ -45,8 +45,8 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" >
         </activity>
         <activity
             android:name=".ui.HomeActivity"
@@ -54,7 +54,7 @@
             android:exported="false"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
     </application>
 
