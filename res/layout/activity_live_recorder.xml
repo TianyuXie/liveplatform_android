@@ -95,28 +95,15 @@
             android:text="@string/test_edit_program" />
     </LinearLayout>
 
-    <LinearLayout
+    <com.pplive.liveplatform.ui.widget.DateTimePicker
         android:id="@+id/calendar_pick_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal"
-        android:visibility="gone" >
-
-        <DatePicker
-            android:id="@+id/date_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
-            android:calendarViewShown="false" />
-
-        <TimePicker
-            android:id="@+id/time_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+        android:gravity="center"
+        android:orientation="horizontal" 
+        android:visibility="gone"/>
 
     <com.pplive.liveplatform.ui.widget.HorizontalListView
         android:id="@+id/program_list_view"

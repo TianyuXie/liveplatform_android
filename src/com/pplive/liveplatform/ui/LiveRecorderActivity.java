@@ -56,10 +56,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     
     private Button mBtnEditProgram;
     
-    private View mCalendarPicker;
     private DateTimePicker mDateTimePacker;
-    private DatePicker mDatePicker;
-    private TimePicker mTimePicker;
     
     private HorizontalListView mHorizontalListView;
     
@@ -85,7 +82,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             public boolean onTouch(View v, MotionEvent event) {
                 Log.d(TAG, "onTouch");
                 
-                mCalendarPicker.setVisibility(View.VISIBLE);
+                mDateTimePacker.setVisibility(View.VISIBLE);
                 
                 
                 return true;
@@ -96,17 +93,14 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         
         mBtnEditProgram = (Button) findViewById(R.id.btn_add_program);
         
-        mDatePicker = (DatePicker) findViewById(R.id.date_picker);
-        mTimePicker = (TimePicker) findViewById(R.id.time_picker);
-        mDateTimePacker = new DateTimePicker(mDatePicker, mTimePicker, new OnDateTimeChangedListener() {
+        mDateTimePacker = (DateTimePicker) findViewById(R.id.calendar_pick_container);
+        mDateTimePacker.setOnDateTimeChanged(new OnDateTimeChangedListener() {
             
             @Override
             public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
                 mEditProgramSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
             }
         });
-        
-        mCalendarPicker = findViewById(R.id.calendar_pick_container);
         
         mHorizontalListView = (HorizontalListView) findViewById(R.id.program_list_view);
         mHorizontalListView.setAdapter(new BaseAdapter() {

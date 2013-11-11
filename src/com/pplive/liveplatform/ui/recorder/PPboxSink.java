@@ -185,9 +185,12 @@ public class PPboxSink {
         // TODO: DEBUG
         if (null != mAudioRecord) {
             mAudioRecord.release();
+            mAudioRecord = null;
         }
 
+        Log.d(TAG, "Before destroy capture");
         MediaSDK.CaptureDestroy(mCaptureId);
+        Log.d(TAG, "After destroy capture");
 
         mVideoStream.stop();
         mAudioStream.stop();
