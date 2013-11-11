@@ -27,18 +27,21 @@
             android:src="@drawable/searchbar_icon" />
 
         <EditText
+            android:id="@+id/edittext_searchbar"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:background="@color/searchbar_text_bg"
+            android:imeOptions="actionSearch"
             android:inputType="text"
+            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="14sp" >
         </EditText>
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_searchbar_search"
+        android:id="@+id/btn_searchbar_close"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="@drawable/searchbar_close_btn_bg"

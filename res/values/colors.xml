@@ -21,12 +21,14 @@
     <color name="program_owner_text">#FF919191</color>
     <color name="program_views_text">#FF5AC7FF</color>
     <color name="program_views_bg">#FF001E33</color>
+    <color name="program_tag_bg">#BB191919</color>
 
     <!-- Home -->
     <color name="home_fragment_nav_bg">#FF19A0FF</color>
     <color name="home_fragment_nav_text">#FF191919</color>
     <color name="home_fragment_body_bg">#FF1A1A1A</color>
-    
+
     <!-- Search -->
     <color name="searchbar_text_bg">#FF001E33</color>
+
 </resources>

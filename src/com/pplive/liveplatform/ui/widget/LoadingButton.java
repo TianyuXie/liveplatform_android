@@ -14,9 +14,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.widget.attr.ISelfHidable;
+import com.pplive.liveplatform.ui.widget.attr.IHidable;
 
-public class LoadingButton extends RelativeLayout implements ISelfHidable {
+public class LoadingButton extends RelativeLayout implements IHidable {
     static final String TAG = "LoadingButton";
 
     private ViewGroup mRoot;

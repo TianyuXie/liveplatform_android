@@ -25,6 +25,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.GetTask;
 import com.pplive.liveplatform.ui.home.program.ProgramView;
+import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
@@ -41,7 +42,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private TitleBar mTitleBar;
 
+//    private StatusBar mStatusBar;
+
+    private SearchBar mSearchBar;
+
     private Callback mCallbackListener;
+
+//    private BroadcastReceiver mBatteryReceiver;
 
     private boolean mSlided;
 
@@ -56,8 +63,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         Log.d(TAG, "onCreateView");
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (LinearLayout) layout.findViewById(R.id.layout_home_body);
+//        mStatusBar = (StatusBar) layout.findViewById(R.id.statusbar_home);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
-        mTitleBar.setMenuButtonOnClickListener(menuButtonOnClickListener);
+        mTitleBar.setOnClickListener(titleBarOnClickListener);
+        mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
+        mSearchBar.setOnClickListener(searchBarOnClickListener);
         mRefreshDialog = new Dialog(getActivity(), R.style.homepage_refresh_dialog);
         mRefreshDialog.setContentView(R.layout.dialog_refresh);
         layout.setGestureDetector(new InterceptDetector(getActivity(), onGestureListener));
@@ -69,6 +79,23 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStart();
         Log.d(TAG, "onStart");
         startTask();
+//        if (null == mBatteryReceiver) {
+//            mBatteryReceiver = new BatteryBroadcastReceiver();
+//            IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+//            getActivity().registerReceiver(mBatteryReceiver, filter);
+//        }
+//        mStatusBar.updateTime();
+    }
+
+    @Override
+    public void onStop() {
+        Log.d(TAG, "onStop");
+//        if (null != mBatteryReceiver) {
+//            getActivity().unregisterReceiver(mBatteryReceiver);
+//            mBatteryReceiver = null;
+//        }
+//        mStatusBar.stopUpdateTime();
+        super.onStop();
     }
 
     private void startTask() {
@@ -184,13 +211,46 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         this.mCallbackListener = listener;
     }
 
-    private View.OnClickListener menuButtonOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener titleBarOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (mCallbackListener != null) {
-                mCallbackListener.doSlide();
+            switch (v.getId()) {
+            case R.id.btn_titlebar_menu:
+                if (mCallbackListener != null) {
+                    mCallbackListener.doSlide();
+                }
+                break;
+            case R.id.btn_titlebar_search:
+                mSearchBar.show();
+                break;
+            default:
+                break;
             }
         }
     };
+
+    private View.OnClickListener searchBarOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+            case R.id.btn_searchbar_close:
+                mSearchBar.hide();
+                break;
+            }
+        }
+    };
+
+//    private class BatteryBroadcastReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if (null == intent) {
+//                return;
+//            }
+//            String action = intent.getAction();
+//            if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
+//                mStatusBar.updateBattery(intent);
+//            }
+//        }
+//    }
 
 }

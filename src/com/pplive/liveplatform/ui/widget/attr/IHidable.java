@@ -1,6 +1,6 @@
 package com.pplive.liveplatform.ui.widget.attr;
 
-public interface ISelfHidable {
+public interface IHidable {
     public void hide(boolean gone);
 
     public void hide();

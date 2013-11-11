@@ -63,9 +63,8 @@
             android:button="@drawable/sidebar_finance_btn_bg" />
     </RadioGroup>
 
-    <ToggleButton
+    <Button
         android:id="@+id/btn_sidebar_settings"
-        style="@style/togglebutton_notext"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
