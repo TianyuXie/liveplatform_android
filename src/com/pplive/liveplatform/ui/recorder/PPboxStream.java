@@ -19,7 +19,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
-import com.pplive.sdk.PPBOX;
+import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PPboxStream {
@@ -53,33 +53,33 @@ public class PPboxStream {
         }
     }
 
-    private long capture;
+    private long mCaptureId;
 
-    private MediaCodec encoder;
+    private MediaCodec mEncoder;
 
-    private InBuffer[] in_buffers;
+    private InBuffer[] mInBuffers;
 
-    private ByteBuffer[] out_buffers;
+    private ByteBuffer[] mOutBuffers;
 
-    private MediaCodec.BufferInfo buffer_info;
+    private MediaCodec.BufferInfo mBufferInfo;
 
-    private Cycle<InBuffer> buffer_cycle;
+    private Cycle<InBuffer> mCycleBuffer;
 
-    private int in_size;
+    private int mInSize;
 
-    private PPBOX.StreamInfo stream_info;
+    private MediaSDK.StreamInfo mStreamInfo;
 
-    private PPBOX.Sample sample;
+    private MediaSDK.Sample mSample;
 
-    private String stream_type;
-
-    private static PPboxStream[] streams = new PPboxStream[2];
+    private String mStreamType;
+    
+    private static PPboxStream[] mStreams = new PPboxStream[2];
 
     public PPboxStream(long capture, int itrack, Camera camera) {
-        stream_type = "Video";
+        mStreamType = "Video";
 
-        this.capture = capture;
-        streams[itrack] = this;
+        this.mCaptureId = capture;
+        mStreams[itrack] = this;
 
         Camera.Parameters p = camera.getParameters();
 
@@ -88,220 +88,177 @@ public class PPboxStream {
 
         Camera.Size size = p.getPreviewSize();
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            //MediaCodecInfo codec = find_codec("video/avc");
-            //MediaCodecInfo.CodecCapabilities capabilities = codec.getCapabilitiesForType("video/avc");
-            //int[] clr_fmts = capabilities.colorFormats;
-            MediaFormat format = MediaFormat.createVideoFormat("video/avc", size.width, size.height);
-            format.setInteger(MediaFormat.KEY_BIT_RATE, 200000);
-            format.setInteger(MediaFormat.KEY_FRAME_RATE, 15);
-            format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 5);
-            format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar);
-            encoder = MediaCodec.createEncoderByType("video/avc");
-            encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            MediaFormat format = MediaCodecManager.getInstance().getSupportedEncodingMediaFormat(MediaCodecManager.MIME_TYPE_VIDEO_AVC, size);
+            mEncoder = MediaCodec.createEncoderByType(MediaCodecManager.MIME_TYPE_VIDEO_AVC);
+            mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
 
-        in_size = pic_size(p);
+        mInSize = pic_size(p);
 
-        stream_info = new PPBOX.StreamInfo();
-        stream_info.type = fourcc("VIDE");
+        mStreamInfo = new MediaSDK.StreamInfo();
+        
+        mStreamInfo.time_scale = 1000 * 1000;
+        mStreamInfo.bitrate = 0;
+        mStreamInfo.__union0 = p.getPreviewSize().width;
+        mStreamInfo.__union1 = p.getPreviewSize().height;
+        mStreamInfo.__union2 = MediaCodecManager.FRAME_RATE;
+        mStreamInfo.__union3 = 0;
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.sub_type = fourcc("AVC1");
+            mStreamInfo.format_size = 0;
+            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         } else {
-            stream_info.sub_type = pic_format(p.getPreviewFormat());
-        }
-        stream_info.time_scale = 1000 * 1000;
-        stream_info.bitrate = 0;
-        stream_info.__union0 = p.getPreviewSize().width;
-        stream_info.__union1 = p.getPreviewSize().height;
-        stream_info.__union2 = 0;
-        stream_info.__union3 = 1;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.format_type = 2;
-            stream_info.format_size = 0;
-            stream_info.format_buffer = ByteBuffer.allocateDirect(0);
-        } else {
-            stream_info.format_type = 0;
-            stream_info.format_size = 0;
-            stream_info.format_buffer = ByteBuffer.allocateDirect(0);
+            mStreamInfo.format_size = 0;
+            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-        PPBOX.CaptureSetStream(capture, itrack, stream_info);
+        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
 
-        sample = new PPBOX.Sample();
-        sample.itrack = itrack;
-        sample.flags = 0;
-        sample.time = 0;
-        sample.decode_time = 0;
-        sample.composite_time_delta = 0;
-        sample.duration = 0;
-        sample.size = in_size;
-        sample.buffer = null;
-        sample.context = 0;
+        mSample = new MediaSDK.Sample();
+        mSample.itrack = itrack;
+        mSample.flags = 0;
+        mSample.time = 0;
+        mSample.composite_time_delta = 0;
+        mSample.size = mInSize;
+        mSample.buffer = null;
     }
 
     public PPboxStream(long capture, int itrack, AudioRecord audio) {
-        stream_type = "Audio";
+        mStreamType = "Audio";
 
-        this.capture = capture;
-        streams[itrack] = this;
+        this.mCaptureId = capture;
+        mStreams[itrack] = this;
 
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            //MediaCodecInfo codec = find_codec("audio/mp4a-latm");
-            //MediaCodecInfo.CodecCapabilities capabilities = codec.getCapabilitiesForType("video/avc");
-
-            Log.d(TAG, "[Audio] sample_rate: " + audio.getSampleRate() + "; channel_count: " + audio.getChannelCount());
-
             MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", audio.getSampleRate(), audio.getChannelCount());
             format.setInteger(MediaFormat.KEY_BIT_RATE, 16000);
-            format.setInteger(MediaFormat.KEY_AAC_PROFILE, MediaCodecInfo.CodecProfileLevel.AACObjectELD);
-            encoder = MediaCodec.createEncoderByType("audio/mp4a-latm");
-            encoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
+            mEncoder = MediaCodec.createEncoderByType("audio/mp4a-latm");
+            mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
 
-        in_size = frame_size(1024, audio.getChannelConfiguration(), audio.getAudioFormat());
+        mInSize = frame_size(1024, audio.getChannelConfiguration(), audio.getAudioFormat());
 
-        stream_info = new PPBOX.StreamInfo();
-        stream_info.type = fourcc("AUDI");
+        mStreamInfo = new MediaSDK.StreamInfo();
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.sub_type = fourcc("MP4A");
+            mStreamInfo.time_scale = 1000 * 1000;
         } else {
-            stream_info.sub_type = fourcc("PCM0");
+            mStreamInfo.time_scale = audio.getSampleRate();
         }
+        mStreamInfo.bitrate = 0;
+        mStreamInfo.__union0 = audio.getChannelCount();
+        mStreamInfo.__union1 = 8 * (4 - audio.getAudioFormat());
+        mStreamInfo.__union2 = audio.getSampleRate();
+        mStreamInfo.__union3 = 1024;
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.time_scale = 1000 * 1000;
-        } else {
-            stream_info.time_scale = audio.getSampleRate();
-        }
-        stream_info.bitrate = 0;
-        stream_info.__union0 = audio.getChannelCount();
-        stream_info.__union1 = 8 * (4 - audio.getAudioFormat());
-        stream_info.__union2 = audio.getSampleRate();
-        stream_info.__union3 = 1024;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            stream_info.format_type = 0;
-            stream_info.format_size = 0;
-            stream_info.format_buffer = ByteBuffer.allocateDirect(0);
+            mStreamInfo.format_size = 0;
+            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
             ;
         } else {
-            stream_info.format_type = 0;
-            stream_info.format_size = 0;
-            stream_info.format_buffer = ByteBuffer.allocateDirect(0);
+            mStreamInfo.format_size = 0;
+            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-        PPBOX.CaptureSetStream(capture, itrack, stream_info);
+        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
 
-        sample = new PPBOX.Sample();
-        sample.itrack = itrack;
-        sample.flags = 0;
-        sample.time = 0;
-        sample.decode_time = 0;
-        sample.composite_time_delta = 0;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            sample.duration = 0;
-        } else {
-            sample.duration = stream_info.__union3;
-        }
-        sample.size = in_size;
-        sample.buffer = null;
-        sample.context = 0;
+        mSample = new MediaSDK.Sample();
+        mSample.itrack = itrack;
+        mSample.flags = 0;
+        mSample.time = 0;
+        mSample.composite_time_delta = 0;
+        mSample.size = mInSize;
+        mSample.buffer = null;
     }
 
     public void start() {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            encoder.start();
-            ByteBuffer[] buffers = encoder.getInputBuffers();
-            in_buffers = new InBuffer[buffers.length];
+            mEncoder.start();
+            ByteBuffer[] buffers = mEncoder.getInputBuffers();
+            mInBuffers = new InBuffer[buffers.length];
             for (int i = 0; i < buffers.length; ++i) {
-                in_buffers[i] = new InBuffer(i, buffers[i]);
+                mInBuffers[i] = new InBuffer(i, buffers[i]);
             }
-            out_buffers = encoder.getOutputBuffers();
-            buffer_info = new MediaCodec.BufferInfo();
+            mOutBuffers = mEncoder.getOutputBuffers();
+            mBufferInfo = new MediaCodec.BufferInfo();
         } else {
-            in_buffers = new InBuffer[128];
-            buffer_cycle = new Cycle<InBuffer>(in_buffers.length);
-            for (int i = 0; i < in_buffers.length; ++i) {
-                in_buffers[i] = new InBuffer(i, in_size);
-                buffer_cycle.push(in_buffers[i]);
+            mInBuffers = new InBuffer[128];
+            mCycleBuffer = new Cycle<InBuffer>(mInBuffers.length);
+            for (int i = 0; i < mInBuffers.length; ++i) {
+                mInBuffers[i] = new InBuffer(i, mInSize);
+                mCycleBuffer.push(mInBuffers[i]);
             }
         }
     }
 
     public void stop() {
-        if (null != encoder) {
-            encoder.stop();
-            encoder.release();
-            encoder = null;
+        if (null != mEncoder) {
+            mEncoder.stop();
+            mEncoder.release();
+            mEncoder = null;
         }
     }
 
-    public int buffer_count() {
-        return in_buffers.length;
+    public int bufferCount() {
+        return mInBuffers.length;
     }
 
-    public int buffer_size() {
-        return in_size;
+    public int bufferSize() {
+        return mInSize;
     }
 
     public InBuffer pop() {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            int index = encoder.dequeueInputBuffer(0);
+            int index = mEncoder.dequeueInputBuffer(0);
             if (index >= 0) {
-                return in_buffers[index];
+                return mInBuffers[index];
             } else {
                 return null;
             }
         } else {
-            return buffer_cycle.pop();
+            return mCycleBuffer.pop();
         }
     }
 
-    public void put(InBuffer buffer) {
-        put2(buffer);
-        sample.decode_time += sample.duration;
-    }
-
     public void put(long time, InBuffer buffer) {
-        sample.decode_time = time;
+        mSample.time = time;
         put2(buffer);
     }
 
     private void put2(InBuffer buffer) {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            encoder.queueInputBuffer(buffer.index(), 0, in_size, sample.decode_time, 0);
+            mEncoder.queueInputBuffer(buffer.index(), 0, mInSize, mSample.time, 0);
             buffer.byte_buffer().clear();
-            int index = encoder.dequeueOutputBuffer(buffer_info, 0);
+            int index = mEncoder.dequeueOutputBuffer(mBufferInfo, 0);
             if (index >= 0) {
-                sample.decode_time = buffer_info.presentationTimeUs;
-                sample.flags = 0;
-                if (buffer_info.flags != 0) {
-                    if (buffer_info.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
-                        System.out.println("Codec Config " + " itrack: " + sample.itrack + " size: " + buffer_info.size);
-                        stream_info.format_size = buffer_info.size;
-                        stream_info.format_buffer = out_buffers[index];
-                        PPBOX.CaptureSetStream(capture, sample.itrack, stream_info);
-                        encoder.releaseOutputBuffer(index, false);
+                mSample.time = mBufferInfo.presentationTimeUs;
+                mSample.flags = 0;
+                if (mBufferInfo.flags != 0) {
+                    if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
+                        Log.d(TAG, "Codec Config " + " itrack: " + mSample.itrack + " size: " + mBufferInfo.size);
+                        mStreamInfo.format_size = mBufferInfo.size;
+                        mStreamInfo.format_buffer = mOutBuffers[index];
+                        MediaSDK.CaptureSetStream(mCaptureId, mSample.itrack, mStreamInfo);
+                        mEncoder.releaseOutputBuffer(index, false);
+
                         return;
                     } else {
-                        sample.flags = 1;
+                        mSample.flags = 1;
                     }
                 }
-                sample.size = buffer_info.size;
-                sample.buffer = out_buffers[index];
+                mSample.size = mBufferInfo.size;
+                mSample.buffer = mOutBuffers[index];
 
                 // TOBO: DEBUG
-                //                writeBuffer(sample.buffer, buffer_info.size);
+                //writeBuffer(sample.buffer, buffer_info.size);
 
-                //sample.context = (((long)sample.itrack << 16) | ((long)index)) + 1;
-                PPBOX.CapturePutSample(capture, sample);
+                MediaSDK.CapturePutSample(mCaptureId, mSample);
 
-                encoder.releaseOutputBuffer(index, false);
+                mEncoder.releaseOutputBuffer(index, false);
 
-                Log.d(TAG, String.format("[%s] decode_time: %s; size: %s", stream_type, sample.decode_time, sample.size));
+                Log.d(TAG, String.format("[%s] time: %s; size: %s", mStreamType, mSample.time, mSample.size));
             }
         } else {
-            sample.buffer = buffer.byte_buffer();
-            sample.context = (((long) sample.itrack << 16) | ((long) buffer.index())) + 1;
-            PPBOX.CapturePutSample(capture, sample);
+            mSample.buffer = buffer.byte_buffer();
+            
+            MediaSDK.CapturePutSample(mCaptureId, mSample);
         }
     }
 
@@ -314,10 +271,10 @@ public class PPboxStream {
             FileOutputStream fos = null;
             if (mWritedBufferCount == 1) {
                 try {
-                    fos = new FileOutputStream(new File("/sdcard/buff/" + stream_type + "_format_buff"));
-                    byte[] dst = new byte[stream_info.format_size];
-                    stream_info.format_buffer.get(dst);
-                    fos.write(dst, 0, stream_info.format_size);
+                    fos = new FileOutputStream(new File("/sdcard/buff/" + mStreamType + "_format_buff"));
+                    byte[] dst = new byte[mStreamInfo.format_size];
+                    mStreamInfo.format_buffer.get(dst);
+                    fos.write(dst, 0, mStreamInfo.format_size);
                 } catch (FileNotFoundException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -336,7 +293,7 @@ public class PPboxStream {
             }
 
             try {
-                fos = new FileOutputStream(new File("/sdcard/buff/" + stream_type + mWritedBufferCount));
+                fos = new FileOutputStream(new File("/sdcard/buff/" + mStreamType + mWritedBufferCount));
                 byte[] dst = new byte[size];
                 buffer.get(dst);
                 fos.write(dst, 0, size);
@@ -357,16 +314,16 @@ public class PPboxStream {
     }
 
     public void drop() {
-        sample.decode_time += sample.duration;
+        //        sample.decode_time += sample.duration;
     }
 
     private boolean free_sample2(int index) {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            encoder.releaseOutputBuffer(index, false);
+            mEncoder.releaseOutputBuffer(index, false);
         } else {
-            InBuffer buffer = in_buffers[index];
+            InBuffer buffer = mInBuffers[index];
             buffer.byte_buffer().clear();
-            buffer_cycle.push(buffer);
+            mCycleBuffer.push(buffer);
         }
         return true;
     }
@@ -375,7 +332,7 @@ public class PPboxStream {
         --context;
         int itrack = (int) (context >> 16);
         int index = (int) (context & 0xffff);
-        return streams[itrack].free_sample2(index);
+        return mStreams[itrack].free_sample2(index);
     }
 
     public static int fourcc(String f) {
@@ -423,25 +380,4 @@ public class PPboxStream {
         return spf * (5 - channel / 4) * (4 - format);
     }
 
-    public static MediaCodecInfo find_codec(String mineType) {
-        for (int i = 0; i < MediaCodecList.getCodecCount(); ++i) {
-            MediaCodecInfo codec = MediaCodecList.getCodecInfoAt(i);
-            if (!codec.isEncoder()) {
-                continue;
-            }
-            if (!codec.getName().startsWith("OMX.")) {
-                continue;
-            }
-            String[] types = codec.getSupportedTypes();
-            for (int j = 0; j < types.length; ++j) {
-                System.out.println("Found codec " + codec.getName() + ", support type " + types[j]);
-                if (types[j].equalsIgnoreCase(mineType)) {
-                    System.out.println("Found codec for mine type " + mineType + " -> " + codec.getName());
-                    return codec;
-                }
-            }
-        }
-        System.out.println("Not Found codec for mine type " + mineType);
-        return null;
-    }
 }

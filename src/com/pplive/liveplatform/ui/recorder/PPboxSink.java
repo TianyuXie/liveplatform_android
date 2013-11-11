@@ -10,109 +10,93 @@ import android.hardware.Camera;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder.AudioSource;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
+import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.pplive.sdk.PPBOX;
+import com.pplive.sdk.MediaSDK;
+import com.pplive.sdk.MediaSDK.Download_Callback;
+import com.pplive.thirdparty.BreakpadUtil;
 
 public class PPboxSink {
 
-    private long capture;
+    private static final String TAG = PPboxSink.class.getSimpleName();
 
-    private Camera camera;
+    private long mCaptureId;
 
-    private AudioRecord audio;
+    private Camera mCamera;
 
-    private PPboxStream video_stream;
+    private AudioRecord mAudioRecord;
 
-    private PPboxStream audio_stream;
+    private PPboxStream mVideoStream;
 
-    private Thread audio_thread;
+    private PPboxStream mAudioStream;
+
+    private Thread mAudioThread;
+
+    private long mStartTime;
 
     public static void init(Context c) {
         File cacheDirFile = c.getCacheDir();
-        // String cacheDir = cacheDirFile.getAbsolutePath();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
         String libDir = dataDir + "/lib";
         String tmpDir = System.getProperty("java.io.tmpdir") + "/ppsdk";
         File tmpDirFile = new File(tmpDir);
         tmpDirFile.mkdir();
 
-        PPBOX.libPath = libDir;
-        // cacheDir.getAbsolutePath();
-        PPBOX.logPath = tmpDir;
-        PPBOX.logLevel = PPBOX.LEVEL_TRACE;
-        PPBOX.load();
-        PPBOX.StartEngine("161", "12", "111");
+        MediaSDK.libPath = libDir;
+        MediaSDK.logPath = tmpDir;
+        MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
+        MediaSDK.startP2PEngine("161", "12", "111");
     }
 
     public PPboxSink(Camera camera) {
-        this.camera = camera;
+        this.mCamera = camera;
     }
 
     public void open(String url) {
-        capture = PPBOX.CaptureCreate("andriod", url);
+        mCaptureId = MediaSDK.CaptureOpen("pprecord://record", "rtmp", url, new Download_Callback() {
+
+            @Override
+            public void invoke(long err) {
+                Log.d(TAG, "err:  " + err);
+            }
+        });
 
         // TODO: DEBUG
-        //        camera = Camera.open();
+        mAudioRecord = getAudioRecord();
 
-        //        Camera.Parameters p = camera.getParameters();
-        //        p.setPreviewFormat(ImageFormat.NV21);
-        // List<int[]> fps_ranges = p.getSupportedPreviewFpsRange();
-        // p.setPreviewFpsRange(5000, 15000);
-        //        Camera.Size size = min_size(p.getSupportedPreviewSizes());
-        //        p.setPreviewSize(size.width, size.height);
-        //        camera.setParameters(p);
-
-        audio = get_audio_record();
-
-        PPBOX.CaptureConfigData config = new PPBOX.CaptureConfigData();
+        MediaSDK.CaptureConfigData config = new MediaSDK.CaptureConfigData();
 
         // TODO: Debug
-        config.stream_count = 1;
-        config.flags = 1; // multi_thread
-        config.get_sample_buffers = null;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            config.free_sample = null;
-        } else {
-            config.free_sample = new PPBOX.FreeSampleCallBack() {
-                @Override
-                public boolean invoke(long context) {
-                    return PPboxStream.free_sample(context);
-                }
-            };
-        }
+        config.stream_count = 2;
+        config.thread_count = 2; // multi_thread
+        config.sort_type = 1;
 
-        PPBOX.CaptureInit(capture, config);
+        MediaSDK.CaptureInit(mCaptureId, config);
 
-        video_stream = new PPboxStream(capture, 0, camera);
-
-        // TODO: Debug
-        // audio_stream = new PpboxStream(capture, 1, audio);
+        mStartTime = System.nanoTime();
+        mVideoStream = new PPboxStream(mCaptureId, 0, mCamera);
+        mAudioStream = new PPboxStream(mCaptureId, 1, mAudioRecord);
     }
 
     public void preview(SurfaceHolder holder) {
         try {
-            camera.setPreviewDisplay(holder);
+            mCamera.setPreviewDisplay(holder);
         } catch (IOException e) {
-            e.printStackTrace();
+
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
     }
 
     public void start() {
-        video_stream.start();
-        final byte[] video_buffer = new byte[video_stream.buffer_size()];
-        camera.addCallbackBuffer(video_buffer);
+        mVideoStream.start();
 
-        // TODO: Debug
-        // audio_stream.start();
+        final byte[] video_buffer = new byte[mVideoStream.bufferSize()];
 
-        camera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
+        mCamera.addCallbackBuffer(video_buffer);
+        mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
             private final long time_scale = 1000 * 1000 * 1000;
-            private long start_time = System.nanoTime();
             private int num_total = 0;
             private int num_drop = 0;
             private long next_time = 5 * time_scale;
@@ -120,14 +104,14 @@ public class PPboxSink {
             @Override
             public void onPreviewFrame(byte[] data, Camera camera) {
                 ++num_total;
-                long time = System.nanoTime() - start_time;
-                PPboxStream.InBuffer buffer = video_stream.pop();
+                long time = System.nanoTime() - mStartTime;
+                PPboxStream.InBuffer buffer = mVideoStream.pop();
                 if (buffer == null) {
                     ++num_drop;
                     // System.out.println("video drop");
                 } else {
                     buffer.byte_buffer().put(data);
-                    video_stream.put(time / 1000, buffer);
+                    mVideoStream.put(time / 1000, buffer);
                 }
                 if (time >= next_time) {
                     System.out.println("video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
@@ -138,127 +122,119 @@ public class PPboxSink {
             }
         });
 
-        //TODO: DEBUG
-        //        camera.startPreview();
-
-        audio_thread = new Thread() {
+        mAudioStream.start();
+        mAudioThread = new Thread() {
             @Override
             public void run() {
                 audio_read_thread();
             }
         };
-        audio_thread.setPriority(Thread.MAX_PRIORITY);
-
-        // TODO: Debug
-        // audio_thread.start();
+        mAudioThread.setPriority(Thread.MAX_PRIORITY);
+        mAudioThread.start();
     }
 
     private void audio_read_thread() {
         final long time_scale = 1000 * 1000 * 1000;
-        final int read_size = audio_stream.buffer_size();
-        final long start_time = System.nanoTime();
+        final int read_size = mAudioStream.bufferSize();
         int num_total = 0;
         int num_drop = 0;
         long next_time = 5 * time_scale;
 
         ByteBuffer drop_buffer = ByteBuffer.allocateDirect(read_size);
 
-        audio.startRecording();
+        mAudioRecord.startRecording();
         while (!Thread.interrupted()) {
-            long time = System.nanoTime() - start_time;
+            long time = System.nanoTime() - mStartTime;
             if (time >= next_time) {
-                System.out.println("audio " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
-                        + num_drop);
+                Log.d(TAG, "audio " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
                 next_time += 5 * time_scale;
             }
             ++num_total;
-            PPboxStream.InBuffer buffer = audio_stream.pop();
+            PPboxStream.InBuffer buffer = mAudioStream.pop();
             if (buffer == null) {
                 // System.out.println("audio drop");
-                audio.read(drop_buffer, read_size);
-                audio_stream.drop();
+                mAudioRecord.read(drop_buffer, read_size);
+                mAudioStream.drop();
                 ++num_drop;
                 continue;
             }
-            int read = audio.read(buffer.byte_buffer(), read_size);
+            int read = mAudioRecord.read(buffer.byte_buffer(), read_size);
             if (read != read_size) {
-                System.out.println("audio.read failed. read = " + read);
+                Log.d(TAG, "audio.read failed. read = " + read);
                 break;
             }
-            audio_stream.put(buffer);
+
+            mAudioStream.put(time / 1000, buffer);
         }
-        audio.stop();
+        
+        mAudioRecord.stop();
     }
 
     public void stop() {
-        audio_thread.interrupt();
+        mAudioThread.interrupt();
         try {
-            audio_thread.join();
+            mAudioThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        camera.setPreviewCallbackWithBuffer(null);
-
-        // TODO: DEBUG
-        //        camera.stopPreview();
+        mCamera.setPreviewCallbackWithBuffer(null);
     }
 
     public void close() {
         //        camera.release();
 
         // TODO: DEBUG
-        //        audio.release();
+        if (null != mAudioRecord) {
+            mAudioRecord.release();
+        }
 
-        PPBOX.CaptureDestroy(capture);
+        MediaSDK.CaptureDestroy(mCaptureId);
 
-        video_stream.stop();
-        //        audio_stream.stop();
+        mVideoStream.stop();
+        mAudioStream.stop();
 
-        video_stream = null;
-        audio_stream = null;
+        mVideoStream = null;
+        mAudioStream = null;
     }
 
     private static int[] sampleRates = new int[] { 8000, 11025, 22050, 44100 };
     private static short[] channelConfigs = new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO };
-    private static short[] audioFormats = new short[] { AudioFormat.ENCODING_PCM_8BIT, AudioFormat.ENCODING_PCM_16BIT };
+    private static short[] audioFormats = new short[] { AudioFormat.ENCODING_PCM_16BIT };
 
-    private AudioRecord get_audio_record() {
+    private AudioRecord getAudioRecord() {
         for (int sampleRate : sampleRates) {
             for (short channelConfig : channelConfigs) {
                 for (short audioFormat : audioFormats) {
                     try {
-                        System.out.println("Attempting rate " + sampleRate + "Hz, channel: " + channelConfig + ", bits: " + audioFormat);
+                        Log.d(TAG, "Attempting rate " + sampleRate + "Hz, channel: " + channelConfig + ", bits: " + audioFormat);
                         int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
 
                         if (bufferSize == AudioRecord.ERROR_BAD_VALUE) {
                             continue;
                         }
+
+                        Log.d(TAG, "bufferSize: " + bufferSize);
+
                         bufferSize = PPboxStream.frame_size(1024, channelConfig, audioFormat) * 16;
                         // check if we can instantiate and have a success
                         AudioRecord recorder = new AudioRecord(AudioSource.DEFAULT, sampleRate, channelConfig, audioFormat, bufferSize);
 
+                        Log.d(TAG, "state: " + recorder.getState());
+
                         if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
-                            System.out.println("Supported. buffer size: " + bufferSize);
+                            Log.d(TAG, "Supported. buffer size: " + bufferSize);
                             return recorder;
                         }
+
+                        Log.d(TAG, "release audio recorder");
                         recorder.release();
                     } catch (Exception e) {
-                        System.out.println("Exception, keep trying." + e);
+                        Log.d(TAG, "Exception, keep trying." + e);
                     }
                 }
             }
         }
         return null;
-    }
-
-    private Camera.Size min_size(List<Camera.Size> sizes) {
-        Camera.Size ms = sizes.get(0);
-        for (Camera.Size s : sizes) {
-            if (s.width >= 320 && (ms.width < 320 || s.width < ms.width || s.height < ms.height)) {
-                ms = s;
-            }
-        }
-        return ms;
     }
 }
