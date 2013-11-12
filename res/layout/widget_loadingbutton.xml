@@ -9,12 +9,14 @@
         android:layout_height="fill_parent"
         android:contentDescription="@string/blank" />
 
+
     <ImageView
         android:id="@+id/image_loading_anim"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:contentDescription="@string/blank" />
-
+    
+    
     <TextView
         android:id="@+id/textview_loading_status"
         android:layout_width="wrap_content"

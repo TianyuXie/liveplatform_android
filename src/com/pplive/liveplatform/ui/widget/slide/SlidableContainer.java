@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.animation.Animation;
@@ -13,16 +14,11 @@ import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 
+import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public abstract class SlidableContainer extends LinearLayout {
     final static String TAG = "SlidableContainer";
-
-    protected static final float SCALE_PERCENT = 0.95f;
-
-    private static final int SLIDE_DURATION = 250;
-
-    private static final float SLIDE_DP = 100.0f;
 
     private AnimationSet mSlideAnimationSet;
 
@@ -32,7 +28,9 @@ public abstract class SlidableContainer extends LinearLayout {
 
     private boolean mAnimating;
 
-    private int mAnimX;
+    private float mAnimX;
+    
+    protected float mScalePercent;
 
     private Collection<OnSlideListener> mOnSlideListeners;
 
@@ -43,23 +41,47 @@ public abstract class SlidableContainer extends LinearLayout {
     public SlidableContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
 
-        mAnimX = Math.round(DisplayUtil.dp2px(context, SLIDE_DP) - (1.0f - SCALE_PERCENT) * DisplayUtil.getWidthPx(context));
+        mOnSlideListeners = new ArrayList<SlidableContainer.OnSlideListener>();
+
+        /* default values */
+        mScalePercent = 1.0f;
+        int duration = 0;
+        int distance = 0;
+
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlidableContainer);
+        int n = a.getIndexCount();
+        for (int i = 0; i < n; i++) {
+            int attr = a.getIndex(i);
+            switch (attr) {
+            case R.styleable.SlidableContainer_duration:
+                duration = a.getInt(attr, 0);
+                break;
+            case R.styleable.SlidableContainer_distance:
+                distance = a.getDimensionPixelSize(attr, 0);
+                break;
+            case R.styleable.SlidableContainer_scale_percent:
+                mScalePercent = a.getFloat(attr, 1.0f);
+                break;
+            }
+        }
+        a.recycle();
+
+        mAnimX = distance - (1.0f - mScalePercent) * DisplayUtil.getWidthPx(context);
 
         mSlideAnimationSet = new AnimationSet(true);
         mSlideBackAnimationSet = new AnimationSet(true);
         mSlideAnimationSet.setInterpolator(new DecelerateInterpolator());
         mSlideBackAnimationSet.setInterpolator(new DecelerateInterpolator());
-        mSlideAnimationSet.setDuration(SLIDE_DURATION);
-        mSlideBackAnimationSet.setDuration(SLIDE_DURATION);
+        mSlideAnimationSet.setDuration(duration);
+        mSlideBackAnimationSet.setDuration(duration);
 
-        mSlideAnimationSet.addAnimation(new ScaleAnimation(1.0f, SCALE_PERCENT, 1.0f, SCALE_PERCENT, Animation.RELATIVE_TO_SELF, 1.0f,
+        mSlideAnimationSet.addAnimation(new ScaleAnimation(1.0f, mScalePercent, 1.0f, mScalePercent, Animation.RELATIVE_TO_SELF, 1.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f));
         mSlideAnimationSet.addAnimation(new TranslateAnimation(0.0f, mAnimX, 0.0f, 0.0f));
-        mSlideBackAnimationSet.addAnimation(new ScaleAnimation(SCALE_PERCENT, 1.0f, SCALE_PERCENT, 1.0f, Animation.RELATIVE_TO_SELF, 1.0f,
+        mSlideBackAnimationSet.addAnimation(new ScaleAnimation(mScalePercent, 1.0f, mScalePercent, 1.0f, Animation.RELATIVE_TO_SELF, 1.0f,
                 Animation.RELATIVE_TO_SELF, 0.5f));
         mSlideBackAnimationSet.addAnimation(new TranslateAnimation(mAnimX, 0.0f, 0.0f, 0.0f));
 
-        mOnSlideListeners = new ArrayList<SlidableContainer.OnSlideListener>();
     }
 
     public abstract boolean slide();
@@ -94,7 +116,7 @@ public abstract class SlidableContainer extends LinearLayout {
         notifySlideBack();
     }
 
-    protected int getAnimX() {
+    protected float getAnimX() {
         return mAnimX;
     }
 

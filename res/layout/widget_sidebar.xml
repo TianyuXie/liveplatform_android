@@ -17,7 +17,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btn_sidebar_user_icon"
         android:layout_centerHorizontal="true"
-        android:text="@string/test_titlebar_title" />
+        android:text="@string/test_titlebar_title"
+        android:textColor="@color/white" />
 
     <RadioGroup
         android:layout_width="wrap_content"
@@ -62,9 +63,8 @@
             android:button="@drawable/sidebar_finance_btn_bg" />
     </RadioGroup>
 
-    <ToggleButton
+    <Button
         android:id="@+id/btn_sidebar_settings"
-        style="@style/togglebutton_notext"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"

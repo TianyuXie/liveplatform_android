@@ -11,16 +11,21 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.vo.program.Program;
 
 public class ProgramAdapter extends BaseAdapter {
+    private static float ratio = 16.0f / 10.0f;
+
     private List<Program> mPrograms;
     private LayoutInflater mInflater;
+    private int mHeight;
 
     public ProgramAdapter(Context context, List<Program> programs) {
         super();
         this.mPrograms = programs;
         this.mInflater = LayoutInflater.from(context);
+        mHeight = (int) (DisplayUtil.getWidthPx(context) / 2.0f / ratio);
     }
 
     @Override
@@ -48,16 +53,12 @@ public class ProgramAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.layout_program_itemview, null);
             holder = new ViewHolder();
-            holder.previewImageView = (ImageView) convertView
-                    .findViewById(R.id.imageview_program_preview);
-            holder.statusTextView = (TextView) convertView
-                    .findViewById(R.id.textview_program_status);
-            holder.timedownTextView = (TextView) convertView
-                    .findViewById(R.id.textview_program_timedown);
+            holder.previewImageView = (ImageView) convertView.findViewById(R.id.imageview_program_preview);
+            holder.statusTextView = (TextView) convertView.findViewById(R.id.textview_program_status);
+            holder.timedownTextView = (TextView) convertView.findViewById(R.id.textview_program_timedown);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.textview_program_title);
             holder.ownerTextView = (TextView) convertView.findViewById(R.id.textview_program_owner);
-            holder.viewcountTextView = (TextView) convertView
-                    .findViewById(R.id.textview_program_viewcount);
+            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.textview_program_viewcount);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -67,7 +68,8 @@ public class ProgramAdapter extends BaseAdapter {
     }
 
     private void updateView(ViewHolder holder, Program data) {
-        holder.titleTextView.setText(data.getTitle());
+        ViewGroup.LayoutParams lp = holder.previewImageView.getLayoutParams();
+        lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwner());
     }
 
