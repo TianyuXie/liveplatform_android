@@ -73,7 +73,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-        mStatusButton.startLoading("正在加载");
+//        mStatusButton.startLoading("正在加载");
     }
 
     @Override
