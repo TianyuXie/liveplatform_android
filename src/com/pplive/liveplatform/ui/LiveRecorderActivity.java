@@ -72,10 +72,10 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         mSurfaceHolder = mPreview.getHolder();
         mSurfaceHolder.addCallback(this);
 
-        mBtnRecord = (ToggleButton) findViewById(R.id.btn_media_record);
+        mBtnRecord = (ToggleButton) findViewById(R.id.btn_live_record);
         mBtnSwitchFlashMode = (ToggleButton) findViewById(R.id.btn_switch_flash_mode);
 
-        mEditProgramSchedule = (EditText) findViewById(R.id.edit_program_schedule);
+        mEditProgramSchedule = (EditText) findViewById(R.id.edit_live_schedule);
         mEditProgramSchedule.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -89,9 +89,9 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             }
         });
         
-        mEditProgramTitle = (EditText) findViewById(R.id.edit_program_title);
+        mEditProgramTitle = (EditText) findViewById(R.id.edit_live_title);
         
-        mBtnEditProgram = (Button) findViewById(R.id.btn_add_program);
+        mBtnEditProgram = (Button) findViewById(R.id.btn_live_prelive);
         
         mDateTimePacker = (DateTimePicker) findViewById(R.id.calendar_pick_container);
         mDateTimePacker.setOnDateTimeChanged(new OnDateTimeChangedListener() {
@@ -102,7 +102,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
             }
         });
         
-        mHorizontalListView = (HorizontalListView) findViewById(R.id.program_list_view);
+        mHorizontalListView = (HorizontalListView) findViewById(R.id.live_list_view);
         mHorizontalListView.setAdapter(new BaseAdapter() {
             
             @Override
@@ -253,13 +253,13 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         case R.id.btn_switch_camera:
             onClickBtnSwitchCamera(v);
             break;
-        case R.id.btn_media_record:
+        case R.id.btn_live_record:
             onClickBtnMediaRecord(v);
             break;
         case R.id.btn_switch_flash_mode:
             onClickBtnSwitchFlashMode(v);
             break;
-        case R.id.btn_add_program:
+        case R.id.btn_live_prelive:
             onClickBtnAddProgram(v);
             break;
         default:
