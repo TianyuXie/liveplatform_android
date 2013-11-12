@@ -48,13 +48,13 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     private LiveMediaRecoder mMediaRecorder;
     private boolean mRecording = false;
 
-    private ToggleButton mBtnRecord;
-    private ToggleButton mBtnSwitchFlashMode;
+    private ToggleButton mBtnLiveRecord;
+    private ToggleButton mBtnFlashLight;
 
-    private EditText mEditProgramSchedule;
-    private EditText mEditProgramTitle;
+    private EditText mEditLiveSchedule;
+    private EditText mEditLiveTitle;
     
-    private Button mBtnEditProgram;
+    private Button mBtnPrelive;
     
     private DateTimePicker mDateTimePacker;
     
@@ -72,33 +72,37 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         mSurfaceHolder = mPreview.getHolder();
         mSurfaceHolder.addCallback(this);
 
-        mBtnRecord = (ToggleButton) findViewById(R.id.btn_live_record);
-        mBtnSwitchFlashMode = (ToggleButton) findViewById(R.id.btn_switch_flash_mode);
+        mBtnLiveRecord = (ToggleButton) findViewById(R.id.btn_live_record);
+        mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
-        mEditProgramSchedule = (EditText) findViewById(R.id.edit_live_schedule);
-        mEditProgramSchedule.setOnTouchListener(new OnTouchListener() {
+        mEditLiveSchedule = (EditText) findViewById(R.id.edit_live_schedule);
+        mEditLiveSchedule.setOnTouchListener(new OnTouchListener() {
             
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.d(TAG, "onTouch");
+                Log.d(TAG, "onTouch: " + (event.getAction() & MotionEvent.ACTION_MASK));
                 
-                mDateTimePacker.setVisibility(View.VISIBLE);
+                int action = event.getAction() & MotionEvent.ACTION_MASK;
+                if (MotionEvent.ACTION_UP != action) {
+                    return true;
+                }
                 
+                mDateTimePacker.showOrHide();
                 
                 return true;
             }
         });
         
-        mEditProgramTitle = (EditText) findViewById(R.id.edit_live_title);
+        mEditLiveTitle = (EditText) findViewById(R.id.edit_live_title);
         
-        mBtnEditProgram = (Button) findViewById(R.id.btn_live_prelive);
+        mBtnPrelive = (Button) findViewById(R.id.btn_live_prelive);
         
         mDateTimePacker = (DateTimePicker) findViewById(R.id.calendar_pick_container);
         mDateTimePacker.setOnDateTimeChanged(new OnDateTimeChangedListener() {
             
             @Override
             public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
-                mEditProgramSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
+                mEditLiveSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
             }
         });
         
@@ -198,7 +202,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     }
 
     private boolean setFlashMode(boolean isFlashOn) {
-        Log.d(TAG, "isFlashOn: " + isFlashOn + "; Status: " + mBtnSwitchFlashMode.getText());
+        Log.d(TAG, "isFlashOn: " + isFlashOn + "; Status: " + mBtnFlashLight.getText());
 
         if (null != mCamera) {
             Camera.Parameters params = mCamera.getParameters();
@@ -250,24 +254,24 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         Log.d(TAG, "onClick");
 
         switch (v.getId()) {
-        case R.id.btn_switch_camera:
-            onClickBtnSwitchCamera(v);
+        case R.id.btn_camera_change:
+            onClickBtnCameraChange(v);
             break;
         case R.id.btn_live_record:
-            onClickBtnMediaRecord(v);
+            onClickBtnLiveRecord(v);
             break;
-        case R.id.btn_switch_flash_mode:
-            onClickBtnSwitchFlashMode(v);
+        case R.id.btn_flash_light:
+            onClickBtnFlashLight(v);
             break;
         case R.id.btn_live_prelive:
-            onClickBtnAddProgram(v);
+            onClickBtnPrelive(v);
             break;
         default:
             break;
         }
     }
 
-    private void onClickBtnSwitchCamera(View v) {
+    private void onClickBtnCameraChange(View v) {
         if (mRecording) {
             stopRecording();
         }
@@ -281,7 +285,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         startPreview();
     }
 
-    private void onClickBtnMediaRecord(View v) {
+    private void onClickBtnLiveRecord(View v) {
         if (null != mCamera) {
             if (!mRecording) {
                 startRecording();
@@ -289,24 +293,26 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
                 stopRecording();
             }
 
-            mBtnRecord.setChecked(mRecording);
+            mBtnLiveRecord.setChecked(mRecording);
         }
     }
 
-    private void onClickBtnSwitchFlashMode(View v) {
-        boolean isFlashOn = mBtnSwitchFlashMode.isChecked();
+    private void onClickBtnFlashLight(View v) {
+        boolean isFlashOn = mBtnFlashLight.isChecked();
 
         isFlashOn = setFlashMode(isFlashOn);
-        mBtnSwitchFlashMode.setChecked(isFlashOn);
+        mBtnFlashLight.setChecked(isFlashOn);
     }
     
-    private void onClickBtnAddProgram(View v) {
-        if (View.VISIBLE == mEditProgramSchedule.getVisibility()) {
+    private void onClickBtnPrelive(View v) {
+        if (View.VISIBLE != mEditLiveSchedule.getVisibility()) {
+            mEditLiveSchedule.setVisibility(View.VISIBLE);
+            mEditLiveTitle.setFocusable(true);
+            mEditLiveTitle.setFocusableInTouchMode(true);
             
+            mDateTimePacker.showOrHide();
         } else {
-            mEditProgramSchedule.setVisibility(View.VISIBLE);
-            mEditProgramTitle.setFocusable(true);
-            mEditProgramTitle.setFocusableInTouchMode(true);
+            
         }
     }
 

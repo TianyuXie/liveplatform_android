@@ -10,7 +10,7 @@
         android:layout_centerInParent="true" />
 
     <Button
-        android:id="@+id/btn_switch_camera"
+        android:id="@+id/btn_camera_change"
         style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,12 +23,12 @@
         android:onClick="onClick" />
 
     <ToggleButton
-        android:id="@+id/btn_switch_flash_mode"
+        android:id="@+id/btn_flash_light"
         style="@style/Widget.ToggleButton.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/btn_switch_camera"
-        android:layout_toLeftOf="@+id/btn_switch_camera"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_toLeftOf="@+id/btn_camera_change"
         android:checked="false"
         android:drawableStart="@drawable/live_record_btn_flash_light"
         android:onClick="onClick" />
@@ -38,7 +38,7 @@
         style="@style/Widget.ToggleButton.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/btn_switch_camera"
+        android:layout_alignRight="@+id/btn_camera_change"
         android:layout_centerVertical="true"
         android:checked="false"
         android:drawableStart="@drawable/live_record_btn_live_record"
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/extra_container"
         android:layout_alignWithParentIfMissing="true"
-        android:background="@android:drawable/screen_background_light_transparent"
+        android:background="@drawable/live_record_footer_bar_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="10dp" >
@@ -101,7 +101,7 @@
             style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:drawableStart="@drawable/live_record_btn_live_add"
+            android:drawableStart="@drawable/live_record_btn_live_prelive"
             android:onClick="onClick" />
     </LinearLayout>
 
@@ -116,9 +116,10 @@
             android:id="@+id/calendar_pick_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@android:drawable/screen_background_light_transparent"
             android:gravity="center"
             android:orientation="horizontal"
+            android:padding="20dp"
             android:visibility="gone" />
 
         <com.pplive.liveplatform.ui.widget.HorizontalListView
