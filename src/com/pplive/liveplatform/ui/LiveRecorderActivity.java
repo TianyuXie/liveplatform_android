@@ -28,6 +28,7 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.recorder.CameraManager;
 import com.pplive.liveplatform.ui.recorder.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
@@ -60,6 +61,8 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     
     private HorizontalListView mHorizontalListView;
     
+    private AnimDoor mAnimDoor;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +77,9 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
 
         mBtnLiveRecord = (ToggleButton) findViewById(R.id.btn_live_record);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
-
+        
+        mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
+        
         mEditLiveSchedule = (EditText) findViewById(R.id.edit_live_schedule);
         mEditLiveSchedule.setOnTouchListener(new OnTouchListener() {
             

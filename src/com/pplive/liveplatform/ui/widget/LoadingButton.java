@@ -108,6 +108,13 @@ public class LoadingButton extends RelativeLayout implements IHidable {
         setText(getContext().getResources().getString(resid));
     }
 
+    public void setBackgroundResource(int normal) {
+        mLoadingBackgroundRes = mNormalBackgroundRes = normal;
+        if (normal > 0) {
+            mBaseButton.setBackgroundResource(normal);
+        }
+    }
+
     public void setBackgroundResource(int normal, int loading) {
         mNormalBackgroundRes = normal;
         mLoadingBackgroundRes = loading;
@@ -141,7 +148,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void startLoading(CharSequence text) {
         if (!mLoading && mAnimation != null) {
             mLoading = true;
-            mBaseButton.setClickable(false);
+            setClickable(false);
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(VISIBLE);
             mAnimImageView.startAnimation(mAnimation);
@@ -162,7 +169,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void showLoadingResult(CharSequence text) {
         if (mLoading) {
             mLoading = false;
-            mBaseButton.setClickable(true);
+            setClickable(true);
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
@@ -175,7 +182,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void finishLoading() {
         if (mLoading) {
             mLoading = false;
-            mBaseButton.setClickable(true);
+            setClickable(true);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
         }
@@ -188,6 +195,12 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     @Override
     public void setOnClickListener(View.OnClickListener l) {
         mBaseButton.setOnClickListener(l);
+    }
+
+    @Override
+    public void setClickable(boolean clickable) {
+        mBaseButton.setClickable(clickable);
+        super.setClickable(clickable);
     }
 
     @Override
