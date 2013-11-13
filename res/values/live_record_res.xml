@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- String -->
+    <string name="test_switch_camera">Switch</string>
+    <string name="test_flash_mode_on">Flash on</string>
+    <string name="test_flash_mode_off">Flash off</string>
+    <string name="test_start_record">Record</string>
+    <string name="test_stop_record">Stop</string>
+    <string name="test_back">Back</string>
+    <string name="test_share_program">Share</string>
+    <string name="test_edit_program">Edit</string>
+
+    <!-- Style -->
+    <style name="Widget.Button.Transparent" parent="@android:style/Widget.Button">
+        <item name="android:background">@null</item>
+        <item name="android:text">@null</item>
+    </style>
+
+    <style name="Widget.ToggleButton.Transparent" parent="@style/Widget.Button.Transparent">
+        <item name="android:textOff">@null</item>
+        <item name="android:textOn">@null</item>
+    </style>
+
+    <style name="Widget.EditText" parent="@android:style/Widget.TextView">
+        <item name="android:background">@drawable/live_record_edit_bg</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+</resources>

@@ -3,7 +3,6 @@ package com.pplive.liveplatform.ui.recorder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.List;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -15,7 +14,6 @@ import android.view.SurfaceHolder;
 
 import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
-import com.pplive.thirdparty.BreakpadUtil;
 
 public class PPboxSink {
 
@@ -187,9 +185,12 @@ public class PPboxSink {
         // TODO: DEBUG
         if (null != mAudioRecord) {
             mAudioRecord.release();
+            mAudioRecord = null;
         }
 
+        Log.d(TAG, "Before destroy capture");
         MediaSDK.CaptureDestroy(mCaptureId);
+        Log.d(TAG, "After destroy capture");
 
         mVideoStream.stop();
         mAudioStream.stop();

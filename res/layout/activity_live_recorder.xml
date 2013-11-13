@@ -10,51 +10,124 @@
         android:layout_centerInParent="true" />
 
     <Button
-        android:id="@+id/btn_camera_switch"
+        android:id="@+id/btn_camera_change"
+        style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:onClick="onClick"
-        android:text="@string/test_switch_camera" />
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:drawableStart="@drawable/live_record_btn_camera_change"
+        android:onClick="onClick" />
 
-    <Button
-        android:id="@+id/btn_media_record"
+    <ToggleButton
+        android:id="@+id/btn_flash_light"
+        style="@style/Widget.ToggleButton.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:onClick="onClick"
-        android:text="@string/test_start_record" />
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_toLeftOf="@+id/btn_camera_change"
+        android:checked="false"
+        android:drawableStart="@drawable/live_record_btn_flash_light"
+        android:onClick="onClick" />
 
-    <RelativeLayout
-        android:id="@+id/footer_bar"
+    <ToggleButton
+        android:id="@+id/btn_live_record"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/btn_camera_change"
+        android:layout_centerVertical="true"
+        android:checked="false"
+        android:drawableStart="@drawable/live_record_btn_live_record"
+        android:onClick="onClick" />
+
+    <LinearLayout
+        android:id="@+id/bottom_bar_container"
         android:layout_width="fill_parent"
-        android:layout_height="80dp"
-        android:layout_alignParentBottom="true"
-        android:background="@android:drawable/screen_background_light_transparent" >
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/extra_container"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="@drawable/live_record_footer_bar_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="10dp" >
+
+        <Button
+            android:id="@+id/btn_home"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/live_record_btn_live_home" />
 
         <EditText
-            android:layout_width="80dp"
+            android:id="@+id/edit_live_schedule"
+            style="@style/Widget.EditText"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:imeOptions="flagNoExtractUi"
-            android:inputType="text" />
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.5"
+            android:focusable="false"
+            android:inputType="none"
+            android:singleLine="true"
+            android:visibility="gone" />
 
-        <TextView
+        <EditText
+            android:id="@+id/edit_live_title"
+            style="@style/Widget.EditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:background="@drawable/live_record_edit_bg"
+            android:focusable="false"
+            android:inputType="text"
+            android:singleLine="true" />
+
+        <Button
+            android:id="@+id/btn_live_share"
+            style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/tv_2"
-            android:text="TextView1" />
+            android:layout_marginRight="10dp"
+            android:drawableStart="@drawable/live_record_btn_live_share" />
 
-        <TextView
-            android:id="@+id/tv_2"
+        <Button
+            android:id="@+id/btn_live_prelive"
+            style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:text="TextView2" />
-    </RelativeLayout>
+            android:drawableStart="@drawable/live_record_btn_live_prelive"
+            android:onClick="onClick" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/extra_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <com.pplive.liveplatform.ui.widget.DateTimePicker
+            android:id="@+id/calendar_pick_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/screen_background_light_transparent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="20dp"
+            android:visibility="gone" />
+
+        <com.pplive.liveplatform.ui.widget.HorizontalListView
+            android:id="@+id/live_list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:background="@color/black"
+            android:visibility="gone" />
+    </LinearLayout>
 
 </RelativeLayout>

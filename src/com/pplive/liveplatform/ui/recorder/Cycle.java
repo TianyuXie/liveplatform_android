@@ -1,11 +1,14 @@
 package com.pplive.liveplatform.ui.recorder;
 
+
+
 public class Cycle<A> {
 
     private A[] elems;
     private int read_index;
     private int write_index;
 
+    @SuppressWarnings("unchecked")
     public Cycle(int cap) {
         elems = (A[]) new Object[cap + 1];
         read_index = write_index = 0;
