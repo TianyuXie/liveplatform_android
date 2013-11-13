@@ -11,6 +11,9 @@
     <string name="test_share_program">Share</string>
     <string name="test_edit_program">Edit</string>
 
+    <!-- Color -->
+    <color name="bottom_bar_bg">#40000000</color>
+    
     <!-- Style -->
     <style name="Widget.Button.Transparent" parent="@android:style/Widget.Button">
         <item name="android:background">@null</item>

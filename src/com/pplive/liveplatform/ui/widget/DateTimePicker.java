@@ -86,18 +86,6 @@ public class DateTimePicker extends LinearLayout {
         return mTimePicker.getCurrentMinute();
     }
 
-    public void showOrHide() {
-        showOrHide(true);
-    }
-
-    public void showOrHide(boolean gone) {
-        if (View.VISIBLE != this.getVisibility()) {
-            this.setVisibility(View.VISIBLE);
-        } else {
-            this.setVisibility(gone ? View.GONE : View.INVISIBLE);
-        }
-    }
-
     public interface OnDateTimeChangedListener {
 
         void onDateTimeChanged(int year, int month, int day, int hour, int minute);

@@ -40,7 +40,7 @@
             android:screenOrientation="landscape" >
         </activity>
         <activity
-            android:name=".ui.LiveRecorderActivity"
+            android:name=".ui.LiveRecordActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
             android:launchMode="singleTask"

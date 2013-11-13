@@ -44,95 +44,12 @@
         android:drawableStart="@drawable/live_record_btn_live_record"
         android:onClick="onClick" />
 
-    <LinearLayout
-        android:id="@+id/bottom_bar_container"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/extra_container"
-        android:layout_alignWithParentIfMissing="true"
-        android:background="@drawable/live_record_footer_bar_bg"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp" >
-
-        <Button
-            android:id="@+id/btn_home"
-            style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:drawableStart="@drawable/live_record_btn_live_home" />
-
-        <EditText
-            android:id="@+id/edit_live_schedule"
-            style="@style/Widget.EditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_weight="0.5"
-            android:inputType="none"
-            android:singleLine="true"
-            android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/edit_live_title"
-            style="@style/Widget.EditText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_weight="1"
-            android:background="@drawable/live_record_edit_bg"
-            android:focusable="false"
-            android:inputType="text"
-            android:singleLine="true" />
-
-        <Button
-            android:id="@+id/btn_live_share"
-            style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:drawableStart="@drawable/live_record_btn_live_share" />
-
-        <Button
-            android:id="@+id/btn_live_prelive"
-            style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:drawableStart="@drawable/live_record_btn_live_prelive"
-            android:onClick="onClick" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/extra_container"
+    <com.pplive.liveplatform.ui.widget.FooterBar
+        android:id="@+id/footer_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical" >
-
-        <com.pplive.liveplatform.ui.widget.DateTimePicker
-            android:id="@+id/calendar_pick_container"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:drawable/screen_background_light_transparent"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:padding="20dp"
-            android:visibility="gone" />
-
-        <com.pplive.liveplatform.ui.widget.HorizontalListView
-            android:id="@+id/live_list_view"
-            android:layout_width="fill_parent"
-            android:layout_height="60dp"
-            android:background="@color/black"
-            android:visibility="gone" />
-    </LinearLayout>
+        android:background="@drawable/live_record_footer_bar_bg"
+        android:orientation="vertical" />
 
 </RelativeLayout>
