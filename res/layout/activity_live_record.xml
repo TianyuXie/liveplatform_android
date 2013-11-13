@@ -53,13 +53,16 @@
         android:background="@drawable/live_record_footer_bar_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="10dp" >
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp" >
 
         <Button
             android:id="@+id/btn_home"
             style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:drawableStart="@drawable/live_record_btn_live_home" />
 
         <EditText
@@ -67,10 +70,9 @@
             style="@style/Widget.EditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_weight="0.5"
-            android:focusable="false"
             android:inputType="none"
             android:singleLine="true"
             android:visibility="gone" />
@@ -80,8 +82,8 @@
             style="@style/Widget.EditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_weight="1"
             android:background="@drawable/live_record_edit_bg"
             android:focusable="false"
@@ -93,7 +95,8 @@
             style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:drawableStart="@drawable/live_record_btn_live_share" />
 
         <Button
@@ -101,6 +104,8 @@
             style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:drawableStart="@drawable/live_record_btn_live_prelive"
             android:onClick="onClick" />
     </LinearLayout>

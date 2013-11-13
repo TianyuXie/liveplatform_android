@@ -14,27 +14,24 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.recorder.CameraManager;
-import com.pplive.liveplatform.ui.recorder.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.record.CameraManager;
+import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
 
-public class LiveRecorderActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback {
+public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
-    private static final String TAG = LiveRecorderActivity.class.getSimpleName();
+    private static final String TAG = LiveRecordActivity.class.getSimpleName();
 
     private SurfaceView mPreview;
     private SurfaceHolder mSurfaceHolder;
@@ -66,7 +63,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_live_recorder);
+        setContentView(R.layout.activity_live_record);
 
         mPreview = (SurfaceView) findViewById(R.id.preview_view);
         mSurfaceHolder = mPreview.getHolder();
@@ -87,6 +84,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
                     return true;
                 }
                 
+                mEditLiveSchedule.requestFocus();
                 mDateTimePacker.showOrHide();
                 
                 return true;
@@ -307,6 +305,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     private void onClickBtnPrelive(View v) {
         if (View.VISIBLE != mEditLiveSchedule.getVisibility()) {
             mEditLiveSchedule.setVisibility(View.VISIBLE);
+            mEditLiveSchedule.requestFocus();
             mEditLiveTitle.setFocusable(true);
             mEditLiveTitle.setFocusableInTouchMode(true);
             

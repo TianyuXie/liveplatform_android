@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.recorder;
+package com.pplive.liveplatform.ui.record;
 
 public class Timer {
     

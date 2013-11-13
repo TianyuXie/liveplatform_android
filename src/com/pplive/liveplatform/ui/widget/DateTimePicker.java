@@ -25,7 +25,7 @@ public class DateTimePicker extends LinearLayout {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.layout_datetime_picker, this, true);
+        inflater.inflate(R.layout.widget_datetime_picker, this, true);
     }
 
     @Override
