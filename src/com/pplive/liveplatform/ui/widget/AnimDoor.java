@@ -18,6 +18,10 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class AnimDoor extends RelativeLayout {
+    private static final int HORIZONTAL = 0;
+
+    private static final int VERTICAL = 1;
+
     private ViewGroup mRoot;
 
     private ImageView mLeftDoorImageView;
@@ -36,6 +40,8 @@ public class AnimDoor extends RelativeLayout {
 
     private float mFactor;
 
+    private int mOrientaion;
+
     public AnimDoor(Context context) {
         this(context, null);
     }
@@ -50,6 +56,7 @@ public class AnimDoor extends RelativeLayout {
         /* default values */
         mFactor = 1.0f;
         mAnimX = 0.0f;
+        mOrientaion = HORIZONTAL;
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AnimDoor);
         int n = a.getIndexCount();
@@ -65,6 +72,9 @@ public class AnimDoor extends RelativeLayout {
             case R.styleable.AnimDoor_factor:
                 mFactor = a.getFloat(attr, 1.0f);
                 break;
+            case R.styleable.AnimDoor_orientation:
+                mOrientaion = a.getInt(attr, 0);
+                break;
             }
         }
         a.recycle();
@@ -77,15 +87,41 @@ public class AnimDoor extends RelativeLayout {
 
     public void setFactor(float factor) {
         mFactor = factor;
-        ViewGroup.LayoutParams llp = mLeftDoorImageView.getLayoutParams();
-        ViewGroup.LayoutParams rlp = mRightDoorImageView.getLayoutParams();
-        mAnimX = rlp.width = llp.width = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
-        mLeftDoorImageView.requestLayout();
-        mRightDoorImageView.requestLayout();
-        mLCAnimation = new TranslateAnimation(-mAnimX, 0.0f, 0.0f, 0.0f);
-        mLOAnimation = new TranslateAnimation(0.0f, -mAnimX, 0.0f, 0.0f);
-        mRCAnimation = new TranslateAnimation(mAnimX, 0.0f, 0.0f, 0.0f);
-        mROAnimation = new TranslateAnimation(0.0f, mAnimX, 0.0f, 0.0f);
+
+        RelativeLayout.LayoutParams llp = (RelativeLayout.LayoutParams) mLeftDoorImageView.getLayoutParams();
+        RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) mRightDoorImageView.getLayoutParams();
+
+        switch (mOrientaion) {
+        case VERTICAL:
+            llp.addRule(ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            llp.addRule(ALIGN_PARENT_LEFT, 0);
+            rlp.addRule(ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            rlp.addRule(ALIGN_PARENT_RIGHT, 0);
+            rlp.width = llp.width = LayoutParams.MATCH_PARENT;
+            mAnimX = rlp.height = llp.height = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
+            mLeftDoorImageView.requestLayout();
+            mRightDoorImageView.requestLayout();
+            mLCAnimation = new TranslateAnimation(0.0f, 0.0f, mAnimX, 0.0f);
+            mLOAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, mAnimX);
+            mRCAnimation = new TranslateAnimation(0.0f, 0.0f, -mAnimX, 0.0f);
+            mROAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -mAnimX);
+            break;
+        case HORIZONTAL:
+        default:
+            llp.addRule(ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+            llp.addRule(ALIGN_PARENT_BOTTOM, 0);
+            rlp.addRule(ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            rlp.addRule(ALIGN_PARENT_TOP, 0);
+            rlp.height = llp.height = LayoutParams.MATCH_PARENT;
+            mAnimX = rlp.width = llp.width = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
+            mLeftDoorImageView.requestLayout();
+            mRightDoorImageView.requestLayout();
+            mLCAnimation = new TranslateAnimation(-mAnimX, 0.0f, 0.0f, 0.0f);
+            mLOAnimation = new TranslateAnimation(0.0f, -mAnimX, 0.0f, 0.0f);
+            mRCAnimation = new TranslateAnimation(mAnimX, 0.0f, 0.0f, 0.0f);
+            mROAnimation = new TranslateAnimation(0.0f, mAnimX, 0.0f, 0.0f);
+            break;
+        }
         mLCAnimation.setDuration(1000);
         mRCAnimation.setDuration(1000);
         mLOAnimation.setDuration(1000);

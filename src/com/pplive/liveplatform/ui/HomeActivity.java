@@ -2,8 +2,6 @@ package com.pplive.liveplatform.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -74,14 +72,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Intent intent = new Intent(HomeActivity.this, LiveRecorderActivity.class);
-            startActivity(intent);
-        }
-    };
-
     @Override
     protected void onDestroy() {
         mFragmentContainer.clearOnSlideListeners();
@@ -105,13 +95,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         Log.d(TAG, "onStart");
         super.onStart();
         mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
+        mStatusButton.setClickable(true);
         // mStatusButton.startLoading("正在加载");
     }
 
     @Override
     protected void onStop() {
         mStatusButtonWrapper.clearAnimation();
-        mStatusButton.finishLoading();
         mAnimDoor.hide();
         super.onStop();
     }
@@ -164,9 +154,8 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            Log.d(TAG, "upAnimationListener: clear");
-            mStatusButton.startLoading();
-            mHandler.sendEmptyMessageDelayed(0, 1200);
+            Intent intent = new Intent(HomeActivity.this, LiveRecorderActivity.class);
+            startActivity(intent);
         }
 
         @Override

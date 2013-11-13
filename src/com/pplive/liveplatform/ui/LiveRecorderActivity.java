@@ -14,15 +14,12 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.TimePicker;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
@@ -54,15 +51,15 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
 
     private EditText mEditLiveSchedule;
     private EditText mEditLiveTitle;
-    
+
     private Button mBtnPrelive;
-    
+
     private DateTimePicker mDateTimePacker;
-    
+
     private HorizontalListView mHorizontalListView;
-    
+
     private AnimDoor mAnimDoor;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,62 +74,62 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
 
         mBtnLiveRecord = (ToggleButton) findViewById(R.id.btn_live_record);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
-        
+
         mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
-        
+
         mEditLiveSchedule = (EditText) findViewById(R.id.edit_live_schedule);
         mEditLiveSchedule.setOnTouchListener(new OnTouchListener() {
-            
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 Log.d(TAG, "onTouch: " + (event.getAction() & MotionEvent.ACTION_MASK));
-                
+
                 int action = event.getAction() & MotionEvent.ACTION_MASK;
                 if (MotionEvent.ACTION_UP != action) {
                     return true;
                 }
-                
+
                 mDateTimePacker.showOrHide();
-                
+
                 return true;
             }
         });
-        
+
         mEditLiveTitle = (EditText) findViewById(R.id.edit_live_title);
-        
+
         mBtnPrelive = (Button) findViewById(R.id.btn_live_prelive);
-        
+
         mDateTimePacker = (DateTimePicker) findViewById(R.id.calendar_pick_container);
         mDateTimePacker.setOnDateTimeChanged(new OnDateTimeChangedListener() {
-            
+
             @Override
             public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
                 mEditLiveSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
             }
         });
-        
+
         mHorizontalListView = (HorizontalListView) findViewById(R.id.live_list_view);
         mHorizontalListView.setAdapter(new BaseAdapter() {
-            
+
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 View view = LayoutInflater.from(getApplicationContext()).inflate(R.layout.layout_record_program_itemview, null);
-                
+
                 return view;
             }
-            
+
             @Override
             public long getItemId(int position) {
                 // TODO Auto-generated method stub
                 return position;
             }
-            
+
             @Override
             public Object getItem(int position) {
                 // TODO Auto-generated method stub
                 return null;
             }
-            
+
             @Override
             public int getCount() {
                 // TODO Auto-generated method stub
@@ -148,6 +145,14 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         mCamera = CameraManager.getInstance().open(mCurrentCameraId);
 
         startPreview();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            mAnimDoor.open();
+        }
     }
 
     @Override
@@ -308,16 +313,16 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         isFlashOn = setFlashMode(isFlashOn);
         mBtnFlashLight.setChecked(isFlashOn);
     }
-    
+
     private void onClickBtnPrelive(View v) {
         if (View.VISIBLE != mEditLiveSchedule.getVisibility()) {
             mEditLiveSchedule.setVisibility(View.VISIBLE);
             mEditLiveTitle.setFocusable(true);
             mEditLiveTitle.setFocusableInTouchMode(true);
-            
+
             mDateTimePacker.showOrHide();
         } else {
-            
+
         }
     }
 

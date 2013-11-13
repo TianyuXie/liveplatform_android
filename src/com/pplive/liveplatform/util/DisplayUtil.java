@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.util;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 
 public class DisplayUtil {
     public static int dp2px(Context context, float dpValue) {
@@ -14,10 +15,12 @@ public class DisplayUtil {
     }
 
     public static int getWidthPx(Context context) {
-        return context.getApplicationContext().getResources().getDisplayMetrics().widthPixels;
+        DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
+        return Math.min(dm.widthPixels, dm.heightPixels);
     }
-    
+
     public static int getHeightPx(Context context) {
-        return context.getApplicationContext().getResources().getDisplayMetrics().heightPixels;
+        DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
+        return Math.max(dm.widthPixels, dm.heightPixels);
     }
 }

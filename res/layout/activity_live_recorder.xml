@@ -136,8 +136,10 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="false"
-        live:factor="1.076"
-        live:left_src="@drawable/animdoor_left"
-        live:right_src="@drawable/animdoor_right" />
+        live:factor="1.139"
+        live:duration="1500"
+        live:left_src="@drawable/animdoor_bottom"
+        live:orientation="vertical"
+        live:right_src="@drawable/animdoor_top" />
 
 </RelativeLayout>
