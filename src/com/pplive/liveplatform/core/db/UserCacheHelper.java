@@ -15,8 +15,7 @@ public class UserCacheHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS search (_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "stime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, keyword TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS search (_id INTEGER PRIMARY KEY AUTOINCREMENT, stime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, keyword TEXT)");
         db.execSQL("CREATE INDEX search_index ON search(keyword)");
     }
 

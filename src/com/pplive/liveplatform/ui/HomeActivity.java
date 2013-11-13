@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.home.HomeFragment;
@@ -37,6 +38,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mSideBar = (SideBar) findViewById(R.id.home_sidebar);
         mAnimDoor = (AnimDoor) findViewById(R.id.home_animdoor);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_home_status);
+        mStatusButton.setOnClickListener(onStatusClickListener);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -73,7 +75,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onStart() {
         // TODO Auto-generated method stub
         super.onStart();
-//        mStatusButton.startLoading("正在加载");
+        //        mStatusButton.startLoading("正在加载");
     }
 
     @Override
@@ -111,7 +113,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
             }
             return super.onScroll(e1, e2, distanceX, distanceY);
         }
+    };
 
+    private View.OnClickListener onStatusClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mAnimDoor.shut();
+        }
     };
 
     @Override

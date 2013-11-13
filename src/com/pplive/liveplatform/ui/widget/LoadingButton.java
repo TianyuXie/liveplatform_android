@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -140,6 +141,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void startLoading(CharSequence text) {
         if (!mLoading && mAnimation != null) {
             mLoading = true;
+            mBaseButton.setClickable(false);
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(VISIBLE);
             mAnimImageView.startAnimation(mAnimation);
@@ -160,6 +162,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void showLoadingResult(CharSequence text) {
         if (mLoading) {
             mLoading = false;
+            mBaseButton.setClickable(true);
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
@@ -172,6 +175,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void finishLoading() {
         if (mLoading) {
             mLoading = false;
+            mBaseButton.setClickable(true);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
         }
@@ -179,6 +183,11 @@ public class LoadingButton extends RelativeLayout implements IHidable {
         if (mNormalBackgroundRes > 0) {
             mBaseButton.setBackgroundResource(mNormalBackgroundRes);
         }
+    }
+
+    @Override
+    public void setOnClickListener(View.OnClickListener l) {
+        mBaseButton.setOnClickListener(l);
     }
 
     @Override

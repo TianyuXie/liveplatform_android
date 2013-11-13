@@ -12,7 +12,15 @@ public class CacheManager {
 
     private UserCacheHelper mUserCacheHelper;
 
-    public CacheManager(Context context) {
+    private static CacheManager instance;
+
+    public static synchronized CacheManager getInstance(Context context) {
+        if (instance == null)
+            instance = new CacheManager(context.getApplicationContext());
+        return instance;
+    }
+
+    private CacheManager(Context context) {
         mUserCacheHelper = new UserCacheHelper(context);
         mUserCache = mUserCacheHelper.getWritableDatabase();
     }
