@@ -2,6 +2,8 @@ package com.pplive.liveplatform.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +25,8 @@ import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
     static final String TAG = "HomepageActivity";
+    
+    private static final int NORMAL = 701;
 
     private AnimDoor mAnimDoor;
 
@@ -68,7 +72,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 67.5f);
         mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -upPx);
         mStatusUpAnimation.setFillAfter(true);
-        mStatusUpAnimation.setDuration(700);
+        mStatusUpAnimation.setDuration(500);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
     }
 
@@ -193,5 +197,33 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     public void doSlideBack() {
         mFragmentContainer.slideBack();
     }
+
+    @Override
+    public void doLoadMore() {
+        mStatusButton.startLoading("正在加载");
+    }
+
+    @Override
+    public void doLoadResult(String text) {
+        mStatusButton.showLoadingResult(text);
+        mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 5000);
+    }
+    
+    @Override
+    public void doLoadFinish() {
+        mStatusButton.finishLoading();
+    }
+    
+    private Handler mStatusButtonHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case NORMAL:
+                mStatusButton.finishLoading();
+                break;
+            }
+        }
+        
+    };
 
 }

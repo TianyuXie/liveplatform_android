@@ -1,6 +1,5 @@
 package com.pplive.liveplatform.ui.home;
 
-import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -8,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.gson.JsonObject;
@@ -24,7 +22,8 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.GetTask;
-import com.pplive.liveplatform.ui.home.program.ProgramView;
+import com.pplive.liveplatform.ui.home.program.RefreshContainer;
+import com.pplive.liveplatform.ui.widget.AdvancedGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
@@ -34,21 +33,15 @@ import com.pplive.liveplatform.util.ConfigUtil;
 import com.pplive.liveplatform.util.KeyUtil;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
-    static final String TAG = "HomepageFragment";
-
-    private Dialog mRefreshDialog;
-
-    private LinearLayout mContainer;
-
+    static final String TAG = "HomeFragment";
+    
     private TitleBar mTitleBar;
 
-//    private StatusBar mStatusBar;
+    private RefreshContainer mContainer;
 
     private SearchBar mSearchBar;
 
     private Callback mCallbackListener;
-
-//    private BroadcastReceiver mBatteryReceiver;
 
     private boolean mSlided;
 
@@ -62,14 +55,12 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
-        mContainer = (LinearLayout) layout.findViewById(R.id.layout_home_body);
-//        mStatusBar = (StatusBar) layout.findViewById(R.id.statusbar_home);
+        mContainer = (RefreshContainer) layout.findViewById(R.id.layout_home_body);
+        mContainer.setOnReachBottomListener(onReachBottomListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(titleBarOnClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
         mSearchBar.setOnClickListener(searchBarOnClickListener);
-        mRefreshDialog = new Dialog(getActivity(), R.style.homepage_refresh_dialog);
-        mRefreshDialog.setContentView(R.layout.dialog_refresh);
         layout.setGestureDetector(new InterceptDetector(getActivity(), onGestureListener));
         return layout;
     }
@@ -79,22 +70,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStart();
         Log.d(TAG, "onStart");
         startTask();
-//        if (null == mBatteryReceiver) {
-//            mBatteryReceiver = new BatteryBroadcastReceiver();
-//            IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//            getActivity().registerReceiver(mBatteryReceiver, filter);
-//        }
-//        mStatusBar.updateTime();
     }
 
     @Override
     public void onStop() {
         Log.d(TAG, "onStop");
-//        if (null != mBatteryReceiver) {
-//            getActivity().unregisterReceiver(mBatteryReceiver);
-//            mBatteryReceiver = null;
-//        }
-//        mStatusBar.stopUpdateTime();
         super.onStop();
     }
 
@@ -105,26 +85,25 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         task.addTaskCancelListener(getOnTaskCancelListner);
         task.addTaskFailedListener(getTaskFailedListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_FAKE_SERVER2));
-        mRefreshDialog.show();
+        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_HOME_TEST_URL));
         task.execute(taskContext);
+        if (mCallbackListener != null){
+            mCallbackListener.doLoadMore();
+        }
     }
 
     private OnTaskFinishedListener getTaskFinishedListener = new OnTaskFinishedListener() {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             if (getActivity() != null) {
-                mRefreshDialog.dismiss();
                 Toast.makeText(getActivity(), R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-
                 String response = (String) event.getContext().get(GetTask.KEY_RESULT);
                 Log.d(TAG, response);
                 JsonObject jsonElement = new JsonParser().parse(response).getAsJsonObject();
-
-                ProgramView pv = new ProgramView(getActivity().getApplicationContext());
-                pv.updateData(jsonElement);
-                mContainer.removeAllViews();
-                mContainer.addView(pv.getView());
+                mContainer.refreshData(jsonElement);
+                if (mCallbackListener != null){
+                    mCallbackListener.doLoadResult("已加载10条");
+                }
             }
         }
     };
@@ -133,7 +112,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             if (getActivity() != null) {
-                mRefreshDialog.dismiss();
+                if (mCallbackListener != null){
+                    mCallbackListener.doLoadResult("已加载10条");
+                }
                 Toast.makeText(getActivity(), R.string.toast_timeout, Toast.LENGTH_SHORT).show();
             }
         }
@@ -143,7 +124,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             if (getActivity() != null) {
-                mRefreshDialog.dismiss();
+                if (mCallbackListener != null){
+                    mCallbackListener.doLoadFinish();
+                }
                 Toast.makeText(getActivity(), R.string.toast_failed, Toast.LENGTH_SHORT).show();
             }
         }
@@ -153,7 +136,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             if (getActivity() != null) {
-                mRefreshDialog.dismiss();
+                if (mCallbackListener != null){
+                    mCallbackListener.doLoadFinish();
+                }
                 Toast.makeText(getActivity(), R.string.toast_cancel, Toast.LENGTH_SHORT).show();
             }
         }
@@ -171,40 +156,16 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mTitleBar.setMenuButtonHighlight(false);
     }
 
-    private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
-        @Override
-        public boolean onDown(MotionEvent e) {
-            Log.d(TAG, "onDown");
-            return mSlided;
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            Log.d(TAG, "onSingleTapUp");
-            if (mSlided) {
-                if (mCallbackListener != null) {
-                    mCallbackListener.doSlideBack();
-                }
-                return true;
-            } else {
-                return false;
-            }
-
-        }
-
-        @Override
-        public void onShowPress(MotionEvent e) {
-            Log.d(TAG, "onShowPress");
-            if (mSlided && mCallbackListener != null) {
-                mCallbackListener.doSlideBack();
-            }
-        }
-    };
-
     public interface Callback {
         public void doSlide();
 
         public void doSlideBack();
+
+        public void doLoadMore();
+
+        public void doLoadResult(String text);
+        
+        public void doLoadFinish();
     }
 
     public void setCallbackListener(Callback listener) {
@@ -240,17 +201,41 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
-//    private class BatteryBroadcastReceiver extends BroadcastReceiver {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if (null == intent) {
-//                return;
-//            }
-//            String action = intent.getAction();
-//            if (Intent.ACTION_BATTERY_CHANGED.equals(action)) {
-//                mStatusBar.updateBattery(intent);
-//            }
-//        }
-//    }
+    private AdvancedGridView.OnReachBottomListener onReachBottomListener = new AdvancedGridView.OnReachBottomListener() {
+        @Override
+        public void onReachBottom() {
+            if (mCallbackListener != null) {
+                mCallbackListener.doLoadMore();
+            }
+        }
+    };
 
+    private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Log.d(TAG, "onDown");
+            return mSlided;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            Log.d(TAG, "onSingleTapUp");
+            if (mSlided) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.doSlideBack();
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        @Override
+        public void onShowPress(MotionEvent e) {
+            Log.d(TAG, "onShowPress");
+            if (mSlided && mCallbackListener != null) {
+                mCallbackListener.doSlideBack();
+            }
+        }
+    };
 }
