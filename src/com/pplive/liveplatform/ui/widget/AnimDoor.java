@@ -36,11 +36,11 @@ public class AnimDoor extends RelativeLayout {
 
     private Animation mROAnimation;
 
-    private float mAnimX;
-
     private float mFactor;
 
     private int mOrientaion;
+
+    private int mDuration;
 
     public AnimDoor(Context context) {
         this(context, null);
@@ -55,8 +55,8 @@ public class AnimDoor extends RelativeLayout {
 
         /* default values */
         mFactor = 1.0f;
-        mAnimX = 0.0f;
         mOrientaion = HORIZONTAL;
+        mDuration = 1000;
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AnimDoor);
         int n = a.getIndexCount();
@@ -75,6 +75,17 @@ public class AnimDoor extends RelativeLayout {
             case R.styleable.AnimDoor_orientation:
                 mOrientaion = a.getInt(attr, 0);
                 break;
+            case R.styleable.AnimDoor_time:
+                mDuration = a.getInt(attr, 1000);
+                break;
+            case R.styleable.AnimDoor_visible:
+                if (a.getBoolean(attr, false)) {
+                    mLeftDoorImageView.setVisibility(VISIBLE);
+                    mRightDoorImageView.setVisibility(VISIBLE);
+                } else {
+                    mLeftDoorImageView.setVisibility(GONE);
+                    mRightDoorImageView.setVisibility(GONE);
+                }
             }
         }
         a.recycle();
@@ -88,6 +99,7 @@ public class AnimDoor extends RelativeLayout {
     public void setFactor(float factor) {
         mFactor = factor;
 
+        float animX = 0.0f;
         RelativeLayout.LayoutParams llp = (RelativeLayout.LayoutParams) mLeftDoorImageView.getLayoutParams();
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) mRightDoorImageView.getLayoutParams();
 
@@ -98,13 +110,13 @@ public class AnimDoor extends RelativeLayout {
             rlp.addRule(ALIGN_PARENT_TOP, RelativeLayout.TRUE);
             rlp.addRule(ALIGN_PARENT_RIGHT, 0);
             rlp.width = llp.width = LayoutParams.MATCH_PARENT;
-            mAnimX = rlp.height = llp.height = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
+            animX = rlp.height = llp.height = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
             mLeftDoorImageView.requestLayout();
             mRightDoorImageView.requestLayout();
-            mLCAnimation = new TranslateAnimation(0.0f, 0.0f, mAnimX, 0.0f);
-            mLOAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, mAnimX);
-            mRCAnimation = new TranslateAnimation(0.0f, 0.0f, -mAnimX, 0.0f);
-            mROAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -mAnimX);
+            mLCAnimation = new TranslateAnimation(0.0f, 0.0f, animX, 0.0f);
+            mLOAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, animX);
+            mRCAnimation = new TranslateAnimation(0.0f, 0.0f, -animX, 0.0f);
+            mROAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -animX);
             break;
         case HORIZONTAL:
         default:
@@ -113,19 +125,19 @@ public class AnimDoor extends RelativeLayout {
             rlp.addRule(ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             rlp.addRule(ALIGN_PARENT_TOP, 0);
             rlp.height = llp.height = LayoutParams.MATCH_PARENT;
-            mAnimX = rlp.width = llp.width = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
+            animX = rlp.width = llp.width = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
             mLeftDoorImageView.requestLayout();
             mRightDoorImageView.requestLayout();
-            mLCAnimation = new TranslateAnimation(-mAnimX, 0.0f, 0.0f, 0.0f);
-            mLOAnimation = new TranslateAnimation(0.0f, -mAnimX, 0.0f, 0.0f);
-            mRCAnimation = new TranslateAnimation(mAnimX, 0.0f, 0.0f, 0.0f);
-            mROAnimation = new TranslateAnimation(0.0f, mAnimX, 0.0f, 0.0f);
+            mLCAnimation = new TranslateAnimation(-animX, 0.0f, 0.0f, 0.0f);
+            mLOAnimation = new TranslateAnimation(0.0f, -animX, 0.0f, 0.0f);
+            mRCAnimation = new TranslateAnimation(animX, 0.0f, 0.0f, 0.0f);
+            mROAnimation = new TranslateAnimation(0.0f, animX, 0.0f, 0.0f);
             break;
         }
-        mLCAnimation.setDuration(1000);
-        mRCAnimation.setDuration(1000);
-        mLOAnimation.setDuration(1000);
-        mROAnimation.setDuration(1000);
+        mLCAnimation.setDuration(mDuration);
+        mRCAnimation.setDuration(mDuration);
+        mLOAnimation.setDuration(mDuration);
+        mROAnimation.setDuration(mDuration);
         mLCAnimation.setFillAfter(true);
         mRCAnimation.setFillAfter(true);
         mLOAnimation.setFillAfter(true);
@@ -174,18 +186,18 @@ public class AnimDoor extends RelativeLayout {
     }
 
     public void hide() {
-        mRightDoorImageView.clearAnimation();
-        mLeftDoorImageView.clearAnimation();
         mLeftDoorImageView.setVisibility(GONE);
         mRightDoorImageView.setVisibility(GONE);
+        mRightDoorImageView.clearAnimation();
+        mLeftDoorImageView.clearAnimation();
     }
 
     public void open() {
         if (mLOAnimation != null && mROAnimation != null) {
+            mLeftDoorImageView.setVisibility(VISIBLE);
+            mRightDoorImageView.setVisibility(VISIBLE);
             mRightDoorImageView.startAnimation(mROAnimation);
             mLeftDoorImageView.startAnimation(mLOAnimation);
-            mLeftDoorImageView.setVisibility(GONE);
-            mRightDoorImageView.setVisibility(GONE);
         }
     }
 

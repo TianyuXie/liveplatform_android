@@ -15,6 +15,8 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
@@ -76,6 +78,21 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
+        mAnimDoor.setOpenDoorListener(new AnimationListener() {
+            
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+            
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+            
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mAnimDoor.hide();
+            }
+        });
 
         mEditLiveSchedule = (EditText) findViewById(R.id.edit_live_schedule);
         mEditLiveSchedule.setOnTouchListener(new OnTouchListener() {
@@ -151,6 +168,7 @@ public class LiveRecorderActivity extends FragmentActivity implements View.OnCli
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
+            Log.d(TAG, "open");
             mAnimDoor.open();
         }
     }

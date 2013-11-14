@@ -30,11 +30,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="false"
-        live:duration="1000"
         live:factor="1.139"
         live:left_src="@drawable/animdoor_left"
         live:orientation="horizontal"
-        live:right_src="@drawable/animdoor_right" />
+        live:right_src="@drawable/animdoor_right"
+        live:time="1000"
+        live:visible="false" />
 
     <LinearLayout
         android:id="@+id/wrapper_home_status"

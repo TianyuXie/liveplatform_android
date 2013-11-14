@@ -74,13 +74,16 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         mFragmentContainer.clearOnSlideListeners();
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
+        Log.d(TAG, "onPause");
+        mStatusButtonWrapper.clearAnimation();
+        mAnimDoor.hide();
         super.onPause();
     }
 
@@ -101,8 +104,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     @Override
     protected void onStop() {
-        mStatusButtonWrapper.clearAnimation();
-        mAnimDoor.hide();
+        Log.d(TAG, "onStop");
         super.onStop();
     }
 
