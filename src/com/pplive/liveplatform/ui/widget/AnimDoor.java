@@ -42,6 +42,8 @@ public class AnimDoor extends RelativeLayout {
 
     private int mDuration;
 
+    private float mAnimX;
+
     public AnimDoor(Context context) {
         this(context, null);
     }
@@ -57,6 +59,7 @@ public class AnimDoor extends RelativeLayout {
         mFactor = 1.0f;
         mOrientaion = HORIZONTAL;
         mDuration = 1000;
+        mAnimX = 0.0f;
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.AnimDoor);
         int n = a.getIndexCount();
@@ -99,7 +102,6 @@ public class AnimDoor extends RelativeLayout {
     public void setFactor(float factor) {
         mFactor = factor;
 
-        float animX = 0.0f;
         RelativeLayout.LayoutParams llp = (RelativeLayout.LayoutParams) mLeftDoorImageView.getLayoutParams();
         RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) mRightDoorImageView.getLayoutParams();
 
@@ -110,13 +112,13 @@ public class AnimDoor extends RelativeLayout {
             rlp.addRule(ALIGN_PARENT_TOP, RelativeLayout.TRUE);
             rlp.addRule(ALIGN_PARENT_RIGHT, 0);
             rlp.width = llp.width = LayoutParams.MATCH_PARENT;
-            animX = rlp.height = llp.height = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
+            mAnimX = rlp.height = llp.height = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
             mLeftDoorImageView.requestLayout();
             mRightDoorImageView.requestLayout();
-            mLCAnimation = new TranslateAnimation(0.0f, 0.0f, animX, 0.0f);
-            mLOAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, animX);
-            mRCAnimation = new TranslateAnimation(0.0f, 0.0f, -animX, 0.0f);
-            mROAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -animX);
+            mLCAnimation = new TranslateAnimation(0.0f, 0.0f, mAnimX, 0.0f);
+            mLOAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, mAnimX);
+            mRCAnimation = new TranslateAnimation(0.0f, 0.0f, -mAnimX, 0.0f);
+            mROAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -mAnimX);
             break;
         case HORIZONTAL:
         default:
@@ -125,13 +127,13 @@ public class AnimDoor extends RelativeLayout {
             rlp.addRule(ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             rlp.addRule(ALIGN_PARENT_TOP, 0);
             rlp.height = llp.height = LayoutParams.MATCH_PARENT;
-            animX = rlp.width = llp.width = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
+            mAnimX = rlp.width = llp.width = (int) Math.round(DisplayUtil.getWidthPx(getContext()) / 2.0 * mFactor);
             mLeftDoorImageView.requestLayout();
             mRightDoorImageView.requestLayout();
-            mLCAnimation = new TranslateAnimation(-animX, 0.0f, 0.0f, 0.0f);
-            mLOAnimation = new TranslateAnimation(0.0f, -animX, 0.0f, 0.0f);
-            mRCAnimation = new TranslateAnimation(animX, 0.0f, 0.0f, 0.0f);
-            mROAnimation = new TranslateAnimation(0.0f, animX, 0.0f, 0.0f);
+            mLCAnimation = new TranslateAnimation(-mAnimX, 0.0f, 0.0f, 0.0f);
+            mLOAnimation = new TranslateAnimation(0.0f, -mAnimX, 0.0f, 0.0f);
+            mRCAnimation = new TranslateAnimation(mAnimX, 0.0f, 0.0f, 0.0f);
+            mROAnimation = new TranslateAnimation(0.0f, mAnimX, 0.0f, 0.0f);
             break;
         }
         mLCAnimation.setDuration(mDuration);
@@ -199,6 +201,14 @@ public class AnimDoor extends RelativeLayout {
             mRightDoorImageView.startAnimation(mROAnimation);
             mLeftDoorImageView.startAnimation(mLOAnimation);
         }
+    }
+    
+    public float getAnimX() {
+        return mAnimX;
+    }
+    
+    public int getDuration() {
+        return mDuration;
     }
 
     public void setShutDoorListener(AnimationListener listener) {

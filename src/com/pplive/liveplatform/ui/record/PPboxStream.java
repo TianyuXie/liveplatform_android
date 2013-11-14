@@ -71,7 +71,7 @@ public class PPboxStream {
     private MediaSDK.Sample mSample;
 
     private String mStreamType;
-    
+
     private static PPboxStream[] mStreams = new PPboxStream[2];
 
     public PPboxStream(long capture, int itrack, Camera camera) {
@@ -95,7 +95,7 @@ public class PPboxStream {
         mInSize = pic_size(p);
 
         mStreamInfo = new MediaSDK.StreamInfo();
-        
+
         mStreamInfo.time_scale = 1000 * 1000;
         mStreamInfo.bitrate = 0;
         mStreamInfo.__union0 = p.getPreviewSize().width;
@@ -256,7 +256,7 @@ public class PPboxStream {
             }
         } else {
             mSample.buffer = buffer.byte_buffer();
-            
+
             MediaSDK.CapturePutSample(mCaptureId, mSample);
         }
     }
@@ -264,7 +264,7 @@ public class PPboxStream {
     private int mWritedBufferCount = 0;
 
     @SuppressLint("SdCardPath")
-	private void writeBuffer(ByteBuffer buffer, int size) {
+    private void writeBuffer(ByteBuffer buffer, int size) {
 
         if (mWritedBufferCount++ < 10) {
 

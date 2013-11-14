@@ -65,7 +65,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         mGlobalDetector = new GestureDetector(getApplicationContext(), onGestureListener);
 
-        float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 90);
+        float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 67.5f);
         mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -upPx);
         mStatusUpAnimation.setFillAfter(true);
         mStatusUpAnimation.setDuration(700);
@@ -91,14 +91,14 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
+        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
+        mStatusButton.setClickable(true);
     }
 
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
-        mStatusButton.setClickable(true);
         // mStatusButton.startLoading("正在加载");
     }
 
@@ -158,6 +158,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         public void onAnimationEnd(Animation animation) {
             Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
             startActivity(intent);
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
 
         @Override
