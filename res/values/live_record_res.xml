@@ -11,6 +11,9 @@
     <string name="test_share_program">Share</string>
     <string name="test_edit_program">Edit</string>
 
+    <!-- Color -->
+    <color name="bottom_bar_bg">#40000000</color>
+    
     <!-- Style -->
     <style name="Widget.Button.Transparent" parent="@android:style/Widget.Button">
         <item name="android:background">@null</item>
@@ -24,10 +27,12 @@
 
     <style name="Widget.EditText" parent="@android:style/Widget.TextView">
         <item name="android:background">@drawable/live_record_edit_bg</item>
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">20dp</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#dedede</item>
     </style>
 
 </resources>

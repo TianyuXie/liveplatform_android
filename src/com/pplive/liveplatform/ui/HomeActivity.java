@@ -156,7 +156,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            Intent intent = new Intent(HomeActivity.this, LiveRecorderActivity.class);
+            Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
             startActivity(intent);
         }
 

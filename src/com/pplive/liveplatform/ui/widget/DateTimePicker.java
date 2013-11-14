@@ -25,7 +25,7 @@ public class DateTimePicker extends LinearLayout {
         super(context, attrs);
 
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.layout_datetime_picker, this, true);
+        inflater.inflate(R.layout.widget_datetime_picker, this, true);
     }
 
     @Override
@@ -84,18 +84,6 @@ public class DateTimePicker extends LinearLayout {
 
     public int getCurrentMinute() {
         return mTimePicker.getCurrentMinute();
-    }
-
-    public void showOrHide() {
-        showOrHide(true);
-    }
-
-    public void showOrHide(boolean gone) {
-        if (View.VISIBLE != this.getVisibility()) {
-            this.setVisibility(View.VISIBLE);
-        } else {
-            this.setVisibility(gone ? View.GONE : View.INVISIBLE);
-        }
     }
 
     public interface OnDateTimeChangedListener {

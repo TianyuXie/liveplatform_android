@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
             startActivity(intent);
             break;
         case R.id.btn_go_recorder:
-            intent = new Intent(getApplicationContext(), LiveRecorderActivity.class);
+            intent = new Intent(getApplicationContext(), LiveRecordActivity.class);
             startActivity(intent);
             break;
         case R.id.btn_go_home:
