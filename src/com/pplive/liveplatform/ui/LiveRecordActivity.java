@@ -18,8 +18,7 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
-import com.pplive.liveplatform.ui.widget.FooterBar;
-
+import com.pplive.liveplatform.ui.widget.AnimDoor;import com.pplive.liveplatform.ui.widget.FooterBar;
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
     private static final String TAG = LiveRecordActivity.class.getSimpleName();
@@ -41,6 +40,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     
     private FooterBar mFooterBar;
 
+    private AnimDoor mAnimDoor;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +56,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mBtnLiveRecord = (ToggleButton) findViewById(R.id.btn_live_record);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
-
+        
+        mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
+        
         mFooterBar = (FooterBar) findViewById(R.id.footer_bar);
     }
 

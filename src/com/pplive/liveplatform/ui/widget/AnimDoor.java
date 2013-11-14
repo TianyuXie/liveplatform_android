@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
@@ -136,6 +137,13 @@ public class AnimDoor extends RelativeLayout {
         }
     }
 
+    public void hide() {
+        mRightDoorImageView.clearAnimation();
+        mLeftDoorImageView.clearAnimation();
+        mLeftDoorImageView.setVisibility(GONE);
+        mRightDoorImageView.setVisibility(GONE);
+    }
+
     public void open() {
         if (mLOAnimation != null && mROAnimation != null) {
             mRightDoorImageView.startAnimation(mROAnimation);
@@ -143,5 +151,13 @@ public class AnimDoor extends RelativeLayout {
             mLeftDoorImageView.setVisibility(GONE);
             mRightDoorImageView.setVisibility(GONE);
         }
+    }
+
+    public void setShutDoorListener(AnimationListener listener) {
+        mLCAnimation.setAnimationListener(listener);
+    }
+
+    public void setOpenDoorListener(AnimationListener listener) {
+        mLOAnimation.setAnimationListener(listener);
     }
 }

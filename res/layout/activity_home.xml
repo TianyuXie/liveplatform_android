@@ -34,18 +34,24 @@
         live:left_src="@drawable/animdoor_left"
         live:right_src="@drawable/animdoor_right" />
 
-    <com.pplive.liveplatform.ui.widget.LoadingButton
-        android:id="@+id/btn_home_status"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+    <LinearLayout
+        android:id="@+id/wrapper_home_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        live:anim_background="@drawable/home_status_btn_anim"
-        live:animation="@anim/home_status_rotate"
-        live:loading_background="@drawable/home_status_btn_loading"
-        live:normal_background="@drawable/home_status_btn_bg"
-        live:text="@string/blank"
-        live:textSize="12sp" />
+        android:layout_marginBottom="30dp" >
+
+        <com.pplive.liveplatform.ui.widget.LoadingButton
+            android:id="@+id/btn_home_status"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            live:anim_background="@drawable/home_status_btn_anim"
+            live:animation="@anim/home_status_rotate"
+            live:loading_background="@drawable/home_status_btn_loading"
+            live:normal_background="@drawable/home_status_btn_bg"
+            live:text="@string/blank"
+            live:textSize="12sp" />
+    </LinearLayout>
 
 </RelativeLayout>
