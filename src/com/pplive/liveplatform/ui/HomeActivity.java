@@ -77,7 +77,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            Intent intent = new Intent(HomeActivity.this, LiveRecorderActivity.class);
+            Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
             startActivity(intent);
         }
     };
