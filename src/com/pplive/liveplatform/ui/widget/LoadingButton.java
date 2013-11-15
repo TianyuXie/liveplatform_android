@@ -109,7 +109,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     }
 
     public void setBackgroundResource(int normal) {
-        mLoadingBackgroundRes = mNormalBackgroundRes = normal;
+        mNormalBackgroundRes = normal;
         if (normal > 0) {
             mBaseButton.setBackgroundResource(normal);
         }
@@ -118,8 +118,10 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void setBackgroundResource(int normal, int loading) {
         mNormalBackgroundRes = normal;
         mLoadingBackgroundRes = loading;
-        if (normal > 0) {
+        if (normal > 0 && !mLoading) {
             mBaseButton.setBackgroundResource(normal);
+        } else if (loading > 0 && mLoading){
+            mBaseButton.setBackgroundResource(loading);
         }
     }
 

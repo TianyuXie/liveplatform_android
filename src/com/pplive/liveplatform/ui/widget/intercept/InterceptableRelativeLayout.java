@@ -9,6 +9,10 @@ import android.widget.RelativeLayout;
 
 public class InterceptableRelativeLayout extends RelativeLayout implements Interceptable {
     static final String TAG = "InterceptableRelativeLayout";
+    
+    public InterceptableRelativeLayout(Context context) {
+        super(context);
+    }
 
     public InterceptableRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);

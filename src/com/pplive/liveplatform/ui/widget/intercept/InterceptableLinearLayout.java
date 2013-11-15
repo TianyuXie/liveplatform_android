@@ -1,17 +1,13 @@
 package com.pplive.liveplatform.ui.widget.intercept;
 
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
 
 public class InterceptableLinearLayout extends LinearLayout implements Interceptable {
     static final String TAG = "InterceptableLinearLayout";
-
-    private GestureDetector mGestureDetector;
 
     public InterceptableLinearLayout(Context context) {
         this(context, null);
@@ -21,16 +17,20 @@ public class InterceptableLinearLayout extends LinearLayout implements Intercept
         super(context, attrs);
     }
 
-    public void setGestureDetector(GestureDetector detector) {
-        this.mGestureDetector = detector;
+    private InterceptDetector mInterceptDetector;
+
+    public void setGestureDetector(InterceptDetector detector) {
+        this.mInterceptDetector = detector;
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.d(TAG, "onInterceptTouchEvent");
-        if (mGestureDetector != null && mGestureDetector.onTouchEvent(ev)) {
+        if (mInterceptDetector != null && mInterceptDetector.onTouchEvent(ev)) {
+            Log.d(TAG, "Intercept");
             return true;
         } else {
+            Log.d(TAG, "Pass");
             return super.onInterceptTouchEvent(ev);
         }
     }
@@ -38,11 +38,10 @@ public class InterceptableLinearLayout extends LinearLayout implements Intercept
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         Log.d(TAG, "onTouchEvent");
-        if (mGestureDetector != null && mGestureDetector.onTouchEvent(event)) {
+        if (mInterceptDetector != null && mInterceptDetector.onTouchEvent(event)) {
             return true;
         } else {
             return super.onTouchEvent(event);
         }
     }
-
 }

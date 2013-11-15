@@ -23,7 +23,6 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.GetTask;
 import com.pplive.liveplatform.ui.home.program.RefreshContainer;
-import com.pplive.liveplatform.ui.widget.AdvancedGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
@@ -34,7 +33,7 @@ import com.pplive.liveplatform.util.KeyUtil;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
     static final String TAG = "HomeFragment";
-    
+
     private TitleBar mTitleBar;
 
     private RefreshContainer mContainer;
@@ -56,7 +55,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         Log.d(TAG, "onCreateView");
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (RefreshContainer) layout.findViewById(R.id.layout_home_body);
-        mContainer.setOnReachBottomListener(onReachBottomListener);
+//        mContainer.setOnScrollRefreshListener(scrollRefreshListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(titleBarOnClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
@@ -87,7 +86,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         TaskContext taskContext = new TaskContext();
         taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_HOME_TEST_URL));
         task.execute(taskContext);
-        if (mCallbackListener != null){
+        if (mCallbackListener != null) {
             mCallbackListener.doLoadMore();
         }
     }
@@ -101,7 +100,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 Log.d(TAG, response);
                 JsonObject jsonElement = new JsonParser().parse(response).getAsJsonObject();
                 mContainer.refreshData(jsonElement);
-                if (mCallbackListener != null){
+                if (mCallbackListener != null) {
                     mCallbackListener.doLoadResult("已加载10条");
                 }
             }
@@ -112,7 +111,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             if (getActivity() != null) {
-                if (mCallbackListener != null){
+                if (mCallbackListener != null) {
                     mCallbackListener.doLoadResult("已加载10条");
                 }
                 Toast.makeText(getActivity(), R.string.toast_timeout, Toast.LENGTH_SHORT).show();
@@ -124,7 +123,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             if (getActivity() != null) {
-                if (mCallbackListener != null){
+                if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
                 Toast.makeText(getActivity(), R.string.toast_failed, Toast.LENGTH_SHORT).show();
@@ -136,7 +135,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             if (getActivity() != null) {
-                if (mCallbackListener != null){
+                if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
                 Toast.makeText(getActivity(), R.string.toast_cancel, Toast.LENGTH_SHORT).show();
@@ -164,7 +163,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void doLoadMore();
 
         public void doLoadResult(String text);
-        
+
         public void doLoadFinish();
     }
 
@@ -201,14 +200,21 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
-    private AdvancedGridView.OnReachBottomListener onReachBottomListener = new AdvancedGridView.OnReachBottomListener() {
-        @Override
-        public void onReachBottom() {
-            if (mCallbackListener != null) {
-                mCallbackListener.doLoadMore();
-            }
-        }
-    };
+//    private RefreshContainer.OnScrollRefreshListener scrollRefreshListener = new RefreshContainer.OnScrollRefreshListener() {
+//
+//        @Override
+//        public void onReachTop() {
+//            // TODO Auto-generated method stub
+//
+//        }
+//
+//        @Override
+//        public void onReachBottom() {
+//            if (mCallbackListener != null) {
+//                mCallbackListener.doLoadMore();
+//            }
+//        }
+//    };
 
     private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
         @Override
