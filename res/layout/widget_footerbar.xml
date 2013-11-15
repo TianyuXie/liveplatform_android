@@ -40,8 +40,8 @@
             android:id="@+id/center_container"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/left_container"
             android:layout_toLeftOf="@+id/right_container"
+            android:layout_toRightOf="@+id/left_container"
             android:orientation="horizontal" >
 
             <EditText
@@ -54,6 +54,7 @@
                 android:layout_weight="0.5"
                 android:inputType="none"
                 android:singleLine="true"
+                android:textColor="@color/edit_normal"
                 android:visibility="gone" />
 
             <EditText
@@ -64,9 +65,9 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_weight="1"
-                android:background="@drawable/live_record_edit_bg"
                 android:inputType="text"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="@color/edit_normal" />
         </LinearLayout>
 
         <LinearLayout
