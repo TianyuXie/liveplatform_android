@@ -139,6 +139,10 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
 
         return true;
     }
+    
+    public HorizontalListView getLiveListView() {
+        return mLiveListView;
+    }
 
     private void setStatus(Status status) {
         mStatus = status;

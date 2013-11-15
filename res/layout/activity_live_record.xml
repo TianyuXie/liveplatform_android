@@ -9,6 +9,29 @@
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
+    <TextView
+        android:id="@+id/text_live"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_marginLeft="20dp"
+        android:text="@string/live"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_record_duration"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/text_live"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/text_live"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/btn_camera_change"
         style="@style/Widget.Button.Transparent"
