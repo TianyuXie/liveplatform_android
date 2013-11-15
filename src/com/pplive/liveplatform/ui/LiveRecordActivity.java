@@ -146,7 +146,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onRecordEnd() {
-        mTextLive.setVisibility(View.VISIBLE);
+        mTextLive.setVisibility(View.GONE);
         mTextRecordDuration.setVisibility(View.GONE);
     }
 

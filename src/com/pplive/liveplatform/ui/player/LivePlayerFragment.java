@@ -1,9 +1,12 @@
 package com.pplive.liveplatform.ui.player;
 
+import java.io.File;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.pplive.media.player.MeetVideoView;
+import android.pplive.media.player.MeetVideoView.DecodeMode;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -14,6 +17,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.sdk.MediaSDK;
 
 public class LivePlayerFragment extends Fragment implements OnTouchListener {
     static final String TAG = "LivePlayerFragment";
@@ -30,6 +34,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        
     }
 
     @Override
@@ -43,10 +48,27 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     }
 
     public void setupPlayer(Intent intent) {
+        // TODO: test code
+        File cacheDirFile = getActivity().getCacheDir();
+        String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
+        String libDir = dataDir + "/lib";
+        String tmpDir = System.getProperty("java.io.tmpdir") + "/ppsdk";
+        File tmpDirFile = new File(tmpDir);
+        tmpDirFile.mkdir();
+
+        MediaSDK.libPath = libDir;
+        MediaSDK.logPath = tmpDir;
+        MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
+        
+        MediaSDK.startP2PEngine("161", "12", "111");
+        
         Uri uri = intent.getData();
         // uri =
         // Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
-        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
+//        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
+        
+        uri = Uri.parse("rtsp://127.0.0.1:5054/record.es?playlink=rtmp%3A%2F%2F192.168.27.253%2Flive%2Fandroid");
+        mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);

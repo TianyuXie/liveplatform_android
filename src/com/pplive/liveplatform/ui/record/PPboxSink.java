@@ -221,8 +221,6 @@ public class PPboxSink {
                         // check if we can instantiate and have a success
                         AudioRecord recorder = new AudioRecord(AudioSource.DEFAULT, sampleRate, channelConfig, audioFormat, bufferSize);
 
-                        Log.d(TAG, "state: " + recorder.getState());
-
                         if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
                             Log.d(TAG, "Supported. buffer size: " + bufferSize);
                             return recorder;
