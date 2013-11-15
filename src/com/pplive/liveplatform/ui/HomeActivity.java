@@ -25,6 +25,8 @@ import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
     static final String TAG = "HomepageActivity";
+    
+    private static final int NORMAL = 701;
 
     private AnimDoor mAnimDoor;
 
@@ -67,30 +69,25 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         mGlobalDetector = new GestureDetector(getApplicationContext(), onGestureListener);
 
-        float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 90);
+        float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 67.5f);
         mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -upPx);
         mStatusUpAnimation.setFillAfter(true);
-        mStatusUpAnimation.setDuration(700);
+        mStatusUpAnimation.setDuration(500);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
-            startActivity(intent);
-        }
-    };
-
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         mFragmentContainer.clearOnSlideListeners();
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
+        Log.d(TAG, "onPause");
+        mStatusButtonWrapper.clearAnimation();
+        mAnimDoor.hide();
         super.onPause();
     }
 
@@ -98,21 +95,20 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
+        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
+        mStatusButton.setClickable(true);
     }
 
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
         // mStatusButton.startLoading("正在加载");
     }
 
     @Override
     protected void onStop() {
-        mStatusButtonWrapper.clearAnimation();
-        mStatusButton.finishLoading();
-        mAnimDoor.hide();
+        Log.d(TAG, "onStop");
         super.onStop();
     }
 
@@ -164,9 +160,9 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            Log.d(TAG, "upAnimationListener: clear");
-            mStatusButton.startLoading();
-            mHandler.sendEmptyMessageDelayed(0, 1200);
+            Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
+            startActivity(intent);
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
 
         @Override
@@ -201,5 +197,33 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     public void doSlideBack() {
         mFragmentContainer.slideBack();
     }
+
+    @Override
+    public void doLoadMore() {
+        mStatusButton.startLoading("正在加载");
+    }
+
+    @Override
+    public void doLoadResult(String text) {
+        mStatusButton.showLoadingResult(text);
+        mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 5000);
+    }
+    
+    @Override
+    public void doLoadFinish() {
+        mStatusButton.finishLoading();
+    }
+    
+    private Handler mStatusButtonHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case NORMAL:
+                mStatusButton.finishLoading();
+                break;
+            }
+        }
+        
+    };
 
 }

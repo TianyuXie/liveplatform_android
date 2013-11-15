@@ -13,15 +13,21 @@
         <attr name="left_src" format="reference" />
         <attr name="right_src" format="reference" />
         <attr name="factor" format="float" />
+        <attr name="time" format="integer" />
+        <attr name="visible" format="boolean" />
+        <attr name="orientation">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
     </declare-styleable>
     <declare-styleable name="SideBar">
         <attr name="anim_show" format="reference" />
         <attr name="anim_hide" format="reference" />
     </declare-styleable>
     <declare-styleable name="SlidableContainer">
-        <attr name="duration" format="integer" />
         <attr name="distance" format="dimension" />
         <attr name="scale_percent" format="float" />
+        <attr name="duration" format="integer" />
     </declare-styleable>
 
 </resources>

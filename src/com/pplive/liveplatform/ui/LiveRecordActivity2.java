@@ -2,45 +2,35 @@ package com.pplive.liveplatform.ui;
 
 import java.io.IOException;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
-import android.graphics.Typeface;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
-import android.text.Html;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
-import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.TextView;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.FooterBar;
-import com.pplive.liveplatform.ui.widget.HorizontalListView;
-import com.pplive.liveplatform.util.TimeUtil;
+import com.pplive.liveplatform.ui.widget.LoadingButton;
 
-public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback, Handler.Callback {
+public class LiveRecordActivity2 extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback {
 
-    private static final String TAG = LiveRecordActivity.class.getSimpleName();
-
-    private static final int WHAT_RECORD_START = 9001;
-    private static final int WHAT_RECORD_END = 9002;
-    private static final int WHAT_RECORD_UPDATE = 9003;
-
-    private Handler mInnerHandler = new Handler(this);
+    private static final String TAG = LiveRecordActivity2.class.getSimpleName();
 
     private SurfaceView mPreview;
     private SurfaceHolder mSurfaceHolder;
@@ -58,11 +48,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private ToggleButton mBtnFlashLight;
 
     private FooterBar mFooterBar;
+    
+    private AnimDoor mAnimDoor;
+    
+    private View mStatusButtonWrapper;
 
-    private HorizontalListView mLiveListView;
+    private Animation mStatusUpAnimation;
 
-    private TextView mTextLive;
-    private TextView mTextRecordDuration;
+    private LoadingButton mStatusButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +63,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        setContentView(R.layout.activity_live_record);
+        setContentView(R.layout.activity_live_record_2);
 
         mPreview = (SurfaceView) findViewById(R.id.preview_view);
         mSurfaceHolder = mPreview.getHolder();
@@ -80,10 +73,17 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mFooterBar = (FooterBar) findViewById(R.id.footer_bar);
-        mLiveListView = mFooterBar.getLiveListView();
-
-        mTextLive = (TextView) findViewById(R.id.text_live);
-        mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
+        
+        mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
+        mAnimDoor.setOpenDoorListener(openDoorListener);
+    
+        mStatusButtonWrapper = findViewById(R.id.wrapper_live_status);
+        mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
+        
+        mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -mAnimDoor.getAnimX() * 1.3f);
+        mStatusUpAnimation.setFillAfter(true);
+        mStatusUpAnimation.setDuration((int)(mAnimDoor.getDuration() * 1.3f));
+        mStatusUpAnimation.setInterpolator(new LinearInterpolator());
     }
 
     @Override
@@ -94,6 +94,25 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         startPreview();
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            Log.d(TAG, "open");
+            mStatusButton.startLoading();
+            mHandler.sendEmptyMessageDelayed(0, 2000);
+        }
+    }
+    
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            mStatusButton.finishLoading();
+            mStatusButtonWrapper.startAnimation(mStatusUpAnimation);
+            mAnimDoor.open();
+        }
+    };
 
     @Override
     protected void onStop() {
@@ -107,57 +126,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-    }
-
-    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
         Log.d(TAG, "onConfigurationChanged");
-    }
-
-    @Override
-    public boolean handleMessage(Message msg) {
-        switch (msg.what) {
-        case WHAT_RECORD_START:
-            onRecordStart();
-            break;
-        case WHAT_RECORD_END:
-            onRecordEnd();
-            break;
-        case WHAT_RECORD_UPDATE:
-            onRecordUpdate(msg.arg1);
-            break;
-        default:
-            break;
-        }
-
-        return false;
-    }
-
-    private void onRecordStart() {
-        mTextLive.setVisibility(View.VISIBLE);
-        mTextRecordDuration.setVisibility(View.VISIBLE);
-
-        Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
-        mInnerHandler.sendMessage(msg);
-    }
-
-    private void onRecordEnd() {
-        mTextLive.setVisibility(View.GONE);
-        mTextRecordDuration.setVisibility(View.GONE);
-    }
-
-    private void onRecordUpdate(int duration) {
-
-        if (mRecording) {
-            mTextRecordDuration.setText(TimeUtil.stringForTime(duration * 1000));
-
-            Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE, duration + 1 /* arg1 */, 0 /* arg2 */);
-            mInnerHandler.sendMessageDelayed(msg, 1000 /* milliseconds */);
-        }
     }
 
     @Override
@@ -235,8 +207,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mMediaRecorder.start();
 
             mRecording = true;
-
-            mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
         }
     }
 
@@ -245,8 +215,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mMediaRecorder.stop();
 
             mRecording = false;
-
-            mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
     }
 
@@ -302,5 +270,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mBtnFlashLight.setChecked(isFlashOn);
 
     }
+    
+    private AnimationListener openDoorListener = new AnimationListener() {
+        
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+        
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+        
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mAnimDoor.hide();
+        }
+    };
 
 }
