@@ -5,7 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -15,7 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.widget.AdvancedGridView;
+import com.pplive.liveplatform.ui.widget.PullToRefreshGridView;
 import com.pplive.liveplatform.vo.program.Program;
 
 public class RefreshContainer extends LinearLayout {
@@ -23,7 +27,7 @@ public class RefreshContainer extends LinearLayout {
 
     private List<Program> mPrograms;
     private ProgramAdapter mAdapter;
-    private AdvancedGridView mGridView;
+    private PullToRefreshGridView mGridView;
 
     public RefreshContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,8 +36,12 @@ public class RefreshContainer extends LinearLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_home_container, this);
-        mGridView = (AdvancedGridView) root.findViewById(R.id.gridview_answer_results);
+        mGridView = (PullToRefreshGridView) root.findViewById(R.id.gridview_answer_results);
+        LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_answer_header);
+        head.addView(mGridView.getView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mGridView.setAdapter(mAdapter);
+        mGridView.setOnRefreshListener(onRefreshListener);
     }
 
     public RefreshContainer(Context context) {
@@ -49,7 +57,26 @@ public class RefreshContainer extends LinearLayout {
         mAdapter.notifyDataSetChanged();
     }
 
-    public void setOnReachBottomListener(AdvancedGridView.OnReachBottomListener l) {
-        mGridView.setOnReachBottomListener(l);
-    }
+    private PullToRefreshGridView.OnRefreshListener onRefreshListener = new PullToRefreshGridView.OnRefreshListener() {
+
+        @Override
+        public void onRefresh() {
+            new AsyncTask<Void, Void, Void>() {
+                protected Void doInBackground(Void... params) {
+                    //TODO
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    mGridView.onRefreshComplete();
+                }
+            }.execute();
+        }
+    };
 }

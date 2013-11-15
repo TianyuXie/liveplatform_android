@@ -44,8 +44,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     public void setupPlayer(Intent intent) {
         Uri uri = intent.getData();
-        // uri =
-        // Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
+        //        uri = Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
         uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);

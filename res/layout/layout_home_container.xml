@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="2dp" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <!-- Can add some extra views here -->
+    <LinearLayout
+        android:id="@+id/layout_answer_header"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
 
-    <com.pplive.liveplatform.ui.widget.AdvancedGridView
+    <com.pplive.liveplatform.ui.widget.PullToRefreshGridView
         android:id="@+id/gridview_answer_results"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layoutAnimation="@anim/layout_grid_inverse_fade"
         android:numColumns="2" />
 
     <!-- Can add some extra views here -->
 
-</merge>
+</LinearLayout>
