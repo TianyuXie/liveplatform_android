@@ -120,7 +120,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
         mLoadingBackgroundRes = loading;
         if (normal > 0 && !mLoading) {
             mBaseButton.setBackgroundResource(normal);
-        } else if (loading > 0 && mLoading){
+        } else if (loading > 0 && mLoading) {
             mBaseButton.setBackgroundResource(loading);
         }
     }
@@ -171,7 +171,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void showLoadingResult(CharSequence text) {
         if (mLoading) {
             mLoading = false;
-            setClickable(true);
+            setClickable(false);
             mStatusTextView.setText(text);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
@@ -184,10 +184,10 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     public void finishLoading() {
         if (mLoading) {
             mLoading = false;
-            setClickable(true);
             mAnimImageView.setVisibility(INVISIBLE);
             mAnimImageView.clearAnimation();
         }
+        setClickable(true);
         mStatusTextView.setText(mNormalText);
         if (mNormalBackgroundRes > 0) {
             mBaseButton.setBackgroundResource(mNormalBackgroundRes);

@@ -38,7 +38,7 @@ public class RefreshContainer extends LinearLayout {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_home_container, this);
         mGridView = (RefreshGridView) root.findViewById(R.id.gridview_home_results);
         LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_pull_header);
-        head.addView(mGridView.getView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        head.addView(mGridView.getHeader(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mGridView.setAdapter(mAdapter);
         mGridView.setOnRefreshListener(onRefreshListener);
@@ -65,7 +65,7 @@ public class RefreshContainer extends LinearLayout {
                 protected Void doInBackground(Void... params) {
                     //TODO
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

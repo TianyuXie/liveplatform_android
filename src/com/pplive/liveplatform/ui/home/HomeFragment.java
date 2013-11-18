@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         task.addTaskCancelListener(getOnTaskCancelListner);
         task.addTaskFailedListener(getTaskFailedListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_FAKE_SERVER2));
+        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_HOME_TEST_URL));
         task.execute(taskContext);
         if (mCallbackListener != null) {
             mCallbackListener.doLoadMore();
