@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
@@ -8,6 +9,29 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/text_live"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_marginLeft="20dp"
+        android:text="@string/live"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_record_duration"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/text_live"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/text_live"
+        android:textSize="16sp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn_camera_change"
@@ -51,5 +75,35 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/live_record_footer_bar_bg"
         android:orientation="vertical" />
+
+    <com.pplive.liveplatform.ui.widget.AnimDoor
+        android:id="@+id/live_animdoor"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="false"
+        live:factor="1.139"
+        live:left_src="@drawable/animdoor_bottom"
+        live:orientation="vertical"
+        live:right_src="@drawable/animdoor_top"
+        live:time="1500"
+        live:visible="true" />
+
+    <LinearLayout
+        android:id="@+id/wrapper_live_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" >
+
+        <com.pplive.liveplatform.ui.widget.LoadingButton
+            android:id="@+id/btn_live_status"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            live:anim_background="@drawable/home_status_btn_anim"
+            live:animation="@anim/home_status_rotate"
+            live:loading_background="@drawable/home_status_btn_rotate"
+            live:normal_background="@drawable/home_status_btn_rotate"
+            live:text="@string/blank"
+            live:textSize="12sp" />
+    </LinearLayout>
 
 </RelativeLayout>

@@ -10,10 +10,14 @@
     <string name="test_back">Back</string>
     <string name="test_share_program">Share</string>
     <string name="test_edit_program">Edit</string>
+    
+    <string name="live"><b>Live</b></string>
 
     <!-- Color -->
     <color name="bottom_bar_bg">#40000000</color>
-    
+    <color name="edit_normal">#ffffff</color>
+    <color name="edit_focused">#19a0ff</color>
+
     <!-- Style -->
     <style name="Widget.Button.Transparent" parent="@android:style/Widget.Button">
         <item name="android:background">@null</item>
@@ -33,6 +37,14 @@
         <item name="android:paddingBottom">10dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textColor">#dedede</item>
+    </style>
+    
+    <style name="Widget.TextView.Shadow" parent="@android:style/Widget.TextView">
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowRadius">15</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
 </resources>

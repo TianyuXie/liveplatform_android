@@ -5,7 +5,7 @@
         android:drawable="@drawable/live_record_btn_live_record_ing_1"
         android:maxLevel="0"/>
     <item
-        android:drawable="@drawable/live_record_btn_live_record_ing_1"
+        android:drawable="@drawable/live_record_btn_live_record_ing_2"
         android:maxLevel="1"/>
 
 </level-list>

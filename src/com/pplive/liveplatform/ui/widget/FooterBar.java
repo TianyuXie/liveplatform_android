@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.util.ViewUtil;
 
-public class FooterBar extends LinearLayout implements OnClickListener, OnTouchListener, OnDateTimeChangedListener {
+public class FooterBar extends LinearLayout implements OnClickListener, OnTouchListener, OnFocusChangeListener, OnDateTimeChangedListener {
 
     private static final String TAG = FooterBar.class.getSimpleName();
 
@@ -69,6 +70,8 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
         mBtnLiveComplete.setOnClickListener(this);
 
         mEditLiveSchedule.setOnTouchListener(this);
+        mEditLiveSchedule.setOnFocusChangeListener(this);
+        mEditLiveTitle.setOnFocusChangeListener(this);
 
         mDateTimePicker.setOnDateTimeChanged(this);
 
@@ -138,6 +141,28 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
         ViewUtil.showOrHide(mDateTimePicker);
 
         return true;
+    }
+    
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        
+        int color;
+        switch (v.getId()) {
+        case R.id.edit_live_schedule:
+            color = getResources().getColor(hasFocus ? R.color.edit_focused : R.color.edit_normal);
+            mEditLiveSchedule.setTextColor(color);
+            break;
+        case R.id.edit_live_title:
+            color = getResources().getColor(hasFocus ? R.color.edit_focused : R.color.edit_normal);
+            mEditLiveTitle.setTextColor(color);
+            break;
+        default:
+            break;
+        }
+    }
+    
+    public HorizontalListView getLiveListView() {
+        return mLiveListView;
     }
 
     private void setStatus(Status status) {
