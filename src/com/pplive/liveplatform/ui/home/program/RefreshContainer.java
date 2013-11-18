@@ -19,7 +19,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.widget.PullToRefreshGridView;
+import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.vo.program.Program;
 
 public class RefreshContainer extends LinearLayout {
@@ -27,7 +27,7 @@ public class RefreshContainer extends LinearLayout {
 
     private List<Program> mPrograms;
     private ProgramAdapter mAdapter;
-    private PullToRefreshGridView mGridView;
+    private RefreshGridView mGridView;
 
     public RefreshContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -36,8 +36,8 @@ public class RefreshContainer extends LinearLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_home_container, this);
-        mGridView = (PullToRefreshGridView) root.findViewById(R.id.gridview_answer_results);
-        LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_answer_header);
+        mGridView = (RefreshGridView) root.findViewById(R.id.gridview_home_results);
+        LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_pull_header);
         head.addView(mGridView.getView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mGridView.setAdapter(mAdapter);
@@ -57,7 +57,7 @@ public class RefreshContainer extends LinearLayout {
         mAdapter.notifyDataSetChanged();
     }
 
-    private PullToRefreshGridView.OnRefreshListener onRefreshListener = new PullToRefreshGridView.OnRefreshListener() {
+    private RefreshGridView.OnRefreshListener onRefreshListener = new RefreshGridView.OnRefreshListener() {
 
         @Override
         public void onRefresh() {

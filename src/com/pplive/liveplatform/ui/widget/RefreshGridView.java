@@ -16,7 +16,7 @@ import android.widget.ProgressBar;
 
 import com.pplive.liveplatform.R;
 
-public class PullToRefreshGridView extends GridView implements OnScrollListener {
+public class RefreshGridView extends GridView implements OnScrollListener {
     static final String TAG = "PullToRefreshGridView";
 
     private final static int STATUS_RELEASE_TO_REFRESH = 800;
@@ -47,11 +47,11 @@ public class PullToRefreshGridView extends GridView implements OnScrollListener 
 
     private OnRefreshListener refreshListener;
 
-    public PullToRefreshGridView(Context context) {
+    public RefreshGridView(Context context) {
         this(context, null);
     }
 
-    public PullToRefreshGridView(Context context, AttributeSet attrs) {
+    public RefreshGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mGestureDetector = new GestureDetector(getContext(), onGestureListener);
         mStatus = STATUS_DONE;
@@ -65,9 +65,9 @@ public class PullToRefreshGridView extends GridView implements OnScrollListener 
 
     private void init(Context context) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        headView = (LinearLayout) inflater.inflate(R.layout.layout_home_container_header, null);
+        headView = (LinearLayout) inflater.inflate(R.layout.layout_home_pull_header, null);
 
-        progressBar = (ProgressBar) headView.findViewById(R.id.head_progressBar);
+        progressBar = (ProgressBar) headView.findViewById(R.id.progress_header);
 
         //计算head的高宽
         measureView(headView);
@@ -201,11 +201,11 @@ public class PullToRefreshGridView extends GridView implements OnScrollListener 
         switch (mStatus) {
         case STATUS_RELEASE_TO_REFRESH:
             Log.d(TAG, "STATUS_RELEASE_TO_REFRESH");
-            progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.INVISIBLE);
             break;
         case STATUS_PULL_TO_REFRESH:
             Log.d(TAG, "STATUS_PULL_TO_REFRESH");
-            progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.INVISIBLE);
             break;
         case STATUS_REFRESHING:
             Log.d(TAG, "STATUS_REFRESHING");
@@ -215,7 +215,7 @@ public class PullToRefreshGridView extends GridView implements OnScrollListener 
         case STATUS_DONE:
             Log.v(TAG, "STATUS_DONE");
             headView.setPadding(0, -headContentHeight, 0, 0);
-            progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.INVISIBLE);
             break;
         }
     }

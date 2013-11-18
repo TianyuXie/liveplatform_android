@@ -5,18 +5,16 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:id="@+id/layout_answer_header"
+        android:id="@+id/layout_pull_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical" />
 
-    <com.pplive.liveplatform.ui.widget.PullToRefreshGridView
-        android:id="@+id/gridview_answer_results"
+    <com.pplive.liveplatform.ui.widget.RefreshGridView
+        android:id="@+id/gridview_home_results"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layoutAnimation="@anim/layout_grid_inverse_fade"
         android:numColumns="2" />
-
-    <!-- Can add some extra views here -->
 
 </LinearLayout>
