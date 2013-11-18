@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.record;
 
+import com.pplive.liveplatform.Constant;
+
 import android.content.Context;
 import android.hardware.Camera;
 
@@ -16,7 +18,7 @@ public class LiveMediaRecoder {
         //        String url = "rtmp://192.168.27.253/live/android";
         //        String url = "/sdcard/pplog/a.flv";
 
-        String url = "rtmp://10.0.0.200/live/android";
+        String url = Constant.TEST_PUSH_URL;
 
         mCapture.open(url);
     }

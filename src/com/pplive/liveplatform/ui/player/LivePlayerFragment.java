@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
+import com.pplive.liveplatform.Constant;
 import com.pplive.liveplatform.R;
 import com.pplive.sdk.MediaSDK;
 
@@ -34,7 +35,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-        
+
     }
 
     @Override
@@ -59,14 +60,14 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         MediaSDK.libPath = libDir;
         MediaSDK.logPath = tmpDir;
         MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
-        
+
         MediaSDK.startP2PEngine("161", "12", "111");
-        
+
         Uri uri = intent.getData();
         //        uri = Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
-//        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
-        
-        uri = Uri.parse("rtsp://127.0.0.1:5054/record.es?playlink=rtmp%3A%2F%2F192.168.27.253%2Flive%2Fandroid");
+        //        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
+
+        uri = Uri.parse(Constant.TEST_PLAY_URL);
         mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);
