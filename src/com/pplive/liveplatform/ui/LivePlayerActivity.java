@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -22,7 +23,8 @@ public class LivePlayerActivity extends FragmentActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_live_player);
-        mLivePlayerFragment = (LivePlayerFragment) getSupportFragmentManager().findFragmentById(R.id.live_player_fragment);
+        mLivePlayerFragment = new LivePlayerFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
     }
 
     @Override
@@ -54,5 +56,11 @@ public class LivePlayerActivity extends FragmentActivity {
     protected void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        Log.d(TAG, newConfig.orientation + "");
+        super.onConfigurationChanged(newConfig);
     }
 }

@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <fragment
-        android:id="@+id/live_player_fragment"
-        android:name="com.pplive.liveplatform.ui.player.LivePlayerFragment"
+    <LinearLayout
+        android:id="@+id/layout_player_fragment"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
-    </fragment>
+        android:layout_height="300dp"
+        android:layout_below="@+id/layout_player_topbar"
+        android:orientation="vertical" >
+    </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@id/layout_player_topbar"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/dim_gray"
+        android:orientation="horizontal" >
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_player_dialog"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/layout_player_fragment"
+        android:background="@color/dim_gray"
+        android:orientation="vertical" >
+    </LinearLayout>
+
+</RelativeLayout>
