@@ -110,7 +110,7 @@ public class PPboxStream {
             mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
+//        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
 
         mSample = new MediaSDK.Sample();
         mSample.itrack = itrack;
@@ -156,7 +156,7 @@ public class PPboxStream {
             mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
+//        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
 
         mSample = new MediaSDK.Sample();
         mSample.itrack = itrack;

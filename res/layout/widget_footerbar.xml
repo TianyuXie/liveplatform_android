@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableStart="@drawable/live_record_btn_live_home" />
+                android:drawableRight="@drawable/live_record_btn_live_home" />
 
             <Button
                 android:id="@+id/btn_live_back"
@@ -32,7 +32,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableStart="@drawable/live_record_btn_live_back"
+                android:drawableRight="@drawable/live_record_btn_live_back"
                 android:visibility="gone" />
         </LinearLayout>
 
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableStart="@drawable/live_record_btn_live_share" />
+                android:drawableRight="@drawable/live_record_btn_live_share" />
 
             <Button
                 android:id="@+id/btn_live_prelive"
@@ -93,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableStart="@drawable/live_record_btn_live_prelive" />
+                android:drawableRight="@drawable/live_record_btn_live_prelive" />
 
             <Button
                 android:id="@+id/btn_live_complete"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableStart="@drawable/live_record_btn_live_complete"
+                android:drawableRight="@drawable/live_record_btn_live_complete"
                 android:visibility="gone" />
 
             <Button
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableStart="@drawable/live_record_btn_live_add"
+                android:drawableRight="@drawable/live_record_btn_live_add"
                 android:visibility="gone" />
         </LinearLayout>
     </RelativeLayout>

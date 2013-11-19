@@ -43,7 +43,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:drawableStart="@drawable/live_record_btn_camera_change"
+        android:drawableRight="@drawable/live_record_btn_camera_change"
         android:onClick="onClick" />
 
     <ToggleButton
@@ -54,7 +54,7 @@
         android:layout_alignTop="@+id/btn_camera_change"
         android:layout_toLeftOf="@+id/btn_camera_change"
         android:checked="false"
-        android:drawableStart="@drawable/live_record_btn_flash_light"
+        android:drawableRight="@drawable/live_record_btn_flash_light"
         android:onClick="onClick" />
 
     <ToggleButton
@@ -65,7 +65,7 @@
         android:layout_alignRight="@+id/btn_camera_change"
         android:layout_centerVertical="true"
         android:checked="false"
-        android:drawableStart="@drawable/live_record_btn_live_record"
+        android:drawableRight="@drawable/live_record_btn_live_record"
         android:onClick="onClick" />
 
     <com.pplive.liveplatform.ui.widget.FooterBar
