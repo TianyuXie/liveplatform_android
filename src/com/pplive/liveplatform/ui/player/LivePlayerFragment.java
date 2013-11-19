@@ -16,7 +16,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
-import com.pplive.liveplatform.Constant;
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.sdk.MediaSDK;
 
@@ -67,7 +67,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         //        uri = Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
         //        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
 
-        uri = Uri.parse(Constant.TEST_PLAY_URL);
+        uri = Uri.parse(Constants.TEST_PLAY_URL);
         mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);

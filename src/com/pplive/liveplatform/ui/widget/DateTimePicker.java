@@ -2,8 +2,10 @@ package com.pplive.liveplatform.ui.widget;
 
 import java.util.Calendar;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Context;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.DatePicker;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 
 public class DateTimePicker extends LinearLayout {
@@ -62,6 +65,20 @@ public class DateTimePicker extends LinearLayout {
     private void onDateTimeChanged() {
         if (null != mOnDateTimeChangedListener) {
             mOnDateTimeChangedListener.onDateTimeChanged(getYear(), getMonth(), getDayOfMonth(), getCurrentHour(), getCurrentMinute());
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public void setMaxDate(long maxDate) {
+        if (Constants.LARGER_THAN_OR_EQUAL_HONEYCOMB) {
+            mDatePicker.setMaxDate(maxDate);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    public void setMinDate(long minDate) {
+        if (Constants.LARGER_THAN_OR_EQUAL_HONEYCOMB) {
+            mDatePicker.setMinDate(minDate);
         }
     }
 

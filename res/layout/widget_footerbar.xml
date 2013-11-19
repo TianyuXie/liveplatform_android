@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
-                android:drawableRight="@drawable/live_record_btn_live_home" />
+                android:drawableRight="@drawable/live_record_btn_live_back" />
 
             <Button
                 android:id="@+id/btn_live_back"

@@ -1,5 +1,9 @@
 package com.pplive.liveplatform.ui.widget;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+
 import android.app.Service;
 import android.content.Context;
 import android.util.AttributeSet;
@@ -63,6 +67,15 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
         mBtnLiveAdd = (Button) findViewById(R.id.btn_live_add);
 
         mDateTimePicker = (DateTimePicker) findViewById(R.id.datetime_picker);
+        
+        Calendar maxDate = Calendar.getInstance();
+        maxDate.add(Calendar.DATE, 7);
+        mDateTimePicker.setMaxDate(maxDate.getTimeInMillis());
+        
+        Calendar minDate = Calendar.getInstance();
+        minDate.add(Calendar.DATE, -1);
+        mDateTimePicker.setMinDate(minDate.getTimeInMillis());
+        
         mLiveListView = (HorizontalListView) findViewById(R.id.live_listview);
 
         mBtnLivePrelive.setOnClickListener(this);
