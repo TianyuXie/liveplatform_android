@@ -16,16 +16,18 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 
-import com.pplive.liveplatform.Constant;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.util.ConfigUtil;
+import com.pplive.liveplatform.util.Keys;
 import com.pplive.sdk.MediaSDK;
+import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements OnTouchListener {
     static final String TAG = "LivePlayerFragment";
 
     private MeetVideoView mVideoView;
 
-    private LivePlayerController mController;
+    //    private LivePlayerController mController;
 
     private OnCompletionListener mOnCompletionListener;
 
@@ -35,6 +37,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        BreakpadUtil.registerBreakpad(getActivity().getCacheDir());
 
     }
 
@@ -42,7 +45,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
-        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
+        //        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         layout.setOnTouchListener(this);
         return layout;
@@ -53,7 +56,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         File cacheDirFile = getActivity().getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
         String libDir = dataDir + "/lib";
-        String tmpDir = System.getProperty("java.io.tmpdir") + "/ppsdk";
+        //        String tmpDir = System.getProperty("java.io.tmpdir") + "/ppsdk";
+        String tmpDir = cacheDirFile.getAbsolutePath();
         File tmpDirFile = new File(tmpDir);
         tmpDirFile.mkdir();
 
@@ -64,16 +68,13 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         MediaSDK.startP2PEngine("161", "12", "111");
 
         Uri uri = intent.getData();
-        //        uri = Uri.parse("http://111.1.16.24/youku/69785C2C54A3E71A67BB168D6/0300080E0A51091C3469AA05CF07DDCC5586BD-6A9D-9FDD-5D28-E0EC7596689D.mp4");
-        //        uri = Uri.parse("file:///mnt/sdcard/external_sd/movies/test1.mp4");
-
-        uri = Uri.parse(Constant.TEST_PLAY_URL);
+        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
         mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);
         mVideoView.setOnErrorListener(mErrorListener);
-        mController.setMediaPlayer(mVideoView);
+        //        mController.setMediaPlayer(mVideoView);
     }
 
     @Override
@@ -113,7 +114,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         @Override
         public void onPrepared() {
             mVideoView.start();
-            mController.show();
+            //            mController.show();
         }
     };
 
@@ -170,7 +171,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d(TAG, "onSingleTap");
-            mController.switchVisibility();
+            //            mController.switchVisibility();
             return true;
         }
 

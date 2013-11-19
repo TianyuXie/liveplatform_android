@@ -36,4 +36,7 @@
     <color name="searchbar_list_select">#FF001E33</color>
     <color name="searchbar_list_divider">#FF080808</color>
 
+    <!-- Player -->
+    <color name="player_title_bar">#55545454</color>
+
 </resources>

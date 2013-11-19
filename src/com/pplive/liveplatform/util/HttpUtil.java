@@ -34,7 +34,7 @@ public class HttpUtil {
             HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
             HttpProtocolParams.setContentCharset(params, CHARSET);
             HttpProtocolParams.setUseExpectContinue(params, true);
-            HttpProtocolParams.setUserAgent(params, ConfigUtil.getString(KeyUtil.HTTP_USER_AGENT));
+            HttpProtocolParams.setUserAgent(params, ConfigUtil.getString(Keys.HTTP_USER_AGENT));
             ConnManagerParams.setTimeout(params, 2000);
             HttpConnectionParams.setConnectionTimeout(params, 10000);
             HttpConnectionParams.setSoTimeout(params, 20000);
@@ -51,7 +51,7 @@ public class HttpUtil {
 
     public static HttpGet getHttpGetRequest(String url, String mime) {
         HttpGet request = new HttpGet(url);
-        request.addHeader("User-Agent", ConfigUtil.getString(KeyUtil.HTTP_USER_AGENT));
+        request.addHeader("User-Agent", ConfigUtil.getString(Keys.HTTP_USER_AGENT));
         request.addHeader("Accept", mime);
         request.addHeader("Connection", "Keep-Alive");
         return request;
