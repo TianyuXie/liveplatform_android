@@ -16,7 +16,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@color/player_title_bar" >
+        android:background="@color/player_title_bar"
+        android:visibility="gone" >
 
         <Button
             android:id="@+id/btn_player_back"
@@ -51,7 +52,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/player_title_bar" >
+        android:background="@color/player_title_bar"
+        android:visibility="gone" >
 
         <Button
             android:id="@+id/btn_player_share"
@@ -70,7 +72,8 @@
         android:layout_alignParentLeft="true"
         android:layout_marginLeft="10dp"
         android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <ImageView
             android:id="@+id/image_player_icon"
