@@ -68,13 +68,11 @@
         android:drawableRight="@drawable/live_record_btn_live_record"
         android:onClick="onClick" />
 
-    <com.pplive.liveplatform.ui.widget.FooterBar
-        android:id="@+id/footer_bar"
+    <fragment        android:id="@+id/footer_bar"
+        android:name="com.pplive.liveplatform.ui.record.FooterBarFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/live_record_footer_bar_bg"
-        android:orientation="vertical" />
+        android:layout_alignParentBottom="true" />
 
     <com.pplive.liveplatform.ui.widget.AnimDoor
         android:id="@+id/live_animdoor"

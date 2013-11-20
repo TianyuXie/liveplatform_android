@@ -1,12 +1,9 @@
-package com.pplive.liveplatform.ui.widget;
+package com.pplive.liveplatform.ui.record;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
-import android.app.Service;
-import android.content.Context;
-import android.util.AttributeSet;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,68 +11,71 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
+import com.pplive.liveplatform.ui.widget.HorizontalListView;
 import com.pplive.liveplatform.util.ViewUtil;
 
-public class FooterBar extends LinearLayout implements OnClickListener, OnTouchListener, OnFocusChangeListener, OnDateTimeChangedListener {
+public class FooterBarFragment extends Fragment implements OnClickListener, OnTouchListener, OnFocusChangeListener, OnDateTimeChangedListener {
 
-    private static final String TAG = FooterBar.class.getSimpleName();
+    private static final String TAG = FooterBarFragment.class.getSimpleName();
 
-    private Button mBtnLiveHome;
-    private Button mBtnLiveBack;
+    private ImageButton mBtnLiveHome;
+    private ImageButton mBtnLiveBack;
 
     private EditText mEditLiveSchedule;
     private EditText mEditLiveTitle;
 
-    private Button mBtnLiveShare;
-    private Button mBtnLivePrelive;
+    private ImageButton mBtnLiveShare;
+    private ImageButton mBtnLivePrelive;
 
-    private Button mBtnLiveComplete;
-    private Button mBtnLiveAdd;
+    private ImageButton mBtnLiveComplete;
+    private ImageButton mBtnLiveAdd;
 
     private DateTimePicker mDateTimePicker;
     private HorizontalListView mLiveListView;
 
-    private FooterBar.Status mStatus = Status.HOME;
+    private FooterBarFragment.Status mStatus = Status.HOME;
 
-    public FooterBar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.widget_footerbar, this);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
-        mBtnLiveHome = (Button) findViewById(R.id.btn_live_home);
-        mBtnLiveBack = (Button) findViewById(R.id.btn_live_back);
+        View layout = inflater.inflate(R.layout.layout_footerbar_fragment, container, false);
 
-        mEditLiveSchedule = (EditText) findViewById(R.id.edit_live_schedule);
-        mEditLiveTitle = (EditText) findViewById(R.id.edit_live_title);
+        mBtnLiveHome = (ImageButton) layout.findViewById(R.id.btn_live_home);
+        mBtnLiveBack = (ImageButton) layout.findViewById(R.id.btn_live_back);
 
-        mBtnLiveShare = (Button) findViewById(R.id.btn_live_share);
-        mBtnLivePrelive = (Button) findViewById(R.id.btn_live_prelive);
+        mEditLiveSchedule = (EditText) layout.findViewById(R.id.edit_live_schedule);
+        mEditLiveTitle = (EditText) layout.findViewById(R.id.edit_live_title);
 
-        mBtnLiveComplete = (Button) findViewById(R.id.btn_live_complete);
-        mBtnLiveAdd = (Button) findViewById(R.id.btn_live_add);
+        mBtnLiveShare = (ImageButton) layout.findViewById(R.id.btn_live_share);
+        mBtnLivePrelive = (ImageButton) layout.findViewById(R.id.btn_live_prelive);
 
-        mDateTimePicker = (DateTimePicker) findViewById(R.id.datetime_picker);
-        
+        mBtnLiveComplete = (ImageButton) layout.findViewById(R.id.btn_live_complete);
+        mBtnLiveAdd = (ImageButton) layout.findViewById(R.id.btn_live_add);
+
+        mDateTimePicker = (DateTimePicker) layout.findViewById(R.id.datetime_picker);
+
         Calendar maxDate = Calendar.getInstance();
         maxDate.add(Calendar.DATE, 7);
         mDateTimePicker.setMaxDate(maxDate.getTimeInMillis());
-        
+
         Calendar minDate = Calendar.getInstance();
         mDateTimePicker.setMinDate(minDate.getTimeInMillis() - 1000);
-        
-        mLiveListView = (HorizontalListView) findViewById(R.id.live_listview);
+
+        mLiveListView = (HorizontalListView) layout.findViewById(R.id.live_listview);
 
         mBtnLivePrelive.setOnClickListener(this);
         mBtnLiveBack.setOnClickListener(this);
@@ -88,6 +88,8 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
         mDateTimePicker.setOnDateTimeChanged(this);
 
         setStatus(Status.HOME);
+
+        return layout;
     }
 
     @Override
@@ -119,11 +121,11 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
 
         mEditLiveSchedule.requestFocus();
     }
-    
+
     private void onClickBtnLiveBack(View v) {
         setStatus(Status.HOME);
     }
-    
+
     private void onClickBtnLiveComplete(View v) {
         setStatus(Status.VIEW);
     }
@@ -154,10 +156,10 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
 
         return true;
     }
-    
+
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-        
+
         int color;
         switch (v.getId()) {
         case R.id.edit_live_schedule:
@@ -172,7 +174,7 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
             break;
         }
     }
-    
+
     public HorizontalListView getLiveListView() {
         return mLiveListView;
     }
