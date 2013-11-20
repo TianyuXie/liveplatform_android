@@ -1,9 +1,9 @@
 package com.pplive.liveplatform;
 
+import android.app.Application;
+
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-
-import android.app.Application;
 
 public class LiveApplication extends Application {
 

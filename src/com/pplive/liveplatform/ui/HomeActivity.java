@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
@@ -45,6 +46,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_home);
 
         mFragmentContainer = (SlidableContainer) findViewById(R.id.layout_home_fragment_container);

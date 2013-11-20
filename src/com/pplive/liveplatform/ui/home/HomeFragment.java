@@ -29,7 +29,7 @@ import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.util.ConfigUtil;
-import com.pplive.liveplatform.util.KeyUtil;
+import com.pplive.liveplatform.util.Keys;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
     static final String TAG = "HomeFragment";
@@ -84,7 +84,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         task.addTaskCancelListener(getOnTaskCancelListner);
         task.addTaskFailedListener(getTaskFailedListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(KeyUtil.HTTP_HOME_TEST_URL));
+        taskContext.set(GetTask.KEY_URL, ConfigUtil.getString(Keys.HTTP_HOME_TEST_URL));
         task.execute(taskContext);
         if (mCallbackListener != null) {
             mCallbackListener.doLoadMore();

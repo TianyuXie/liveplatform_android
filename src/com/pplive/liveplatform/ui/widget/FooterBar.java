@@ -73,8 +73,7 @@ public class FooterBar extends LinearLayout implements OnClickListener, OnTouchL
         mDateTimePicker.setMaxDate(maxDate.getTimeInMillis());
         
         Calendar minDate = Calendar.getInstance();
-        minDate.add(Calendar.DATE, -1);
-        mDateTimePicker.setMinDate(minDate.getTimeInMillis());
+        mDateTimePicker.setMinDate(minDate.getTimeInMillis() - 1000);
         
         mLiveListView = (HorizontalListView) findViewById(R.id.live_listview);
 

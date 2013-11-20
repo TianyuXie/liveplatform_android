@@ -23,4 +23,13 @@ public class DisplayUtil {
         DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
         return Math.max(dm.widthPixels, dm.heightPixels);
     }
+
+    public static boolean isLandscape(Context context) {
+        DisplayMetrics dm = context.getApplicationContext().getResources().getDisplayMetrics();
+        return dm.widthPixels > dm.heightPixels;
+    }
+
+    public static boolean isPortrait(Context context) {
+        return !isLandscape(context);
+    }
 }
