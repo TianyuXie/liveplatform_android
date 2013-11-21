@@ -27,8 +27,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     private MeetVideoView mVideoView;
 
-    private View mTitleBarView;
-
     private View mBottomBarView;
 
     private View mUserView;
@@ -57,7 +55,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         //        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
-        mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mUserView = layout.findViewById(R.id.layout_player_user);
         layout.setOnTouchListener(this);
@@ -177,17 +174,16 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     public void setLayout(boolean isFull) {
         mIsFull = isFull;
-        if (isFull) {
-            showBars();
-        } else {
-            hideBars();
-        }
+//        if (isFull) {
+//            showBars();
+//        } else {
+//            hideBars();
+//        }
     }
 
     private void hideBars() {
         if (mShowBar) {
             mShowBar = false;
-            mTitleBarView.setVisibility(View.GONE);
             mBottomBarView.setVisibility(View.GONE);
             mUserView.setVisibility(View.GONE);
         }
@@ -196,7 +192,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     private void showBars() {
         if (!mShowBar) {
             mShowBar = true;
-            mTitleBarView.setVisibility(View.VISIBLE);
             mBottomBarView.setVisibility(View.VISIBLE);
             mUserView.setVisibility(View.VISIBLE);
         }
@@ -211,13 +206,13 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d(TAG, "onSingleTap");
-            if (mIsFull) {
-                if (mShowBar) {
-                    hideBars();
-                } else {
-                    showBars();
-                }
-            }
+            //            if (mIsFull) {
+            //                if (mShowBar) {
+            //                    hideBars();
+            //                } else {
+            //                    showBars();
+            //                }
+            //            }
             return true;
         }
 

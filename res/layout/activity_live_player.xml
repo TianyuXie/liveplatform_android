@@ -8,18 +8,8 @@
         android:id="@+id/layout_player_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/layout_player_topbar"
-        android:orientation="vertical" >
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@id/layout_player_topbar"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
         android:layout_alignParentTop="true"
-        android:background="@color/dim_gray"
-        android:orientation="horizontal"
-        android:visibility="gone" >
+        android:orientation="vertical" >
     </LinearLayout>
 
     <LinearLayout
@@ -32,37 +22,13 @@
         android:visibility="gone" >
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/layout_player_out_user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/layout_player_topbar"
-        android:layout_marginLeft="10dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone" >
-
-        <ImageView
-            android:id="@+id/image_player_out_icon"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:contentDescription="@null"
-            android:src="@color/red" />
-
-        <TextView
-            android:id="@+id/textview_player_out_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/test_player_name"
-            android:textColor="@color/white"
-            android:textSize="13sp" />
-    </LinearLayout>
-
-    <Button
+    <ToggleButton
         android:id="@+id/btn_player_mode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/green" />
+        style="@style/togglebutton_notext"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/player_btn_land_port" />
 
 </RelativeLayout>

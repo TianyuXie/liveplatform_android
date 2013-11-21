@@ -13,9 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
@@ -30,11 +30,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mFragmentContainer;
 
-    private View mTopBarView;
-
     private View mDialogView;
 
-    private View mOutUserView;
+    private ToggleButton mModeBtn;
 
     private SensorManager mSensorManager;
 
@@ -58,26 +56,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_live_player);
 
-        /* init fields */
-        mFragmentContainer = findViewById(R.id.layout_player_fragment);
-        mTopBarView = findViewById(R.id.layout_player_topbar);
-        mDialogView = findViewById(R.id.layout_player_dialog);
-        mOutUserView = findViewById(R.id.layout_player_out_user);
-        Button modeButton = (Button) findViewById(R.id.btn_player_mode);
-        modeButton.setOnClickListener(onModeBtnClickListener);
+        /* init fragment */
         mLivePlayerFragment = new LivePlayerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
-        float width = DisplayUtil.getWidthPx(this);
-        float height = DisplayUtil.getHeightPx(this);
-        mHalfScreenHeight = (int) (width * width / height);
+        mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
 
         /* init views */
+        mFragmentContainer = findViewById(R.id.layout_player_fragment);
+        mDialogView = findViewById(R.id.layout_player_dialog);
+        mModeBtn = (ToggleButton) findViewById(R.id.btn_player_mode);
+        mModeBtn.setOnClickListener(onModeBtnClickListener);
         setLayout(DisplayUtil.isLandscape(this), true);
-        ((RelativeLayout.LayoutParams) mOutUserView.getLayoutParams()).topMargin = mHalfScreenHeight - DisplayUtil.dp2px(this, 10);
 
         /* init others */
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -127,15 +120,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
         if (mIsFull) {
             lp.height = LayoutParams.MATCH_PARENT;
-            mTopBarView.setVisibility(View.GONE);
+            mModeBtn.setChecked(true);
             mDialogView.setVisibility(View.GONE);
-            mOutUserView.setVisibility(View.GONE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
             lp.height = mHalfScreenHeight;
-            mTopBarView.setVisibility(View.VISIBLE);
+            mModeBtn.setChecked(false);
             mDialogView.setVisibility(View.VISIBLE);
-            mOutUserView.setVisibility(View.VISIBLE);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         mFragmentContainer.requestLayout();
