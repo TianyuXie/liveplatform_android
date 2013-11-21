@@ -17,18 +17,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/layout_player_fragment"
-        android:background="@color/dim_gray"
+        android:background="@color/black"
         android:orientation="vertical"
         android:visibility="gone" >
     </LinearLayout>
-
-    <ToggleButton
-        android:id="@+id/btn_player_mode"
-        style="@style/togglebutton_notext"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:background="@drawable/player_btn_land_port" />
 
 </RelativeLayout>

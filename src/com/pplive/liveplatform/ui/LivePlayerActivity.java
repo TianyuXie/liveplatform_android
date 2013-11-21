@@ -15,7 +15,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
@@ -31,8 +30,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private View mFragmentContainer;
 
     private View mDialogView;
-
-    private ToggleButton mModeBtn;
 
     private SensorManager mSensorManager;
 
@@ -68,8 +65,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         /* init views */
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mDialogView = findViewById(R.id.layout_player_dialog);
-        mModeBtn = (ToggleButton) findViewById(R.id.btn_player_mode);
-        mModeBtn.setOnClickListener(onModeBtnClickListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -83,6 +78,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setupPlayer(getIntent());
+        mLivePlayerFragment.setOnModeBtnClickListener(onModeBtnClickListener);
     }
 
     @Override
@@ -108,6 +104,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
+        mLivePlayerFragment.setOnModeBtnClickListener(null);
         super.onStop();
     }
 
@@ -120,12 +117,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
         if (mIsFull) {
             lp.height = LayoutParams.MATCH_PARENT;
-            mModeBtn.setChecked(true);
             mDialogView.setVisibility(View.GONE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
             lp.height = mHalfScreenHeight;
-            mModeBtn.setChecked(false);
             mDialogView.setVisibility(View.VISIBLE);
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
