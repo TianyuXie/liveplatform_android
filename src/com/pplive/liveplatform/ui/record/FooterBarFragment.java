@@ -2,6 +2,7 @@ package com.pplive.liveplatform.ui.record;
 
 import java.util.Calendar;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -26,6 +26,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     private static final String TAG = FooterBarFragment.class.getSimpleName();
 
+    private Activity mAttachedActivity;
+    
     private ImageButton mBtnLiveHome;
     private ImageButton mBtnLiveBack;
 
@@ -36,13 +38,28 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private ImageButton mBtnLivePrelive;
 
     private ImageButton mBtnLiveComplete;
-    private ImageButton mBtnLiveAdd;
+    private ImageButton mBtnAddPrelive;
 
     private DateTimePicker mDateTimePicker;
     private HorizontalListView mLiveListView;
-
-    private FooterBarFragment.Status mStatus = Status.HOME;
-
+    
+    private Mode mStatus = Mode.HOME;
+    
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        Log.d(TAG, "onAttach");
+        
+        mAttachedActivity = activity;
+    }
+    
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        
+        mAttachedActivity = null;
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,7 +81,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         mBtnLivePrelive = (ImageButton) layout.findViewById(R.id.btn_live_prelive);
 
         mBtnLiveComplete = (ImageButton) layout.findViewById(R.id.btn_live_complete);
-        mBtnLiveAdd = (ImageButton) layout.findViewById(R.id.btn_live_add);
+        mBtnAddPrelive = (ImageButton) layout.findViewById(R.id.btn_add_prelive);
 
         mDateTimePicker = (DateTimePicker) layout.findViewById(R.id.datetime_picker);
 
@@ -78,7 +95,9 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         mLiveListView = (HorizontalListView) layout.findViewById(R.id.live_listview);
 
         mBtnLivePrelive.setOnClickListener(this);
+        mBtnLiveHome.setOnClickListener(this);
         mBtnLiveBack.setOnClickListener(this);
+        mBtnAddPrelive.setOnClickListener(this);
         mBtnLiveComplete.setOnClickListener(this);
 
         mEditLiveSchedule.setOnTouchListener(this);
@@ -87,7 +106,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         mDateTimePicker.setOnDateTimeChanged(this);
 
-        setStatus(Status.HOME);
+        setStatus(Mode.HOME);
 
         return layout;
     }
@@ -105,8 +124,14 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         case R.id.btn_live_prelive:
             onClickBtnLivePrelive(v);
             break;
+        case R.id.btn_live_home:
+            onClickBtnLiveHome(v);
+            break;
         case R.id.btn_live_back:
             onClickBtnLiveBack(v);
+            break;
+        case R.id.btn_add_prelive:
+            onClickBtnAddPrelive(v);
             break;
         case R.id.btn_live_complete:
             onClickBtnLiveComplete(v);
@@ -117,17 +142,28 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     }
 
     private void onClickBtnLivePrelive(View v) {
-        setStatus(Status.EDIT);
+        setStatus(Mode.VIEW);
 
         mEditLiveSchedule.requestFocus();
     }
+    
+    private void onClickBtnLiveHome(View v) {
+        
+        if (null != mAttachedActivity) {
+            mAttachedActivity.finish();
+        }
+    }
 
     private void onClickBtnLiveBack(View v) {
-        setStatus(Status.HOME);
+        setStatus(Mode.HOME);
+    }
+    
+    private void onClickBtnAddPrelive(View v) {
+        setStatus(Mode.EDIT);
     }
 
     private void onClickBtnLiveComplete(View v) {
-        setStatus(Status.VIEW);
+        setStatus(Mode.VIEW);
     }
 
     @Override
@@ -179,7 +215,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         return mLiveListView;
     }
 
-    private void setStatus(Status status) {
+    private void setStatus(Mode status) {
         mStatus = status;
 
         setVisibilityByFlags();
@@ -190,58 +226,16 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         Log.d(TAG, "flags: " + flags);
 
-        ViewUtil.setVisibility(mBtnLiveHome, flags & Status.FLAG_BTN_LIVE_HOME);
-        ViewUtil.setVisibility(mBtnLiveBack, flags & Status.FLAG_BTN_LIVE_BACK);
-        ViewUtil.setVisibility(mEditLiveSchedule, flags & Status.FLAG_EDIT_LIVE_SCHEDULE);
-        ViewUtil.setVisibility(mEditLiveTitle, flags & Status.FLAG_EDIT_LIVE_TITLE);
-        ViewUtil.setVisibility(mBtnLiveShare, flags & Status.FLAG_BTN_LIVE_SHARE);
-        ViewUtil.setVisibility(mBtnLivePrelive, flags & Status.FLAG_BTN_LIVE_PRELIVE);
-        ViewUtil.setVisibility(mBtnLiveComplete, flags & Status.FLAG_BTN_LIVE_COMPLETE);
-        ViewUtil.setVisibility(mBtnLiveAdd, flags & Status.FLAG_BTN_LIVE_ADD);
-        ViewUtil.setVisibility(mDateTimePicker, flags & Status.FLAG_DATETIME_PICKER);
-        ViewUtil.setVisibility(mLiveListView, flags & Status.FLAG_LIVE_LISTVIEW);
-    }
-
-    enum Status {
-        HOME {
-            @Override
-            public int flags() {
-                return FLAG_BTN_LIVE_HOME | FLAG_EDIT_LIVE_TITLE | FLAG_BTN_LIVE_SHARE | FLAG_BTN_LIVE_PRELIVE;
-            }
-        },
-        EDIT {
-            @Override
-            public int flags() {
-                return FLAG_BTN_LIVE_BACK | FLAG_EDIT_LIVE_SCHEDULE | FLAG_EDIT_LIVE_TITLE | FLAG_BTN_LIVE_COMPLETE | FLAG_DATETIME_PICKER;
-            }
-        },
-        VIEW {
-            @Override
-            public int flags() {
-                return FLAG_BTN_LIVE_BACK | FLAG_BTN_LIVE_ADD | FLAG_LIVE_LISTVIEW;
-            }
-        },
-        LIVING {
-            @Override
-            public int flags() {
-                // TODO Auto-generated method stub
-                return 0;
-            }
-        };
-
-        public abstract int flags();
-
-        static final int FLAG_MASK = 0xffffffff;
-        static final int FLAG_BTN_LIVE_HOME = 0x1;
-        static final int FLAG_BTN_LIVE_BACK = 0x2;
-        static final int FLAG_EDIT_LIVE_SCHEDULE = 0x4;
-        static final int FLAG_EDIT_LIVE_TITLE = 0x8;
-        static final int FLAG_BTN_LIVE_SHARE = 0x10;
-        static final int FLAG_BTN_LIVE_PRELIVE = 0x20;
-        static final int FLAG_BTN_LIVE_COMPLETE = 0x40;
-        static final int FLAG_BTN_LIVE_ADD = 0x80;
-        static final int FLAG_DATETIME_PICKER = 0x100;
-        static final int FLAG_LIVE_LISTVIEW = 0x200;
+        ViewUtil.setVisibility(mBtnLiveHome, flags & Mode.FLAG_BTN_LIVE_HOME);
+        ViewUtil.setVisibility(mBtnLiveBack, flags & Mode.FLAG_BTN_LIVE_BACK);
+        ViewUtil.setVisibility(mEditLiveSchedule, flags & Mode.FLAG_EDIT_LIVE_SCHEDULE);
+        ViewUtil.setVisibility(mEditLiveTitle, flags & Mode.FLAG_EDIT_LIVE_TITLE);
+        ViewUtil.setVisibility(mBtnLiveShare, flags & Mode.FLAG_BTN_LIVE_SHARE);
+        ViewUtil.setVisibility(mBtnLivePrelive, flags & Mode.FLAG_BTN_LIVE_PRELIVE);
+        ViewUtil.setVisibility(mBtnLiveComplete, flags & Mode.FLAG_BTN_LIVE_COMPLETE);
+        ViewUtil.setVisibility(mBtnAddPrelive, flags & Mode.FLAG_BTN_ADD_PRELIVE);
+        ViewUtil.setVisibility(mDateTimePicker, flags & Mode.FLAG_DATETIME_PICKER);
+        ViewUtil.setVisibility(mLiveListView, flags & Mode.FLAG_LIVE_LISTVIEW);
     }
 
 }

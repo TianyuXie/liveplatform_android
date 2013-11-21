@@ -18,9 +18,9 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -108,7 +108,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
         mLiveListView = mFooterBarFragment.getLiveListView();
-
+        
         mTextLive = (TextView) findViewById(R.id.text_live);
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
 

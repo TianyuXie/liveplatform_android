@@ -18,8 +18,6 @@ import android.view.ViewGroup;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.util.ConfigUtil;
-import com.pplive.liveplatform.util.Keys;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.thirdparty.BreakpadUtil;
 
