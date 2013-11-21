@@ -26,7 +26,17 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     private MeetVideoView mVideoView;
 
+    private View mTitleBarView;
+
+    private View mBottomBarView;
+
+    private View mUserView;
+
     //    private LivePlayerController mController;
+
+    private boolean mShowBar;
+
+    private boolean mIsFull;
 
     private OnCompletionListener mOnCompletionListener;
 
@@ -36,8 +46,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        mShowBar = true;
         BreakpadUtil.registerBreakpad(getActivity().getCacheDir());
-
     }
 
     @Override
@@ -46,6 +56,9 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         //        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
+        mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
+        mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
+        mUserView = layout.findViewById(R.id.layout_player_user);
         layout.setOnTouchListener(this);
         return layout;
     }
@@ -162,6 +175,33 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         return false;
     }
 
+    public void setLayout(boolean isFull) {
+        mIsFull = isFull;
+        if (isFull) {
+            showBars();
+        } else {
+            hideBars();
+        }
+    }
+
+    private void hideBars() {
+        if (mShowBar) {
+            mShowBar = false;
+            mTitleBarView.setVisibility(View.GONE);
+            mBottomBarView.setVisibility(View.GONE);
+            mUserView.setVisibility(View.GONE);
+        }
+    }
+
+    private void showBars() {
+        if (!mShowBar) {
+            mShowBar = true;
+            mTitleBarView.setVisibility(View.VISIBLE);
+            mBottomBarView.setVisibility(View.VISIBLE);
+            mUserView.setVisibility(View.VISIBLE);
+        }
+    }
+
     private GestureDetector mDoubleTapListener = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
@@ -171,7 +211,13 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.d(TAG, "onSingleTap");
-            //            mController.switchVisibility();
+            if (mIsFull) {
+                if (mShowBar) {
+                    hideBars();
+                } else {
+                    showBars();
+                }
+            }
             return true;
         }
 
