@@ -61,7 +61,7 @@ public class SearchBar extends LinearLayout implements IHidable {
         mRoot = (ViewGroup) inflater.inflate(R.layout.widget_searchbar, this);
         mCloseButton = (Button) mRoot.findViewById(R.id.btn_searchbar_close);
 
-        mSearchEditText = (EditText) mRoot.findViewById(R.id.edittext_searchbar);
+        mSearchEditText = (EditText) mRoot.findViewById(R.id.edit_searchbar);
         mSearchEditText.setOnKeyListener(searchOnKeyListener);
         mSearchEditText.setOnFocusChangeListener(onFocusChangeListener);
 

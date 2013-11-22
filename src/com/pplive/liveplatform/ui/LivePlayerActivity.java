@@ -13,11 +13,13 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
+import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener {
@@ -31,6 +33,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mDialogView;
 
+    private View mCommentView;
+
+    private Button mWriteBtn;
+
+    private EnterSendEditText mCommentEditText;
+
     private SensorManager mSensorManager;
 
     private Sensor mSensor;
@@ -40,6 +48,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private int mUserOrient;
 
     private boolean mIsFull;
+
+    private boolean mWriting;
 
     private int mHalfScreenHeight;
 
@@ -63,8 +73,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
 
         /* init views */
+        mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
+        mCommentEditText.setOnEnterListener(commentOnEnterListener);
+        mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mDialogView = findViewById(R.id.layout_player_dialog);
+        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
+        mWriteBtn.setOnClickListener(onWriteBtnClickListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -90,6 +105,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
+        pauseWriting();
         mSensorManager.unregisterListener(this);
         super.onPause();
     }
@@ -137,6 +153,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         setLayout(DisplayUtil.isLandscape(this), false);
     }
 
+    View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startWriting();
+        }
+    };
+
     View.OnClickListener onModeBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -153,8 +176,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
         if (mCurrentOrient != requestedOrientation) {
-            mCurrentOrient = requestedOrientation;
             Log.d(TAG, "Update Orientation");
+            mCurrentOrient = requestedOrientation;
+            pauseWriting();
             super.setRequestedOrientation(requestedOrientation);
         }
     }
@@ -197,7 +221,50 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO Auto-generated method stub
 
+    }
+
+    private EnterSendEditText.OnEnterListener commentOnEnterListener = new EnterSendEditText.OnEnterListener() {
+
+        @Override
+        public boolean onEnter(View v) {
+            //TODO
+            String keyword = mCommentEditText.getText().toString();
+            Log.d(TAG, "Send: " + keyword);
+            sendWriting();
+            return true;
+        }
+    };
+
+    private void startWriting() {
+        if (!mWriting) {
+            mWriting = true;
+            mWriteBtn.setVisibility(View.GONE);
+            mCommentView.setVisibility(View.VISIBLE);
+            mCommentEditText.requestFocus();
+        }
+    }
+
+    private void sendWriting() {
+        if (mWriting) {
+            mCommentEditText.setText("");
+            mCommentEditText.clearFocus();
+        }
+    }
+
+    private void pauseWriting() {
+        if (mWriting) {
+            mCommentEditText.clearFocus();
+        }
+    }
+
+    private void stopWriting() {
+        if (mWriting) {
+            mWriting = false;
+            mCommentEditText.setText("");
+            mCommentEditText.clearFocus();
+            mCommentView.setVisibility(View.GONE);
+            mWriteBtn.setVisibility(View.VISIBLE);
+        }
     }
 }
