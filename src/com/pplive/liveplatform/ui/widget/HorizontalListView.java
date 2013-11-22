@@ -16,6 +16,8 @@ import android.widget.ListAdapter;
 import android.widget.Scroller;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
+    
+    private static final String TAG = HorizontalListView.class.getSimpleName();
 
     public boolean mAlwaysOverrideTouch = true;
     protected ListAdapter mAdapter;
@@ -119,7 +121,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
     private void addAndMeasureChild(final View child, int viewPos) {
         LayoutParams params = child.getLayoutParams();
         if (params == null) {
-            params = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            params = new LayoutParams(LayoutParams.WRAP_CONTENT, getHeight());
         }
 
         addViewInLayout(child, viewPos, params, true);

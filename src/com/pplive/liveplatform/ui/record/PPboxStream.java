@@ -110,7 +110,7 @@ public class PPboxStream {
             mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-//        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
+        //        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
 
         mSample = new MediaSDK.Sample();
         mSample.itrack = itrack;
@@ -156,7 +156,7 @@ public class PPboxStream {
             mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
         }
 
-//        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
+        //        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
 
         mSample = new MediaSDK.Sample();
         mSample.itrack = itrack;
@@ -230,7 +230,7 @@ public class PPboxStream {
                 mSample.time = mBufferInfo.presentationTimeUs;
                 mSample.flags = 0;
                 if (mBufferInfo.flags != 0) {
-                    if (mBufferInfo.flags == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
+                    if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_CODEC_CONFIG) == MediaCodec.BUFFER_FLAG_CODEC_CONFIG) {
                         Log.d(TAG, "Codec Config " + " itrack: " + mSample.itrack + " size: " + mBufferInfo.size);
                         mStreamInfo.format_size = mBufferInfo.size;
                         mStreamInfo.format_buffer = mOutBuffers[index];
@@ -246,13 +246,13 @@ public class PPboxStream {
                 mSample.buffer = mOutBuffers[index];
 
                 // TOBO: DEBUG
-                //writeBuffer(sample.buffer, buffer_info.size);
+                //                writeBuffer(mSample.buffer, mBufferInfo.size);
 
                 MediaSDK.CapturePutSample(mCaptureId, mSample);
 
                 mEncoder.releaseOutputBuffer(index, false);
 
-                Log.d(TAG, String.format("[%s] time: %s; size: %s", mStreamType, mSample.time, mSample.size));
+                Log.d(TAG, String.format("[%s] time: %s; size: %s; flag: %d", mStreamType, mSample.time, mSample.size, mBufferInfo.flags));
             }
         } else {
             mSample.buffer = buffer.byte_buffer();

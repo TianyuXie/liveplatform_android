@@ -27,6 +27,32 @@
             android:layout_alignParentRight="true"
             android:layout_margin="10dp"
             android:background="@drawable/player_btn_write" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="10dp"
+            android:background="@drawable/searchbar_text_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp" >
+
+            <EditText
+                android:id="@+id/edittext_searchbar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/searchbar_text_bg"
+                android:imeOptions="actionDone"
+                android:singleLine="true"
+                android:inputType="text"
+                android:textColor="@color/black"
+                android:textSize="15sp" >
+            </EditText>
+        </LinearLayout>
     </RelativeLayout>
 
 </RelativeLayout>

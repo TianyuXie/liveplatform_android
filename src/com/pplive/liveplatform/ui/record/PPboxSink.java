@@ -164,7 +164,7 @@ public class PPboxSink {
 
             mAudioStream.put(time / 1000, buffer);
         }
-        
+
         mAudioRecord.stop();
     }
 

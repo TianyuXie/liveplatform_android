@@ -9,7 +9,7 @@ import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Build;
 
-import com.pplive.liveplatform.Constant;
+import com.pplive.liveplatform.Constants;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class CameraManager {
@@ -34,7 +34,7 @@ public class CameraManager {
     public Camera open(final int facing) {
         Camera camera = null;
 
-        if (Constant.LARGER_THAN_OR_EQUAL_GINGERBREAD) {
+        if (Constants.LARGER_THAN_OR_EQUAL_GINGERBREAD) {
 
             int numberOfCameras = Camera.getNumberOfCameras();
             CameraInfo cameraInfo = new CameraInfo();
@@ -93,7 +93,7 @@ public class CameraManager {
     }
 
     public int getNumberOfCameras() {
-        return Constant.LARGER_THAN_OR_EQUAL_GINGERBREAD ? Camera.getNumberOfCameras() : DEFAULT_NUMBER_OF_CAMERAS;
+        return Constants.LARGER_THAN_OR_EQUAL_GINGERBREAD ? Camera.getNumberOfCameras() : DEFAULT_NUMBER_OF_CAMERAS;
     }
 
     public Camera.Size getMiniSize(Parameters params) {

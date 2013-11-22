@@ -18,17 +18,17 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.record.CameraManager;
+import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
-import com.pplive.liveplatform.ui.widget.FooterBar;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.util.TimeUtil;
@@ -61,7 +61,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private ToggleButton mBtnLiveRecord;
     private ToggleButton mBtnFlashLight;
 
-    private FooterBar mFooterBar;
+    private FooterBarFragment mFooterBarFragment;
 
     private HorizontalListView mLiveListView;
 
@@ -106,9 +106,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mBtnLiveRecord = (ToggleButton) findViewById(R.id.btn_live_record);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
-        mFooterBar = (FooterBar) findViewById(R.id.footer_bar);
-        mLiveListView = mFooterBar.getLiveListView();
-
+        mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
+        mLiveListView = mFooterBarFragment.getLiveListView();
+        
         mTextLive = (TextView) findViewById(R.id.text_live);
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
 

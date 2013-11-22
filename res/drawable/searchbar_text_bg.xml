@@ -3,6 +3,6 @@
 
     <solid android:color="@color/searchbar_text_bg" />
 
-    <corners android:radius="50dp" />
+    <corners android:radius="10dp" />
 
 </shape>
