@@ -5,6 +5,8 @@ import java.io.File;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.pplive.media.player.MeetVideoView;
 import android.pplive.media.player.MeetVideoView.DecodeMode;
 import android.support.v4.app.Fragment;
@@ -20,11 +22,20 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.ConfigUtil;
 import com.pplive.liveplatform.util.Keys;
+import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements OnTouchListener {
     static final String TAG = "LivePlayerFragment";
+
+    private static final int HIDE = 301;
+
+    private static final int FLAG_TITLE_BAR = 0x1;
+
+    private static final int FLAG_BOTTOM_BAR = 0x2;
+
+    private static final int FLAG_USER_VIEW = 0x4;
 
     private MeetVideoView mVideoView;
 
@@ -36,19 +47,23 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     private ToggleButton mModeBtn;
 
-    //    private LivePlayerController mController;
-
     private boolean mShowBar;
 
     private OnCompletionListener mOnCompletionListener;
 
     private OnErrorListener mOnErrorListener;
 
+    private int mFlagMask;
+
+    private int mViewFlags;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mShowBar = true;
+        mFlagMask = 0xffffffff;
+        mViewFlags = 0xffffffff;
         BreakpadUtil.registerBreakpad(getActivity().getCacheDir());
     }
 
@@ -56,7 +71,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
-        //        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
@@ -71,7 +85,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         File cacheDirFile = getActivity().getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
         String libDir = dataDir + "/lib";
-        //        String tmpDir = System.getProperty("java.io.tmpdir") + "/ppsdk";
         String tmpDir = cacheDirFile.getAbsolutePath();
         File tmpDirFile = new File(tmpDir);
         tmpDirFile.mkdir();
@@ -89,7 +102,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);
         mVideoView.setOnErrorListener(mErrorListener);
-        //        mController.setMediaPlayer(mVideoView);
     }
 
     @Override
@@ -129,11 +141,21 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         mModeBtn.setOnClickListener(l);
     }
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case HIDE:
+                hideBars();
+                break;
+            }
+        }
+    };
+
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
         @Override
         public void onPrepared() {
             mVideoView.start();
-            //            mController.show();
         }
     };
 
@@ -183,29 +205,52 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     public void setLayout(boolean isFull) {
         mModeBtn.setChecked(isFull);
-        //        if (isFull) {
-        //            showBars();
-        //        } else {
-        //            hideBars();
-        //        }
+        if (isFull) {
+            mFlagMask = FLAG_TITLE_BAR;
+        } else {
+            mFlagMask = FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW;
+        }
+        setVisibilityByFlags();
+        mHandler.removeMessages(HIDE);
+        mHandler.sendEmptyMessageDelayed(HIDE, 6000);
+    }
+
+    private void setVisibilityByFlags() {
+        int flags = mViewFlags & mFlagMask;
+        ViewUtil.setVisibility(mTitleBarView, flags & FLAG_TITLE_BAR);
+        ViewUtil.setVisibility(mBottomBarView, flags & FLAG_BOTTOM_BAR);
+        ViewUtil.setVisibility(mUserView, flags & FLAG_USER_VIEW);
     }
 
     private void hideBars() {
+        if (!mShowBar) {
+            return;
+        }
+        mShowBar = false;
+        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW);
+        setVisibilityByFlags();
+        mHandler.removeMessages(HIDE);
+    }
+
+    private void showBars(int timeout) {
         if (mShowBar) {
-            mShowBar = false;
-            mTitleBarView.setVisibility(View.GONE);
-            mBottomBarView.setVisibility(View.GONE);
-            mUserView.setVisibility(View.GONE);
+            return;
+        }
+        mShowBar = true;
+        setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW);
+        setVisibilityByFlags();
+        mHandler.removeMessages(HIDE);
+        if (timeout != 0) {
+            mHandler.sendEmptyMessageDelayed(HIDE, timeout);
         }
     }
 
-    private void showBars() {
-        if (!mShowBar) {
-            mShowBar = true;
-            mTitleBarView.setVisibility(View.VISIBLE);
-            mBottomBarView.setVisibility(View.VISIBLE);
-            mUserView.setVisibility(View.VISIBLE);
-        }
+    private void clearViewFlags(int flags) {
+        mViewFlags &= ~flags;
+    }
+
+    private void setViewFlags(int flags) {
+        mViewFlags |= flags;
     }
 
     private GestureDetector mDoubleTapListener = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
@@ -220,7 +265,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
             if (mShowBar) {
                 hideBars();
             } else {
-                showBars();
+                showBars(6000);
             }
             return true;
         }

@@ -9,6 +9,7 @@
     <color name="yellow">#FFFFFF00</color>
     <color name="saffron_yellow">#FF9900</color>
     <color name="dim_gray">#FF545454</color>
+    <color name="dark_gray">#FF333333</color>
     <color name="true_gray">#FF808080</color>
     <color name="title_blue">#FF36a0ec</color>
     <color name="fancy_blue">#FF00ACFF</color>

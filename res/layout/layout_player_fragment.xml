@@ -44,7 +44,8 @@
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/player_title_bar" >
+        android:background="@color/player_title_bar"
+        android:clickable="true" >
 
         <Button
             android:id="@+id/btn_player_back"
@@ -71,15 +72,15 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
-        <ImageView
-            android:id="@+id/image_player_icon"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:contentDescription="@null"
-            android:src="@color/dim_gray" />
+        <Button
+            android:id="@+id/btn_player_user_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/sidebar_user_icon_default" />
 
         <TextView
             android:id="@+id/textview_player_name"
