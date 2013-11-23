@@ -232,7 +232,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         mHandler.removeMessages(HIDE);
     }
 
-    private void showBars(int timeout) {
+    public void showBars(int timeout) {
         if (mShowBar) {
             return;
         }

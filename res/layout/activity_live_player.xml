@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pplive.liveplatform.ui.widget.DetectRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pplive.liveplatform.ui.widget.DetectableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/black"
     android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/layout_player_fragment"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:clickable="true"
+        android:orientation="vertical" >
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/layout_player_dialog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/layout_player_comment"
-        android:layout_below="@+id/layout_player_fragment"
-        android:background="@color/dark_gray" />
+        android:background="@color/player_dialog_bg" />
 
     <LinearLayout
-        android:id="@id/layout_player_comment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_margin="10dp"
-        android:background="@drawable/searchbar_text_bg"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:paddingTop="5dp"
-        android:visibility="gone" >
+        android:background="@color/black" >
 
         <LinearLayout
             android:id="@+id/layout_player_dimmy"
@@ -35,16 +35,31 @@
             android:focusableInTouchMode="true"
             android:orientation="horizontal" />
 
-        <com.pplive.liveplatform.ui.widget.EnterSendEditText
-            android:id="@+id/edit_player_comment"
+        <LinearLayout
+            android:id="@id/layout_player_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/searchbar_text_bg"
-            android:imeOptions="actionSend"
-            android:inputType="text|textMultiLine"
-            android:maxLines="4"
-            android:textColor="@color/black"
-            android:textSize="15sp" />
+            android:layout_margin="10dp"
+            android:background="@drawable/searchbar_text_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:visibility="gone" >
+
+            <com.pplive.liveplatform.ui.widget.EnterSendEditText
+                android:id="@+id/edit_player_comment"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/searchbar_text_bg"
+                android:imeOptions="actionSend"
+                android:inputType="text|textMultiLine"
+                android:maxLines="4"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <Button
@@ -56,13 +71,4 @@
         android:layout_margin="10dp"
         android:background="@drawable/player_btn_write" />
 
-    <LinearLayout
-        android:id="@id/layout_player_fragment"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:clickable="true"
-        android:orientation="vertical" >
-    </LinearLayout>
-
-</com.pplive.liveplatform.ui.widget.DetectRelativeLayout>
+</com.pplive.liveplatform.ui.widget.DetectableRelativeLayout>
