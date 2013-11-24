@@ -22,7 +22,9 @@ public class DateTimePicker extends LinearLayout {
     private DatePicker mDatePicker;
     private TimePicker mTimePicker;
     private OnDateTimeChangedListener mOnDateTimeChangedListener;
-
+    
+    private Calendar mCalendar;
+    
     public DateTimePicker(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -37,8 +39,13 @@ public class DateTimePicker extends LinearLayout {
         mDatePicker = (DatePicker) findViewById(R.id.date_picker);
         mTimePicker = (TimePicker) findViewById(R.id.time_picker);
 
-        Calendar calendar = Calendar.getInstance();
-        mDatePicker.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), new OnDateChangedListener() {
+        mCalendar = Calendar.getInstance();
+        
+        init();
+    }
+    
+    private void init() {
+        mDatePicker.init(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH), new OnDateChangedListener() {
 
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -55,7 +62,7 @@ public class DateTimePicker extends LinearLayout {
             }
         });
     }
-
+    
     public void setOnDateTimeChanged(OnDateTimeChangedListener listener) {
         mOnDateTimeChangedListener = listener;
 
@@ -100,6 +107,13 @@ public class DateTimePicker extends LinearLayout {
 
     public int getCurrentMinute() {
         return mTimePicker.getCurrentMinute();
+    }
+    
+    public long getTimeInMillis() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(getYear(), getMonth(), getDayOfMonth(), getCurrentHour(), getCurrentMinute());
+        
+        return calendar.getTimeInMillis();
     }
 
     public interface OnDateTimeChangedListener {

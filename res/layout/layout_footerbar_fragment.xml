@@ -105,7 +105,18 @@
                 android:src="@drawable/live_record_btn_live_prelive" />
 
             <ImageButton
-                android:id="@+id/btn_live_complete"
+                android:id="@+id/btn_live_add_complete"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_complete"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_live_edit_complete"
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

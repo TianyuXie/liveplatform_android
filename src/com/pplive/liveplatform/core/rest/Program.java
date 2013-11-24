@@ -23,8 +23,8 @@ public class Program {
 
     int subject_id = 1;
     
-    public Program(long pid) {
-        this.pid = pid;
+    public Program(String owner, String title, long starttime) {
+        this(owner, LiveModeEnum.UNKNOWN, title, starttime);
     }
 
     public Program(String owner, LiveModeEnum mode, String title, long starttime) {
@@ -53,8 +53,11 @@ public class Program {
     public LiveStatusEnum getLiveStatus() {
         return livestatus;
     }
+    
+    public String getCoverUrl() {
+        return cover_url;
+    }
 
-    @SuppressLint("DefaultLocale")
     @Override
     public String toString() {
         return String.format("pid: %d; owner: %s; starttime: %d; title: %s; livestatus: %s; cover_url: %s;", pid, owner, starttime, title, livestatus, cover_url);

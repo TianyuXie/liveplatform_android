@@ -3,6 +3,7 @@ package com.pplive.liveplatform.ui.record;
 import java.util.Calendar;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -17,12 +18,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.service.ProgramService;
+import com.pplive.liveplatform.ui.record.LiveListView.OnLiveSelectedListener;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
-import com.pplive.liveplatform.ui.widget.HorizontalListView;
 import com.pplive.liveplatform.util.ViewUtil;
 
-public class FooterBarFragment extends Fragment implements OnClickListener, OnTouchListener, OnFocusChangeListener, OnDateTimeChangedListener {
+public class FooterBarFragment extends Fragment implements OnClickListener, OnTouchListener, OnFocusChangeListener, OnDateTimeChangedListener, OnLiveSelectedListener {
 
     private static final String TAG = FooterBarFragment.class.getSimpleName();
 
@@ -37,13 +40,15 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private ImageButton mBtnLiveShare;
     private ImageButton mBtnLivePrelive;
 
-    private ImageButton mBtnLiveComplete;
+    private ImageButton mBtnLiveAddComplete;
+    private ImageButton mBtnLiveEditComplete;
+    
     private ImageButton mBtnAddPrelive;
 
     private DateTimePicker mDateTimePicker;
-    private HorizontalListView mLiveListView;
+    private LiveListView mLiveListView;
     
-    private Mode mStatus = Mode.HOME;
+    private Mode mStatus = Mode.INITIAL;
     
     @Override
     public void onAttach(Activity activity) {
@@ -80,7 +85,9 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         mBtnLiveShare = (ImageButton) layout.findViewById(R.id.btn_live_share);
         mBtnLivePrelive = (ImageButton) layout.findViewById(R.id.btn_live_prelive);
 
-        mBtnLiveComplete = (ImageButton) layout.findViewById(R.id.btn_live_complete);
+        mBtnLiveAddComplete = (ImageButton) layout.findViewById(R.id.btn_live_add_complete);
+        mBtnLiveEditComplete = (ImageButton) layout.findViewById(R.id.btn_live_edit_complete);
+        
         mBtnAddPrelive = (ImageButton) layout.findViewById(R.id.btn_add_prelive);
 
         mDateTimePicker = (DateTimePicker) layout.findViewById(R.id.datetime_picker);
@@ -92,13 +99,15 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         Calendar minDate = Calendar.getInstance();
         mDateTimePicker.setMinDate(minDate.getTimeInMillis() - 1000);
 
-        mLiveListView = (HorizontalListView) layout.findViewById(R.id.live_listview);
+        mLiveListView = (LiveListView) layout.findViewById(R.id.live_listview);
+        mLiveListView.setOnLiveSelectedListener(this);
 
         mBtnLivePrelive.setOnClickListener(this);
         mBtnLiveHome.setOnClickListener(this);
         mBtnLiveBack.setOnClickListener(this);
         mBtnAddPrelive.setOnClickListener(this);
-        mBtnLiveComplete.setOnClickListener(this);
+        mBtnLiveAddComplete.setOnClickListener(this);
+        mBtnLiveEditComplete.setOnClickListener(this);
 
         mEditLiveSchedule.setOnTouchListener(this);
         mEditLiveSchedule.setOnFocusChangeListener(this);
@@ -106,7 +115,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         mDateTimePicker.setOnDateTimeChanged(this);
 
-        setStatus(Mode.HOME);
+        setMode(Mode.INITIAL);
 
         return layout;
     }
@@ -133,8 +142,11 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         case R.id.btn_add_prelive:
             onClickBtnAddPrelive(v);
             break;
-        case R.id.btn_live_complete:
-            onClickBtnLiveComplete(v);
+        case R.id.btn_live_add_complete:
+            onClickBtnLiveAddComplete(v);
+            break;
+        case R.id.btn_live_edit_complete:
+            onClickBtnLiveEditComplete(v);
             break;
         default:
             break;
@@ -142,7 +154,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     }
 
     private void onClickBtnLivePrelive(View v) {
-        setStatus(Mode.VIEW);
+        setMode(Mode.VIEW_PRELIVES);
 
         mEditLiveSchedule.requestFocus();
     }
@@ -155,17 +167,41 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     }
 
     private void onClickBtnLiveBack(View v) {
-        setStatus(Mode.HOME);
+        setMode(Mode.INITIAL);
     }
     
     private void onClickBtnAddPrelive(View v) {
-        setStatus(Mode.EDIT);
+        setMode(Mode.ADD_PRELIVE);
     }
 
-    private void onClickBtnLiveComplete(View v) {
-        setStatus(Mode.VIEW);
+    private void onClickBtnLiveAddComplete(View v) {
+        setMode(Mode.VIEW_PRELIVES);
+        
+        final String title = mEditLiveTitle.getText().toString();
+        final long starttime = mDateTimePicker.getTimeInMillis();
+        
+        AsyncTask<Void, Void, Void> createLiveTask = new AsyncTask<Void, Void, Void>() {
+            
+            @Override
+            protected Void doInBackground(Void... params) {
+                
+                Log.d(TAG, "title: " + (null == title ? "null" : title) + "; starttime: " + starttime);
+                
+                Program program = new Program("xiety0001", title, starttime);
+                
+                ProgramService.getInstance().createProgram(program);
+                
+                return null;
+            }
+        };
+        
+        createLiveTask.execute();
     }
-
+    
+    private void onClickBtnLiveEditComplete(View v) {
+        setMode(Mode.VIEW_PRELIVES);
+    }
+    
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         v.requestFocus();
@@ -210,13 +246,22 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             break;
         }
     }
+    
+    @Override
+    public void onLiveSelected(Program program) {
+        setMode(Mode.EDIT_PRELIVE);
+        
+        if (null != program) {
+            mEditLiveTitle.setText(program.getTitle());
+        }
+    }
 
-    public HorizontalListView getLiveListView() {
+    public LiveListView getLiveListView() {
         return mLiveListView;
     }
 
-    private void setStatus(Mode status) {
-        mStatus = status;
+    private void setMode(Mode mode) {
+        mStatus = mode;
 
         setVisibilityByFlags();
     }
@@ -232,7 +277,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         ViewUtil.setVisibility(mEditLiveTitle, flags & Mode.FLAG_EDIT_LIVE_TITLE);
         ViewUtil.setVisibility(mBtnLiveShare, flags & Mode.FLAG_BTN_LIVE_SHARE);
         ViewUtil.setVisibility(mBtnLivePrelive, flags & Mode.FLAG_BTN_LIVE_PRELIVE);
-        ViewUtil.setVisibility(mBtnLiveComplete, flags & Mode.FLAG_BTN_LIVE_COMPLETE);
+        ViewUtil.setVisibility(mBtnLiveAddComplete, flags & Mode.FLAG_BTN_LIVE_ADD_COMPLETE);
         ViewUtil.setVisibility(mBtnAddPrelive, flags & Mode.FLAG_BTN_ADD_PRELIVE);
         ViewUtil.setVisibility(mDateTimePicker, flags & Mode.FLAG_DATETIME_PICKER);
         ViewUtil.setVisibility(mLiveListView, flags & Mode.FLAG_LIVE_LISTVIEW);

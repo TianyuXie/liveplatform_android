@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
+import android.util.Log;
+
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.core.rest.http.Url;
@@ -47,6 +49,7 @@ public class ProgramService extends AbsService{
     }
 
     public Program createProgram(Program program) {
+        Log.d(TAG, program.toString());
         
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
         

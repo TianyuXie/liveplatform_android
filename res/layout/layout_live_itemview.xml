@@ -5,11 +5,10 @@
     android:gravity="center_vertical"
     android:paddingRight="10dp" >
 
-    <ImageView
+    <com.pplive.liveplatform.ui.widget.AsyncImageView
         android:id="@+id/image_prelive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/red"
         android:contentDescription="@null"
         android:minHeight="120dp"
         android:minWidth="160dp"
