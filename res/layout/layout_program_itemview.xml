@@ -70,7 +70,6 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="5dp"
-            android:text="@string/test_program_title"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -81,7 +80,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/textview_program_title"
-            android:text="@string/test_program_owner"
             android:textColor="@color/program_owner_text"
             android:textSize="13sp" />
 

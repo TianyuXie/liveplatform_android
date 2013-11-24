@@ -11,12 +11,13 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 
-public class RefreshContainer extends LinearLayout {
+public class RefreshContainer extends RelativeLayout {
     static final String TAG = "RefreshContainer";
 
     private List<Program> mPrograms;
