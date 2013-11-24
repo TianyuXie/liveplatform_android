@@ -23,7 +23,7 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
     private static final String TAG = LiveListView.class.getSimpleName();
 
     private int mSelectedItemPosition = -1;
-    private LiveListView.ViewHolder mSelectedViewHolder;
+    private LiveListItemView mSelectedLiveItem;
 
     public LiveListView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -46,12 +46,12 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
         }
 
         if (mSelectedItemPosition >= 0) {
-            mSelectedViewHolder.setSelected(false);
+            mSelectedLiveItem.setSelected(false);
         }
 
         mSelectedItemPosition = position;
-        mSelectedViewHolder = (ViewHolder) view.getTag();
-        mSelectedViewHolder.setSelected(true);
+        mSelectedLiveItem = (LiveListItemView) view;
+        mSelectedLiveItem.setSelected(true);
     }
 
     @Override
@@ -91,36 +91,8 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.layout_live_itemview, null);
 
-                final ViewHolder holder = new ViewHolder();
-                holder.mImagePrelive = (ImageView) convertView.findViewById(R.id.image_prelive);
-                holder.mBtnPreliveDelete = (ImageButton) convertView.findViewById(R.id.btn_prelive_delete);
-                holder.mBtnDelete = (ImageButton) convertView.findViewById(R.id.btn_delete);
-                holder.mTextLiveTitle = (TextView) convertView.findViewById(R.id.text_live_title);
-                
-                holder.mPosition = position;
-                
-                holder.mBtnPreliveDelete.setOnClickListener(new OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        
-                        holder.showOrHideDeleteBtn();
-                    }
-                });
-                
-                holder.mBtnDelete.setOnClickListener(new OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View v) {
-                        Log.d(TAG, "onClickBtnDelete");
-                    }
-                });
-
-                convertView.setTag(holder);
             } else {
-                final ViewHolder holder = (ViewHolder) convertView.getTag();
-                holder.mPosition = position;
-                holder.reset();
+                ((LiveListItemView)convertView).reset();
             }
 
             return convertView;
@@ -128,37 +100,6 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
 
     }
 
-    static class ViewHolder {
-        int mPosition;
-
-        ImageView mImagePrelive;
-        ImageButton mBtnPreliveDelete;
-        ImageButton mBtnDelete;
-        TextView mTextLiveTitle;
-
-        void setSelected(boolean selected) {
-            if (selected) {
-                mBtnPreliveDelete.setVisibility(View.VISIBLE);
-            } else {
-                reset();
-            }
-        }
-
-        void showOrHideDeleteBtn() {
-            boolean selected = mBtnPreliveDelete.isSelected();
-
-            mBtnPreliveDelete.setSelected(!selected);
-
-            ViewUtil.showOrHide(mBtnDelete, false);
-        }
-
-        void reset() {
-            mBtnPreliveDelete.setSelected(false);
-            mBtnPreliveDelete.setVisibility(View.INVISIBLE);
-            mBtnDelete.setVisibility(View.INVISIBLE);
-        }
-    }
-    
     interface OnLiveSelectedListener {
         void onSelected();
     }
