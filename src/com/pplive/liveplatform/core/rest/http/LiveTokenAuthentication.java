@@ -2,11 +2,11 @@ package com.pplive.liveplatform.core.rest.http;
 
 import org.springframework.http.HttpAuthentication;
 
-public class LiveTkAuthentication extends HttpAuthentication {
+public class LiveTokenAuthentication extends HttpAuthentication {
     
     private String mLiveTk;
     
-    public LiveTkAuthentication(String liveTk) {
+    public LiveTokenAuthentication(String liveTk) {
         mLiveTk = liveTk;
     }
 

@@ -2,12 +2,12 @@ package com.pplive.liveplatform.core.rest.http;
 
 import org.springframework.http.HttpAuthentication;
 
-public class CoTkAuthentication extends HttpAuthentication {
+public class CoTokenAuthentication extends HttpAuthentication {
 
     private String mCoName;
     private String mCoTk;
     
-    public CoTkAuthentication(String coName, String coTk) {
+    public CoTokenAuthentication(String coName, String coTk) {
         mCoName = coName;
         mCoTk = coTk;
     }

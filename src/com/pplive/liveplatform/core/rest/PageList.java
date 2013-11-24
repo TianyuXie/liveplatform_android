@@ -1,16 +1,10 @@
 package com.pplive.liveplatform.core.rest;
 
-public class PageList<T> {
+public class PageList<T> extends List<T> {
 
-    java.util.List<T> list;
-    
     int count;
     
     String nexttk;
-    
-    public java.util.List<T> getList() {
-        return list;
-    }
     
     public int count() {
        return count; 

@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Program;
-import com.pplive.liveplatform.core.rest.ProgramPageListResp;
 import com.pplive.liveplatform.core.rest.http.Url;
+import com.pplive.liveplatform.core.rest.resp.ProgramPageListResp;
 
 public class SearchService extends AbsService {
 

@@ -2,11 +2,11 @@ package com.pplive.liveplatform.core.rest.http;
 
 import org.springframework.http.HttpAuthentication;
 
-public class PlayTkAuthentication extends HttpAuthentication {
+public class PlayTokenAuthentication extends HttpAuthentication {
 
     private String mPlayTk;
     
-    public PlayTkAuthentication(String playTk) {
+    public PlayTokenAuthentication(String playTk) {
         mPlayTk = playTk;
     }
 
