@@ -1,6 +1,6 @@
 package com.pplive.liveplatform.core.rest;
 
-public class PageList<T> extends List<T> {
+public class FallList<T> extends List<T> {
 
     int count;
     

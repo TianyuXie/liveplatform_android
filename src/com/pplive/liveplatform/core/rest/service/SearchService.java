@@ -5,7 +5,7 @@ import java.util.List;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.core.rest.http.Url;
-import com.pplive.liveplatform.core.rest.resp.ProgramPageListResp;
+import com.pplive.liveplatform.core.rest.resp.ProgramFallListResp;
 
 public class SearchService extends AbsService {
 
@@ -30,7 +30,7 @@ public class SearchService extends AbsService {
 
     public List<Program> searchProgram(int subjectId, String sort, String liveStatus, String nextTk, int fallCount) {
         
-        ProgramPageListResp rep = mRestTemplate.getForObject(SEARCH_PROGRAM_URL.toString(), ProgramPageListResp.class, subjectId, sort, liveStatus, nextTk, fallCount);
+        ProgramFallListResp rep = mRestTemplate.getForObject(SEARCH_PROGRAM_URL.toString(), ProgramFallListResp.class, subjectId, sort, liveStatus, nextTk, fallCount);
         
         return rep.getList();
     }
