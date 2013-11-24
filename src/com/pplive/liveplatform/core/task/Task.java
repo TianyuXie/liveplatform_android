@@ -9,49 +9,38 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
+
 public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
-
-    public abstract String getID();
-
-    public abstract String getName();
-
-    public abstract void cancel();
-
-    public abstract void pause();
-
-    public abstract void resume();
-
-    private boolean isReturn = false;
-
-    protected boolean isCancel = false;
-
     private static final int DEFAULT_TIME_OUT = 20 * 1000;
+
+    private boolean isReturn;
+
+    private int timeout;
 
     private Timer timer = new Timer();
 
-    private ArrayList<OnTaskFinishedListener> taskFinishedListeners = new ArrayList<OnTaskFinishedListener>();
-
-    private ArrayList<OnTaskFailedListener> taskFailedListeners = new ArrayList<OnTaskFailedListener>();
-
-    private ArrayList<OnTaskProgressChangedListener> taskProgressChangedListeners = new ArrayList<OnTaskProgressChangedListener>();
-
-    private ArrayList<OnTaskTimeoutListener> taskTimeoutListeners = new ArrayList<OnTaskTimeoutListener>();
-
-    private ArrayList<OnTaskCancelListner> taskCancelListeners = new ArrayList<Task.OnTaskCancelListner>();
-
-    private int timeout = DEFAULT_TIME_OUT;
+    private ArrayList<OnTaskListener> taskListeners = new ArrayList<OnTaskListener>();
 
     public Task(int timeout) {
         this.timeout = timeout;
     }
 
     public Task() {
-
+        this.timeout = DEFAULT_TIME_OUT;
     }
+
+    public abstract String getID();
+
+    public abstract String getName();
+
+    public abstract void pause();
+
+    public abstract void resume();
 
     @Override
     protected void onPreExecute() {
-        // Timer, use to count the time, the default time is 10 seconds
+        // Timer, use to count the time, the default time is 20 seconds
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -67,7 +56,6 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
             case 0:
                 onTaskTimeout(Task.this, new TaskTimeoutEvent("Task timeout"));
                 break;
-
             default:
                 break;
             }
@@ -81,7 +69,6 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         if (result == null) {
             result = new TaskResult(TaskStatus.Failed, "Can not return null when the task done");
         }
-
         if (result.getStatus() == TaskStatus.Finished) {
             onTaskFinished(this, new TaskFinishedEvent(result.getContext()));
         } else if (result.getStatus() == TaskStatus.Cancel) {
@@ -91,50 +78,25 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         }
     }
 
-    public void addTaskFinishedListener(OnTaskFinishedListener listener) {
-        taskFinishedListeners.add(listener);
+    @Override
+    protected void onCancelled() {
+        if (isReturn)
+            return;
+        onTaskCancel(this, new TaskCancelEvent("Canceled"));
     }
 
-    public void removeTaskFinishedListener(OnTaskFinishedListener listener) {
-        taskFinishedListeners.remove(listener);
+    public void addTaskListener(OnTaskListener listener) {
+        taskListeners.add(listener);
     }
 
-    public void addTaskFailedListener(OnTaskFailedListener listener) {
-        taskFailedListeners.add(listener);
-    }
-
-    public void removeTaskFailedListener(OnTaskFailedListener listener) {
-        taskFailedListeners.remove(listener);
-    }
-
-    public void addTaskProgressChangeListener(OnTaskProgressChangedListener listener) {
-        taskProgressChangedListeners.add(listener);
-    }
-
-    public void removeTaskProgressChangeListener(OnTaskProgressChangedListener listener) {
-        taskProgressChangedListeners.remove(listener);
-    }
-
-    public void addTaskTimeoutListener(OnTaskTimeoutListener listener) {
-        taskTimeoutListeners.add(listener);
-    }
-
-    public void removeTaskTimeoutListener(OnTaskTimeoutListener listener) {
-        taskTimeoutListeners.remove(listener);
-    }
-
-    public void addTaskCancelListener(OnTaskCancelListner listener) {
-        taskCancelListeners.add(listener);
-    }
-
-    public void removeTaskCancelListener(OnTaskCancelListner listener) {
-        taskCancelListeners.remove(listener);
+    public void removeTaskCancelListener(OnTaskListener listener) {
+        taskListeners.remove(listener);
     }
 
     protected void onTaskFinished(Object sender, TaskFinishedEvent event) {
         if (!isReturn) {
             isReturn = true;
-            for (OnTaskFinishedListener listener : taskFinishedListeners) {
+            for (OnTaskListener listener : taskListeners) {
                 listener.onTaskFinished(sender, event);
             }
         }
@@ -143,7 +105,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     protected void onTaskFailed(Object sender, TaskFailedEvent event) {
         if (!isReturn) {
             isReturn = true;
-            for (OnTaskFailedListener listener : taskFailedListeners) {
+            for (OnTaskListener listener : taskListeners) {
                 listener.onTaskFailed(sender, event);
             }
         }
@@ -151,8 +113,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     protected void onTaskProgressChanged(Object sender, TaskProgressChangedEvent event) {
         if (!isReturn) {
-            isReturn = true;
-            for (OnTaskProgressChangedListener listener : taskProgressChangedListeners) {
+            for (OnTaskListener listener : taskListeners) {
                 listener.onProgressChanged(sender, event);
             }
         }
@@ -161,7 +122,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     protected void onTaskTimeout(Object sender, TaskTimeoutEvent event) {
         if (!isReturn) {
             isReturn = true;
-            for (OnTaskTimeoutListener listener : taskTimeoutListeners) {
+            for (OnTaskListener listener : taskListeners) {
                 listener.onTimeout(sender, event);
             }
         }
@@ -170,29 +131,21 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     protected void onTaskCancel(Object sender, TaskCancelEvent event) {
         if (!isReturn) {
             isReturn = true;
-            for (OnTaskCancelListner listener : taskCancelListeners) {
+            for (OnTaskListener listener : taskListeners) {
                 listener.onTaskCancel(sender, event);
             }
         }
     }
 
-    public interface OnTaskFinishedListener {
-        public abstract void onTaskFinished(Object sender, TaskFinishedEvent event);
-    }
+    public interface OnTaskListener {
+        void onTaskFinished(Object sender, TaskFinishedEvent event);
 
-    public interface OnTaskFailedListener {
-        public abstract void onTaskFailed(Object sender, TaskFailedEvent event);
-    }
+        void onTaskFailed(Object sender, TaskFailedEvent event);
 
-    public interface OnTaskProgressChangedListener {
-        public abstract void onProgressChanged(Object sender, TaskProgressChangedEvent event);
-    }
+        void onProgressChanged(Object sender, TaskProgressChangedEvent event);
 
-    public interface OnTaskTimeoutListener {
-        public abstract void onTimeout(Object sender, TaskTimeoutEvent event);
-    }
+        void onTimeout(Object sender, TaskTimeoutEvent event);
 
-    public interface OnTaskCancelListner {
-        public abstract void onTaskCancel(Object sender, TaskCancelEvent event);
+        void onTaskCancel(Object sender, TaskCancelEvent event);
     }
 }
