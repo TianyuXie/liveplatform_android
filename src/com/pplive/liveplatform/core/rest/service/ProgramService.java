@@ -1,16 +1,12 @@
 package com.pplive.liveplatform.core.rest.service;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Program;
-import com.pplive.liveplatform.core.rest.http.CoTokenAuthentication;
 import com.pplive.liveplatform.core.rest.http.Url;
 import com.pplive.liveplatform.core.rest.resp.ProgramListResp;
 import com.pplive.liveplatform.core.rest.resp.ProgramResp;
@@ -36,9 +32,6 @@ public class ProgramService extends AbsService{
     }
 
     private ProgramService() {
-        mRequestHeaders = new HttpHeaders();
-        mRequestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        mRequestHeaders.setAuthorization(new CoTokenAuthentication("pptv", Constants.TEST_COTK));
     }
     
     public List<Program> getProgramsByOwner(String owner) {
@@ -65,7 +58,7 @@ public class ProgramService extends AbsService{
     public void updateProgram(Program program) {
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
         
-        mRestTemplate.postForObject(UPDATE_PROGRAM_URL.toString(), req, Resp.class, program.getPid());
+        mRestTemplate.postForObject(UPDATE_PROGRAM_URL.toString(), req, Resp.class, program.getId());
     }
 
     public void deleteProgramById(long id) {

@@ -1,8 +1,14 @@
 package com.pplive.liveplatform.core.rest.service;
 
+import java.util.Collections;
+
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.rest.http.CoTokenAuthentication;
 
 public abstract class AbsService {
 
@@ -13,5 +19,9 @@ public abstract class AbsService {
     protected AbsService() {
         mRestTemplate = new RestTemplate();
         mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+        
+        mRequestHeaders = new HttpHeaders();
+        mRequestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        mRequestHeaders.setAuthorization(new CoTokenAuthentication("pptv", Constants.TEST_COTK));
     }
 }

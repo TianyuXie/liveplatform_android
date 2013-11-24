@@ -2,5 +2,9 @@ package com.pplive.liveplatform.core.rest;
 
 public class LiveStatus {
 
-    String livestatus;
+    LiveStatusEnum livestatus;
+    
+    public LiveStatus(LiveStatusEnum livestatus) {
+        this.livestatus = livestatus;
+    }
 }

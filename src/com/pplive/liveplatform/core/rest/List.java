@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.rest;
 
+
 public class List<T> {
 
     java.util.List<T> list;
