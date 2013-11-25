@@ -29,6 +29,5 @@ public abstract class AbsService {
         
         mRequestHeaders = new HttpHeaders();
         mRequestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
     }
 }

@@ -11,7 +11,7 @@ public enum LiveStatusEnum {
     INIT,
     
     @SerializedName("preview")
-    PREVIWE,
+    PREVIEW,
     
     @SerializedName("living")
     LIVING,
