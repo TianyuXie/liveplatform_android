@@ -2,17 +2,17 @@ package com.pplive.liveplatform.core.task;
 
 public class TaskProgressChangedEvent {
 
-    private int progressPercentage = -1;
+    private int progress = -1;
 
     public TaskProgressChangedEvent(int progressPercentage) {
-        this.progressPercentage = progressPercentage;
+        this.progress = progressPercentage;
     }
 
-    public int getProgressPercentage() {
-        return progressPercentage;
+    public int getProgress() {
+        return progress;
     }
 
-    public void setProgressPercentage(int progressPercentage) {
-        this.progressPercentage = progressPercentage;
+    public void setProgress(int progressPercentage) {
+        this.progress = progressPercentage;
     }
 }

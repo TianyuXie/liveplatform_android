@@ -1,19 +1,22 @@
 package com.pplive.liveplatform.core.task.home;
 
-import java.io.IOException;
+import java.util.List;
 
+import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.service.SearchService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
-import com.pplive.liveplatform.core.task.TaskStatus;
-import com.pplive.liveplatform.util.HttpUtil;
+import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class GetTask extends Task {
-
-    public final static String KEY_REQUEST = "get_task_request";
-    public final static String KEY_URL = "get_task_url";
+public class SearchTask extends Task {
     public final static String KEY_RESULT = "get_task_result";
+    public final static String KEY_SUBJECT_ID = "subjectId";
+    public final static String KEY_SORT = "sort";
+    public final static String KEY_LIVE_STATUS = "liveStatus";
+    public final static String KEY_NEXT_TK = "nextTk";
+    public final static String KEY_FALL_COUNT = "fallCount";
 
     private final String ID = StringUtil.newGuid();
     private final String NAME = "GetTask";
@@ -26,11 +29,6 @@ public class GetTask extends Task {
     @Override
     public String getName() {
         return NAME;
-    }
-
-    @Override
-    public void cancel() {
-        isCancel = true;
     }
 
     @Override
@@ -48,27 +46,30 @@ public class GetTask extends Task {
         if (params == null || params.length <= 0) {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
-
+        if (isCancelled()) {
+            return new TaskResult(TaskStatus.Cancel, "Canceled");
+        }
         TaskContext context = params[0];
-
-        String data = null;
+        int subjectId = (Integer) context.get(KEY_SUBJECT_ID);
+        String sort = context.getString(KEY_SORT);
+        String liveStatus = (String) context.getString(KEY_LIVE_STATUS);
+        String nextTk = (String) context.getString(KEY_NEXT_TK);
+        int fallCount = (Integer) context.get(KEY_FALL_COUNT);
+        List<Program> data = null;
         try {
-            data = HttpUtil.getFromUrl((String) context.get(KEY_URL), "application/javascript");
-        } catch (IOException e) {
+            data = SearchService.getInstance().searchProgram(subjectId, sort, liveStatus, nextTk, fallCount);
+        } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "GET Error");
         }
         if (data == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
-
+        if (isCancelled()) {
+            return new TaskResult(TaskStatus.Cancel, "Canceled");
+        }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_RESULT, data);
         result.setContext(context);
-
-        if (isCancel) {
-            result.setStatus(TaskStatus.Cancel);
-            result.setMessage("Task is canceled");
-        }
         return result;
     }
 }

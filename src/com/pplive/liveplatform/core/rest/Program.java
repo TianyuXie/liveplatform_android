@@ -30,15 +30,16 @@ public class Program {
         this.title = title;
         this.starttime = starttime;
     }
+    
 
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
     public long getId() {
         return pid;
     }
-
+    
     public String getTitle() {
         return title;
     }
@@ -50,7 +51,7 @@ public class Program {
     public long getStartTime() {
         return starttime;
     }
-
+    
     public LiveStatusEnum getLiveStatus() {
         return livestatus;
     }
@@ -61,7 +62,6 @@ public class Program {
 
     @Override
     public String toString() {
-        return String.format("pid: %d; owner: %s; starttime: %d; title: %s; livestatus: %s; cover_url: %s;", pid, owner, starttime, title, livestatus,
-                cover_url);
+        return String.format("owner: %s; starttime: %d; title: %s; cover_url: %s;", owner, starttime, title, cover_url);
     }
 }

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -19,22 +20,29 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
+import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
+import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.ViewUtil;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener {
     static final String TAG = "LivePlayerActivity";
 
     private static final int SCREEN_ORIENTATION_INVALID = -1;
 
+    private DetectableRelativeLayout mRootLayout;
+
     private LivePlayerFragment mLivePlayerFragment;
 
     private View mFragmentContainer;
 
-    private View mTopBarView;
-
     private View mDialogView;
 
-    private View mOutUserView;
+    private View mCommentView;
+
+    private Button mWriteBtn;
+
+    private EnterSendEditText mCommentEditText;
 
     private SensorManager mSensorManager;
 
@@ -45,6 +53,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private int mUserOrient;
 
     private boolean mIsFull;
+
+    private boolean mWriting;
 
     private int mHalfScreenHeight;
 
@@ -58,26 +68,26 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_live_player);
 
-        /* init fields */
-        mFragmentContainer = findViewById(R.id.layout_player_fragment);
-        mTopBarView = findViewById(R.id.layout_player_topbar);
-        mDialogView = findViewById(R.id.layout_player_dialog);
-        mOutUserView = findViewById(R.id.layout_player_out_user);
-        Button modeButton = (Button) findViewById(R.id.btn_player_mode);
-        modeButton.setOnClickListener(onModeBtnClickListener);
+        /* init fragment */
         mLivePlayerFragment = new LivePlayerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
-        float width = DisplayUtil.getWidthPx(this);
-        float height = DisplayUtil.getHeightPx(this);
-        mHalfScreenHeight = (int) (width * width / height);
+        mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
 
         /* init views */
+        mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
+        mRootLayout.setOnSoftInputListener(onSoftInputListener);
+        mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
+        mCommentEditText.setOnEnterListener(commentOnEnterListener);
+        mCommentView = findViewById(R.id.layout_player_comment);
+        mFragmentContainer = findViewById(R.id.layout_player_fragment);
+        mDialogView = findViewById(R.id.layout_player_dialog);
+        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
+        mWriteBtn.setOnClickListener(onWriteBtnClickListener);
         setLayout(DisplayUtil.isLandscape(this), true);
-        ((RelativeLayout.LayoutParams) mOutUserView.getLayoutParams()).topMargin = mHalfScreenHeight - DisplayUtil.dp2px(this, 10);
 
         /* init others */
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -90,6 +100,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setupPlayer(getIntent());
+        mLivePlayerFragment.setOnModeBtnClickListener(onModeBtnClickListener);
     }
 
     @Override
@@ -101,6 +112,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
+        pauseWriting();
         mSensorManager.unregisterListener(this);
         super.onPause();
     }
@@ -115,6 +127,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
+        mLivePlayerFragment.setOnModeBtnClickListener(null);
         super.onStop();
     }
 
@@ -124,21 +137,27 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
         Log.d(TAG, "setLayout");
         mIsFull = isFull;
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
+        RelativeLayout.LayoutParams containerLp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
         if (mIsFull) {
-            lp.height = LayoutParams.MATCH_PARENT;
-            mTopBarView.setVisibility(View.GONE);
+            containerLp.height = LayoutParams.MATCH_PARENT;
             mDialogView.setVisibility(View.GONE);
-            mOutUserView.setVisibility(View.GONE);
+            mCommentView.setVisibility(View.GONE);
+            mWriteBtn.setVisibility(View.GONE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            lp.height = mHalfScreenHeight;
-            mTopBarView.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+            containerLp.height = mHalfScreenHeight;
+            dialogLp.topMargin = mHalfScreenHeight;
             mDialogView.setVisibility(View.VISIBLE);
-            mOutUserView.setVisibility(View.VISIBLE);
+            if (mWriting) {
+                mCommentView.setVisibility(View.VISIBLE);
+                mWriteBtn.setVisibility(View.GONE);
+            } else {
+                mCommentView.setVisibility(View.GONE);
+                mWriteBtn.setVisibility(View.VISIBLE);
+            }
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
-        mFragmentContainer.requestLayout();
         if (!init) {
             mLivePlayerFragment.setLayout(mIsFull);
         }
@@ -150,6 +169,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onConfigurationChanged(newConfig);
         setLayout(DisplayUtil.isLandscape(this), false);
     }
+
+    View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startWriting();
+        }
+    };
 
     View.OnClickListener onModeBtnClickListener = new View.OnClickListener() {
         @Override
@@ -167,8 +193,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
         if (mCurrentOrient != requestedOrientation) {
-            mCurrentOrient = requestedOrientation;
             Log.d(TAG, "Update Orientation");
+            mCurrentOrient = requestedOrientation;
+            pauseWriting();
             super.setRequestedOrientation(requestedOrientation);
         }
     }
@@ -211,7 +238,69 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // TODO Auto-generated method stub
 
+    }
+
+    private EnterSendEditText.OnEnterListener commentOnEnterListener = new EnterSendEditText.OnEnterListener() {
+
+        @Override
+        public boolean onEnter(View v) {
+            //TODO
+            String keyword = mCommentEditText.getText().toString();
+            Log.d(TAG, "Send: " + keyword);
+            stopWriting();
+            return true;
+        }
+    };
+
+    private DetectableRelativeLayout.OnSoftInputListener onSoftInputListener = new DetectableRelativeLayout.OnSoftInputListener() {
+        @Override
+        public void onSoftInputShow() {
+            Log.d(TAG, "onSoftInputShow");
+            popupDialog();
+        }
+
+        @Override
+        public void onSoftInputHide() {
+            Log.d(TAG, "onSoftInputHide");
+            popdownDialog();
+        }
+    };
+
+    private void startWriting() {
+        if (!mWriting) {
+            mWriting = true;
+            mWriteBtn.setVisibility(View.GONE);
+            mCommentView.setVisibility(View.VISIBLE);
+            mCommentEditText.requestFocus();
+        }
+    }
+
+    private void pauseWriting() {
+        if (mWriting) {
+            mCommentEditText.clearFocus();
+        }
+    }
+
+    private void stopWriting() {
+        if (mWriting) {
+            mWriting = false;
+            mCommentEditText.setText("");
+            mCommentEditText.clearFocus();
+            mCommentView.setVisibility(View.GONE);
+            mWriteBtn.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void popupDialog() {
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+        lp.topMargin = DisplayUtil.dp2px(this, 100);
+        ViewUtil.requestLayoutDelay(mDialogView, 200);
+    }
+
+    private void popdownDialog() {
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+        lp.topMargin = mHalfScreenHeight;
+        ViewUtil.requestLayoutDelay(mDialogView, 200);
     }
 }

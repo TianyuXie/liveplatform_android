@@ -1,68 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pplive.liveplatform.ui.widget.DetectableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:background="@color/black"
     android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/layout_player_fragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/layout_player_topbar"
+        android:layout_alignParentTop="true"
+        android:clickable="true"
         android:orientation="vertical" >
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@id/layout_player_topbar"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:background="@color/dim_gray"
-        android:orientation="horizontal"
-        android:visibility="gone" >
-    </LinearLayout>
-
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/layout_player_dialog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/layout_player_fragment"
-        android:background="@color/dim_gray"
-        android:orientation="vertical"
-        android:visibility="gone" >
-    </LinearLayout>
+        android:layout_above="@+id/layout_player_comment"
+        android:background="@color/player_dialog_bg" />
 
     <LinearLayout
-        android:id="@+id/layout_player_out_user"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/layout_player_topbar"
-        android:layout_marginLeft="10dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone" >
+        android:layout_alignParentBottom="true"
+        android:background="@color/black" >
 
-        <ImageView
-            android:id="@+id/image_player_out_icon"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:contentDescription="@null"
-            android:src="@color/red" />
+        <LinearLayout
+            android:id="@+id/layout_player_dimmy"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal" />
 
-        <TextView
-            android:id="@+id/textview_player_out_name"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@id/layout_player_comment"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/test_player_name"
-            android:textColor="@color/white"
-            android:textSize="13sp" />
+            android:layout_margin="10dp"
+            android:background="@drawable/searchbar_text_bg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:paddingTop="5dp"
+            android:visibility="gone" >
+
+            <com.pplive.liveplatform.ui.widget.EnterSendEditText
+                android:id="@+id/edit_player_comment"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/searchbar_text_bg"
+                android:imeOptions="actionSend"
+                android:inputType="text|textMultiLine"
+                android:maxLines="4"
+                android:textColor="@color/black"
+                android:textSize="15sp" />
+        </LinearLayout>
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_player_mode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/green" />
+        android:id="@+id/btn_player_write"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="10dp"
+        android:background="@drawable/player_btn_write" />
 
-</RelativeLayout>
+</com.pplive.liveplatform.ui.widget.DetectableRelativeLayout>

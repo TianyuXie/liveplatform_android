@@ -286,15 +286,17 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
     private void bounceHeader(int yTranslate) {
         mAniming = true;
-
-        TranslateAnimation bodyAnim = new TranslateAnimation(0, 0, 0, yTranslate);
+        if (mStatus == STATUS_REFRESHING) {
+            mHeaderView.setPadding(0, 0, 0, 0);
+        } else if (mStatus == STATUS_DONE) {
+            mHeaderView.setPadding(0, -mHeaderHeight, 0, 0);
+        }
+        TranslateAnimation bodyAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
         bodyAnim.setDuration(700);
-        bodyAnim.setFillAfter(true);
         bodyAnim.setInterpolator(new OvershootInterpolator(1.7f));
 
-        TranslateAnimation headerAnim = new TranslateAnimation(0, 0, 0, yTranslate);
+        TranslateAnimation headerAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
         headerAnim.setDuration(700);
-        headerAnim.setFillAfter(true);
         headerAnim.setInterpolator(new OvershootInterpolator(1.7f));
 
         startAnimation(bodyAnim);
@@ -307,12 +309,6 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         mAniming = false;
         clearAnimation();
         mHeaderView.clearAnimation();
-        if (mStatus == STATUS_REFRESHING) {
-            mHeaderView.setPadding(0, 0, 0, 0);
-        } else if (mStatus == STATUS_DONE) {
-            mHeaderView.setPadding(0, -mHeaderHeight, 0, 0);
-        }
-        mHeaderView.invalidate();
     }
 
     public boolean isBusy() {

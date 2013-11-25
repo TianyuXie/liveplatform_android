@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.util;
 
+import android.os.Handler;
 import android.view.View;
 
 public class ViewUtil {
@@ -7,26 +8,42 @@ public class ViewUtil {
     public static void showOrHide(final View v) {
         showOrHide(v, true);
     }
-    
+
     public static void showOrHide(final View v, final boolean gone) {
         if (null == v) {
             return;
         }
-        
+
         if (View.VISIBLE != v.getVisibility()) {
             v.setVisibility(View.VISIBLE);
         } else {
             v.setVisibility(gone ? View.GONE : View.INVISIBLE);
         }
     }
-    
-    public static void setVisibility(final View v, final int flag) {
-        if (null == v) {
+
+    public static void setVisibility(final View v, final int flag, final boolean gone) {
+        if (v == null) {
             return;
         }
-        
-        v.setVisibility(flag != 0 ? View.VISIBLE : View.GONE);
+        if (flag == 0x0) {
+            v.setVisibility(gone ? View.GONE : View.INVISIBLE);
+        } else {
+            v.setVisibility(View.VISIBLE);
+        }
     }
-    
-    private ViewUtil() {}
+
+    public static void setVisibility(final View v, final int flag) {
+        setVisibility(v, flag, true);
+    }
+
+    public static void requestLayoutDelay(final View v, final int timeout) {
+        (new Handler()).postDelayed(new Runnable() {
+            public void run() {
+                v.requestLayout();
+            }
+        }, timeout);
+    }
+
+    private ViewUtil() {
+    }
 }

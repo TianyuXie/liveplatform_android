@@ -5,24 +5,19 @@ import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
-import com.pplive.liveplatform.vo.program.Program;
 
-public class RefreshContainer extends LinearLayout {
+public class RefreshContainer extends RelativeLayout {
     static final String TAG = "RefreshContainer";
 
     private List<Program> mPrograms;
@@ -39,7 +34,6 @@ public class RefreshContainer extends LinearLayout {
         mGridView = (RefreshGridView) root.findViewById(R.id.gridview_home_results);
         LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_pull_header);
         head.addView(mGridView.getHeader(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
-        mGridView.setSelector(new ColorDrawable(Color.TRANSPARENT));
         mGridView.setAdapter(mAdapter);
         mGridView.setOnRefreshListener(onRefreshListener);
     }
@@ -48,12 +42,10 @@ public class RefreshContainer extends LinearLayout {
         this(context, null);
     }
 
+    @SuppressWarnings("unchecked")
     public void refreshData(Object data) {
-        JsonElement list = ((JsonObject) data).get("data").getAsJsonObject().get("list");
-        Collection<Program> newPrograms = new Gson().fromJson(list, new TypeToken<Collection<Program>>() {
-        }.getType());
         mPrograms.clear();
-        mPrograms.addAll(newPrograms);
+        mPrograms.addAll((Collection<Program>) data);
         mAdapter.notifyDataSetChanged();
     }
 

@@ -11,6 +11,15 @@ public class TaskContext {
         return map.get(key);
     }
 
+    public String getString(String key) {
+        Object result = map.get(key);
+        if (result == null) {
+            return "";
+        } else {
+            return result.toString();
+        }
+    }
+
     public Object set(String key, Object value) {
         return map.put(key, value);
     }

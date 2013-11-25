@@ -11,8 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.util.DisplayUtil;
-import com.pplive.liveplatform.vo.program.Program;
 
 public class ProgramAdapter extends BaseAdapter {
     private static float ratio = 16.0f / 10.0f;
@@ -71,6 +71,7 @@ public class ProgramAdapter extends BaseAdapter {
         ViewGroup.LayoutParams lp = holder.previewImageView.getLayoutParams();
         lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwner());
+        holder.titleTextView.setText(data.getTitle());
     }
 
     static class ViewHolder {

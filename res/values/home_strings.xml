@@ -6,8 +6,6 @@
     <string name="test_titlebar_title">PP直播</string>
     <string name="test_sidebar_username">心碎无痕</string>
     <string name="test_home_column">原创</string>
-    <string name="test_program_title">萌货集锦之喵星人</string>
-    <string name="test_program_owner">尼克1990</string>
-    <string name="test_program_viewcount">123</string>
+    <string name="test_program_viewcount">0</string>
 
 </resources>

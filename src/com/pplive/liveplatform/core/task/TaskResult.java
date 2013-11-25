@@ -4,6 +4,10 @@ public class TaskResult {
 
     public final static TaskResult FINISHED = new TaskResult(TaskStatus.Finished);
 
+    public enum TaskStatus {
+        Finished, Failed, Cancel
+    }
+
     private TaskStatus status;
     private TaskContext context;
     private String message;
