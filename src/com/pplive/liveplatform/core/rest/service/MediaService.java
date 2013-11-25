@@ -8,9 +8,10 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.rest.Protocol;
+import com.pplive.liveplatform.core.rest.URL;
 import com.pplive.liveplatform.core.rest.http.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.rest.http.PlayTokenAuthentication;
-import com.pplive.liveplatform.core.rest.http.Url;
 import com.pplive.liveplatform.core.rest.model.Push;
 import com.pplive.liveplatform.core.rest.model.Watch;
 import com.pplive.liveplatform.core.rest.resp.PushResp;
@@ -20,13 +21,13 @@ public class MediaService extends AbsService {
 
     private static final String TAG = MediaService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PUSH = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/media/v1/pptv/program/{pid}/publish")
+    private static final String TEMPLATE_GET_PUSH = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/media/v1/pptv/program/{pid}/publish")
             .toString();
 
-    private static final String TEMPLATE_GET_PLAY = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/media/v1/pptv/program/{pid}/watch")
+    private static final String TEMPLATE_GET_PLAY = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/media/v1/pptv/program/{pid}/watch")
             .toString();
 
-    private static final String TEMPLATE_GET_PREVIEW = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
+    private static final String TEMPLATE_GET_PREVIEW = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
             "/media/v1/pptv/program/{pid}/preview").toString();
 
     private static final MediaService sInstance = new MediaService();

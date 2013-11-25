@@ -7,14 +7,15 @@ import org.springframework.http.ResponseEntity;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.http.Url;
+import com.pplive.liveplatform.core.rest.Protocol;
+import com.pplive.liveplatform.core.rest.URL;
 import com.pplive.liveplatform.core.rest.resp.TokenResp;
 
 public class TokenService extends AbsService {
 
     private static final String TAG = TokenService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_TOKEN = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
+    private static final String TEMPLATE_GET_TOKEN = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
             "/tk/v1/{tokentype}/{programid}?user={username}&expiretime={expiretime}").toString();
 
     private static final TokenService sInstance = new TokenService();

@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.rest.http;
+package com.pplive.liveplatform.core.rest;
 
 
 import java.io.Serializable;
@@ -10,76 +10,35 @@ import java.util.Map.Entry;
 import android.net.Uri;
 import android.text.TextUtils;
 
-public class Url implements Serializable {
+public class URL implements Serializable, Cloneable {
 
     private static final long serialVersionUID = -3649683692013310693L;
-    
-    public enum Schema {
-        HTTP {
-            @Override
-            public String toString() {
-                return "http://";
-            }
-        }, 
-        HTTPS {
-            @Override
-            public String toString() {
-                return "https://";
-            }
-        }, 
-        RTMP {
-            @Override
-            public String toString() {
-                return "rtmp://";
-            }
-        },
-        RTSP {
-            @Override
-            public String toString() {
-                return "rtsp://";
-            }
-        }, 
-        CONTENT {
-            @Override
-            public String toString() {
-                return "content://";
-            }
-        }, 
-        FILE {
-            @Override
-            public String toString() {
-                return "file://";
-            }
-        };
-        
-        public abstract String toString();
-    }
     
     private String mBaseUrl;
     
     private final Map<String, Object> mParams;
     
-    public Url() {
+    public URL() {
         this(null);
     }
     
-    public Url(String host) {
+    public URL(String host) {
         this(host, null);
     }
     
-    public Url(String host, String path) {
+    public URL(String host, String path) {
         this(host, -1, path);
     }
     
-    public Url(String host, int port, String path) {
+    public URL(String host, int port, String path) {
         this(null, host, port, path);
     }
     
-    public Url(Schema schema, String host, String path) {
+    public URL(Protocol schema, String host, String path) {
         this(schema, host, -1, path);
     }
     
-    public Url(Schema schema, String host, int port, String path) {
+    public URL(Protocol schema, String host, int port, String path) {
         mParams = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
         
         StringBuilder sb = new StringBuilder(); 
@@ -109,6 +68,11 @@ public class Url implements Serializable {
     
     public final <T> void addParameter(String key, T value) {
         mParams.put(key, value);
+    }
+    
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
     
     @Override

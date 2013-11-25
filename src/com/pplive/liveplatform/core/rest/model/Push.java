@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.rest.model;
 
+import java.util.ArrayList;
+
 public class Push {
 
     long pid;
@@ -20,7 +22,7 @@ public class Push {
         return protocol;
     }
     
-    public String[] getAddr() {
+    public String[] getAddrs() {
         return addr;
     }
     
@@ -30,5 +32,19 @@ public class Push {
     
     public String getName() {
         return name;
+    }
+    
+    public java.util.List<String> getPushStringList() {
+        if (null == addr || 0 == addr.length) {
+            return null;
+        }
+        
+        java.util.List<String> list = new ArrayList<String>(addr.length);
+        for (String address : addr) {
+            String url = protocol + "://" + address + path + "/" + name;
+            list.add(url);
+        }
+        
+        return list;
     }
 }

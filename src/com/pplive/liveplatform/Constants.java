@@ -2,6 +2,8 @@ package com.pplive.liveplatform;
 
 import android.os.Build;
 
+import com.pplive.liveplatform.core.rest.URL;
+
 public final class Constants {
 
     public static final boolean LARGER_THAN_OR_EQUAL_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
@@ -23,8 +25,7 @@ public final class Constants {
     public static final String TEST_HOST = "172.16.6.64";
     
     public static final int TEST_PORT = 8080;
-
-
+    
     private Constants() {
     }
 }
