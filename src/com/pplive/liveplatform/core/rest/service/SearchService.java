@@ -14,7 +14,7 @@ public class SearchService extends AbsService {
 
     private static final SearchService sInstance = new SearchService();
     
-    private static final Url SEARCH_PROGRAM_URL = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/search/v1/pptv/searchcommon?subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}");
+    private static final String TEMPLATE_SEARCH_PROGRAM = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/search/v1/pptv/searchcommon?subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}").toString();
 
     public static SearchService getInstance() {
         return sInstance;
@@ -30,7 +30,7 @@ public class SearchService extends AbsService {
 
     public List<Program> searchProgram(int subjectId, String sort, String liveStatus, String nextTk, int fallCount) {
         
-        ProgramFallListResp rep = mRestTemplate.getForObject(SEARCH_PROGRAM_URL.toString(), ProgramFallListResp.class, subjectId, sort, liveStatus, nextTk, fallCount);
+        ProgramFallListResp rep = mRestTemplate.getForObject(TEMPLATE_SEARCH_PROGRAM, ProgramFallListResp.class, subjectId, sort, liveStatus, nextTk, fallCount);
         
         return rep.getList();
     }

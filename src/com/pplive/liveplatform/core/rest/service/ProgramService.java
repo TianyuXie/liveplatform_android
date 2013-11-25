@@ -16,16 +16,15 @@ import com.pplive.liveplatform.core.rest.resp.Resp;
 
 public class ProgramService extends AbsService{
 
-    @SuppressWarnings("unused")
     private static final String TAG = ProgramService.class.getSimpleName();
 
-    private static final Url GET_PROGRAMS_URL = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/owner/{owner}/programs");
+    private static final String TEMPLATE_GET_PROGRAMS = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/owner/{owner}/programs").toString();
     
-    private static final Url CREATE_PROGRAM_URL = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program");
+    private static final String TEMPLATE_CREATE_PROGRAM = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program").toString();
     
-    private static final Url UPDATE_PROGRAM_URL = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program/{programid}/info");
+    private static final String TEMPLATE_UPDATE_PROGRAM = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program/{programid}/info").toString();
 
-    private static final Url DELETE_PROGRAM_URL = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program/{programid}");
+    private static final String TEMPLATE_DELETE_PROGRAM = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program/{programid}").toString();
 
     private static ProgramService sInstance = new ProgramService();
 
@@ -38,7 +37,7 @@ public class ProgramService extends AbsService{
     
     public List<Program> getProgramsByOwner(String owner) {
 
-        ProgramListResp rep = mRestTemplate.getForObject(GET_PROGRAMS_URL.toString(), ProgramListResp.class, owner);
+        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner);
 
         return rep.getList();
     }
@@ -51,9 +50,9 @@ public class ProgramService extends AbsService{
     public Program createProgram(Program program) {
         Log.d(TAG, program.toString());
         
-        HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+        HttpEntity<?> req = new HttpEntity<Program>(program, mRequestHeaders);
         
-        ProgramResp resp = mRestTemplate.postForObject(CREATE_PROGRAM_URL.toString(), req, ProgramResp.class);
+        ProgramResp resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM.toString(), req, ProgramResp.class);
         
         return resp.getData();
     }
@@ -61,12 +60,12 @@ public class ProgramService extends AbsService{
     public void updateProgram(Program program) {
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
         
-        mRestTemplate.postForObject(UPDATE_PROGRAM_URL.toString(), req, Resp.class, program.getId());
+        mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, Resp.class, program.getId());
     }
 
     public void deleteProgramById(long id) {
         
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
-        mRestTemplate.exchange(DELETE_PROGRAM_URL.toString(), HttpMethod.DELETE, req, Resp.class, id);
+        mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, Resp.class, id);
     }
 }

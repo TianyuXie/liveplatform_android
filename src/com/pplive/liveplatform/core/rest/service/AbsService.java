@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.rest.service;
 
 import java.util.Collections;
 
+import org.springframework.http.HttpAuthentication;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -17,13 +18,17 @@ public abstract class AbsService {
     
     protected HttpHeaders mRequestHeaders;
     
+    protected HttpAuthentication mCoTokenAuthentication;
+    
     protected AbsService() {
         mRestTemplate = new RestTemplate();
         mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
         mRestTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         
+        mCoTokenAuthentication = new CoTokenAuthentication("pptv", Constants.TEST_COTK); 
+        
         mRequestHeaders = new HttpHeaders();
         mRequestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        mRequestHeaders.setAuthorization(new CoTokenAuthentication("pptv", Constants.TEST_COTK));
+        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
     }
 }

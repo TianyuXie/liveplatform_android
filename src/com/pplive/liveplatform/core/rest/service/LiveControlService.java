@@ -12,6 +12,8 @@ public class LiveControlService extends AbsService {
 
     @SuppressWarnings("unused")
     private static final String TAG = LiveControlService.class.getSimpleName();
+    
+    private static final String TEMPLATE_UPDATE_LIVESTATUS = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/c/v1/pptv/program/{pid}/livestatus").toString();
 
     private static final LiveControlService sInstance = new LiveControlService();
 
@@ -19,14 +21,12 @@ public class LiveControlService extends AbsService {
         return sInstance;
     }
 
-    private static final Url UPDATE_LIVESTATUS_URL = new Url(Url.Schema.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/c/v1/pptv/program/{pid}/livestatus");
-
     private LiveControlService() {
     }
-    
-    public void updateLiveStatus(long pid, LiveStatusEnum livestatus) {
-        HttpEntity<LiveStatus> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
-        
-        mRestTemplate.postForObject(UPDATE_LIVESTATUS_URL.toString(), req, Resp.class, pid);
+
+    public void updateLiveStatusById(long pid, LiveStatusEnum livestatus) {
+        HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
+
+        mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVESTATUS, req, Resp.class, pid);
     }
 }
