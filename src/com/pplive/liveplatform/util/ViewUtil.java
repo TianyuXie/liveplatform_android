@@ -36,9 +36,10 @@ public class ViewUtil {
         setVisibility(v, flag, true);
     }
 
-    public static void requestLayoutDelay(final View v, final int timeout) {
+    public static void showLayoutDelay(final View v, final int timeout) {
         (new Handler()).postDelayed(new Runnable() {
             public void run() {
+                v.setVisibility(View.VISIBLE);
                 v.requestLayout();
             }
         }, timeout);

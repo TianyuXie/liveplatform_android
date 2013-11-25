@@ -40,5 +40,7 @@
     <!-- Player -->
     <color name="player_title_bar">#55545454</color>
     <color name="player_dialog_bg">#AA000000</color>
+    
+    <color name="share_dialog_bg">#FFFFFFFF</color>
 
 </resources>

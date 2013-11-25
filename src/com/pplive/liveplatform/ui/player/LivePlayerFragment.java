@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
@@ -47,6 +48,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     private ToggleButton mModeBtn;
 
+    private Button mShareBtn;
+
     private boolean mShowBar;
 
     private OnCompletionListener mOnCompletionListener;
@@ -73,6 +76,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
+        mShareBtn = (Button) layout.findViewById(R.id.btn_player_share);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mUserView = layout.findViewById(R.id.layout_player_user);
@@ -139,6 +143,10 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     public void setOnModeBtnClickListener(View.OnClickListener l) {
         mModeBtn.setOnClickListener(l);
+    }
+
+    public void setOnShareBtnClickListener(View.OnClickListener l) {
+        mShareBtn.setOnClickListener(l);
     }
 
     private Handler mHandler = new Handler() {

@@ -84,18 +84,4 @@ public class EnterSendEditText extends EditText {
         me2.recycle();
         super.onDetachedFromWindow();
     }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        Log.d("EnterSendEditText", "onSizeChanged");
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.d("EnterSendEditText", String.format("%d, %d, %d, %d", l, t, r, b));
-        getX();
-        super.onLayout(changed, l, t, r, b);
-    }
-
 }

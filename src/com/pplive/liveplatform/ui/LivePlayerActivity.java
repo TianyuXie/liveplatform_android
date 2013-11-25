@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -22,6 +23,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
+import com.pplive.liveplatform.ui.widget.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
@@ -39,6 +41,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private View mDialogView;
 
     private View mCommentView;
+    
+    private Dialog mShareDialog;
 
     private Button mWriteBtn;
 
@@ -71,6 +75,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         /* init fragment */
         mLivePlayerFragment = new LivePlayerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
+        mShareDialog = new ShareDialog(this, R.style.share_dialog);
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
@@ -101,6 +106,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setupPlayer(getIntent());
         mLivePlayerFragment.setOnModeBtnClickListener(onModeBtnClickListener);
+        mLivePlayerFragment.setOnShareBtnClickListener(onShareBtnClickListener);
     }
 
     @Override
@@ -189,6 +195,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
         }
     };
+    
+    View.OnClickListener onShareBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mShareDialog.show();
+        }
+    };
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
@@ -257,6 +270,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onSoftInputShow() {
             Log.d(TAG, "onSoftInputShow");
+            mCommentView.setVisibility(View.VISIBLE);
             popupDialog();
         }
 
@@ -264,6 +278,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onSoftInputHide() {
             Log.d(TAG, "onSoftInputHide");
             popdownDialog();
+            if (!mWriting){
+                mWriteBtn.setVisibility(View.VISIBLE);
+            }
         }
     };
 
@@ -271,7 +288,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (!mWriting) {
             mWriting = true;
             mWriteBtn.setVisibility(View.GONE);
-            mCommentView.setVisibility(View.VISIBLE);
             mCommentEditText.requestFocus();
         }
     }
@@ -288,19 +304,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             mCommentEditText.setText("");
             mCommentEditText.clearFocus();
             mCommentView.setVisibility(View.GONE);
-            mWriteBtn.setVisibility(View.VISIBLE);
         }
     }
 
     private void popupDialog() {
+        mDialogView.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
-        lp.topMargin = DisplayUtil.dp2px(this, 100);
-        ViewUtil.requestLayoutDelay(mDialogView, 200);
+        lp.topMargin = mHalfScreenHeight * 3 / 5;
+        ViewUtil.showLayoutDelay(mDialogView, 100);
     }
 
     private void popdownDialog() {
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
         lp.topMargin = mHalfScreenHeight;
-        ViewUtil.requestLayoutDelay(mDialogView, 200);
+        ViewUtil.showLayoutDelay(mDialogView, 100);
     }
 }

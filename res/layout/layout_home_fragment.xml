@@ -30,7 +30,7 @@
             android:textSize="15sp" />
     </LinearLayout>
 
-    <com.pplive.liveplatform.ui.home.program.RefreshContainer
+    <com.pplive.liveplatform.ui.home.program.ProgramsContainer
         android:id="@+id/layout_home_body"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

@@ -14,14 +14,30 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <RelativeLayout
+    <ScrollView
         android:id="@+id/layout_player_dialog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/layout_player_comment"
-        android:background="@color/player_dialog_bg" />
+        android:layout_above="@+id/wrapper_player_comment"
+        android:background="@color/player_dialog_bg"
+        android:fadingEdgeLength="15dp"
+        android:overScrollMode="never"
+        android:padding="8dp"
+        android:requiresFadingEdge="vertical"
+        android:scrollbars="none" >
+
+        <TextView
+            android:id="@+id/textview_player_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/test_player_dialog"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </ScrollView>
 
     <LinearLayout
+        android:id="@id/wrapper_player_comment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -36,7 +52,7 @@
             android:orientation="horizontal" />
 
         <LinearLayout
-            android:id="@id/layout_player_comment"
+            android:id="@+id/layout_player_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -58,7 +74,7 @@
                 android:inputType="text|textMultiLine"
                 android:maxLines="4"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 
