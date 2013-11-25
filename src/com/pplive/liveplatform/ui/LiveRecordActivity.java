@@ -7,10 +7,12 @@ import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.Parameters;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -25,11 +27,17 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
+import com.pplive.liveplatform.core.rest.model.Program;
+import com.pplive.liveplatform.core.rest.model.Push;
+import com.pplive.liveplatform.core.rest.service.LiveControlService;
+import com.pplive.liveplatform.core.rest.service.MediaService;
+import com.pplive.liveplatform.core.rest.service.ProgramService;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.record.OnLiveSelectedListener;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
-import com.pplive.liveplatform.ui.widget.HorizontalListView;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.util.TimeUtil;
 
@@ -40,10 +48,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
     private static final int WHAT_RECORD_UPDATE = 9003;
-    
-    
-    private static final int WHAT_OPEN_DOOR = 9004;
-    
+    private static final int WHAT_LIVE_COMING_UPDATE = 9004;
+
+    private static final int WHAT_OPEN_DOOR = 9005;
+
     private Handler mInnerHandler = new Handler(this);
 
     private SurfaceView mPreview;
@@ -63,10 +71,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private FooterBarFragment mFooterBarFragment;
 
-    private HorizontalListView mLiveListView;
-
     private TextView mTextLive;
     private TextView mTextRecordDuration;
+    private TextView mTextLiveComing;
 
     private AnimDoor mAnimDoor;
     private View mStatusButtonWrapper;
@@ -89,6 +96,17 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     };
 
+    private Program mSelectedProgram;
+    private OnLiveSelectedListener mOnLiveSelectedListener = new OnLiveSelectedListener() {
+
+        @Override
+        public void onLiveSelected(Program program) {
+            mSelectedProgram = program;
+            
+            mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_UPDATE);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,10 +125,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
-        mLiveListView = mFooterBarFragment.getLiveListView();
-        
+        mFooterBarFragment.setOnLiveSelected(mOnLiveSelectedListener);
+
         mTextLive = (TextView) findViewById(R.id.text_live);
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
+        mTextLiveComing = (TextView) findViewById(R.id.text_live_coming);
 
         mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
         mAnimDoor.setOpenDoorListener(openDoorListener);
@@ -178,6 +197,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_RECORD_UPDATE:
             onRecordUpdate(msg.arg1);
             break;
+        case WHAT_LIVE_COMING_UPDATE:
+            onLiveComingUpdate();
+            break;
         case WHAT_OPEN_DOOR:
             mStatusButton.finishLoading();
             mStatusButtonWrapper.startAnimation(mStatusUpAnimation);
@@ -210,6 +232,30 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE, duration + 1 /* arg1 */, 0 /* arg2 */);
             mInnerHandler.sendMessageDelayed(msg, 1000 /* milliseconds */);
+        }
+    }
+
+    private void onLiveComingUpdate() {
+        if (mRecording) {
+            return;
+        }
+        
+        if (null != mSelectedProgram) {
+            long now = System.currentTimeMillis();
+            long start = mSelectedProgram.getStartTime();
+            
+            Log.d(TAG, "now: " + now + "; start: " + start);
+            
+            String coming = null;
+            if (start - now > 0) {
+                coming = TimeUtil.stringForTime(start - now);
+            } else {
+                coming = TimeUtil.stringForTime(0);
+            }
+            
+            mTextLiveComing.setVisibility(View.VISIBLE);
+            mTextLiveComing.setText(coming);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
         }
     }
 
@@ -281,9 +327,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void startRecording() {
+    private void startRecording(String url) {
         if (!mRecording) {
             mMediaRecorder = new LiveMediaRecoder(getApplicationContext(), mCamera);
+            mMediaRecorder.setOutputPath(url);
 
             mMediaRecorder.start();
 
@@ -337,14 +384,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onClickBtnLiveRecord(View v) {
+
         if (null != mCamera) {
             if (!mRecording) {
-                startRecording();
+                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
+                mTextLiveComing.setVisibility(View.GONE);
+                if (null == mGetPushUrlOneStepTask) {
+                    mGetPushUrlOneStepTask = new GetPushUrlTask();
+                    mGetPushUrlOneStepTask.execute(mSelectedProgram);
+                }
             } else {
                 stopRecording();
-            }
 
-            mBtnLiveRecord.setChecked(mRecording);
+                mBtnLiveRecord.setChecked(mRecording);
+            }
         }
     }
 
@@ -356,4 +409,49 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     }
 
+    private GetPushUrlTask mGetPushUrlOneStepTask;
+
+    class GetPushUrlTask extends AsyncTask<Program, Void, String> {
+
+        @Override
+        protected String doInBackground(Program... params) {
+
+            Program program = null;
+            if (null == params || 0 == params.length) {
+                program = new Program("xiety0001", "My Living", System.currentTimeMillis());
+                program = ProgramService.getInstance().createProgram(program);
+            } else {
+                program = params[0];
+            }
+
+            LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.INIT);
+            LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.PREVIEW);
+            LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.LIVING);
+
+            Push push = MediaService.getInstance().getPush(program.getId(), "xiety0001");
+
+            String url = null;
+            for (int i = 0, len = push.getPushStringList().size(); i < len; ++i) {
+                url = push.getPushStringList().get(i);
+                if (!TextUtils.isEmpty(url)) {
+                    break;
+                }
+            }
+
+            return url;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            mGetPushUrlOneStepTask = null;
+
+            if (null != mCamera) {
+                if (!mRecording) {
+                    startRecording(result);
+                }
+
+                mBtnLiveRecord.setChecked(mRecording);
+            }
+        }
+    }
 }

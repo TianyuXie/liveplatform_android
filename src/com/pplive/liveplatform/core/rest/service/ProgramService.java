@@ -10,6 +10,7 @@ import android.util.Log;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Protocol;
 import com.pplive.liveplatform.core.rest.URL;
+import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.resp.ProgramListResp;
 import com.pplive.liveplatform.core.rest.resp.ProgramResp;
@@ -19,8 +20,8 @@ public class ProgramService extends AbsService {
 
     private static final String TAG = ProgramService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PROGRAMS = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/owner/{owner}/programs")
-            .toString();
+    private static final String TEMPLATE_GET_PROGRAMS = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
+            "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
 
     private static final String TEMPLATE_CREATE_PROGRAM = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program").toString();
 
@@ -40,8 +41,13 @@ public class ProgramService extends AbsService {
     }
 
     public List<Program> getProgramsByOwner(String owner) {
+        return getProgramsByOwner(owner, LiveStatusEnum.NOT_START);
+    }
 
-        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner);
+    public List<Program> getProgramsByOwner(String owner, LiveStatusEnum livestatus) {
+        Log.d(TAG, "owner: " + owner + "; livestatus: " + livestatus);
+
+        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, livestatus);
 
         return rep.getList();
     }
@@ -53,7 +59,7 @@ public class ProgramService extends AbsService {
 
     public Program createProgram(Program program) {
         Log.d(TAG, program.toString());
-        
+
         mRequestHeaders.setAuthorization(mCoTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<Program>(program, mRequestHeaders);
 
@@ -64,7 +70,7 @@ public class ProgramService extends AbsService {
 
     public void updateProgram(Program program) {
         Log.d(TAG, program.toString());
-        
+
         mRequestHeaders.setAuthorization(mCoTokenAuthentication);
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
 
@@ -73,10 +79,10 @@ public class ProgramService extends AbsService {
 
     public void deleteProgramById(long pid) {
         Log.d(TAG, "pid: " + pid);
-        
+
         mRequestHeaders.setAuthorization(mCoTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
-        
+
         mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, Resp.class, pid);
     }
 }
