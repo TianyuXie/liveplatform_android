@@ -39,9 +39,17 @@ public class MediaService extends AbsService {
 
     }
 
-    public Push getPush(long pid, String token) {
+    public Push getPush(long pid, String username) {
+        Log.d(TAG, "pid: " + pid + "; username: " + username);
+
+        String token = TokenService.getInstance().getLiveToken(pid, username);
+
+        return getPushByToken(pid, token);
+    }
+
+    public Push getPushByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
-        
+
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
@@ -52,9 +60,17 @@ public class MediaService extends AbsService {
         return body.getData();
     }
 
-    public List<Watch> getPlayWatchList(long pid, String token) {
+    public List<Watch> getPlayWatchList(long pid, String username) {
+        Log.d(TAG, "pid: " + pid + "; username: " + username);
+
+        String token = TokenService.getInstance().getPlayToken(pid, username);
+
+        return getPlayWatchListByToken(pid, token);
+    }
+
+    public List<Watch> getPlayWatchListByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
-        
+
         mRequestHeaders.setAuthorization(new PlayTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
@@ -65,9 +81,17 @@ public class MediaService extends AbsService {
         return body.getList();
     }
 
-    public List<Watch> getPreviewWatchList(long pid, String token) {
+    public List<Watch> getPreviewWatchList(long pid, String username) {
+        Log.d(TAG, "pid: " + pid + "; username: " + username);
+
+        String token = TokenService.getInstance().getLiveToken(pid, username);
+
+        return getPreviewWatchListByToken(pid, token);
+    }
+
+    public List<Watch> getPreviewWatchListByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
-        
+
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
