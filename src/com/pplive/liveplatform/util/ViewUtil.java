@@ -45,6 +45,14 @@ public class ViewUtil {
         }, timeout);
     }
 
+    public static void requestLayoutDelay(final View v, final int timeout) {
+        (new Handler()).postDelayed(new Runnable() {
+            public void run() {
+                v.requestLayout();
+            }
+        }, timeout);
+    }
+
     private ViewUtil() {
     }
 }

@@ -23,6 +23,7 @@
     <color name="program_views_text">#FF5AC7FF</color>
     <color name="program_views_bg">#FF001E33</color>
     <color name="program_tag_bg">#BB191919</color>
+    <color name="input_text_bg">#FF19A0FF</color>
 
     <!-- Home -->
     <color name="home_fragment_nav_bg">#FF19A0FF</color>
@@ -30,7 +31,6 @@
     <color name="home_fragment_body_bg">#FF1A1A1A</color>
 
     <!-- Search -->
-    <color name="searchbar_text_bg">#FF19A0FF</color>
     <color name="searchbar_body_bg">#DD131313</color>
     <color name="searchbar_list_text_select">#FF5AC7FF</color>
     <color name="searchbar_list_normal">#FF222222</color>
@@ -38,9 +38,8 @@
     <color name="searchbar_list_divider">#FF080808</color>
 
     <!-- Player -->
-    <color name="player_title_bar">#55545454</color>
-    <color name="player_dialog_bg">#AA000000</color>
-    
+    <color name="player_bottom_bar">#7F000000</color>
+    <color name="player_dialog_bg">#B3000000</color>
     <color name="share_dialog_bg">#FFFFFFFF</color>
 
 </resources>

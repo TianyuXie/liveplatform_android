@@ -56,25 +56,25 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@drawable/searchbar_text_bg"
+            android:background="@drawable/player_dialog_input_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="5dp"
+            android:paddingBottom="6dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:paddingTop="5dp"
+            android:paddingTop="6dp"
             android:visibility="gone" >
 
             <com.pplive.liveplatform.ui.widget.EnterSendEditText
                 android:id="@+id/edit_player_comment"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/searchbar_text_bg"
+                android:background="@color/input_text_bg"
                 android:imeOptions="actionSend"
                 android:inputType="text|textMultiLine"
                 android:maxLines="4"
                 android:textColor="@color/black"
-                android:textSize="16sp" />
+                android:textSize="17sp" />
         </LinearLayout>
     </LinearLayout>
 

@@ -11,7 +11,7 @@ public class PPBoxUtil {
     public static URL getSDKPlayString(String playlink) {
         
         URL url = new URL(Protocol.RTSP, "127.0.0.1", 5054, "/record.es");
-        url.addParameter("playlinke", URLEncoder.encode(playlink));
+        url.addParameter("playlink", URLEncoder.encode(playlink));
         
         return url;
     }

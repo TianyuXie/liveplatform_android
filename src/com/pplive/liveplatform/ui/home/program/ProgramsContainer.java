@@ -94,9 +94,9 @@ public class ProgramsContainer extends RelativeLayout {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (!mGridView.isBusy() && mItemClickable) {
-                Log.d(TAG, "onItemClick");
                 long pid = mPrograms.get(position).getId();
                 String username = "xiety0001";
+                Log.d(TAG, pid + "");
                 GetMediaTask task = new GetMediaTask();
                 task.addTaskListener(onTaskListener);
                 TaskContext taskContext = new TaskContext();
