@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.util.ViewUtil;
 

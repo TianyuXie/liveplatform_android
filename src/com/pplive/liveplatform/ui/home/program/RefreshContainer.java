@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 
 public class RefreshContainer extends RelativeLayout {

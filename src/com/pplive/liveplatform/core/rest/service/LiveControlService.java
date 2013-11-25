@@ -3,9 +3,9 @@ package com.pplive.liveplatform.core.rest.service;
 import org.springframework.http.HttpEntity;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.LiveStatus;
-import com.pplive.liveplatform.core.rest.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.http.Url;
+import com.pplive.liveplatform.core.rest.model.LiveStatus;
+import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.resp.Resp;
 
 public class LiveControlService extends AbsService {

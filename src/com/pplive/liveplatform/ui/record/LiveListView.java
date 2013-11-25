@@ -15,7 +15,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.BaseAdapter;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
 

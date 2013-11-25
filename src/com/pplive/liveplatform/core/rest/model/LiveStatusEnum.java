@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.rest;
+package com.pplive.liveplatform.core.rest.model;
 
 import com.google.gson.annotations.SerializedName;
 

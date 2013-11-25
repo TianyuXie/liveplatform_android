@@ -3,8 +3,8 @@ package com.pplive.liveplatform.core.rest.service;
 import java.util.List;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.core.rest.http.Url;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.resp.ProgramFallListResp;
 
 public class SearchService extends AbsService {

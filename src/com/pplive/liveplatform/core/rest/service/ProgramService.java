@@ -8,8 +8,8 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.Program;
 import com.pplive.liveplatform.core.rest.http.Url;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.resp.ProgramListResp;
 import com.pplive.liveplatform.core.rest.resp.ProgramResp;
 import com.pplive.liveplatform.core.rest.resp.Resp;

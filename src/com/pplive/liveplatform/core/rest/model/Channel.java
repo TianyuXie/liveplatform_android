@@ -1,10 +1,10 @@
-package com.pplive.liveplatform.core.rest;
+package com.pplive.liveplatform.core.rest.model;
 
-public class Push {
+public class Channel {
 
-    long pid;
+    int ft;
     
-    String protocol;
+    int bwt;
     
     String[] addr;
     
@@ -12,12 +12,14 @@ public class Push {
     
     String name;
     
-    public long getId() {
-        return pid;
+    String[] args;
+    
+    public int getFt() {
+        return ft;
     }
     
-    public String getProtocol() {
-        return protocol;
+    public int getBwt() {
+        return bwt;
     }
     
     public String[] getAddr() {

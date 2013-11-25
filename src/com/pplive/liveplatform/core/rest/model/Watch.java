@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.rest;
+package com.pplive.liveplatform.core.rest.model;
 
 public class Watch {
 

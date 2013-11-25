@@ -18,7 +18,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
 import com.pplive.liveplatform.ui.record.LiveListView.OnLiveSelectedListener;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;

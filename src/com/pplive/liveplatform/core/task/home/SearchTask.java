@@ -2,7 +2,7 @@ package com.pplive.liveplatform.core.task.home;
 
 import java.util.List;
 
-import com.pplive.liveplatform.core.rest.Program;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.SearchService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
