@@ -36,6 +36,7 @@ import com.pplive.liveplatform.core.rest.service.ProgramService;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.record.LiveMediaRecoder.OnErrorListener;
 import com.pplive.liveplatform.ui.record.OnLiveSelectedListener;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
@@ -340,6 +341,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void startRecording(String url) {
         if (!mRecording) {
             mMediaRecorder = new LiveMediaRecoder(getApplicationContext(), mCamera);
+            mMediaRecorder.setOnErrorListener(new OnErrorListener() {
+                
+                @Override
+                public void onError() {
+                    stopRecording();
+                }
+            });
+            
             mMediaRecorder.setOutputPath(url);
 
             mMediaRecorder.start();
@@ -355,6 +364,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mMediaRecorder.stop();
 
             mRecording = false;
+            
+            mBtnLiveRecord.setChecked(mRecording);
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
@@ -405,8 +416,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             } else {
                 stopRecording();
-
-                mBtnLiveRecord.setChecked(mRecording);
             }
         }
     }

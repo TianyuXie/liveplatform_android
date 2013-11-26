@@ -6,7 +6,7 @@ import android.hardware.Camera;
 public class LiveMediaRecoder {
 
     private PPboxSink mCapture;
-    
+
     private String mOutputPath;
 
     public LiveMediaRecoder(Context ctx, Camera camera) {
@@ -14,22 +14,26 @@ public class LiveMediaRecoder {
         PPboxSink.init(ctx.getApplicationContext());
         mCapture = new PPboxSink(camera);
     }
-    
+
     public void setOutputPath(String url) {
         mOutputPath = url;
     }
 
+    public void setOnErrorListener(OnErrorListener listener) {
+        mCapture.setOnErrorListener(listener);
+    }
+
     public void start() {
-        if (null != mCapture) {
-            mCapture.open(mOutputPath);
-            mCapture.start();
-        }
+        mCapture.open(mOutputPath);
+        mCapture.start();
     }
 
     public void stop() {
-        if (null != mCapture) {
-            mCapture.stop();
-            mCapture.close();
-        }
+        mCapture.stop();
+        mCapture.close();
+    }
+
+    public interface OnErrorListener {
+        void onError();
     }
 }

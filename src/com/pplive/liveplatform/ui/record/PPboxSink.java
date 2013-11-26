@@ -33,6 +33,8 @@ public class PPboxSink {
 
     private long mStartTime;
 
+    private LiveMediaRecoder.OnErrorListener mOnErrorListener;
+    
     public static void init(Context c) {
         File cacheDirFile = c.getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
@@ -50,6 +52,10 @@ public class PPboxSink {
     public PPboxSink(Camera camera) {
         this.mCamera = camera;
     }
+    
+    public void setOnErrorListener(LiveMediaRecoder.OnErrorListener listener) {
+        mOnErrorListener = listener;
+    }
 
     public void open(String url) {
         Log.d(TAG, "url: " + url);
@@ -59,6 +65,10 @@ public class PPboxSink {
             @Override
             public void invoke(long err) {
                 Log.d(TAG, "err:  " + err);
+                
+                if (null != mOnErrorListener) {
+                    mOnErrorListener.onError();
+                }
             }
         });
 
