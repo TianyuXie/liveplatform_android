@@ -21,6 +21,7 @@
         android:textColor="@color/white" />
 
     <RadioGroup
+        android:id="@+id/radiogroup_sidebar_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textview_sidebar_user_name"

@@ -88,4 +88,7 @@ public class ProgramsContainer extends RelativeLayout {
         mGridView.setOnUpdateListener(l);
     }
 
+    public void setBusy(boolean isbusy) {
+        mGridView.setBusy(isbusy);
+    }
 }

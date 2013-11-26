@@ -15,7 +15,7 @@ public class SearchService extends AbsService {
 
     private static final SearchService sInstance = new SearchService();
     
-    private static final String TEMPLATE_SEARCH_PROGRAM = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/search/v1/pptv/searchcommon?key={keywords}subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}").toString();
+    private static final String TEMPLATE_SEARCH_PROGRAM = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/search/v1/pptv/searchcommon?key={keywords}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}").toString();
 
     public static SearchService getInstance() {
         return sInstance;

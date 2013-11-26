@@ -8,13 +8,18 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
 public class SideBar extends LinearLayout implements SlidableContainer.OnSlideListener, IHidable {
+    static final String TAG = "_SideBar";
+
     private View mRoot;
+
+    private RadioGroup mRadioGroup;
 
     private Animation mShowAnimation;
 
@@ -51,6 +56,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         }
         a.recycle();
         mShowing = (getVisibility() == VISIBLE);
+        mRadioGroup = (RadioGroup) mRoot.findViewById(R.id.radiogroup_sidebar_type);
     }
 
     public SideBar(Context context) {
@@ -112,4 +118,9 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     public void hide() {
         hide(true);
     }
+
+    public void setOnTypeChangeListener(RadioGroup.OnCheckedChangeListener l) {
+        mRadioGroup.setOnCheckedChangeListener(l);
+    }
+
 }

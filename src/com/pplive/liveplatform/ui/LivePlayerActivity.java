@@ -20,7 +20,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.Watch;
@@ -372,7 +371,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            Toast.makeText(LivePlayerActivity.this, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
             mUrl = watchs.get(0).getWatchStringList().get(0);
             if (mUrl != null) {

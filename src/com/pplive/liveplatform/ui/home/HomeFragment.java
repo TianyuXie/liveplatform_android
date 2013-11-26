@@ -3,7 +3,6 @@ package com.pplive.liveplatform.ui.home;
 import java.util.Locale;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -34,7 +33,7 @@ import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
-    static final String TAG = "HomeFragment";
+    static final String TAG = "_HomeFragment";
 
     private TitleBar mTitleBar;
 
@@ -45,8 +44,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private Callback mCallbackListener;
 
     private boolean mSlided;
-    
+
     private boolean mBusy;
+
+    private boolean mInit;
 
     private String mNextToken;
 
@@ -74,8 +75,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
-        mNextToken = "";
-        startTask(1, false);
+        if (!mInit) {
+            mInit = true;
+            startTask(1, false);
+        }
     }
 
     @Override
@@ -84,10 +87,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStop();
     }
 
-    private void startTask(int subjectid, boolean append) {
-        if (!mBusy){
+    public void startTask(int subjectid, boolean append) {
+        if (!mBusy) {
             Log.d(TAG, "startTask");
+            if (!append) {
+                mNextToken = "";
+            }
             mBusy = true;
+            mContainer.setBusy(true);
             SearchTask task = new SearchTask();
             task.addTaskListener(getTaskListener);
             TaskContext taskContext = new TaskContext();
@@ -96,7 +103,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
             taskContext.set(SearchTask.KEY_SORT, "starttime");
-            taskContext.set(SearchTask.KEY_FALL_COUNT, 10);
+            taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
             task.execute(taskContext);
             if (mCallbackListener != null) {
                 mCallbackListener.doLoadMore();
@@ -113,11 +120,12 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 if (!fallList.nextToken().equals("")) {
                     mNextToken = fallList.nextToken();
                 }
-                if (fallList.count() != 0){
+                if (fallList.count() != 0) {
                     if ((Boolean) event.getContext().get(SearchTask.KEY_TASK_TYPE) /* use append */) {
                         mContainer.appendData(fallList.getList());
                     } else {
                         mContainer.refreshData(fallList.getList());
+                        mContainer.onRefreshComplete();
                     }
                     if (mCallbackListener != null) {
                         mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
@@ -164,10 +172,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             }
         }
     };
-    
-    public void setIdle()
-    {
+
+    public void setIdle() {
         mBusy = false;
+        mContainer.setBusy(false);
     }
 
     @Override
@@ -237,22 +245,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
         @Override
         public void onRefresh() {
-            new AsyncTask<Void, Void, Void>() {
-                protected Void doInBackground(Void... params) {
-                    //TODO
-                    try {
-                        Thread.sleep(2000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void result) {
-                    mContainer.onRefreshComplete();
-                }
-            }.execute();
+            Log.d(TAG, "onRefresh");
+            startTask(1, false);
         }
 
         @Override

@@ -15,6 +15,7 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
+import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.home.HomeFragment;
@@ -25,7 +26,7 @@ import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
-    static final String TAG = "HomepageActivity";
+    static final String TAG = "_HomeActivity";
 
     private static final int NORMAL = 701;
 
@@ -53,6 +54,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         mFragmentContainer = (SlidableContainer) findViewById(R.id.layout_home_fragment_container);
         mSideBar = (SideBar) findViewById(R.id.home_sidebar);
+        mSideBar.setOnTypeChangeListener(onTypeChangeListener);
         mAnimDoor = (AnimDoor) findViewById(R.id.home_animdoor);
         mAnimDoor.setShutDoorListener(shutAnimationListener);
 
@@ -210,7 +212,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     @Override
     public void doLoadResult(String text) {
         mStatusButton.showLoadingResult(text);
-        mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 5000);
+        mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 3000);
     }
 
     @Override
@@ -229,7 +231,36 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
                 break;
             }
         }
+    };
 
+    RadioGroup.OnCheckedChangeListener onTypeChangeListener = new RadioGroup.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId) {
+            case R.id.btn_sidebar_original:
+                Log.d(TAG, "btn_sidebar_original");
+                mHomepageFragment.startTask(0, false);
+                break;
+            case R.id.btn_sidebar_tv:
+                Log.d(TAG, "btn_sidebar_tv");
+                mHomepageFragment.startTask(1, false);
+                break;
+            case R.id.btn_sidebar_game:
+                Log.d(TAG, "btn_sidebar_game");
+                mHomepageFragment.startTask(2, false);
+                break;
+            case R.id.btn_sidebar_sport:
+                Log.d(TAG, "btn_sidebar_sport");
+                mHomepageFragment.startTask(3, false);
+                break;
+            case R.id.btn_sidebar_finance:
+                Log.d(TAG, "btn_sidebar_finance");
+                mHomepageFragment.startTask(4, false);
+                break;
+            default:
+                break;
+            }
+        }
     };
 
 }

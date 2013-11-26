@@ -88,26 +88,28 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     }
 
     public void setupPlayer(String url) {
-        // TODO: test code
-        File cacheDirFile = getActivity().getCacheDir();
-        String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
-        String libDir = dataDir + "/lib";
-        String tmpDir = cacheDirFile.getAbsolutePath();
-        File tmpDirFile = new File(tmpDir);
-        tmpDirFile.mkdir();
+        if (getActivity() != null) {
+            // TODO: test code
+            File cacheDirFile = getActivity().getCacheDir();
+            String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
+            String libDir = dataDir + "/lib";
+            String tmpDir = cacheDirFile.getAbsolutePath();
+            File tmpDirFile = new File(tmpDir);
+            tmpDirFile.mkdir();
 
-        MediaSDK.libPath = libDir;
-        MediaSDK.logPath = tmpDir;
-        MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
-        MediaSDK.startP2PEngine("161", "12", "111");
+            MediaSDK.libPath = libDir;
+            MediaSDK.logPath = tmpDir;
+            MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
+            MediaSDK.startP2PEngine("161", "12", "111");
 
-        Uri uri = Uri.parse(url);
-        //        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
-        mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
-        mVideoView.setVideoURI(uri);
-        mVideoView.setOnPreparedListener(mPreparedListener);
-        mVideoView.setOnCompletionListener(mCompletionListener);
-        mVideoView.setOnErrorListener(mErrorListener);
+            Uri uri = Uri.parse(url);
+            //        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
+            mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
+            mVideoView.setVideoURI(uri);
+            mVideoView.setOnPreparedListener(mPreparedListener);
+            mVideoView.setOnCompletionListener(mCompletionListener);
+            mVideoView.setOnErrorListener(mErrorListener);
+        }
     }
 
     public void setTitle(String title) {
