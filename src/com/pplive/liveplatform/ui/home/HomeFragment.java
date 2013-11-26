@@ -87,6 +87,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStop();
     }
 
+    public void startSearchTask(String keyword) {
+        if (!mBusy) {
+            Log.d(TAG, "pullTask");
+            mNextToken = "";
+            startTask(1, keyword, false);
+        }
+    }
+
     public void startPullTask(int subjectid) {
         if (!mBusy) {
             Log.d(TAG, "pullTask");
@@ -117,6 +125,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     }
 
     private void startTask(int subjectid, boolean append) {
+        startTask(subjectid, "", append);
+    }
+
+    private void startTask(int subjectid, String keyword, boolean append) {
         if (!mBusy) {
             mBusy = true;
             mContainer.setBusy(true);
@@ -126,6 +138,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
             taskContext.set(SearchTask.KEY_APPEND_FLAG, append);
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+            taskContext.set(SearchTask.KEY_KEYWORD, keyword);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
             taskContext.set(SearchTask.KEY_SORT, "starttime");
             taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
@@ -261,16 +274,23 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private View.OnClickListener searchBarOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.d(TAG, "onClick");
+            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             switch (v.getId()) {
             case R.id.btn_searchbar_close:
+                Log.d(TAG, "btn_searchbar_close");
                 mSearchBar.hide();
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm.isActive()) {
                     imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
                 }
                 break;
             case R.id.btn_searchbar_search:
-                
+                Log.d(TAG, "btn_searchbar_search");
+                mSearchBar.hide();
+                if (imm.isActive()) {
+                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                }
+                startSearchTask(mSearchBar.getText());
                 break;
             }
         }

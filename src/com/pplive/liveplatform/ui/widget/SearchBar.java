@@ -135,6 +135,7 @@ public class SearchBar extends LinearLayout implements IHidable {
     public void setOnClickListener(OnClickListener l) {
         super.setOnClickListener(l);
         mCloseButton.setOnClickListener(l);
+        mSearchButton.setOnClickListener(l);
     }
 
     @Override
