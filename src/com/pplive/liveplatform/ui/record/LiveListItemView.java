@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.Program;
+import com.pplive.liveplatform.ui.record.LiveListView.OnLiveDeletedListener;
 import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.util.ViewUtil;
 
@@ -28,6 +29,9 @@ public class LiveListItemView extends RelativeLayout {
     private TextView mTextLiveTitle;
 
     private Program mProgram;
+    
+    private OnLiveSelectedListener mOnLiveSelectedListener;
+    private OnLiveDeletedListener mOnLiveDeletedListener;
 
     public LiveListItemView(Context context, AttributeSet attrs) {
         this(context, attrs, 0 /* defStyle */);
@@ -46,11 +50,22 @@ public class LiveListItemView extends RelativeLayout {
         mBtnDelete = (ImageButton) findViewById(R.id.btn_delete);
         mTextLiveTitle = (TextView) findViewById(R.id.text_live_title);
 
+        mImagePrelive.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (null != mOnLiveSelectedListener) {
+                    mOnLiveSelectedListener.onLiveSelected(getProgram());
+                }
+            }
+        });
+        
         mBtnPreliveDelete.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
+                Log.d(TAG, "onClickBtnPreDelete");
+                
                 showOrHideDeleteBtn();
             }
         });
@@ -60,8 +75,19 @@ public class LiveListItemView extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClickBtnDelete");
+                if (null != mOnLiveDeletedListener) {
+                    mOnLiveDeletedListener.onLiveDeleted(getProgram());
+                }
             }
         });
+    }
+    
+    public void setOnLiveSelectedListener(OnLiveSelectedListener listener) {
+        mOnLiveSelectedListener = listener;
+    }
+    
+    public void setOnLiveDeletedListener(OnLiveDeletedListener listener) {
+        mOnLiveDeletedListener = listener;
     }
 
     public void setProgram(Program program) {
@@ -96,7 +122,6 @@ public class LiveListItemView extends RelativeLayout {
 
     public void reset() {
         mBtnPreliveDelete.setSelected(false);
-        mBtnPreliveDelete.setVisibility(View.INVISIBLE);
         mBtnDelete.setVisibility(View.INVISIBLE);
     }
 }

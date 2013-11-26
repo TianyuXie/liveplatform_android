@@ -1,31 +1,27 @@
 package com.pplive.liveplatform.ui.record;
 
-import com.pplive.liveplatform.Constants;
-
 import android.content.Context;
 import android.hardware.Camera;
 
 public class LiveMediaRecoder {
 
     private PPboxSink mCapture;
+    
+    private String mOutputPath;
 
     public LiveMediaRecoder(Context ctx, Camera camera) {
 
         PPboxSink.init(ctx.getApplicationContext());
         mCapture = new PPboxSink(camera);
-
-        //        String url = "rtmp://183.129.205.101:1936/push/mobi1";
-        //        String url = "rtmp://192.168.27.253/live/android";
-        //        String url = "/sdcard/pplog/a.flv";
-
-        String url = Constants.TEST_PUSH_URL;
-
-        mCapture.open(url);
+    }
+    
+    public void setOutputPath(String url) {
+        mOutputPath = url;
     }
 
     public void start() {
         if (null != mCapture) {
-
+            mCapture.open(mOutputPath);
             mCapture.start();
         }
     }

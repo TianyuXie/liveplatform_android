@@ -3,26 +3,68 @@ package com.pplive.liveplatform.core.rest.model;
 import com.google.gson.annotations.SerializedName;
 
 public enum LiveStatusEnum {
-    
+
     @SerializedName("notstart")
-    NOT_START,
-    
+    NOT_START {
+
+        @Override
+        public String toString() {
+            return "notstart";
+        }
+    },
+
     @SerializedName("init")
-    INIT,
-    
+    INIT {
+
+        @Override
+        public String toString() {
+            return "init";
+        }
+    },
+
     @SerializedName("preview")
-    PREVIEW,
-    
+    PREVIEW {
+
+        @Override
+        public String toString() {
+            return "preview";
+        }
+    },
+
     @SerializedName("living")
-    LIVING,
-    
+    LIVING {
+
+        @Override
+        public String toString() {
+            return "living";
+        }
+    },
+
     @SerializedName("stopped")
-    STOPPED,
-    
+    STOPPED {
+
+        @Override
+        public String toString() {
+            return "stopped";
+        }
+    },
+
     @SerializedName("deleted")
-    DELETED,
-    
+    DELETED {
+
+        @Override
+        public String toString() {
+            return "deleted";
+        }
+    },
+
     @SerializedName("sysdeleted")
-    SYS_DELETED;
+    SYS_DELETED {
+
+        @Override
+        public String toString() {
+            return "sysdeleted";
+        }
+    };
 
 }

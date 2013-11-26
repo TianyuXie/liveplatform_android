@@ -20,7 +20,6 @@ import android.widget.ImageButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
-import com.pplive.liveplatform.ui.record.LiveListView.OnLiveSelectedListener;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.util.ViewUtil;
@@ -49,6 +48,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private LiveListView mLiveListView;
     
     private Mode mStatus = Mode.INITIAL;
+    private OnLiveSelectedListener mOnLiveSelectedListener;
     
     @Override
     public void onAttach(Activity activity) {
@@ -247,12 +247,22 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         }
     }
     
+    public void setOnLiveSelected(OnLiveSelectedListener listener) {
+        mOnLiveSelectedListener = listener;
+    }
+    
     @Override
     public void onLiveSelected(Program program) {
+        Log.d(TAG, program.toString());
+        
         setMode(Mode.EDIT_PRELIVE);
         
         if (null != program) {
             mEditLiveTitle.setText(program.getTitle());
+        }
+        
+        if (null != mOnLiveSelectedListener) {
+            mOnLiveSelectedListener.onLiveSelected(program);
         }
     }
 

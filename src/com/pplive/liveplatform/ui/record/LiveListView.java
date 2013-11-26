@@ -11,7 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
 import com.pplive.liveplatform.R;
@@ -19,13 +19,13 @@ import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
 
-public class LiveListView extends HorizontalListView implements OnItemSelectedListener {
+public class LiveListView extends HorizontalListView implements OnItemClickListener {
 
     private static final String TAG = LiveListView.class.getSimpleName();
 
     private LiveListAdapter mLiveListAdapter;
     private OnLiveSelectedListener mOnLiveSelectedListener;
-    
+
     private int mSelectedItemPosition = -1;
     private LiveListItemView mSelectedLiveItem;
 
@@ -48,7 +48,7 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
         
         mLiveListAdapter = new LiveListAdapter(getContext());
         super.setAdapter(mLiveListAdapter);
-        super.setOnItemSelectedListener(this);
+        super.setOnItemClickListener(this);
     }
 
     public void setOnLiveSelectedListener(OnLiveSelectedListener listener) {
@@ -56,15 +56,10 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Log.d(TAG, "onItemSelected position: " + position + "; id: " + id);
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Log.d(TAG, "onItemClick position: " + position + "; id: " + id);
 
         if (position == mSelectedItemPosition) {
-
-            if (null != mOnLiveSelectedListener) {
-                mOnLiveSelectedListener.onLiveSelected(mSelectedLiveItem.getProgram());
-            }
-
             return;
         }
 
@@ -75,11 +70,6 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
         mSelectedItemPosition = position;
         mSelectedLiveItem = (LiveListItemView) view;
         mSelectedLiveItem.setSelected(true);
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
-        // TODO Auto-generated method stub
     }
 
     class LiveListAdapter extends BaseAdapter {
@@ -93,7 +83,7 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
         public LiveListAdapter(Context context) {
             mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         }
-        
+
         public void refresh() {
             Log.d(TAG, "Refresh 1");
             if (null == mGetProgramsTask) {
@@ -127,13 +117,40 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
 
             if (convertView instanceof LiveListItemView) {
                 LiveListItemView liveItem = (LiveListItemView) convertView;
+                liveItem.setOnLiveSelectedListener(mOnLiveSelectedListener);
+                liveItem.setOnLiveDeletedListener(new OnLiveDeletedListener() {
+                    
+                    @Override
+                    public void onLiveDeleted(final Program program) {
+                        for (int i = 0, len = mPreLiveList.size(); i < len; ++i) {
+                            Program p = mPreLiveList.get(i);
+                            if (p.getId() == program.getId()) {
+                                mPreLiveList.remove(i);
+                                notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                        
+                        AsyncTask<Void, Void, Void> delTask = new AsyncTask<Void, Void, Void>() {
+                            
+                            @Override
+                            protected Void doInBackground(Void... params) {
+                                
+                                ProgramService.getInstance().deleteProgramById(program.getId());
+                                
+                                return null;
+                            }
+                        };
+                        
+                        delTask.execute();
+                    }
+                });
                 liveItem.setProgram(getItem(position));
             }
 
             return convertView;
         }
 
-        
         class GetProgramsTask extends AsyncTask<Void, Void, List<Program>> {
 
             @Override
@@ -152,13 +169,13 @@ public class LiveListView extends HorizontalListView implements OnItemSelectedLi
                     mPreLiveList = result;
                     notifyDataSetChanged();
                 }
-                
+
                 mGetProgramsTask = null;
             };
         }
     }
 
-    interface OnLiveSelectedListener {
-        void onLiveSelected(Program program);
+    interface OnLiveDeletedListener {
+        void onLiveDeleted(Program program);
     }
 }

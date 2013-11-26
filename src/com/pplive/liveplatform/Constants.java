@@ -2,8 +2,6 @@ package com.pplive.liveplatform;
 
 import android.os.Build;
 
-import com.pplive.liveplatform.core.rest.URL;
-
 public final class Constants {
 
     public static final boolean LARGER_THAN_OR_EQUAL_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;

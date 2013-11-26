@@ -62,6 +62,6 @@ public class Program {
 
     @Override
     public String toString() {
-        return String.format("owner: %s; starttime: %d; title: %s; cover_url: %s;", owner, starttime, title, cover_url);
+        return String.format("pid: %d; title: %s; owner: %s; starttime: %d; livestatus: %s; cover_url: %s;", pid, title, owner, starttime, livestatus, cover_url);
     }
 }

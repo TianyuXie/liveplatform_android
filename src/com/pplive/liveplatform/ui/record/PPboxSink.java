@@ -52,6 +52,8 @@ public class PPboxSink {
     }
 
     public void open(String url) {
+        Log.d(TAG, "url: " + url);
+        
         mCaptureId = MediaSDK.CaptureOpen("pprecord://record", "rtmp", url, new Download_Callback() {
 
             @Override

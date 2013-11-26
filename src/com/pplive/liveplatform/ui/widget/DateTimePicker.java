@@ -111,7 +111,7 @@ public class DateTimePicker extends LinearLayout {
     
     public long getTimeInMillis() {
         Calendar calendar = Calendar.getInstance();
-        calendar.set(getYear(), getMonth(), getDayOfMonth(), getCurrentHour(), getCurrentMinute());
+        calendar.set(getYear(), getMonth() - 1, getDayOfMonth(), getCurrentHour(), getCurrentMinute());
         
         return calendar.getTimeInMillis();
     }

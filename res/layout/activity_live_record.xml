@@ -33,6 +33,18 @@
         android:textSize="16sp"
         android:visibility="gone" />
 
+    <TextView
+        android:id="@+id/text_live_coming"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_marginLeft="20dp"
+        android:drawableLeft="@drawable/live_record_stateicon_comingsoon"
+        android:textSize="16sp"
+        android:visibility="gone"/>
+
     <Button
         android:id="@+id/btn_camera_change"
         style="@style/Widget.Button.Transparent"
@@ -68,7 +80,8 @@
         android:drawableRight="@drawable/live_record_btn_live_record"
         android:onClick="onClick" />
 
-    <fragment        android:id="@+id/footer_bar"
+    <fragment
+        android:id="@+id/footer_bar"
         android:name="com.pplive.liveplatform.ui.record.FooterBarFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
