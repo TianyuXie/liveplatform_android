@@ -20,16 +20,14 @@ public class ProgramService extends AbsService {
 
     private static final String TAG = ProgramService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PROGRAMS = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
+    private static final String TEMPLATE_GET_PROGRAMS = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
 
-    private static final String TEMPLATE_CREATE_PROGRAM = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program").toString();
+    private static final String TEMPLATE_CREATE_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
-    private static final String TEMPLATE_UPDATE_PROGRAM = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program/{programid}/info")
-            .toString();
+    private static final String TEMPLATE_UPDATE_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/info").toString();
 
-    private static final String TEMPLATE_DELETE_PROGRAM = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/ft/v1/program/{programid}")
-            .toString();
+    private static final String TEMPLATE_DELETE_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
 
     private static ProgramService sInstance = new ProgramService();
 
@@ -45,10 +43,10 @@ public class ProgramService extends AbsService {
     }
 
     public List<Program> getProgramsByOwner(String owner, LiveStatusEnum livestatus) {
-        
+
         return getProgramsByOwner(owner, livestatus.toString());
     }
-    
+
     private List<Program> getProgramsByOwner(String owner, String liveStatus) {
         Log.d(TAG, "owner: " + owner + "; livestatus: " + liveStatus);
 

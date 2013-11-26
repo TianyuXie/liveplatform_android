@@ -77,6 +77,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextLive;
     private TextView mTextRecordDuration;
     private TextView mTextLiveComing;
+    private TextView mTextLivingTitle;
 
     private AnimDoor mAnimDoor;
     private View mStatusButtonWrapper;
@@ -133,6 +134,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mTextLive = (TextView) findViewById(R.id.text_live);
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
         mTextLiveComing = (TextView) findViewById(R.id.text_live_coming);
+        mTextLivingTitle = (TextView) findViewById(R.id.text_living_title);
 
         mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
         mAnimDoor.setOpenDoorListener(openDoorListener);
@@ -221,6 +223,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onRecordStart() {
         mTextLive.setVisibility(View.VISIBLE);
         mTextRecordDuration.setVisibility(View.VISIBLE);
+        
+        mTextLivingTitle.setVisibility(View.VISIBLE);
+        mTextLivingTitle.setText(mSelectedProgram.getTitle());
 
         Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
         mInnerHandler.sendMessage(msg);
@@ -440,6 +445,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Log.d(TAG, "create program");
                 program = new Program("xiety0001", "My Living", System.currentTimeMillis());
                 program = ProgramService.getInstance().createProgram(program);
+                mSelectedProgram = program;
             } else {
                 Log.d(TAG, "has program");
             }

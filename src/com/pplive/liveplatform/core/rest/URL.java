@@ -71,17 +71,13 @@ public class URL implements Serializable, Cloneable {
     }
     
     @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-    
-    @Override
     public final String toString() {
         StringBuilder sb = new StringBuilder(mBaseUrl); 
         
-        boolean first = false;
+        boolean first = true;
         for (Entry<String, Object> entry : mParams.entrySet()) {
             sb.append(String.format(first ? "?%s=%s" : "&%s=%s", entry.getKey(), entry.getValue()));
+            first = true;
         }
         
         return sb.toString();

@@ -32,7 +32,7 @@
     </style>
 
     <style name="Widget.EditText" parent="@android:style/Widget.TextView">
-        <item name="android:background">@drawable/live_record_edit_bg</item>
+        <item name="android:background">@drawable/live_record_fillet_bg</item>
         <item name="android:paddingLeft">15dp</item>
         <item name="android:paddingRight">15dp</item>
         <item name="android:paddingTop">10dp</item>

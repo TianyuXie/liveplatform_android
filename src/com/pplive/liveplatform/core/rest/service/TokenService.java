@@ -15,7 +15,7 @@ public class TokenService extends AbsService {
 
     private static final String TAG = TokenService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_TOKEN = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
+    private static final String TEMPLATE_GET_TOKEN = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/tk/v1/{tokentype}/{programid}?user={username}&expiretime={expiretime}").toString();
 
     private static final TokenService sInstance = new TokenService();
@@ -46,13 +46,13 @@ public class TokenService extends AbsService {
 
     private String getToken(TokenType type, long pid, String username, int expiretime) {
         Log.d(TAG, "TokenType: " + type + "; pid: " + pid + "; username: " + username + "; expiretime: " + expiretime);
-        
+
         mRequestHeaders.setAuthorization(mCoTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
-        
+
         ResponseEntity<TokenResp> rep = mRestTemplate.exchange(TEMPLATE_GET_TOKEN, HttpMethod.GET, req, TokenResp.class, type, pid, username, expiretime);
         TokenResp body = rep.getBody();
-        
+
         return body.getData();
     }
 
