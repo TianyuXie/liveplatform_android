@@ -1,12 +1,11 @@
 package com.pplive.liveplatform.core.rest.service;
 
-import java.util.List;
-
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Protocol;
 import com.pplive.liveplatform.core.rest.URL;
+import com.pplive.liveplatform.core.rest.model.FallList;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.resp.ProgramFallListResp;
 
@@ -26,15 +25,15 @@ public class SearchService extends AbsService {
 
     }
 
-    public List<Program> searchProgram(int subjectId, String sort) {
+    public FallList<Program> searchProgram(int subjectId, String sort) {
         return searchProgram(subjectId, sort, "living" /* liveStatus */, "" /* nextTk */, 10 /* fallCount */);
     }
 
-    public List<Program> searchProgram(int subjectId, String sort, String liveStatus, String nextToken, int fallCount) {
+    public FallList<Program> searchProgram(int subjectId, String sort, String liveStatus, String nextToken, int fallCount) {
         Log.d(TAG, "subjectId: " + subjectId + "; sort: " + sort + "; liveStatus: " + liveStatus + "; nextToken: " + nextToken + "; fallCount: " + fallCount);
         
         ProgramFallListResp rep = mRestTemplate.getForObject(TEMPLATE_SEARCH_PROGRAM, ProgramFallListResp.class, subjectId, sort, liveStatus, nextToken, fallCount);
         
-        return rep.getList();
+        return rep.getFallList();
     }
 }

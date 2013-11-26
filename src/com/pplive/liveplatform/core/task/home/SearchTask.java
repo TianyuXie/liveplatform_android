@@ -1,7 +1,6 @@
 package com.pplive.liveplatform.core.task.home;
 
-import java.util.List;
-
+import com.pplive.liveplatform.core.rest.model.FallList;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.SearchService;
 import com.pplive.liveplatform.core.task.Task;
@@ -55,7 +54,7 @@ public class SearchTask extends Task {
         String liveStatus = (String) context.getString(KEY_LIVE_STATUS);
         String nextTk = (String) context.getString(KEY_NEXT_TK);
         int fallCount = (Integer) context.get(KEY_FALL_COUNT);
-        List<Program> data = null;
+        FallList<Program> data = null;
         try {
             data = SearchService.getInstance().searchProgram(subjectId, sort, liveStatus, nextTk, fallCount);
         } catch (Exception e) {
