@@ -21,7 +21,7 @@ public class Program {
     String coname = "pptv";
 
     public Program(String owner, String title, long starttime) {
-        this(owner, LiveModeEnum.UNKNOWN, title, starttime);
+        this(owner, LiveModeEnum.CAMERA, title, starttime);
     }
 
     public Program(String owner, LiveModeEnum mode, String title, long starttime) {

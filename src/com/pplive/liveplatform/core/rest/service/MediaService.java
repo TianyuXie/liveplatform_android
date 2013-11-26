@@ -65,7 +65,7 @@ public class MediaService extends AbsService {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
         String token = TokenService.getInstance().getPlayToken(pid, username);
-
+        
         return getPlayWatchListByToken(pid, token);
     }
 

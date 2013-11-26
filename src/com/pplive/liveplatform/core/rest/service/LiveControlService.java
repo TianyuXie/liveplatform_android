@@ -7,6 +7,7 @@ import android.util.Log;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.Protocol;
 import com.pplive.liveplatform.core.rest.URL;
+import com.pplive.liveplatform.core.rest.http.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.rest.model.LiveStatus;
 import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.resp.Resp;
@@ -26,11 +27,17 @@ public class LiveControlService extends AbsService {
 
     private LiveControlService() {
     }
-
+    
     public void updateLiveStatusById(long pid, LiveStatusEnum livestatus) {
+        String token = TokenService.getInstance().getLiveToken(pid, "xiety0001");
+        
+        updateLiveStatusById(pid, livestatus, token);
+    }
+
+    public void updateLiveStatusById(long pid, LiveStatusEnum livestatus, String token) {
         Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
         
-        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
         HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
 
         mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVESTATUS, req, Resp.class, pid);
