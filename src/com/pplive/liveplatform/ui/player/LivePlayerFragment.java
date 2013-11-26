@@ -102,8 +102,9 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
             MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
             MediaSDK.startP2PEngine("161", "12", "111");
 
+            Log.d(TAG, "setupPlayer:" + url);
             Uri uri = Uri.parse(url);
-            //        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
+            // Uri uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
             mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
             mVideoView.setVideoURI(uri);
             mVideoView.setOnPreparedListener(mPreparedListener);
