@@ -2,7 +2,6 @@ package com.pplive.liveplatform.ui.player;
 
 import java.io.File;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,17 +17,16 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.util.ConfigUtil;
-import com.pplive.liveplatform.util.Keys;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements OnTouchListener, View.OnClickListener {
-    static final String TAG = "LivePlayerFragment";
+    static final String TAG = "_LivePlayerFragment";
 
     private static final int HIDE = 301;
 
@@ -45,6 +43,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     private View mBottomBarView;
 
     private View mUserView;
+
+    private TextView mTitleTextView;
 
     private ToggleButton mModeBtn;
 
@@ -76,6 +76,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
+        mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
         Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
@@ -86,27 +87,33 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         return layout;
     }
 
-    public void setupPlayer(Intent intent) {
-        // TODO: test code
-        File cacheDirFile = getActivity().getCacheDir();
-        String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
-        String libDir = dataDir + "/lib";
-        String tmpDir = cacheDirFile.getAbsolutePath();
-        File tmpDirFile = new File(tmpDir);
-        tmpDirFile.mkdir();
+    public void setupPlayer(String url) {
+        if (getActivity() != null) {
+            // TODO: test code
+            File cacheDirFile = getActivity().getCacheDir();
+            String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
+            String libDir = dataDir + "/lib";
+            String tmpDir = cacheDirFile.getAbsolutePath();
+            File tmpDirFile = new File(tmpDir);
+            tmpDirFile.mkdir();
 
-        MediaSDK.libPath = libDir;
-        MediaSDK.logPath = tmpDir;
-        MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
-        MediaSDK.startP2PEngine("161", "12", "111");
+            MediaSDK.libPath = libDir;
+            MediaSDK.logPath = tmpDir;
+            MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
+            MediaSDK.startP2PEngine("161", "12", "111");
 
-        Uri uri = intent.getData();
-        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
-        mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
-        mVideoView.setVideoURI(uri);
-        mVideoView.setOnPreparedListener(mPreparedListener);
-        mVideoView.setOnCompletionListener(mCompletionListener);
-        mVideoView.setOnErrorListener(mErrorListener);
+            Uri uri = Uri.parse(url);
+            //        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
+            mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
+            mVideoView.setVideoURI(uri);
+            mVideoView.setOnPreparedListener(mPreparedListener);
+            mVideoView.setOnCompletionListener(mCompletionListener);
+            mVideoView.setOnErrorListener(mErrorListener);
+        }
+    }
+
+    public void setTitle(String title) {
+        mTitleTextView.setText(title);
     }
 
     @Override

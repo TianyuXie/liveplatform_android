@@ -19,7 +19,7 @@ import android.widget.ProgressBar;
 import com.pplive.liveplatform.R;
 
 public class RefreshGridView extends GridView implements OnScrollListener {
-    static final String TAG = "PullToRefreshGridView";
+    static final String TAG = "_RefreshGridView";
 
     private final static int STATUS_RELEASE_TO_REFRESH = 800;
     private final static int STATUS_PULL_TO_REFRESH = 801;
@@ -39,6 +39,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private boolean mRefreshable;
     private boolean mPulling;
     private boolean mAniming;
+    private boolean mBusy;
 
     private boolean mSeeLast;
     private boolean mSeeFirst;
@@ -67,6 +68,10 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
     public View getHeader() {
         return mHeaderView;
+    }
+
+    public void setBusy(boolean isbusy) {
+        mBusy = isbusy;
     }
 
     @Override
@@ -105,7 +110,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         Log.v(TAG, "onTouchEvent");
         mGestureDetector.onTouchEvent(event);
 
-        if (mRefreshable && mPulling && !mAniming) {
+        if (mRefreshable && mPulling && !mAniming && !mBusy) {
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (!mRecorded) {
@@ -266,13 +271,13 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
-
             if (absDistanceY > absDistanceX) {
                 if (distanceY > 10.0f && mReachBottom) {
-
+                    if (mUpdateListener != null) {
+                        mUpdateListener.onAppend();
+                    }
                 } else if (distanceY < -10.0f && mReachTop) {
                     mPulling = true;
                 }
@@ -286,9 +291,6 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         View last = getChildAt(getChildCount() - 1);
         if (last != null && (last.getBottom() - (getHeight() + getScrollY())) <= 0 && mSeeLast) {
             mReachBottom = true;
-            if (mUpdateListener != null) {
-                mUpdateListener.onAppend();
-            }
         } else {
             mReachBottom = false;
         }

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,23 +13,14 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.Program;
-import com.pplive.liveplatform.core.rest.model.Watch;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.TaskCancelEvent;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
-import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
-import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.home.GetMediaTask;
+import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 
 public class ProgramsContainer extends RelativeLayout {
-    static final String TAG = "ProgramsContainer";
+    static final String TAG = "_ProgramsContainer";
 
     private List<Program> mPrograms;
     private ProgramAdapter mAdapter;
@@ -72,51 +63,16 @@ public class ProgramsContainer extends RelativeLayout {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (!mGridView.isBusy() && mItemClickable) {
-                long pid = mPrograms.get(position).getId();
-                String username = "xiety0001";
-                Log.d(TAG, pid + "");
-                GetMediaTask task = new GetMediaTask();
-                task.addTaskListener(onTaskListener);
-                TaskContext taskContext = new TaskContext();
-                taskContext.set(GetMediaTask.KEY_PID, pid);
-                taskContext.set(GetMediaTask.KEY_USERNAME, username);
-                task.execute(taskContext);
+                Program program = mPrograms.get(position);
+                long pid = program.getId();
+                String title = program.getTitle();
+                Intent intent = new Intent();
+                intent.putExtra("pid", pid);
+                intent.putExtra("username", "xiety0001");
+                intent.putExtra("title", title);
+                intent.setClass(getContext(), LivePlayerActivity.class);
+                getContext().startActivity(intent);
             }
-        }
-    };
-
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
-
-        @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            Toast.makeText(getContext(), R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-            List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            Log.d(TAG, watchs.get(0).getWatchStringList().get(0));
-        }
-
-        @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
     };
 
@@ -132,4 +88,7 @@ public class ProgramsContainer extends RelativeLayout {
         mGridView.setOnUpdateListener(l);
     }
 
+    public void setBusy(boolean isbusy) {
+        mGridView.setBusy(isbusy);
+    }
 }
