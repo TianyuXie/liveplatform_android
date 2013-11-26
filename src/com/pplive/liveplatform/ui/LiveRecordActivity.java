@@ -48,9 +48,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
     private static final int WHAT_RECORD_UPDATE = 9003;
-    private static final int WHAT_LIVE_COMING_UPDATE = 9004;
+    
+    private static final int WHAT_LIVE_COMING_START = 9004;
+    private static final int WHAT_LIVE_COMING_UPDATE = 9005;
 
-    private static final int WHAT_OPEN_DOOR = 9005;
+    private static final int WHAT_OPEN_DOOR = 9006;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -103,7 +105,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         public void onLiveSelected(Program program) {
             mSelectedProgram = program;
             
-            mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_UPDATE);
+            mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
         }
     };
 
@@ -197,6 +199,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_RECORD_UPDATE:
             onRecordUpdate(msg.arg1);
             break;
+        case WHAT_LIVE_COMING_START:
+            onLiveComingStart();
+            break;
         case WHAT_LIVE_COMING_UPDATE:
             onLiveComingUpdate();
             break;
@@ -234,6 +239,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mInnerHandler.sendMessageDelayed(msg, 1000 /* milliseconds */);
         }
     }
+    
+    private void onLiveComingStart() {
+        mTextLiveComing.setVisibility(View.VISIBLE);
+        
+        mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_UPDATE);
+    }
 
     private void onLiveComingUpdate() {
         if (mRecording) {
@@ -253,7 +264,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 coming = TimeUtil.stringForTime(0);
             }
             
-            mTextLiveComing.setVisibility(View.VISIBLE);
             mTextLiveComing.setText(coming);
             mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
         }
@@ -416,12 +426,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         @Override
         protected String doInBackground(Program... params) {
 
-            Program program = null;
-            if (null == params || 0 == params.length) {
+            Program program = params[0];
+            if (null == program) {
+                Log.d(TAG, "create program");
                 program = new Program("xiety0001", "My Living", System.currentTimeMillis());
                 program = ProgramService.getInstance().createProgram(program);
             } else {
-                program = params[0];
+                Log.d(TAG, "has program");
             }
 
             LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.INIT);
