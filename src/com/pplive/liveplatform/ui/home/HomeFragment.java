@@ -1,6 +1,9 @@
 package com.pplive.liveplatform.ui.home;
 
+import java.util.Locale;
+
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.model.FallList;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -21,6 +26,7 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.program.ProgramsContainer;
+import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
@@ -40,6 +46,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private boolean mSlided;
 
+    private String mNextToken;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,7 +59,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         Log.d(TAG, "onCreateView");
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (ProgramsContainer) layout.findViewById(R.id.layout_home_body);
-        //        mContainer.setOnScrollRefreshListener(scrollRefreshListener);
+        mContainer.setOnUpdateListener(onUpdateListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(titleBarOnClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
@@ -64,7 +72,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
-        startTask();
+        mNextToken = "";
+        startTask(1);
     }
 
     @Override
@@ -73,14 +82,15 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStop();
     }
 
-    private void startTask() {
+    private void startTask(int subjectid) {
         SearchTask task = new SearchTask();
         task.addTaskListener(getTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(SearchTask.KEY_SUBJECT_ID, 1);
+        taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
+        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
         taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-        taskContext.set(SearchTask.KEY_SORT, "vv");
-        taskContext.set(SearchTask.KEY_FALL_COUNT, 10);
+        taskContext.set(SearchTask.KEY_SORT, "starttime");
+        taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
         task.execute(taskContext);
         if (mCallbackListener != null) {
             mCallbackListener.doLoadMore();
@@ -89,12 +99,15 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private Task.OnTaskListener getTaskListener = new Task.OnTaskListener() {
         @Override
+        @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             if (getActivity() != null) {
                 Toast.makeText(getActivity(), R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-                mContainer.refreshData(event.getContext().get(SearchTask.KEY_RESULT));
+                FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_TASK_RESULT);
+                mNextToken = fallList.nextToken();
+                mContainer.refreshData(fallList.getList());
                 if (mCallbackListener != null) {
-                    mCallbackListener.doLoadResult("已加载10条");
+                    mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
                 }
             }
         }
@@ -117,7 +130,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             if (getActivity() != null) {
                 if (mCallbackListener != null) {
-                    mCallbackListener.doLoadResult("已加载10条");
+                    mCallbackListener.doLoadFinish();
                 }
                 Toast.makeText(getActivity(), R.string.toast_timeout, Toast.LENGTH_SHORT).show();
             }
@@ -197,21 +210,35 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
-    //    private RefreshContainer.OnScrollRefreshListener scrollRefreshListener = new RefreshContainer.OnScrollRefreshListener() {
-    //
-    //        @Override
-    //        public void onReachTop() {
-    //            // TODO Auto-generated method stub
-    //
-    //        }
-    //
-    //        @Override
-    //        public void onReachBottom() {
-    //            if (mCallbackListener != null) {
-    //                mCallbackListener.doLoadMore();
-    //            }
-    //        }
-    //    };
+    private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
+
+        @Override
+        public void onRefresh() {
+            new AsyncTask<Void, Void, Void>() {
+                protected Void doInBackground(Void... params) {
+                    //TODO
+                    try {
+                        Thread.sleep(2000);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void result) {
+                    mContainer.onRefreshComplete();
+                }
+            }.execute();
+        }
+
+        @Override
+        public void onAppend() {
+            if (mCallbackListener != null) {
+                mCallbackListener.doLoadMore();
+            }
+        }
+    };
 
     private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
         @Override

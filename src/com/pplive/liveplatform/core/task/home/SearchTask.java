@@ -10,7 +10,9 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
-    public final static String KEY_RESULT = "get_task_result";
+    public final static String KEY_TASK_RESULT = "search_task_result";
+    public final static String KEY_TASK_TYPE = "search_task_type";
+
     public final static String KEY_SUBJECT_ID = "subjectId";
     public final static String KEY_SORT = "sort";
     public final static String KEY_LIVE_STATUS = "liveStatus";
@@ -67,7 +69,7 @@ public class SearchTask extends Task {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
-        context.set(KEY_RESULT, data);
+        context.set(KEY_TASK_RESULT, data);
         result.setContext(context);
         return result;
     }

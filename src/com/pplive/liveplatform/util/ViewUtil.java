@@ -1,7 +1,6 @@
 
 package com.pplive.liveplatform.util;
 
-import android.os.Handler;
 import android.view.View;
 
 public class ViewUtil {
@@ -38,7 +37,7 @@ public class ViewUtil {
     }
 
     public static void showLayoutDelay(final View v, final int timeout) {
-        (new Handler()).postDelayed(new Runnable() {
+        v.postDelayed(new Runnable() {
             public void run() {
                 v.setVisibility(View.VISIBLE);
                 v.requestLayout();
@@ -47,7 +46,7 @@ public class ViewUtil {
     }
 
     public static void requestLayoutDelay(final View v, final int timeout) {
-        (new Handler()).postDelayed(new Runnable() {
+        v.postDelayed(new Runnable() {
             public void run() {
                 v.requestLayout();
             }

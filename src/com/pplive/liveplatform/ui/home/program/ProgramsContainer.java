@@ -1,11 +1,9 @@
 package com.pplive.liveplatform.ui.home.program;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -51,7 +49,6 @@ public class ProgramsContainer extends RelativeLayout {
         LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_pull_header);
         head.addView(mGridView.getHeader(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mGridView.setAdapter(mAdapter);
-        mGridView.setOnRefreshListener(onRefreshListener);
         mGridView.setOnItemClickListener(onItemClickListener);
     }
 
@@ -59,35 +56,16 @@ public class ProgramsContainer extends RelativeLayout {
         this(context, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public void refreshData(Object data) {
+    public void refreshData(List<Program> data) {
         mPrograms.clear();
-        mPrograms.addAll((Collection<Program>) data);
+        mPrograms.addAll(data);
         mAdapter.notifyDataSetChanged();
     }
 
-    private RefreshGridView.OnRefreshListener onRefreshListener = new RefreshGridView.OnRefreshListener() {
-
-        @Override
-        public void onRefresh() {
-            new AsyncTask<Void, Void, Void>() {
-                protected Void doInBackground(Void... params) {
-                    //TODO
-                    try {
-                        Thread.sleep(2000);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void result) {
-                    mGridView.onRefreshComplete();
-                }
-            }.execute();
-        }
-    };
+    public void appendData(List<Program> data) {
+        mPrograms.addAll(data);
+        mAdapter.notifyDataSetChanged();
+    }
 
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
 
@@ -144,6 +122,14 @@ public class ProgramsContainer extends RelativeLayout {
 
     public void setItemClickable(boolean clickable) {
         this.mItemClickable = clickable;
+    }
+
+    public void onRefreshComplete() {
+        mGridView.onRefreshComplete();
+    }
+
+    public void setOnUpdateListener(RefreshGridView.OnUpdateListener l) {
+        mGridView.setOnUpdateListener(l);
     }
 
 }

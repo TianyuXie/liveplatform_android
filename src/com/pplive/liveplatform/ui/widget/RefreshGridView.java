@@ -45,7 +45,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private boolean mReachBottom;
     private boolean mReachTop;
 
-    private OnRefreshListener refreshListener;
+    private OnUpdateListener mUpdateListener;
 
     public RefreshGridView(Context context) {
         this(context, null);
@@ -130,8 +130,8 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                         mStatus = STATUS_REFRESHING;
                         updateHeader();
                         bounceHeader(mHeaderHeight - mHeaderView.getHeight());
-                        if (refreshListener != null) {
-                            refreshListener.onRefresh();
+                        if (mUpdateListener != null) {
+                            mUpdateListener.onRefresh();
                         }
                         Log.v(TAG, "由松开刷新状态，到done状态");
                     }
@@ -227,13 +227,15 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         }
     }
 
-    public void setOnRefreshListener(OnRefreshListener refreshListener) {
-        this.refreshListener = refreshListener;
+    public void setOnUpdateListener(OnUpdateListener updateListener) {
+        this.mUpdateListener = updateListener;
         mRefreshable = true;
     }
 
-    public interface OnRefreshListener {
+    public interface OnUpdateListener {
         public void onRefresh();
+
+        public void onAppend();
     }
 
     public void onRefreshComplete() {
@@ -284,6 +286,9 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         View last = getChildAt(getChildCount() - 1);
         if (last != null && (last.getBottom() - (getHeight() + getScrollY())) <= 0 && mSeeLast) {
             mReachBottom = true;
+            if (mUpdateListener != null) {
+                mUpdateListener.onAppend();
+            }
         } else {
             mReachBottom = false;
         }
