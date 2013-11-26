@@ -63,10 +63,13 @@ public class ProgramsContainer extends RelativeLayout {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (!mGridView.isBusy() && mItemClickable) {
-                long pid = mPrograms.get(position).getId();
+                Program program = mPrograms.get(position);
+                long pid = program.getId();
+                String title = program.getTitle();
                 Intent intent = new Intent();
                 intent.putExtra("pid", pid);
                 intent.putExtra("username", "xiety0001");
+                intent.putExtra("title", title);
                 intent.setClass(getContext(), LivePlayerActivity.class);
                 getContext().startActivity(intent);
             }

@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
@@ -42,6 +43,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     private View mBottomBarView;
 
     private View mUserView;
+
+    private TextView mTitleTextView;
 
     private ToggleButton mModeBtn;
 
@@ -73,6 +76,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
+        mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
         Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
@@ -104,6 +108,10 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);
         mVideoView.setOnErrorListener(mErrorListener);
+    }
+
+    public void setTitle(String title) {
+        mTitleTextView.setText(title);
     }
 
     @Override

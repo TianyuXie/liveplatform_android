@@ -19,7 +19,7 @@
         android:layout_alignParentTop="true" >
 
         <TextView
-            android:id="@+id/textview_player_title"
+            android:id="@+id/text_player_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

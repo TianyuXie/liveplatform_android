@@ -119,6 +119,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
+        mLivePlayerFragment.setTitle(getIntent().getStringExtra("title"));
         if (mUrl == null) {
             String username = getIntent().getStringExtra("username");
             long pid = getIntent().getLongExtra("pid", -1);
