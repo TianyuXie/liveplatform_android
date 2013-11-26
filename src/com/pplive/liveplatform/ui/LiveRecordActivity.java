@@ -49,7 +49,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
     private static final int WHAT_RECORD_UPDATE = 9003;
-    
+
     private static final int WHAT_LIVE_COMING_START = 9004;
     private static final int WHAT_LIVE_COMING_UPDATE = 9005;
 
@@ -105,7 +105,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         @Override
         public void onLiveSelected(Program program) {
             mSelectedProgram = program;
-            
+
             mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
         }
     };
@@ -240,10 +240,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mInnerHandler.sendMessageDelayed(msg, 1000 /* milliseconds */);
         }
     }
-    
+
     private void onLiveComingStart() {
         mTextLiveComing.setVisibility(View.VISIBLE);
-        
+
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_UPDATE);
     }
 
@@ -251,20 +251,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (mRecording) {
             return;
         }
-        
+
         if (null != mSelectedProgram) {
             long now = System.currentTimeMillis();
             long start = mSelectedProgram.getStartTime();
-            
+
             Log.d(TAG, "now: " + now + "; start: " + start);
-            
+
             String coming = null;
             if (start - now > 0) {
                 coming = TimeUtil.stringForTime(start - now);
             } else {
                 coming = TimeUtil.stringForTime(0);
             }
-            
+
             mTextLiveComing.setText(coming);
             mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
         }
@@ -342,13 +342,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (!mRecording) {
             mMediaRecorder = new LiveMediaRecoder(getApplicationContext(), mCamera);
             mMediaRecorder.setOnErrorListener(new OnErrorListener() {
-                
+
                 @Override
                 public void onError() {
-                    stopRecording();
+                    //                    stopRecording();
                 }
             });
-            
+
             mMediaRecorder.setOutputPath(url);
 
             mMediaRecorder.start();
@@ -364,7 +364,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mMediaRecorder.stop();
 
             mRecording = false;
-            
+
             mBtnLiveRecord.setChecked(mRecording);
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
