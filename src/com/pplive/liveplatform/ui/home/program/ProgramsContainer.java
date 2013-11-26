@@ -1,7 +1,6 @@
 package com.pplive.liveplatform.ui.home.program;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import android.content.Context;
@@ -59,10 +58,9 @@ public class ProgramsContainer extends RelativeLayout {
         this(context, null);
     }
 
-    @SuppressWarnings("unchecked")
-    public void refreshData(Object data) {
+    public void refreshData(List<Program> data) {
         mPrograms.clear();
-        mPrograms.addAll((Collection<Program>) data);
+        mPrograms.addAll(data);
         mAdapter.notifyDataSetChanged();
     }
 

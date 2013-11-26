@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.home;
 
+import java.util.Locale;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.model.FallList;
+import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -40,6 +44,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private boolean mSlided;
 
+    private String mNextToken;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +70,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        mNextToken = "";
         startTask();
     }
 
@@ -78,9 +85,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         task.addTaskListener(getTaskListener);
         TaskContext taskContext = new TaskContext();
         taskContext.set(SearchTask.KEY_SUBJECT_ID, 1);
+        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
         taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-        taskContext.set(SearchTask.KEY_SORT, "vv");
-        taskContext.set(SearchTask.KEY_FALL_COUNT, 10);
+        taskContext.set(SearchTask.KEY_SORT, "starttime");
+        taskContext.set(SearchTask.KEY_FALL_COUNT, 50);
         task.execute(taskContext);
         if (mCallbackListener != null) {
             mCallbackListener.doLoadMore();
@@ -89,12 +97,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private Task.OnTaskListener getTaskListener = new Task.OnTaskListener() {
         @Override
+        @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             if (getActivity() != null) {
                 Toast.makeText(getActivity(), R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-                mContainer.refreshData(event.getContext().get(SearchTask.KEY_RESULT));
+                FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
+                mContainer.refreshData(fallList.getList());
                 if (mCallbackListener != null) {
-                    mCallbackListener.doLoadResult("已加载10条");
+                    mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
                 }
             }
         }
