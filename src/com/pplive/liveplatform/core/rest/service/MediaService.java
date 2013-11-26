@@ -51,7 +51,7 @@ public class MediaService extends AbsService {
     public Push getPushByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -72,7 +72,7 @@ public class MediaService extends AbsService {
     public List<Watch> getPlayWatchListByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(Constants.TEST_COTK, token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -93,7 +93,7 @@ public class MediaService extends AbsService {
     public List<Watch> getPreviewWatchListByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 

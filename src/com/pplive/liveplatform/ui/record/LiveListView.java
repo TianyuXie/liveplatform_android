@@ -15,6 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
@@ -157,7 +158,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             protected List<Program> doInBackground(Void... params) {
                 Log.d(TAG, "doInBackground");
 
-                List<Program> programs = ProgramService.getInstance().getProgramsByOwner("xiety0001");
+                List<Program> programs = ProgramService.getInstance().getProgramsByOwner("xiety0001", LiveStatusEnum.NOT_START);
 
                 return programs;
             }

@@ -1,17 +1,18 @@
 package com.pplive.liveplatform.core.rest.http;
 
-import org.springframework.http.HttpAuthentication;
+import android.text.TextUtils;
 
-public class PlayTokenAuthentication extends HttpAuthentication {
+public class PlayTokenAuthentication extends TokenAuthentication {
 
-    private String mPlayTk;
-    
-    public PlayTokenAuthentication(String playTk) {
-        mPlayTk = playTk;
+    public PlayTokenAuthentication(String playToken) {
+        this(null, playToken);
     }
-
-    @Override
-    public String getHeaderValue() {
-        return String.format("playtk=%s", mPlayTk);
+    
+    public PlayTokenAuthentication(String coToken, String playToken) {
+        super(coToken);
+        
+        if (!TextUtils.isEmpty(playToken)) {
+            mKeyValueMap.put(KEY_PLAY_TOKEN, playToken);
+        }
     }
 }

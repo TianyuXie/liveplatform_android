@@ -10,7 +10,7 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.http.CoTokenAuthentication;
+import com.pplive.liveplatform.core.rest.http.TokenAuthentication;
 
 public abstract class AbsService {
 
@@ -25,7 +25,7 @@ public abstract class AbsService {
         mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
         mRestTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         
-        mCoTokenAuthentication = new CoTokenAuthentication("pptv", Constants.TEST_COTK); 
+        mCoTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK); 
         
         mRequestHeaders = new HttpHeaders();
         mRequestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));

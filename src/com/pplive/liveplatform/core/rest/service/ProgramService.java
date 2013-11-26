@@ -41,13 +41,18 @@ public class ProgramService extends AbsService {
     }
 
     public List<Program> getProgramsByOwner(String owner) {
-        return getProgramsByOwner(owner, LiveStatusEnum.NOT_START);
+        return getProgramsByOwner(owner, "");
     }
 
     public List<Program> getProgramsByOwner(String owner, LiveStatusEnum livestatus) {
-        Log.d(TAG, "owner: " + owner + "; livestatus: " + livestatus);
+        
+        return getProgramsByOwner(owner, livestatus.toString());
+    }
+    
+    private List<Program> getProgramsByOwner(String owner, String liveStatus) {
+        Log.d(TAG, "owner: " + owner + "; livestatus: " + liveStatus);
 
-        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, livestatus);
+        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, liveStatus);
 
         return rep.getList();
     }

@@ -1,18 +1,18 @@
 package com.pplive.liveplatform.core.rest.http;
 
-import org.springframework.http.HttpAuthentication;
+import android.text.TextUtils;
 
-public class LiveTokenAuthentication extends HttpAuthentication {
+public class LiveTokenAuthentication extends TokenAuthentication {
     
-    private String mLiveTk;
+    public LiveTokenAuthentication(String liveToken) {
+        this(null, liveToken);
+    }
     
-    public LiveTokenAuthentication(String liveTk) {
-        mLiveTk = liveTk;
+    public LiveTokenAuthentication(String coToken, String liveToken) {
+        super(coToken);
+        
+        if (!TextUtils.isEmpty(liveToken)) {
+            mKeyValueMap.put(KEY_LIVE_TOKEN, liveToken);
+        }
     }
-
-    @Override
-    public String getHeaderValue() {
-        return String.format("livetk=%s", mLiveTk);
-    }
-
 }
