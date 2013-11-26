@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui;
 
+import java.util.List;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
@@ -18,8 +20,18 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.rest.model.Watch;
+import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.TaskCancelEvent;
+import com.pplive.liveplatform.core.task.TaskContext;
+import com.pplive.liveplatform.core.task.TaskFailedEvent;
+import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.core.task.home.GetMediaTask;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
@@ -28,7 +40,7 @@ import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
-    static final String TAG = "LivePlayerActivity";
+    static final String TAG = "_LivePlayerActivity";
 
     private static final int SCREEN_ORIENTATION_INVALID = -1;
 
@@ -61,6 +73,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private boolean mWriting;
 
     private int mHalfScreenHeight;
+
+    private String mUrl;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -104,8 +118,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setLayout(mIsFull);
-        mLivePlayerFragment.setupPlayer(getIntent());
         mLivePlayerFragment.setCallbackListener(this);
+        if (mUrl == null) {
+            String username = getIntent().getStringExtra("username");
+            long pid = getIntent().getLongExtra("pid", -1);
+            Log.d(TAG, pid + "");
+            if (pid != -1) {
+                GetMediaTask task = new GetMediaTask();
+                task.addTaskListener(onTaskListener);
+                TaskContext taskContext = new TaskContext();
+                taskContext.set(GetMediaTask.KEY_PID, pid);
+                taskContext.set(GetMediaTask.KEY_USERNAME, username);
+                task.execute(taskContext);
+            }
+        }
     }
 
     @Override
@@ -333,4 +359,43 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     public void onShareBtnClick() {
         mShareDialog.show();
     }
+
+    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Toast.makeText(LivePlayerActivity.this, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
+            List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
+            mUrl = watchs.get(0).getWatchStringList().get(0);
+            if (mUrl != null) {
+                Log.d(TAG, mUrl);
+                mLivePlayerFragment.setupPlayer(mUrl);
+            }
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+    };
 }

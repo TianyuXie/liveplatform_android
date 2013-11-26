@@ -45,6 +45,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private Callback mCallbackListener;
 
     private boolean mSlided;
+    
+    private boolean mBusy;
 
     private String mNextToken;
 
@@ -73,7 +75,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStart();
         Log.d(TAG, "onStart");
         mNextToken = "";
-        startTask(1);
+        startTask(1, false);
     }
 
     @Override
@@ -82,18 +84,23 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStop();
     }
 
-    private void startTask(int subjectid) {
-        SearchTask task = new SearchTask();
-        task.addTaskListener(getTaskListener);
-        TaskContext taskContext = new TaskContext();
-        taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
-        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-        taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-        taskContext.set(SearchTask.KEY_SORT, "starttime");
-        taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
-        task.execute(taskContext);
-        if (mCallbackListener != null) {
-            mCallbackListener.doLoadMore();
+    private void startTask(int subjectid, boolean append) {
+        if (!mBusy){
+            Log.d(TAG, "startTask");
+            mBusy = true;
+            SearchTask task = new SearchTask();
+            task.addTaskListener(getTaskListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
+            taskContext.set(SearchTask.KEY_TASK_TYPE, append);
+            taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+            taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
+            taskContext.set(SearchTask.KEY_SORT, "starttime");
+            taskContext.set(SearchTask.KEY_FALL_COUNT, 10);
+            task.execute(taskContext);
+            if (mCallbackListener != null) {
+                mCallbackListener.doLoadMore();
+            }
         }
     }
 
@@ -102,12 +109,23 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             if (getActivity() != null) {
-                Toast.makeText(getActivity(), R.string.toast_sucess, Toast.LENGTH_SHORT).show();
                 FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_TASK_RESULT);
-                mNextToken = fallList.nextToken();
-                mContainer.refreshData(fallList.getList());
-                if (mCallbackListener != null) {
-                    mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                if (!fallList.nextToken().equals("")) {
+                    mNextToken = fallList.nextToken();
+                }
+                if (fallList.count() != 0){
+                    if ((Boolean) event.getContext().get(SearchTask.KEY_TASK_TYPE) /* use append */) {
+                        mContainer.appendData(fallList.getList());
+                    } else {
+                        mContainer.refreshData(fallList.getList());
+                    }
+                    if (mCallbackListener != null) {
+                        mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                    }
+                } else {
+                    if (mCallbackListener != null) {
+                        mCallbackListener.doLoadResult("已全部加载");
+                    }
                 }
             }
         }
@@ -146,6 +164,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             }
         }
     };
+    
+    public void setIdle()
+    {
+        mBusy = false;
+    }
 
     @Override
     public void onSlide() {
@@ -234,9 +257,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
         @Override
         public void onAppend() {
-            if (mCallbackListener != null) {
-                mCallbackListener.doLoadMore();
-            }
+            Log.d(TAG, "onAppend");
+            startTask(1, true);
         }
     };
 

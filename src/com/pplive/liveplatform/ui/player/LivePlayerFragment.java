@@ -2,7 +2,6 @@ package com.pplive.liveplatform.ui.player;
 
 import java.io.File;
 
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,14 +20,12 @@ import android.widget.Button;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.util.ConfigUtil;
-import com.pplive.liveplatform.util.Keys;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements OnTouchListener, View.OnClickListener {
-    static final String TAG = "LivePlayerFragment";
+    static final String TAG = "_LivePlayerFragment";
 
     private static final int HIDE = 301;
 
@@ -86,7 +83,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         return layout;
     }
 
-    public void setupPlayer(Intent intent) {
+    public void setupPlayer(String url) {
         // TODO: test code
         File cacheDirFile = getActivity().getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
@@ -100,8 +97,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
         MediaSDK.startP2PEngine("161", "12", "111");
 
-        Uri uri = intent.getData();
-        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
+        Uri uri = Uri.parse(url);
+        //        uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
         mVideoView.setDecodeMode(DecodeMode.HW_SYSTEM);
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);

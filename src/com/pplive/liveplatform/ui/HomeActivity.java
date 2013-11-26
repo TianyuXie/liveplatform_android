@@ -26,7 +26,7 @@ import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
     static final String TAG = "HomepageActivity";
-    
+
     private static final int NORMAL = 701;
 
     private AnimDoor mAnimDoor;
@@ -42,6 +42,8 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     private SideBar mSideBar;
 
     private GestureDetector mGlobalDetector;
+
+    private HomeFragment mHomepageFragment;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -61,13 +63,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        HomeFragment homepageFragment = new HomeFragment();
-        homepageFragment.setCallbackListener(this);
-        fragmentTransaction.add(R.id.layout_home_fragment_container, homepageFragment);
+        mHomepageFragment = new HomeFragment();
+        mHomepageFragment.setCallbackListener(this);
+        fragmentTransaction.add(R.id.layout_home_fragment_container, mHomepageFragment);
         fragmentTransaction.commit();
 
         mFragmentContainer.attachOnSlideListener(mSideBar);
-        mFragmentContainer.attachOnSlideListener(homepageFragment);
+        mFragmentContainer.attachOnSlideListener(mHomepageFragment);
 
         mGlobalDetector = new GestureDetector(getApplicationContext(), onGestureListener);
 
@@ -210,22 +212,24 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusButton.showLoadingResult(text);
         mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 5000);
     }
-    
+
     @Override
     public void doLoadFinish() {
         mStatusButton.finishLoading();
+        mHomepageFragment.setIdle();
     }
-    
-    private Handler mStatusButtonHandler = new Handler(){
+
+    private Handler mStatusButtonHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case NORMAL:
                 mStatusButton.finishLoading();
+                mHomepageFragment.setIdle();
                 break;
             }
         }
-        
+
     };
 
 }

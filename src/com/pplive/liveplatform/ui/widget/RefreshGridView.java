@@ -19,7 +19,7 @@ import android.widget.ProgressBar;
 import com.pplive.liveplatform.R;
 
 public class RefreshGridView extends GridView implements OnScrollListener {
-    static final String TAG = "PullToRefreshGridView";
+    static final String TAG = "_RefreshGridView";
 
     private final static int STATUS_RELEASE_TO_REFRESH = 800;
     private final static int STATUS_PULL_TO_REFRESH = 801;
@@ -266,13 +266,13 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
-
             if (absDistanceY > absDistanceX) {
                 if (distanceY > 10.0f && mReachBottom) {
-
+                    if (mUpdateListener != null) {
+                        mUpdateListener.onAppend();
+                    }
                 } else if (distanceY < -10.0f && mReachTop) {
                     mPulling = true;
                 }
@@ -286,9 +286,6 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         View last = getChildAt(getChildCount() - 1);
         if (last != null && (last.getBottom() - (getHeight() + getScrollY())) <= 0 && mSeeLast) {
             mReachBottom = true;
-            if (mUpdateListener != null) {
-                mUpdateListener.onAppend();
-            }
         } else {
             mReachBottom = false;
         }
