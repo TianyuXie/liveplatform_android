@@ -244,9 +244,11 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     }
 
     public void onRefreshComplete() {
-        mStatus = STATUS_DONE;
-        updateHeader();
-        bounceHeader(-mHeaderHeight);
+        if (mStatus != STATUS_DONE) {
+            mStatus = STATUS_DONE;
+            updateHeader();
+            bounceHeader(-mHeaderHeight);
+        }
     }
 
     // Measure headView's width & height 
@@ -330,7 +332,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         mHeaderView.clearAnimation();
     }
 
-    public boolean isBusy() {
-        return !(mStatus == STATUS_DONE) || mAniming || mPulling;
+    public boolean canClick() {
+        return (mStatus == STATUS_DONE) && !mAniming && !mPulling;
     }
 }

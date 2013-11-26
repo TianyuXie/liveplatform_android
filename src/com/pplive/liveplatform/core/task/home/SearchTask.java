@@ -11,13 +11,14 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
     public final static String KEY_TASK_RESULT = "search_task_result";
-    public final static String KEY_TASK_TYPE = "search_task_type";
+    public final static String KEY_APPEND_FLAG = "search_task_type";
 
     public final static String KEY_SUBJECT_ID = "subjectId";
     public final static String KEY_SORT = "sort";
     public final static String KEY_LIVE_STATUS = "liveStatus";
     public final static String KEY_NEXT_TK = "nextTk";
     public final static String KEY_FALL_COUNT = "fallCount";
+    public final static String KEY_KEYWORD = "key";
 
     private final String ID = StringUtil.newGuid();
     private final String NAME = "GetTask";
@@ -53,12 +54,13 @@ public class SearchTask extends Task {
         TaskContext context = params[0];
         int subjectId = (Integer) context.get(KEY_SUBJECT_ID);
         String sort = context.getString(KEY_SORT);
-        String liveStatus = (String) context.getString(KEY_LIVE_STATUS);
-        String nextTk = (String) context.getString(KEY_NEXT_TK);
+        String liveStatus = context.getString(KEY_LIVE_STATUS);
+        String nextTk = context.getString(KEY_NEXT_TK);
         int fallCount = (Integer) context.get(KEY_FALL_COUNT);
+        String key = context.getString(KEY_KEYWORD);
         FallList<Program> data = null;
         try {
-            data = SearchService.getInstance().searchProgram(subjectId, sort, liveStatus, nextTk, fallCount);
+            data = SearchService.getInstance().searchProgram(key, subjectId, sort, liveStatus, nextTk, fallCount);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "GET Error");
         }

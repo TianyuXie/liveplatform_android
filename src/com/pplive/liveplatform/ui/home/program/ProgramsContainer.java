@@ -62,7 +62,7 @@ public class ProgramsContainer extends RelativeLayout {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (!mGridView.isBusy() && mItemClickable) {
+            if (mGridView.canClick() && mItemClickable) {
                 Program program = mPrograms.get(position);
                 long pid = program.getId();
                 String title = program.getTitle();

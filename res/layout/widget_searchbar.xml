@@ -27,11 +27,11 @@
             android:paddingRight="15dp"
             android:paddingTop="5dp" >
 
-            <ImageView
+            <Button
+                android:id="@+id/btn_searchbar_search"
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:contentDescription="@string/blank"
-                android:src="@drawable/searchbar_icon" />
+                android:background="@drawable/searchbar_icon" />
 
             <EditText
                 android:id="@+id/edit_searchbar"
@@ -51,8 +51,7 @@
             android:id="@+id/btn_searchbar_close"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/searchbar_close_btn_bg"
-            android:contentDescription="@string/blank" />
+            android:background="@drawable/searchbar_close_btn_bg" />
     </LinearLayout>
 
     <ListView
