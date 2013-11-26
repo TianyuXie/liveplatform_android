@@ -43,7 +43,7 @@
         android:layout_marginLeft="20dp"
         android:drawableLeft="@drawable/live_record_stateicon_comingsoon"
         android:textSize="16sp"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btn_camera_change"
@@ -79,6 +79,22 @@
         android:checked="false"
         android:drawableRight="@drawable/live_record_btn_live_record"
         android:onClick="onClick" />
+
+    <TextView
+        android:id="@+id/text_living_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/live_record_fillet_bg"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
     <fragment
         android:id="@+id/footer_bar"

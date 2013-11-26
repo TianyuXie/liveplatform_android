@@ -21,14 +21,12 @@ public class MediaService extends AbsService {
 
     private static final String TAG = MediaService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PUSH = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/media/v1/pptv/program/{pid}/publish")
-            .toString();
+    private static final String TEMPLATE_GET_PUSH = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/publish").toString();
 
-    private static final String TEMPLATE_GET_PLAY = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT, "/media/v1/pptv/program/{pid}/watch")
-            .toString();
+    private static final String TEMPLATE_GET_PLAY = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch").toString();
 
-    private static final String TEMPLATE_GET_PREVIEW = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
-            "/media/v1/pptv/program/{pid}/preview").toString();
+    private static final String TEMPLATE_GET_PREVIEW = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/preview")
+            .toString();
 
     private static final MediaService sInstance = new MediaService();
 
@@ -51,7 +49,7 @@ public class MediaService extends AbsService {
     public Push getPushByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -65,14 +63,14 @@ public class MediaService extends AbsService {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
         String token = TokenService.getInstance().getPlayToken(pid, username);
-        
+
         return getPlayWatchListByToken(pid, token);
     }
 
     public List<Watch> getPlayWatchListByToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(Constants.TEST_COTK, token));
+        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 

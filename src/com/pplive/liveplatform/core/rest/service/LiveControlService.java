@@ -16,8 +16,8 @@ public class LiveControlService extends AbsService {
 
     private static final String TAG = LiveControlService.class.getSimpleName();
 
-    private static final String TEMPLATE_UPDATE_LIVESTATUS = new URL(Protocol.HTTP, Constants.TEST_HOST, Constants.TEST_PORT,
-            "/c/v1/pptv/program/{pid}/livestatus").toString();
+    private static final String TEMPLATE_UPDATE_LIVESTATUS = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/c/v1/pptv/program/{pid}/livestatus")
+            .toString();
 
     private static final LiveControlService sInstance = new LiveControlService();
 
@@ -27,17 +27,17 @@ public class LiveControlService extends AbsService {
 
     private LiveControlService() {
     }
-    
+
     public void updateLiveStatusById(long pid, LiveStatusEnum livestatus) {
         String token = TokenService.getInstance().getLiveToken(pid, "xiety0001");
-        
+
         updateLiveStatusById(pid, livestatus, token);
     }
 
     public void updateLiveStatusById(long pid, LiveStatusEnum livestatus, String token) {
         Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
-        
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
+
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
         HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
 
         mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVESTATUS, req, Resp.class, pid);
