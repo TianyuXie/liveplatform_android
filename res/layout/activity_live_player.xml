@@ -14,14 +14,30 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <RelativeLayout
+    <ScrollView
         android:id="@+id/layout_player_dialog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/layout_player_comment"
-        android:background="@color/player_dialog_bg" />
+        android:layout_above="@+id/wrapper_player_comment"
+        android:background="@color/player_dialog_bg"
+        android:fadingEdgeLength="15dp"
+        android:overScrollMode="never"
+        android:padding="8dp"
+        android:requiresFadingEdge="vertical"
+        android:scrollbars="none" >
+
+        <TextView
+            android:id="@+id/textview_player_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:text="@string/test_player_dialog"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+    </ScrollView>
 
     <LinearLayout
+        android:id="@id/wrapper_player_comment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -36,29 +52,29 @@
             android:orientation="horizontal" />
 
         <LinearLayout
-            android:id="@id/layout_player_comment"
+            android:id="@+id/layout_player_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:background="@drawable/searchbar_text_bg"
+            android:background="@drawable/player_dialog_input_bg"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="5dp"
+            android:paddingBottom="6dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:paddingTop="5dp"
+            android:paddingTop="6dp"
             android:visibility="gone" >
 
             <com.pplive.liveplatform.ui.widget.EnterSendEditText
                 android:id="@+id/edit_player_comment"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/searchbar_text_bg"
+                android:background="@color/input_text_bg"
                 android:imeOptions="actionSend"
                 android:inputType="text|textMultiLine"
                 android:maxLines="4"
                 android:textColor="@color/black"
-                android:textSize="15sp" />
+                android:textSize="17sp" />
         </LinearLayout>
     </LinearLayout>
 

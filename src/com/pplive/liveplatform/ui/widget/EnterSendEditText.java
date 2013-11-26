@@ -13,6 +13,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class EnterSendEditText extends EditText {
+    static final String TAG = "EnterSendEditText";
+
     private OnEnterListener mOnEnterListener;
     private MotionEvent me1;
     private MotionEvent me2;
@@ -33,9 +35,8 @@ public class EnterSendEditText extends EditText {
 
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-        Log.d("focus", "forcus");
-
         if (focused) {
+            Log.d(TAG, "get forcus");
             (new Handler()).postDelayed(new Runnable() {
                 public void run() {
                     dispatchTouchEvent(me1);
@@ -43,6 +44,7 @@ public class EnterSendEditText extends EditText {
                 }
             }, 200);
         } else {
+            Log.d(TAG, "clear forcus");
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm.isActive()) {
                 imm.hideSoftInputFromWindow(getApplicationWindowToken(), 0);
@@ -84,18 +86,4 @@ public class EnterSendEditText extends EditText {
         me2.recycle();
         super.onDetachedFromWindow();
     }
-
-    @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        Log.d("EnterSendEditText", "onSizeChanged");
-        super.onSizeChanged(w, h, oldw, oldh);
-    }
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        Log.d("EnterSendEditText", String.format("%d, %d, %d, %d", l, t, r, b));
-        getX();
-        super.onLayout(changed, l, t, r, b);
-    }
-
 }

@@ -17,6 +17,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
@@ -26,7 +27,7 @@ import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.thirdparty.BreakpadUtil;
 
-public class LivePlayerFragment extends Fragment implements OnTouchListener {
+public class LivePlayerFragment extends Fragment implements OnTouchListener, View.OnClickListener {
     static final String TAG = "LivePlayerFragment";
 
     private static final int HIDE = 301;
@@ -53,6 +54,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
 
     private OnErrorListener mOnErrorListener;
 
+    private Callback mCallbackListener;
+
     private int mFlagMask;
 
     private int mViewFlags;
@@ -73,10 +76,13 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         View layout = inflater.inflate(R.layout.layout_player_fragment, container, false);
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
+        Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mUserView = layout.findViewById(R.id.layout_player_user);
         layout.setOnTouchListener(this);
+        mModeBtn.setOnClickListener(this);
+        shareBtn.setOnClickListener(this);
         return layout;
     }
 
@@ -92,7 +98,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         MediaSDK.libPath = libDir;
         MediaSDK.logPath = tmpDir;
         MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
-
         MediaSDK.startP2PEngine("161", "12", "111");
 
         Uri uri = intent.getData();
@@ -135,10 +140,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
-    }
-
-    public void setOnModeBtnClickListener(View.OnClickListener l) {
-        mModeBtn.setOnClickListener(l);
     }
 
     private Handler mHandler = new Handler() {
@@ -186,18 +187,32 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         boolean onError(int what, int extra);
     }
 
-    public void setOnCompletionListener(OnCompletionListener l) {
-        this.mOnCompletionListener = l;
-    }
-
-    public void setOnErrorListener(OnErrorListener l) {
-        this.mOnErrorListener = l;
+    @Override
+    public void onClick(View v) {
+        Log.d(TAG, "onClick");
+        switch (v.getId()) {
+        case R.id.btn_player_mode:
+            if (mCallbackListener != null) {
+                mCallbackListener.onModeBtnClick();
+            }
+            break;
+        case R.id.btn_player_share:
+            if (mCallbackListener != null) {
+                mCallbackListener.onShareBtnClick();
+            }
+            break;
+        default:
+            break;
+        }
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         Log.d(TAG, "onTouch");
-        if (mDoubleTapListener.onTouchEvent(event)) {
+        if (mCallbackListener != null) {
+            mCallbackListener.onTouch();
+        }
+        if (mGestureDetector.onTouchEvent(event)) {
             return true;
         }
         return false;
@@ -253,7 +268,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
         mViewFlags |= flags;
     }
 
-    private GestureDetector mDoubleTapListener = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector mGestureDetector = new GestureDetector(getActivity(), new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
@@ -277,5 +292,18 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener {
             return true;
         }
     });
+
+    public interface Callback {
+        public void onTouch();
+
+        public void onModeBtnClick();
+
+        public void onShareBtnClick();
+
+    }
+
+    public void setCallbackListener(Callback listener) {
+        this.mCallbackListener = listener;
+    }
 
 }

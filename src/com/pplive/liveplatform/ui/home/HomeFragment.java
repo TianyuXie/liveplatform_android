@@ -20,7 +20,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
-import com.pplive.liveplatform.ui.home.program.RefreshContainer;
+import com.pplive.liveplatform.ui.home.program.ProgramsContainer;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private TitleBar mTitleBar;
 
-    private RefreshContainer mContainer;
+    private ProgramsContainer mContainer;
 
     private SearchBar mSearchBar;
 
@@ -50,13 +50,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
-        mContainer = (RefreshContainer) layout.findViewById(R.id.layout_home_body);
+        mContainer = (ProgramsContainer) layout.findViewById(R.id.layout_home_body);
         //        mContainer.setOnScrollRefreshListener(scrollRefreshListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(titleBarOnClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
         mSearchBar.setOnClickListener(searchBarOnClickListener);
-        layout.setGestureDetector(new InterceptDetector(getActivity(), onGestureListener));
+        layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         return layout;
     }
 
@@ -138,12 +138,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onSlide() {
         mSlided = true;
         mTitleBar.setMenuButtonHighlight(true);
+        mContainer.setItemClickable(false);
     }
 
     @Override
     public void onSlideBack() {
         mSlided = false;
         mTitleBar.setMenuButtonHighlight(false);
+        mContainer.setItemClickable(true);
     }
 
     public interface Callback {

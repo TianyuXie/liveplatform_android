@@ -35,7 +35,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private int mHeaderHeight;
     private float mStartY;
 
-    private boolean mRecored;
+    private boolean mRecorded;
     private boolean mRefreshable;
     private boolean mPulling;
     private boolean mAniming;
@@ -89,6 +89,18 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         }
     }
 
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        Log.v(TAG, "onInterceptTouchEvent");
+        if (mRefreshable && mPulling) {
+            Log.v(TAG, "true");
+            return true;
+        } else {
+            Log.v(TAG, "false");
+            return super.onInterceptTouchEvent(ev);
+        }
+    }
+
     public boolean onTouchEvent(MotionEvent event) {
         Log.v(TAG, "onTouchEvent");
         mGestureDetector.onTouchEvent(event);
@@ -96,8 +108,8 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         if (mRefreshable && mPulling && !mAniming) {
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                if (!mRecored) {
-                    mRecored = true;
+                if (!mRecorded) {
+                    mRecorded = true;
                     mStartY = event.getY();
                 }
                 break;
@@ -124,17 +136,17 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                         Log.v(TAG, "由松开刷新状态，到done状态");
                     }
                 }
-                mRecored = false;
+                mRecorded = false;
                 mPulling = false;
                 break;
 
             case MotionEvent.ACTION_MOVE:
                 float tempY = event.getY();
-                if (!mRecored) {
-                    mRecored = true;
+                if (!mRecorded) {
+                    mRecorded = true;
                     mStartY = tempY;
                 }
-                if (mStatus != STATUS_REFRESHING && mRecored) {
+                if (mStatus != STATUS_REFRESHING && mRecorded) {
                     // 保证在设置padding的过程中，当前的位置一直是在head，否则如果当列表超出屏幕的话，当在上推的时候，列表会同时进行滚动
                     // 可以松手去刷新了
                     if (mStatus == STATUS_RELEASE_TO_REFRESH) {
@@ -312,6 +324,6 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     }
 
     public boolean isBusy() {
-        return mAniming;
+        return !(mStatus == STATUS_DONE) || mAniming || mPulling;
     }
 }

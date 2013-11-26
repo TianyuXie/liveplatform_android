@@ -19,7 +19,7 @@ public class InterceptableLinearLayout extends LinearLayout implements Intercept
 
     private InterceptDetector mInterceptDetector;
 
-    public void setGestureDetector(InterceptDetector detector) {
+    public void setInterceptDetector(InterceptDetector detector) {
         this.mInterceptDetector = detector;
     }
 
