@@ -28,13 +28,13 @@ public class LiveControlService extends AbsService {
     private LiveControlService() {
     }
 
-    public void updateLiveStatusById(long pid, LiveStatusEnum livestatus) {
+    public void updateLiveStatus(long pid, LiveStatusEnum livestatus) {
         String token = TokenService.getInstance().getLiveToken(pid, "xiety0001");
 
-        updateLiveStatusById(pid, livestatus, token);
+        updateLiveStatusWithToken(pid, livestatus, token);
     }
 
-    public void updateLiveStatusById(long pid, LiveStatusEnum livestatus, String token) {
+    public void updateLiveStatusWithToken(long pid, LiveStatusEnum livestatus, String token) {
         Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
 
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));

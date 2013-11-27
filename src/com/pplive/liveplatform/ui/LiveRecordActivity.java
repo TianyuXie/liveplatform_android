@@ -33,6 +33,7 @@ import com.pplive.liveplatform.core.rest.model.Push;
 import com.pplive.liveplatform.core.rest.service.LiveControlService;
 import com.pplive.liveplatform.core.rest.service.MediaService;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
+import com.pplive.liveplatform.core.rest.service.TokenService;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
@@ -449,10 +450,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             } else {
                 Log.d(TAG, "has program");
             }
-
-            LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.INIT);
-            LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.PREVIEW);
-            LiveControlService.getInstance().updateLiveStatusById(program.getId(), LiveStatusEnum.LIVING);
+            
+            String token = TokenService.getInstance().getLiveToken(program.getId(), program.getOwner());
+            
+            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.INIT, token);
+            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.PREVIEW, token);
+            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.LIVING, token);
 
             Push push = MediaService.getInstance().getPush(program.getId(), "xiety0001");
 
