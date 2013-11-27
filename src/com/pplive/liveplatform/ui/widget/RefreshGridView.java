@@ -26,7 +26,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private final static int STATUS_REFRESHING = 802;
     private final static int STATUS_DONE = 803;
 
-    private final static float RATIO = 3.0f;
+    private final static float RATIO = 2.0f;
 
     private LinearLayout mHeaderView;
     private ProgressBar mProgressBar;
@@ -110,7 +110,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         Log.v(TAG, "onTouchEvent");
         mGestureDetector.onTouchEvent(event);
 
-        if (mRefreshable && mPulling && !mAniming && !mBusy) {
+        if (mRefreshable && mPulling && !mAniming) {
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (!mRecorded) {
@@ -244,11 +244,9 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     }
 
     public void onRefreshComplete() {
-        if (mStatus != STATUS_DONE) {
-            mStatus = STATUS_DONE;
-            updateHeader();
-            bounceHeader(-mHeaderHeight);
-        }
+        mStatus = STATUS_DONE;
+        updateHeader();
+        bounceHeader(-mHeaderHeight);
     }
 
     // Measure headView's width & height 

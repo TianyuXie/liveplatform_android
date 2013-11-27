@@ -28,7 +28,9 @@ import com.pplive.liveplatform.util.DisplayUtil;
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
     static final String TAG = "_HomeActivity";
 
-    private static final int NORMAL = 701;
+    private static final int TIME_BUTTON_UP = 400;
+
+    private static final int TIME_BUTTON_SHOW_RESULT = 3000;
 
     private AnimDoor mAnimDoor;
 
@@ -78,7 +80,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 67.5f);
         mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -upPx);
         mStatusUpAnimation.setFillAfter(true);
-        mStatusUpAnimation.setDuration(500);
+        mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
     }
 
@@ -139,7 +141,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
                         return true;
                     }
                 } else if (distanceX < -10.0f) {
-                    if (!mHomeFragment.isBusy() && mFragmentContainer.slide()) {
+                    if (mFragmentContainer.slide()) {
                         return true;
                     }
                 }
@@ -167,7 +169,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         public void onAnimationEnd(Animation animation) {
             Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
             startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
 
         @Override
@@ -188,16 +189,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            Log.d(TAG, "shutAnimationListener: clear");
             mStatusButtonWrapper.startAnimation(mStatusUpAnimation);
         }
     };
 
     @Override
     public void doSlide() {
-        if (!mHomeFragment.isBusy()) {
-            mFragmentContainer.slide();
-        }
+        mFragmentContainer.slide();
     }
 
     @Override
@@ -207,30 +205,24 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     @Override
     public void doLoadMore() {
-        mStatusButton.startLoading("正在加载");
+        mStatusButton.startLoading(getString(R.string.home_loading));
     }
 
     @Override
     public void doLoadResult(String text) {
         mStatusButton.showLoadingResult(text);
-        mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 3000);
+        mStatusButtonHandler.sendEmptyMessageDelayed(0, TIME_BUTTON_SHOW_RESULT);
     }
 
     @Override
     public void doLoadFinish() {
         mStatusButton.finishLoading();
-        mHomeFragment.setIdle();
     }
 
     private Handler mStatusButtonHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case NORMAL:
-                mStatusButton.finishLoading();
-                mHomeFragment.setIdle();
-                break;
-            }
+            mStatusButton.finishLoading();
         }
     };
 

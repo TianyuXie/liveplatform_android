@@ -89,7 +89,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     public void startSearchTask(String keyword) {
         if (!mBusy) {
-            Log.d(TAG, "pullTask");
+            Log.d(TAG, "SearchTask");
             mNextToken = "";
             startTask(1, keyword, false);
         }
@@ -128,22 +128,20 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         startTask(subjectid, "", append);
     }
 
-    private void startTask(int subjectid, String keyword, boolean append) {
-        if (!mBusy) {
-            mBusy = true;
-            mContainer.setBusy(true);
-            SearchTask task = new SearchTask();
-            task.addTaskListener(getTaskListener);
-            TaskContext taskContext = new TaskContext();
-            taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
-            taskContext.set(SearchTask.KEY_APPEND_FLAG, append);
-            taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-            taskContext.set(SearchTask.KEY_KEYWORD, keyword);
-            taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-            taskContext.set(SearchTask.KEY_SORT, "starttime");
-            taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
-            task.execute(taskContext);
-        }
+    private void startTask(int subjectid, String keyword, int type) {
+        mBusy = true;
+        mContainer.setBusy(true);
+        SearchTask task = new SearchTask();
+        task.addTaskListener(getTaskListener);
+        TaskContext taskContext = new TaskContext();
+        taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
+        taskContext.set(SearchTask.KEY_APPEND_FLAG, type);
+        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+        taskContext.set(SearchTask.KEY_KEYWORD, keyword);
+        taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
+        taskContext.set(SearchTask.KEY_SORT, "starttime");
+        taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
+        task.execute(taskContext);
     }
 
     private Task.OnTaskListener getTaskListener = new Task.OnTaskListener() {
@@ -151,6 +149,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             if (getActivity() != null) {
+                mBusy = false;
                 FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_TASK_RESULT);
                 if (!fallList.nextToken().equals("")) {
                     mNextToken = fallList.nextToken();
@@ -182,6 +181,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             if (getActivity() != null) {
+                mBusy = false;
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
@@ -196,6 +196,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             if (getActivity() != null) {
+                mBusy = false;
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
@@ -206,6 +207,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             if (getActivity() != null) {
+                mBusy = false;
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
@@ -214,14 +216,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
-    public void setIdle() {
-        mBusy = false;
-        mContainer.setBusy(false);
-    }
+    //    public void setIdle() {
+    //        mBusy = false;
+    //        mContainer.setBusy(false);
+    //    }
 
-    public boolean isBusy() {
-        return mBusy;
-    }
+    //    public boolean isBusy() {
+    //        return mBusy;
+    //    }
 
     @Override
     public void onSlide() {
