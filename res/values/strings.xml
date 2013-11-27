@@ -1,4 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MainActivity</string>
+
+    <string name="app_name">PP直播</string>
+    <string name="blank"></string>
+
+    <!-- Program -->
+    <string name="program_live">Live</string>
+    <string name="program_going">即将开播</string>
+
+    <!-- For debug -->
+    <string name="toast_failed">失败</string>
+    <string name="toast_timeout">超时</string>
+    <string name="toast_cancel">取消</string>
+    <string name="toast_sucess">成功</string>
+    
+    <!-- For share -->
+    <string name="share_dialog_title">分享我的直播</string>
+
+    <!-- For Test -->
+    <string name="test_go_player">Go LivePlayer</string>
+    <string name="test_go_recorder">Go LiveRecorder</string>
+    <string name="test_go_home">Go Homepage</string>
+    <string name="test_player_title">网吧五连跪</string>
+    <string name="test_player_live">Live</string>
+    <string name="test_player_share">分享</string>
+    <string name="test_player_back">返回</string>
+    <string name="test_player_name">sevengram</string>
+    <string name="test_player_dialog">
+        <b>wfc8219055: </b>好\n
+        <b>猫猫党VIZ: </b>大赞老E,内牛满面啊!\n
+        <b>26155665: </b>有种你来拍拍看,你牛还是敖厂长牛@cacand:老e解说游戏比敖厂长牛比多了,以前厂长还行 现在一点营养都没有\n
+        <b>萨井井: </b>感觉要疯了。\n
+        <b>cacand: </b>老e解说游戏比敖厂长牛比多了,以前厂长还行 现在一点营养都没有\n
+        <b>黄壆珹: </b>最好的音乐好带感啊\n
+        <b>2691900047: </b>太好笑了,老e,顶你\n
+        <b>灬丿小色: </b>笑死老子了....\n
+        <b>永恒的BZK: </b>开头knight of night,结尾owen was her,owen was her前一段应该是second heaven吧?如果是的话也remix了吧\n
+        <b>61942569: </b>略鬼畜\n
+        <b>Death疾风: </b>厂长为老E说的==厂长的视频没这句话 @多啦A梦痴:后面的结尾的BGM在绿野仙踪是老熬说的,然后老E说:挨，敖厂长，你抢我台词啊//@吴眠 :后面的结尾不是老熬的,算了我不明真相搞不好是被敖厂长借鉴过去的！不愧是吐槽鼻祖！连老熬都通不了关的游戏都被你捅破了！
+        </string>
 </resources>

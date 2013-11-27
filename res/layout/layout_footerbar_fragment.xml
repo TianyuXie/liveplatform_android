@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/live_record_footer_bar_bg" >
+
+    <RelativeLayout
+        android:id="@+id/toolbar_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
+
+        <LinearLayout
+            android:id="@+id/left_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/btn_live_home"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_back" />
+
+            <ImageButton
+                android:id="@+id/btn_live_back"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_back"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/center_container"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/right_container"
+            android:layout_toRightOf="@+id/left_container"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edit_live_schedule"
+                style="@style/Widget.EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="0.5"
+                android:inputType="none"
+                android:singleLine="true"
+                android:textColor="@color/edit_normal"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edit_live_title"
+                style="@style/Widget.EditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="@color/edit_normal" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/right_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                android:id="@+id/btn_live_share"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_share" />
+
+            <ImageButton
+                android:id="@+id/btn_live_prelive"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_prelive" />
+
+            <ImageButton
+                android:id="@+id/btn_live_add_complete"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_complete"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/btn_live_edit_complete"
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/live_record_btn_live_complete"
+                android:visibility="gone" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <com.pplive.liveplatform.ui.widget.DateTimePicker
+        android:id="@+id/datetime_picker"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar_container"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/btn_add_prelive"
+        style="@style/Widget.Button.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/toolbar_container"
+        android:background="@color/black"
+        android:contentDescription="@null"
+        android:padding="20dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/live_record_btn_add_prelive"
+        android:visibility="gone" />
+
+    <com.pplive.liveplatform.ui.record.LiveListView
+        android:id="@+id/live_listview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_add_prelive"
+        android:layout_alignTop="@+id/btn_add_prelive"
+        android:layout_below="@+id/toolbar_container"
+        android:layout_toRightOf="@+id/btn_add_prelive"
+        android:background="@color/black"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/home_bg" >
+
+    <com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer
+        android:id="@+id/layout_home_fragment_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        live:distance="100dp"
+        live:duration="250"
+        live:scale_percent="0.95" />
+
+    <com.pplive.liveplatform.ui.widget.SideBar
+        android:id="@+id/home_sidebar"
+        android:layout_width="60dp"
+        android:layout_height="fill_parent"
+        android:layout_margin="20dp"
+        android:clickable="true"
+        android:visibility="gone"
+        live:anim_hide="@anim/sidebar_hide"
+        live:anim_show="@anim/sidebar_show" />
+
+    <com.pplive.liveplatform.ui.widget.AnimDoor
+        android:id="@+id/home_animdoor"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="false"
+        live:factor="1.139"
+        live:left_src="@drawable/animdoor_left"
+        live:orientation="horizontal"
+        live:right_src="@drawable/animdoor_right"
+        live:time="1000"
+        live:visible="false" />
+
+    <LinearLayout
+        android:id="@+id/wrapper_home_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp" >
+
+        <com.pplive.liveplatform.ui.widget.LoadingButton
+            android:id="@+id/btn_home_status"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            live:anim_background="@drawable/home_status_btn_anim"
+            live:animation="@anim/home_status_rotate"
+            live:loading_background="@drawable/home_status_btn_loading"
+            live:normal_background="@drawable/home_status_btn_bg"
+            live:text="@string/blank"
+            live:textSize="12sp" />
+    </LinearLayout>
+
+</RelativeLayout>

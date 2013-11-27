@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pplive.liveplatform.ui.record.LiveListItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center_vertical"
+    android:paddingRight="10dp" >
+
+    <com.pplive.liveplatform.ui.widget.AsyncImageView
+        android:id="@+id/image_prelive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:minHeight="120dp"
+        android:minWidth="160dp"
+        android:src="@drawable/live_record_default_prelive_image" />
+
+    <TextView
+        android:id="@+id/text_live_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image_prelive"
+        android:layout_alignRight="@+id/image_prelive"
+        android:background="@color/black_transparent"
+        android:gravity="center_horizontal"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:text="@string/test_live_title"
+        android:textColor="@color/dim_white" />
+
+    <ImageButton
+        android:id="@+id/btn_delete"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignBottom="@+id/image_prelive"
+        android:layout_alignLeft="@+id/image_prelive"
+        android:layout_alignRight="@+id/image_prelive"
+        android:layout_alignTop="@+id/image_prelive"
+        android:background="@color/black_transparent"
+        android:contentDescription="@null"
+        android:src="@drawable/live_record_btn_delete"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/btn_prelive_delete"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/image_prelive"
+        android:layout_alignTop="@+id/image_prelive"
+        android:layout_margin="10dp"
+        android:contentDescription="@null"
+        android:src="@drawable/live_record_btn_prelive_delete" />
+
+</com.pplive.liveplatform.ui.record.LiveListItemView>

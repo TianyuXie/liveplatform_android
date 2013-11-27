@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.pplive.liveplatform.ui.widget.TitleBar
+        android:id="@+id/titlebar_home"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/black" />
+
+    <LinearLayout
+        android:id="@+id/layout_home_nav"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titlebar_home"
+        android:background="@color/home_fragment_nav_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="2dp" >
+
+        <TextView
+            android:id="@+id/textview_home_catalog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:text="@string/test_home_column"
+            android:textColor="@color/home_fragment_nav_text"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <com.pplive.liveplatform.ui.home.program.ProgramsContainer
+        android:id="@+id/layout_home_body"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/layout_home_nav"
+        android:background="@color/home_fragment_body_bg" />
+
+    <com.pplive.liveplatform.ui.widget.SearchBar
+        android:id="@+id/searchbar_home"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentTop="true"
+        android:visibility="gone" />
+
+</com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout>

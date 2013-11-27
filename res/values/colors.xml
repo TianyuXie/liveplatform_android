@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Basic -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="red">#FFFF0000</color>
+    <color name="green">#FF008000</color>
+    <color name="yellow">#FFFFFF00</color>
+    <color name="saffron_yellow">#FF9900</color>
+    <color name="dim_gray">#FF545454</color>
+    <color name="dark_gray">#FF333333</color>
+    <color name="true_gray">#FF808080</color>
+    <color name="title_blue">#FF36a0ec</color>
+    <color name="fancy_blue">#FF00ACFF</color>
+    <color name="light_blue">#FF0090FF</color>
+    <color name="light_white">#FF9D9D9D</color>
+    <color name="orange">#FFA500</color>
+
+    <!-- Program -->
+    <color name="program_below_image_bg">#FF19A0FF</color>
+    <color name="program_owner_text">#FF919191</color>
+    <color name="program_views_text">#FF5AC7FF</color>
+    <color name="program_views_bg">#FF001E33</color>
+    <color name="program_tag_bg">#BB191919</color>
+    <color name="input_text_bg">#FF19A0FF</color>
+
+    <!-- Home -->
+    <color name="home_fragment_nav_bg">#FF19A0FF</color>
+    <color name="home_fragment_nav_text">#FF191919</color>
+    <color name="home_fragment_body_bg">#FF1A1A1A</color>
+
+    <!-- Search -->
+    <color name="searchbar_body_bg">#DD131313</color>
+    <color name="searchbar_list_text_select">#FF5AC7FF</color>
+    <color name="searchbar_list_normal">#FF222222</color>
+    <color name="searchbar_list_select">#FF001E33</color>
+    <color name="searchbar_list_divider">#FF080808</color>
+
+    <!-- Player -->
+    <color name="player_bottom_bar">#7F000000</color>
+    <color name="player_dialog_bg">#B3000000</color>
+    <color name="share_dialog_bg">#FFFFFFFF</color>
+
+</resources>

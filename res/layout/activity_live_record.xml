@@ -1,0 +1,136 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <SurfaceView
+        android:id="@+id/preview_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_centerInParent="true" />
+
+    <TextView
+        android:id="@+id/text_live"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_marginLeft="20dp"
+        android:text="@string/live"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_record_duration"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/text_live"
+        android:layout_marginLeft="10dp"
+        android:layout_toRightOf="@+id/text_live"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_live_coming"
+        style="@style/Widget.TextView.Shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_marginLeft="20dp"
+        android:drawableLeft="@drawable/live_record_stateicon_comingsoon"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_camera_change"
+        style="@style/Widget.Button.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:drawableRight="@drawable/live_record_btn_camera_change"
+        android:onClick="onClick" />
+
+    <ToggleButton
+        android:id="@+id/btn_flash_light"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/btn_camera_change"
+        android:layout_toLeftOf="@+id/btn_camera_change"
+        android:checked="false"
+        android:drawableRight="@drawable/live_record_btn_flash_light"
+        android:onClick="onClick" />
+
+    <ToggleButton
+        android:id="@+id/btn_live_record"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/btn_camera_change"
+        android:layout_centerVertical="true"
+        android:checked="false"
+        android:drawableRight="@drawable/live_record_btn_live_record"
+        android:onClick="onClick" />
+
+    <TextView
+        android:id="@+id/text_living_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/live_record_fillet_bg"
+        android:paddingBottom="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <fragment
+        android:id="@+id/footer_bar"
+        android:name="com.pplive.liveplatform.ui.record.FooterBarFragment"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+
+    <com.pplive.liveplatform.ui.widget.AnimDoor
+        android:id="@+id/live_animdoor"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="false"
+        live:factor="1.139"
+        live:left_src="@drawable/animdoor_bottom"
+        live:orientation="vertical"
+        live:right_src="@drawable/animdoor_top"
+        live:time="1500"
+        live:visible="true" />
+
+    <LinearLayout
+        android:id="@+id/wrapper_live_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" >
+
+        <com.pplive.liveplatform.ui.widget.LoadingButton
+            android:id="@+id/btn_live_status"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            live:anim_background="@drawable/home_status_btn_anim"
+            live:animation="@anim/home_status_rotate"
+            live:loading_background="@drawable/home_status_btn_rotate"
+            live:normal_background="@drawable/home_status_btn_rotate"
+            live:text="@string/blank"
+            live:textSize="12sp" />
+    </LinearLayout>
+
+</RelativeLayout>

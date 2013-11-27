@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="3dp" >
+
+    <ImageView
+        android:id="@+id/imageview_program_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="200dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/program_default_image"
+        android:contentDescription="@string/blank" />
+
+    <LinearLayout
+        android:id="@+id/layout_program_tag"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/imageview_program_preview"
+        android:layout_alignTop="@id/imageview_program_preview"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/textview_program_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="6dp"
+            android:text="@string/program_going"
+            android:textColor="@color/fancy_blue"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/textview_program_timedown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/program_tag_bg"
+            android:drawableLeft="@drawable/program_live_icon"
+            android:drawablePadding="3dp"
+            android:paddingBottom="3dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
+            android:paddingTop="3dp"
+            android:text="@string/program_live"
+            android:textSize="13sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/divider_program_below_image"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/imageview_program_preview"
+        android:background="@color/program_below_image_bg"
+        android:orientation="horizontal" />
+
+    <RelativeLayout
+        android:id="@+id/layout_program_info"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/divider_program_below_image"
+        android:background="@color/black"
+        android:padding="8dp" >
+
+        <TextView
+            android:id="@+id/textview_program_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="5dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textview_program_owner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/textview_program_title"
+            android:textColor="@color/program_owner_text"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/textview_program_viewcount"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/program_views_bg"
+            android:contentDescription="@string/blank"
+            android:gravity="center"
+            android:text="@string/test_program_viewcount"
+            android:textColor="@color/program_views_text" />
+    </RelativeLayout>
+
+</RelativeLayout>
