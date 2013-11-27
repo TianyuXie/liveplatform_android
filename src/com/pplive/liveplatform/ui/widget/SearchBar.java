@@ -33,6 +33,8 @@ public class SearchBar extends LinearLayout implements IHidable {
 
     private Button mCloseButton;
 
+    private Button mSearchButton;
+
     private CacheManager mCacheManager;
 
     private EditText mSearchEditText;
@@ -60,6 +62,7 @@ public class SearchBar extends LinearLayout implements IHidable {
         LayoutInflater inflater = LayoutInflater.from(context);
         mRoot = (ViewGroup) inflater.inflate(R.layout.widget_searchbar, this);
         mCloseButton = (Button) mRoot.findViewById(R.id.btn_searchbar_close);
+        mSearchButton = (Button) mRoot.findViewById(R.id.btn_searchbar_search);
 
         mSearchEditText = (EditText) mRoot.findViewById(R.id.edit_searchbar);
         mSearchEditText.setOnKeyListener(searchOnKeyListener);
@@ -84,12 +87,17 @@ public class SearchBar extends LinearLayout implements IHidable {
                 String keyword = mSearchEditText.getText().toString();
                 if (!TextUtils.isEmpty(keyword)) {
                     mCacheManager.updateCache(keyword);
+                    mSearchButton.performClick();
                 }
                 return true;
             }
             return false;
         }
     };
+
+    public String getText() {
+        return mSearchEditText.getEditableText().toString();
+    }
 
     private View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
         @Override
@@ -127,6 +135,7 @@ public class SearchBar extends LinearLayout implements IHidable {
     public void setOnClickListener(OnClickListener l) {
         super.setOnClickListener(l);
         mCloseButton.setOnClickListener(l);
+        mSearchButton.setOnClickListener(l);
     }
 
     @Override

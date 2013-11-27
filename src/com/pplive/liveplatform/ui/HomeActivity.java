@@ -44,7 +44,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     private GestureDetector mGlobalDetector;
 
-    private HomeFragment mHomepageFragment;
+    private HomeFragment mHomeFragment;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -65,13 +65,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        mHomepageFragment = new HomeFragment();
-        mHomepageFragment.setCallbackListener(this);
-        fragmentTransaction.add(R.id.layout_home_fragment_container, mHomepageFragment);
+        mHomeFragment = new HomeFragment();
+        mHomeFragment.setCallbackListener(this);
+        fragmentTransaction.add(R.id.layout_home_fragment_container, mHomeFragment);
         fragmentTransaction.commit();
 
         mFragmentContainer.attachOnSlideListener(mSideBar);
-        mFragmentContainer.attachOnSlideListener(mHomepageFragment);
+        mFragmentContainer.attachOnSlideListener(mHomeFragment);
 
         mGlobalDetector = new GestureDetector(getApplicationContext(), onGestureListener);
 
@@ -109,7 +109,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
-        // mStatusButton.startLoading("正在加载");
     }
 
     @Override
@@ -140,7 +139,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
                         return true;
                     }
                 } else if (distanceX < -10.0f) {
-                    if (mFragmentContainer.slide()) {
+                    if (!mHomeFragment.isBusy() && mFragmentContainer.slide()) {
                         return true;
                     }
                 }
@@ -196,7 +195,9 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     @Override
     public void doSlide() {
-        mFragmentContainer.slide();
+        if (!mHomeFragment.isBusy()) {
+            mFragmentContainer.slide();
+        }
     }
 
     @Override
@@ -218,7 +219,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     @Override
     public void doLoadFinish() {
         mStatusButton.finishLoading();
-        mHomepageFragment.setIdle();
+        mHomeFragment.setIdle();
     }
 
     private Handler mStatusButtonHandler = new Handler() {
@@ -227,7 +228,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
             switch (msg.what) {
             case NORMAL:
                 mStatusButton.finishLoading();
-                mHomepageFragment.setIdle();
+                mHomeFragment.setIdle();
                 break;
             }
         }
@@ -236,26 +237,27 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     RadioGroup.OnCheckedChangeListener onTypeChangeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            doSlideBack();
             switch (checkedId) {
             case R.id.btn_sidebar_original:
                 Log.d(TAG, "btn_sidebar_original");
-                mHomepageFragment.startTask(0, false);
+                mHomeFragment.startRefreshTask(1);
                 break;
             case R.id.btn_sidebar_tv:
                 Log.d(TAG, "btn_sidebar_tv");
-                mHomepageFragment.startTask(1, false);
+                mHomeFragment.startRefreshTask(2);
                 break;
             case R.id.btn_sidebar_game:
                 Log.d(TAG, "btn_sidebar_game");
-                mHomepageFragment.startTask(2, false);
+                mHomeFragment.startRefreshTask(3);
                 break;
             case R.id.btn_sidebar_sport:
                 Log.d(TAG, "btn_sidebar_sport");
-                mHomepageFragment.startTask(3, false);
+                mHomeFragment.startRefreshTask(4);
                 break;
             case R.id.btn_sidebar_finance:
                 Log.d(TAG, "btn_sidebar_finance");
-                mHomepageFragment.startTask(4, false);
+                mHomeFragment.startRefreshTask(5);
                 break;
             default:
                 break;

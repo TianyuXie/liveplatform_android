@@ -169,7 +169,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     }
 
     public void showLoadingResult(CharSequence text) {
-        if (mLoading) {
+//        if (mLoading) {
             mLoading = false;
             setClickable(false);
             mStatusTextView.setText(text);
@@ -178,7 +178,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
             if (mLoadingBackgroundRes > 0) {
                 mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
             }
-        }
+//        }
     }
 
     public void finishLoading() {
