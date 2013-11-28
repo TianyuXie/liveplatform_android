@@ -2,17 +2,16 @@ package com.pplive.liveplatform.ui.home;
 
 import java.util.Locale;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
@@ -277,6 +276,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSlided = true;
         mTitleBar.setMenuButtonHighlight(true);
         mContainer.setItemClickable(false);
+        mSearchBar.setFocusable(false);
     }
 
     @Override
@@ -284,6 +284,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSlided = false;
         mTitleBar.setMenuButtonHighlight(false);
         mContainer.setItemClickable(true);
+        mSearchBar.setFocusable(true);
     }
 
     public interface Callback {
@@ -324,22 +325,19 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onClick(View v) {
             Log.d(TAG, "onClick");
-            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             switch (v.getId()) {
             case R.id.btn_searchbar_close:
                 Log.d(TAG, "btn_searchbar_close");
                 mSearchBar.hide();
-                if (imm.isActive()) {
-                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                }
                 break;
             case R.id.btn_searchbar_search:
                 Log.d(TAG, "btn_searchbar_search");
                 mSearchBar.hide();
-                if (imm.isActive()) {
-                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
+                String keyword = mSearchBar.getText().toString();
+                if (!TextUtils.isEmpty(keyword)) {
+                    startSearchTask(keyword);
+                    mSearchBar.clearText();
                 }
-                startSearchTask(mSearchBar.getText());
                 break;
             }
         }

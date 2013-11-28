@@ -26,7 +26,9 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private final static int STATUS_REFRESHING = 802;
     private final static int STATUS_DONE = 803;
 
-    private final static float RATIO = 2.0f;
+    private final static float RATIO = 1.7f;
+
+    private final static int POPUP_TIME = 500;
 
     private LinearLayout mHeaderView;
     private ProgressBar mProgressBar;
@@ -306,12 +308,12 @@ public class RefreshGridView extends GridView implements OnScrollListener {
             mHeaderView.setPadding(0, -mHeaderHeight, 0, 0);
         }
         TranslateAnimation bodyAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
-        bodyAnim.setDuration(700);
-        bodyAnim.setInterpolator(new OvershootInterpolator(1.7f));
+        bodyAnim.setDuration(POPUP_TIME);
+        bodyAnim.setInterpolator(new OvershootInterpolator(1.2f));
 
         TranslateAnimation headerAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
-        headerAnim.setDuration(700);
-        headerAnim.setInterpolator(new OvershootInterpolator(1.7f));
+        headerAnim.setDuration(POPUP_TIME);
+        headerAnim.setInterpolator(new OvershootInterpolator(1.2f));
 
         startAnimation(bodyAnim);
         mHeaderView.startAnimation(headerAnim);

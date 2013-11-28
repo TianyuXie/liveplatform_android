@@ -6,19 +6,14 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -28,7 +23,7 @@ import com.pplive.liveplatform.core.db.CacheManager;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
 
 public class SearchBar extends LinearLayout implements IHidable {
-    final static String TAG = "SearchBar";
+    final static String TAG = "_SearchBar";
 
     private final static String LIST_ITEM_KEY = "ItemTitle";
 
@@ -40,7 +35,7 @@ public class SearchBar extends LinearLayout implements IHidable {
 
     private CacheManager mCacheManager;
 
-    private EditText mSearchEditText;
+    private EnterSendEditText mSearchEditText;
 
     private ViewGroup mRoot;
 
@@ -51,10 +46,6 @@ public class SearchBar extends LinearLayout implements IHidable {
     private List<Map<String, Object>> mRecordItems;
 
     private SimpleAdapter mRecordItemAdapter;
-
-    private MotionEvent me1;
-
-    private MotionEvent me2;
 
     public SearchBar(Context context) {
         this(context, null);
@@ -71,8 +62,8 @@ public class SearchBar extends LinearLayout implements IHidable {
         mCloseButton = (Button) mRoot.findViewById(R.id.btn_searchbar_close);
         mSearchButton = (Button) mRoot.findViewById(R.id.btn_searchbar_search);
 
-        mSearchEditText = (EditText) mRoot.findViewById(R.id.edit_searchbar);
-        mSearchEditText.setOnKeyListener(searchOnKeyListener);
+        mSearchEditText = (EnterSendEditText) mRoot.findViewById(R.id.edit_searchbar);
+        mSearchEditText.setOnEnterListener(onEnterListener);
         mSearchEditText.setOnFocusChangeListener(onFocusChangeListener);
 
         mRecordListView = (ListView) mRoot.findViewById(R.id.listview_searchbar_records);
@@ -81,27 +72,14 @@ public class SearchBar extends LinearLayout implements IHidable {
         mRecordListView.setAdapter(mRecordItemAdapter);
         mRecordListView.setOnItemClickListener(onItemClickListener);
         mShowing = (getVisibility() == VISIBLE);
-
-        me1 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
-        me2 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
     }
 
-    private View.OnKeyListener searchOnKeyListener = new View.OnKeyListener() {
+    private EnterSendEditText.OnEnterListener onEnterListener = new EnterSendEditText.OnEnterListener() {
         @Override
-        public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm.isActive()) {
-                    imm.hideSoftInputFromWindow(v.getApplicationWindowToken(), 0);
-                }
-                String keyword = mSearchEditText.getText().toString();
-                if (!TextUtils.isEmpty(keyword)) {
-                    mCacheManager.updateCache(keyword);
-                    mSearchButton.performClick();
-                }
-                return true;
-            }
-            return false;
+        public boolean onEnter(View v) {
+            mCacheManager.updateCache(mSearchEditText.getText().toString());
+            mSearchButton.performClick();
+            return true;
         }
     };
 
@@ -109,10 +87,15 @@ public class SearchBar extends LinearLayout implements IHidable {
         return mSearchEditText.getEditableText().toString();
     }
 
+    public void clearText() {
+        mSearchEditText.setText("");
+    }
+
     private View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus) {
+                Log.d(TAG, "onFocusChange: get focus");
                 mRecordItems.clear();
                 mRecords.clear();
                 mRecords.addAll(mCacheManager.getSearchCache(5));
@@ -123,8 +106,6 @@ public class SearchBar extends LinearLayout implements IHidable {
                 }
                 mRecordItemAdapter.notifyDataSetChanged();
                 mRecordListView.setVisibility(VISIBLE);
-            } else {
-                mRecordListView.setVisibility(INVISIBLE);
             }
         }
     };
@@ -137,12 +118,6 @@ public class SearchBar extends LinearLayout implements IHidable {
                 if (!TextUtils.isEmpty(text)) {
                     mSearchEditText.setText(text);
                 }
-                mSearchEditText.postDelayed(new Runnable() {
-                    public void run() {
-                        dispatchTouchEvent(me1);
-                        dispatchTouchEvent(me2);
-                    }
-                }, 200);
             }
         }
     };
@@ -155,6 +130,20 @@ public class SearchBar extends LinearLayout implements IHidable {
     }
 
     @Override
+    public void setFocusable(boolean focusable) {
+        super.setFocusable(focusable);
+        mSearchEditText.setFocusable(focusable);
+        mSearchEditText.setFocusableInTouchMode(focusable);
+    }
+
+    @Override
+    public void clearFocus() {
+        Log.d(TAG, "clearFocus");
+        super.clearFocus();
+        mSearchEditText.clearFocus();
+    }
+
+    @Override
     public void hide() {
         hide(true);
     }
@@ -163,6 +152,8 @@ public class SearchBar extends LinearLayout implements IHidable {
     public void hide(boolean gone) {
         if (mShowing) {
             mRoot.setVisibility(gone ? GONE : INVISIBLE);
+            //            mSearchEditText.clearFocus();
+            mRecordListView.setVisibility(INVISIBLE);
             mShowing = false;
         }
     }
@@ -171,6 +162,7 @@ public class SearchBar extends LinearLayout implements IHidable {
     public void show() {
         if (!mShowing) {
             mRoot.setVisibility(VISIBLE);
+            mSearchEditText.requestFocus();
             mShowing = true;
         }
     }
@@ -184,14 +176,6 @@ public class SearchBar extends LinearLayout implements IHidable {
             mShowing = false;
         }
         super.setVisibility(visibility);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        Log.d(TAG, "onDetachedFromWindow");
-        me1.recycle();
-        me2.recycle();
-        super.onDetachedFromWindow();
     }
 
 }

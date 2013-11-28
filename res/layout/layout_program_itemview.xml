@@ -61,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/divider_program_below_image"
         android:background="@color/black"
-        android:padding="8dp" >
+        android:padding="6dp" >
 
         <TextView
             android:id="@+id/textview_program_title"
@@ -70,6 +70,9 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="5dp"
+            android:layout_toLeftOf="@+id/textview_program_viewcount"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -80,6 +83,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/textview_program_title"
+            android:layout_toLeftOf="@id/textview_program_viewcount"
+            android:ellipsize="end"
+            android:singleLine="true"
             android:textColor="@color/program_owner_text"
             android:textSize="13sp" />
 
@@ -88,9 +94,10 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:background="@drawable/program_views_bg"
-            android:contentDescription="@string/blank"
             android:gravity="center"
+            android:singleLine="true"
             android:text="@string/test_program_viewcount"
             android:textColor="@color/program_views_text" />
     </RelativeLayout>

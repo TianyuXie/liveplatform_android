@@ -74,7 +74,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private int mHalfScreenHeight;
 
     private String mUrl;
-    
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
@@ -297,9 +297,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onSoftInputHide() {
             Log.d(TAG, "onSoftInputHide");
             popdownDialog();
-            if (!mWriting) {
+            mCommentView.setVisibility(View.GONE);
+            if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                 mWriteBtn.setVisibility(View.VISIBLE);
             }
+            mWriting = false;
+            //if (!mWriting) {
+            //    mWriteBtn.setVisibility(View.VISIBLE);
+            //}
         }
     };
 
@@ -313,7 +318,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private void pauseWriting() {
         if (mWriting) {
+            mWriting = false;
             mCommentEditText.clearFocus();
+            mCommentView.setVisibility(View.GONE);
         }
     }
 
@@ -372,7 +379,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            mUrl = watchs.get(0).getWatchStringList().get(0);
+            for (Watch watch : watchs) {
+                if ("rtmp".equals(watch.getProtocol())) {
+                    mUrl = watch.getWatchStringList().get(0);
+                    break;
+                }
+            }
             if (mUrl != null) {
                 Log.d(TAG, mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
