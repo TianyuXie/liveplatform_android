@@ -69,6 +69,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private boolean mRefreshDelayed;
 
+    private int mSubjectId;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -94,6 +96,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        mSubjectId = 1;
     }
 
     @Override
@@ -103,9 +106,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mContainer = (ProgramsContainer) layout.findViewById(R.id.layout_home_body);
         mContainer.setOnUpdateListener(onUpdateListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
-        mTitleBar.setOnClickListener(titleBarOnClickListener);
+        mTitleBar.setOnClickListener(onTitleBarClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
-        mSearchBar.setOnClickListener(searchBarOnClickListener);
+        mSearchBar.setOnClickListener(onSearchBarClickListener);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         return layout;
     }
@@ -116,7 +119,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         Log.d(TAG, "onStart");
         if (!mInit) {
             mInit = true;
-            startRefreshTask(1);
+            startRefreshTask();
         }
     }
 
@@ -126,54 +129,59 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStop();
     }
 
+    public void switchSubject(int id) {
+        mSubjectId = id;
+        startRefreshTask();
+    }
+
     public void startSearchTask(String keyword) {
         if (!mBusy) {
             Log.d(TAG, "SearchTask");
             mNextToken = "";
-            startTask(1, keyword, REFRESH);
+            startTask(keyword, REFRESH);
         }
     }
 
-    public void startPullTask(int subjectid) {
+    public void startPullTask() {
         if (!mBusy) {
             Log.d(TAG, "pullTask");
             mNextToken = "";
-            startTask(subjectid, PULL);
+            startTask(PULL);
         }
     }
 
-    public void startRefreshTask(int subjectid) {
+    public void startRefreshTask() {
         if (!mBusy) {
             Log.d(TAG, "refreshTask");
             mNextToken = "";
-            startTask(subjectid, REFRESH);
+            startTask(REFRESH);
             if (mCallbackListener != null) {
                 mCallbackListener.doLoadMore();
             }
         }
     }
 
-    public void startAppendTask(int subjectid) {
+    public void startAppendTask() {
         if (!mBusy) {
             Log.d(TAG, "appendTask");
-            startTask(subjectid, APPEND);
+            startTask(APPEND);
             if (mCallbackListener != null) {
                 mCallbackListener.doLoadMore();
             }
         }
     }
 
-    private void startTask(int subjectid, int type) {
-        startTask(subjectid, "", type);
+    private void startTask(int type) {
+        startTask("", type);
     }
 
-    private void startTask(int subjectid, String keyword, int type) {
+    private void startTask(String keyword, int type) {
         if (!mBusy) {
             mBusy = true;
             SearchTask task = new SearchTask();
             task.addTaskListener(getTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
+            taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
             taskContext.set(SearchTask.KEY_TYPE, type);
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
@@ -264,15 +272,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
-    //    public void setIdle() {
-    //        mBusy = false;
-    //        mContainer.setBusy(false);
-    //    }
-
-    //    public boolean isBusy() {
-    //        return mBusy;
-    //    }
-
     @Override
     public void onSlide() {
         mSlided = true;
@@ -303,7 +302,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         this.mCallbackListener = listener;
     }
 
-    private View.OnClickListener titleBarOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener onTitleBarClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -321,7 +320,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
-    private View.OnClickListener searchBarOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener onSearchBarClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.d(TAG, "onClick");
@@ -353,7 +352,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             Log.d(TAG, "onRefresh");
             mRefreshFinish = false;
             mRefreshDelayed = false;
-            startPullTask(1);
+            startPullTask();
             mHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
             mHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 8000);
         }
@@ -361,7 +360,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onAppend() {
             Log.d(TAG, "onAppend");
-            startAppendTask(1);
+            startAppendTask();
         }
     };
 

@@ -6,10 +6,13 @@ import java.util.List;
 import java.util.Map;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -49,6 +52,10 @@ public class SearchBar extends LinearLayout implements IHidable {
 
     private SimpleAdapter mRecordItemAdapter;
 
+    private MotionEvent me1;
+
+    private MotionEvent me2;
+
     public SearchBar(Context context) {
         this(context, null);
     }
@@ -74,6 +81,9 @@ public class SearchBar extends LinearLayout implements IHidable {
         mRecordListView.setAdapter(mRecordItemAdapter);
         mRecordListView.setOnItemClickListener(onItemClickListener);
         mShowing = (getVisibility() == VISIBLE);
+
+        me1 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
+        me2 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
     }
 
     private View.OnKeyListener searchOnKeyListener = new View.OnKeyListener() {
@@ -127,6 +137,12 @@ public class SearchBar extends LinearLayout implements IHidable {
                 if (!TextUtils.isEmpty(text)) {
                     mSearchEditText.setText(text);
                 }
+                mSearchEditText.postDelayed(new Runnable() {
+                    public void run() {
+                        dispatchTouchEvent(me1);
+                        dispatchTouchEvent(me2);
+                    }
+                }, 200);
             }
         }
     };
@@ -168,6 +184,14 @@ public class SearchBar extends LinearLayout implements IHidable {
             mShowing = false;
         }
         super.setVisibility(visibility);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        Log.d(TAG, "onDetachedFromWindow");
+        me1.recycle();
+        me2.recycle();
+        super.onDetachedFromWindow();
     }
 
 }

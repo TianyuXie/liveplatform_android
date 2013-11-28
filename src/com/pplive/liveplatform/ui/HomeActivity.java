@@ -233,23 +233,23 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
             switch (checkedId) {
             case R.id.btn_sidebar_original:
                 Log.d(TAG, "btn_sidebar_original");
-                mHomeFragment.startRefreshTask(1);
+                mHomeFragment.switchSubject(1);
                 break;
             case R.id.btn_sidebar_tv:
                 Log.d(TAG, "btn_sidebar_tv");
-                mHomeFragment.startRefreshTask(2);
+                mHomeFragment.switchSubject(2);
                 break;
             case R.id.btn_sidebar_game:
                 Log.d(TAG, "btn_sidebar_game");
-                mHomeFragment.startRefreshTask(3);
+                mHomeFragment.switchSubject(3);
                 break;
             case R.id.btn_sidebar_sport:
                 Log.d(TAG, "btn_sidebar_sport");
-                mHomeFragment.startRefreshTask(4);
+                mHomeFragment.switchSubject(4);
                 break;
             case R.id.btn_sidebar_finance:
                 Log.d(TAG, "btn_sidebar_finance");
-                mHomeFragment.startRefreshTask(5);
+                mHomeFragment.switchSubject(5);
                 break;
             default:
                 break;
