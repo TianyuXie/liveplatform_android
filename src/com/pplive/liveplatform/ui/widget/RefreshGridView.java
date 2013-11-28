@@ -39,7 +39,6 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private boolean mRefreshable;
     private boolean mPulling;
     private boolean mAniming;
-    private boolean mBusy;
 
     private boolean mSeeLast;
     private boolean mSeeFirst;
@@ -68,10 +67,6 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
     public View getHeader() {
         return mHeaderView;
-    }
-
-    public void setBusy(boolean isbusy) {
-        mBusy = isbusy;
     }
 
     @Override

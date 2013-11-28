@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,6 +37,18 @@ import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
     static final String TAG = "_HomeFragment";
 
+    private final static int REFRESH = 1000;
+
+    private final static int APPEND = 1001;
+
+    private final static int PULL = 1002;
+
+    private final static int MSG_PULL_DELAY = 2000;
+
+    private final static int MSG_PULL_FINISH = 2001;
+
+    private final static int MSG_PULL_TIMEOUT = 2002;
+
     private TitleBar mTitleBar;
 
     private ProgramsContainer mContainer;
@@ -50,6 +64,31 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private boolean mInit;
 
     private String mNextToken;
+
+    private boolean mRefreshFinish;
+
+    private boolean mRefreshDelayed;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_PULL_DELAY:
+                mRefreshDelayed = true;
+                break;
+            case MSG_PULL_FINISH:
+                mRefreshFinish = true;
+                break;
+            case MSG_PULL_TIMEOUT:
+                mContainer.onRefreshComplete();
+                return;
+            }
+            if (mRefreshDelayed && mRefreshFinish) {
+                mHandler.removeMessages(MSG_PULL_TIMEOUT);
+                mContainer.onRefreshComplete();
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +130,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         if (!mBusy) {
             Log.d(TAG, "SearchTask");
             mNextToken = "";
-            startTask(1, keyword, false);
+            startTask(1, keyword, REFRESH);
         }
     }
 
@@ -99,7 +138,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         if (!mBusy) {
             Log.d(TAG, "pullTask");
             mNextToken = "";
-            startTask(subjectid, false);
+            startTask(subjectid, PULL);
         }
     }
 
@@ -107,7 +146,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         if (!mBusy) {
             Log.d(TAG, "refreshTask");
             mNextToken = "";
-            startTask(subjectid, false);
+            startTask(subjectid, REFRESH);
             if (mCallbackListener != null) {
                 mCallbackListener.doLoadMore();
             }
@@ -117,31 +156,32 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void startAppendTask(int subjectid) {
         if (!mBusy) {
             Log.d(TAG, "appendTask");
-            startTask(subjectid, true);
+            startTask(subjectid, APPEND);
             if (mCallbackListener != null) {
                 mCallbackListener.doLoadMore();
             }
         }
     }
 
-    private void startTask(int subjectid, boolean append) {
-        startTask(subjectid, "", append);
+    private void startTask(int subjectid, int type) {
+        startTask(subjectid, "", type);
     }
 
     private void startTask(int subjectid, String keyword, int type) {
-        mBusy = true;
-        mContainer.setBusy(true);
-        SearchTask task = new SearchTask();
-        task.addTaskListener(getTaskListener);
-        TaskContext taskContext = new TaskContext();
-        taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
-        taskContext.set(SearchTask.KEY_APPEND_FLAG, type);
-        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-        taskContext.set(SearchTask.KEY_KEYWORD, keyword);
-        taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-        taskContext.set(SearchTask.KEY_SORT, "starttime");
-        taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
-        task.execute(taskContext);
+        if (!mBusy) {
+            mBusy = true;
+            SearchTask task = new SearchTask();
+            task.addTaskListener(getTaskListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(SearchTask.KEY_SUBJECT_ID, subjectid);
+            taskContext.set(SearchTask.KEY_TYPE, type);
+            taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+            taskContext.set(SearchTask.KEY_KEYWORD, keyword);
+            taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
+            taskContext.set(SearchTask.KEY_SORT, "starttime");
+            taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
+            task.execute(taskContext);
+        }
     }
 
     private Task.OnTaskListener getTaskListener = new Task.OnTaskListener() {
@@ -155,16 +195,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     mNextToken = fallList.nextToken();
                 }
 
-                if ((Boolean) event.getContext().get(SearchTask.KEY_APPEND_FLAG) /* use append */) {
-                    mContainer.appendData(fallList.getList());
-                    if (mCallbackListener != null) {
-                        if (fallList.count() != 0) {
-                            mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
-                        } else {
-                            mCallbackListener.doLoadResult("已全部加载");
-                        }
-                    }
-                } else {
+                int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
+                switch (type) {
+                case PULL:
+                    mHandler.sendEmptyMessage(MSG_PULL_FINISH);
+                    mContainer.refreshData(fallList.getList());
+                    break;
+                case REFRESH:
                     mContainer.refreshData(fallList.getList());
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
@@ -173,7 +210,18 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                             mCallbackListener.doLoadResult("暂时没有数据");
                         }
                     }
-                    mContainer.onRefreshComplete();
+                    break;
+                case APPEND:
+                    mContainer.appendData(fallList.getList());
+                    if (mCallbackListener != null) {
+                        if (fallList.count() != 0) {
+                            mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                        } else {
+                            mCallbackListener.doLoadResult("已全部加载");
+                        }
+                    }
+                default:
+                    break;
                 }
             }
         }
@@ -303,7 +351,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onRefresh() {
             Log.d(TAG, "onRefresh");
+            mRefreshFinish = false;
+            mRefreshDelayed = false;
             startPullTask(1);
+            mHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
+            mHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 8000);
         }
 
         @Override

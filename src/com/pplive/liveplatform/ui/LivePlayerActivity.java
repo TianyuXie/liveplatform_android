@@ -74,7 +74,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private int mHalfScreenHeight;
 
     private String mUrl;
-
+    
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
