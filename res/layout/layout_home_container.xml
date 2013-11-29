@@ -16,7 +16,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/layout_pull_header"
-        android:layoutAnimation="@anim/layout_grid_inverse_fade"
+        android:layoutAnimation="@anim/home_gridview_flyin"
         android:numColumns="2" />
 
 </RelativeLayout>

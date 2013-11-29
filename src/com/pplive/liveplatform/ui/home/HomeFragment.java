@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
@@ -53,6 +54,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private ProgramsContainer mContainer;
 
     private SearchBar mSearchBar;
+
+    private TextView mCatalogTextView;
 
     private Callback mCallbackListener;
 
@@ -108,7 +111,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mTitleBar.setOnClickListener(onTitleBarClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
+        mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
+        updateCatalogText();
         return layout;
     }
 
@@ -131,6 +136,29 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void switchSubject(int id) {
         mSubjectId = id;
         startRefreshTask();
+        updateCatalogText();
+    }
+
+    private void updateCatalogText() {
+        switch (mSubjectId) {
+        case 1:
+            mCatalogTextView.setText(R.string.home_catalog_original);
+            break;
+        case 2:
+            mCatalogTextView.setText(R.string.home_catalog_tv);
+            break;
+        case 3:
+            mCatalogTextView.setText(R.string.home_catalog_game);
+            break;
+        case 4:
+            mCatalogTextView.setText(R.string.home_catalog_sport);
+            break;
+        case 5:
+            mCatalogTextView.setText(R.string.home_catalog_finance);
+            break;
+        default:
+            break;
+        }
     }
 
     public void startSearchTask(String keyword) {
