@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
@@ -57,6 +59,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         a.recycle();
         mShowing = (getVisibility() == VISIBLE);
         mRadioGroup = (RadioGroup) mRoot.findViewById(R.id.radiogroup_sidebar_type);
+        mRoot.findViewById(R.id.btn_sidebar_settings).setOnClickListener(onSettingsBtnClickListener);
     }
 
     public SideBar(Context context) {
@@ -122,5 +125,14 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     public void setOnTypeChangeListener(RadioGroup.OnCheckedChangeListener l) {
         mRadioGroup.setOnCheckedChangeListener(l);
     }
+
+    private View.OnClickListener onSettingsBtnClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            getContext().startActivity(intent);
+        }
+    };
 
 }

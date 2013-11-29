@@ -122,7 +122,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mUrl == null) {
             String username = getIntent().getStringExtra("username");
             long pid = getIntent().getLongExtra("pid", -1);
-            Log.d(TAG, pid + "");
+            Log.d(TAG, "pid:" + pid);
             if (pid != -1) {
                 GetMediaTask task = new GetMediaTask();
                 task.addTaskListener(onTaskListener);
@@ -336,7 +336,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void popupDialog() {
         mDialogView.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
-        lp.topMargin = mHalfScreenHeight * 3 / 5;
+        lp.topMargin = mRootLayout.getHalfHeight() - DisplayUtil.dp2px(this, 170);
         ViewUtil.showLayoutDelay(mDialogView, 100);
     }
 
@@ -365,6 +365,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onShareBtnClick() {
         mShareDialog.show();
+    }
+
+    @Override
+    public void onBackBtnClick() {
+        finish();
     }
 
     private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
