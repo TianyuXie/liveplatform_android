@@ -372,7 +372,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            mUrl = watchs.get(0).getWatchStringList().get(0);
+
+            for (Watch watch : watchs) {
+                if ("rtmp".equals(watch.getProtocol())) {
+                    mUrl = watch.getWatchStringList().get(0);
+                    break;
+                }
+            }
+            
+//            mUrl = watchs.get(0).getWatchStringList().get(0);
             if (mUrl != null) {
                 Log.d(TAG, mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
