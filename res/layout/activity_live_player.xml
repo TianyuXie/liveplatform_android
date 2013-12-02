@@ -30,7 +30,7 @@
         android:scrollbars="none" >
 
         <TextView
-            android:id="@+id/textview_player_dialog"
+            android:id="@+id/text_player_dialog"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:lineSpacingMultiplier="1.2"

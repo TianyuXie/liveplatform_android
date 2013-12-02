@@ -50,7 +50,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
         mRoot = (ViewGroup) inflater.inflate(R.layout.widget_loadingbutton, this);
         mBaseButton = (Button) mRoot.findViewById(R.id.btn_loading_base);
         mAnimImageView = (ImageView) mRoot.findViewById(R.id.image_loading_anim);
-        mStatusTextView = (TextView) mRoot.findViewById(R.id.textview_loading_status);
+        mStatusTextView = (TextView) mRoot.findViewById(R.id.text_loading_status);
 
         /* default values */
         mNormalText = "";

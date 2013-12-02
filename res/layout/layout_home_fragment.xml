@@ -15,7 +15,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/titlebar_home"
-        android:background="@color/home_fragment_nav_bg"
+        android:background="@color/nav_bg"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="2dp" >
@@ -25,8 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
-            android:textColor="@color/home_fragment_nav_text"
-            android:textSize="15sp" />
+            android:textColor="@color/nav_text_bg"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <com.pplive.liveplatform.ui.home.program.ProgramsContainer

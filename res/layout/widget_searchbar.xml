@@ -55,7 +55,7 @@
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listview_searchbar_records"
+        android:id="@+id/list_searchbar_records"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:divider="@color/searchbar_list_divider"

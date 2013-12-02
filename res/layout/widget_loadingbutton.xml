@@ -18,7 +18,7 @@
     
     
     <TextView
-        android:id="@+id/textview_loading_status"
+        android:id="@+id/text_loading_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" />

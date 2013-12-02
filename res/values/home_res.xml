@@ -19,8 +19,6 @@
     <string name="home_catalog_game">游戏</string>
 
     <!-- color -->
-    <color name="home_fragment_nav_bg">#FF19A0FF</color>
-    <color name="home_fragment_nav_text">#FF191919</color>
     <color name="home_fragment_body_bg">#FF1A1A1A</color>
 
 </resources>

@@ -84,7 +84,7 @@
             android:background="@drawable/sidebar_user_icon_default" />
 
         <TextView
-            android:id="@+id/textview_player_name"
+            android:id="@+id/text_player_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/test_player_name"

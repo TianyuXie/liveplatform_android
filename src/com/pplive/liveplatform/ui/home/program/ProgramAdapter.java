@@ -53,12 +53,12 @@ public class ProgramAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.layout_program_itemview, null);
             holder = new ViewHolder();
-            holder.previewImageView = (ImageView) convertView.findViewById(R.id.imageview_program_preview);
-            holder.statusTextView = (TextView) convertView.findViewById(R.id.textview_program_status);
-            holder.timedownTextView = (TextView) convertView.findViewById(R.id.textview_program_timedown);
-            holder.titleTextView = (TextView) convertView.findViewById(R.id.textview_program_title);
-            holder.ownerTextView = (TextView) convertView.findViewById(R.id.textview_program_owner);
-            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.textview_program_viewcount);
+            holder.previewImageView = (ImageView) convertView.findViewById(R.id.image_program_preview);
+            holder.statusTextView = (TextView) convertView.findViewById(R.id.text_program_status);
+            holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);
+            holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
+            holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_owner);
+            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewcount);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

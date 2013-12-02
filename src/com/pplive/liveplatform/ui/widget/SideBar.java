@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.LoginActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
@@ -60,6 +61,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         mShowing = (getVisibility() == VISIBLE);
         mRadioGroup = (RadioGroup) mRoot.findViewById(R.id.radiogroup_sidebar_type);
         mRoot.findViewById(R.id.btn_sidebar_settings).setOnClickListener(onSettingsBtnClickListener);
+        mRoot.findViewById(R.id.btn_sidebar_user_icon).setOnClickListener(onUserBtnClickListener);
     }
 
     public SideBar(Context context) {
@@ -127,10 +129,17 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     }
 
     private View.OnClickListener onSettingsBtnClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
+            getContext().startActivity(intent);
+        }
+    };
+    
+    private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), LoginActivity.class);
             getContext().startActivity(intent);
         }
     };

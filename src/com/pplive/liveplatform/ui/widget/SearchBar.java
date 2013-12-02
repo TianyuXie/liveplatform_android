@@ -66,9 +66,9 @@ public class SearchBar extends LinearLayout implements IHidable {
         mSearchEditText.setOnEnterListener(onEnterListener);
         mSearchEditText.setOnFocusChangeListener(onFocusChangeListener);
 
-        mRecordListView = (ListView) mRoot.findViewById(R.id.listview_searchbar_records);
+        mRecordListView = (ListView) mRoot.findViewById(R.id.list_searchbar_records);
         mRecordItemAdapter = new SimpleAdapter(context, mRecordItems, R.layout.layout_searchbar_listitem, new String[] { LIST_ITEM_KEY },
-                new int[] { R.id.textview_searchbar_item });
+                new int[] { R.id.text_searchbar_item });
         mRecordListView.setAdapter(mRecordItemAdapter);
         mRecordListView.setOnItemClickListener(onItemClickListener);
         mShowing = (getVisibility() == VISIBLE);
