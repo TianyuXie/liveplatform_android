@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.LoginActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
