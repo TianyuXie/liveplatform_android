@@ -29,7 +29,7 @@
             android:textSize="14sp" />
     </LinearLayout>
 
-    <com.pplive.liveplatform.ui.home.program.ProgramsContainer
+    <com.pplive.liveplatform.ui.home.ProgramContainer
         android:id="@+id/layout_home_body"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

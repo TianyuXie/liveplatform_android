@@ -81,7 +81,7 @@
             android:id="@+id/btn_player_user_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:background="@drawable/sidebar_user_icon_default" />
+            android:background="@drawable/user_icon_default" />
 
         <TextView
             android:id="@+id/text_player_name"

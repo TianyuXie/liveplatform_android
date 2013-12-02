@@ -26,7 +26,6 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
-import com.pplive.liveplatform.ui.home.program.ProgramsContainer;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
@@ -51,7 +50,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private TitleBar mTitleBar;
 
-    private ProgramsContainer mContainer;
+    private ProgramContainer mContainer;
 
     private SearchBar mSearchBar;
 
@@ -105,7 +104,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
-        mContainer = (ProgramsContainer) layout.findViewById(R.id.layout_home_body);
+        mContainer = (ProgramContainer) layout.findViewById(R.id.layout_home_body);
         mContainer.setOnUpdateListener(onUpdateListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(onTitleBarClickListener);

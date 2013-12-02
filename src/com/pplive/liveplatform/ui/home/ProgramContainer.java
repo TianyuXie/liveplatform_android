@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.home.program;
+package com.pplive.liveplatform.ui.home;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 
-public class ProgramsContainer extends RelativeLayout {
+public class ProgramContainer extends RelativeLayout {
     static final String TAG = "_ProgramsContainer";
 
     private List<Program> mPrograms;
@@ -28,7 +28,7 @@ public class ProgramsContainer extends RelativeLayout {
 
     private boolean mItemClickable;
 
-    public ProgramsContainer(Context context, AttributeSet attrs) {
+    public ProgramContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPrograms = new ArrayList<Program>();
         mAdapter = new ProgramAdapter(context, mPrograms);
@@ -43,7 +43,7 @@ public class ProgramsContainer extends RelativeLayout {
         mGridView.setOnItemClickListener(onItemClickListener);
     }
 
-    public ProgramsContainer(Context context) {
+    public ProgramContainer(Context context) {
         this(context, null);
     }
 

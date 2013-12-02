@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.home.program;
+package com.pplive.liveplatform.ui.home;
 
 import java.util.List;
 
