@@ -36,6 +36,12 @@ public enum Protocol {
         public String toString() {
             return "file://";
         }
+    },
+    PPLIVE2 {
+        @Override
+        public String toString() {
+            return "pplive2://";
+        }
     };
     
     public abstract String toString();

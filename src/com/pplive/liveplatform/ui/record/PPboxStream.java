@@ -26,29 +26,29 @@ public class PPboxStream {
     private static final String TAG = PPboxStream.class.getSimpleName();
 
     public class InBuffer {
-        int index_;
-        ByteBuffer byte_buffer_;
+        int mIndex;
+        ByteBuffer mByteBuffer;
 
         public InBuffer(int index, int cap) {
-            index_ = index;
-            byte_buffer_ = ByteBuffer.allocateDirect(cap);
+            mIndex = index;
+            mByteBuffer = ByteBuffer.allocateDirect(cap);
         }
 
         public InBuffer(int index, ByteBuffer bb) {
-            index_ = index;
-            byte_buffer_ = bb;
+            mIndex = index;
+            mByteBuffer = bb;
         }
 
         int size() {
-            return byte_buffer_.capacity();
+            return mByteBuffer.capacity();
         }
 
         int index() {
-            return index_;
+            return mIndex;
         }
 
         ByteBuffer byte_buffer() {
-            return byte_buffer_;
+            return mByteBuffer;
         }
     }
 
@@ -87,8 +87,8 @@ public class PPboxStream {
 
         Camera.Size size = p.getPreviewSize();
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            MediaFormat format = MediaCodecManager.getInstance().getSupportedEncodingMediaFormat(MediaCodecManager.MIME_TYPE_VIDEO_AVC, size);
-            mEncoder = MediaCodec.createEncoderByType(MediaCodecManager.MIME_TYPE_VIDEO_AVC);
+            MediaFormat format = MediaManager.getInstance().getSupportedEncodingVideoFormat(MediaManager.MIME_TYPE_VIDEO_AVC, size);
+            mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_VIDEO_AVC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
 
@@ -100,7 +100,7 @@ public class PPboxStream {
         mStreamInfo.bitrate = 0;
         mStreamInfo.__union0 = p.getPreviewSize().width;
         mStreamInfo.__union1 = p.getPreviewSize().height;
-        mStreamInfo.__union2 = MediaCodecManager.FRAME_RATE;
+        mStreamInfo.__union2 = MediaManager.FRAME_RATE;
         mStreamInfo.__union3 = 0;
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
             mStreamInfo.format_size = 0;
@@ -128,9 +128,8 @@ public class PPboxStream {
         mStreams[itrack] = this;
 
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            MediaFormat format = MediaFormat.createAudioFormat("audio/mp4a-latm", audio.getSampleRate(), audio.getChannelCount());
-            format.setInteger(MediaFormat.KEY_BIT_RATE, 16000);
-            mEncoder = MediaCodec.createEncoderByType("audio/mp4a-latm");
+            MediaFormat format = MediaManager.getInstance().getSupportedEncodingAudioFormat(MediaManager.MIME_TYPE_AUDIO_AAC, audio.getSampleRate(), audio.getChannelCount());
+            mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_AUDIO_AAC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
 

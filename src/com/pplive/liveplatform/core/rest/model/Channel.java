@@ -20,10 +20,6 @@ public class Channel {
         return ft;
     }
     
-    public int getBwt() {
-        return bwt;
-    }
-    
     public String[] getAddrs() {
         return addr;
     }
@@ -34,6 +30,10 @@ public class Channel {
     
     public String getName() {
         return name;
+    }
+    
+    public int getBwType() {
+        return bwt;
     }
     
     public java.util.List<String> getFullPathList() {

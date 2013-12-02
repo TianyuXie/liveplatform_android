@@ -34,17 +34,17 @@ public class URL implements Serializable, Cloneable {
         this(null, host, port, path);
     }
     
-    public URL(Protocol schema, String host, String path) {
-        this(schema, host, -1, path);
+    public URL(Protocol protocol, String host, String path) {
+        this(protocol, host, -1, path);
     }
     
-    public URL(Protocol schema, String host, int port, String path) {
+    public URL(Protocol protocol, String host, int port, String path) {
         mParams = Collections.synchronizedMap(new LinkedHashMap<String, Object>());
         
         StringBuilder sb = new StringBuilder(); 
         
-        if (null != schema) {
-            sb.append(schema.toString());
+        if (null != protocol) {
+            sb.append(protocol.toString());
         }
         
         if (!TextUtils.isEmpty(host)) {
@@ -77,7 +77,7 @@ public class URL implements Serializable, Cloneable {
         boolean first = true;
         for (Entry<String, Object> entry : mParams.entrySet()) {
             sb.append(String.format(first ? "?%s=%s" : "&%s=%s", entry.getKey(), entry.getValue()));
-            first = true;
+            first = false;
         }
         
         return sb.toString();
