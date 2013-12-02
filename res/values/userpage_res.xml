@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="userpage_title">我的主页</string>
+    <string name="test_userpage_status">正在直播</string>
+    <string name="test_userpage_title">少帮主竞技场10术士成也卖血败也卖血</string>
+    <string name="test_userpage_vv">0</string>
+    <string name="test_userpage_time">2013:11:22</string>
+
+    <color name="userpage_bg">#FF111111</color>
+
 </resources>

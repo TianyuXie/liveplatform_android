@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="13dp"
+        android:background="@color/black"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/layout_userpage_program"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="1.5dp"
+            android:layout_marginLeft="1.5dp"
+            android:background="@color/userpage_bg"
+            android:paddingBottom="20dp"
+            android:paddingLeft="30dp"
+            android:paddingRight="20dp"
+            android:paddingTop="20dp" >
+
+            <TextView
+                android:id="@+id/text_userpage_program_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:text="@string/test_userpage_status"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/image_userpage_program_preview"
+                android:layout_width="100dp"
+                android:layout_height="75dp"
+                android:layout_below="@id/text_userpage_program_status"
+                android:layout_marginRight="10dp"
+                android:adjustViewBounds="true"
+                android:background="@drawable/program_default_image"
+                android:contentDescription="@string/blank" />
+
+            <TextView
+                android:id="@+id/text_userpage_program_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/image_userpage_program_preview"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@id/image_userpage_program_preview"
+                android:text="@string/test_userpage_title"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/text_userpage_program_vv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_userpage_program_title"
+                android:layout_toRightOf="@id/image_userpage_program_preview"
+                android:text="@string/test_userpage_vv" />
+
+            <TextView
+                android:id="@+id/text_userpage_program_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/text_userpage_program_title"
+                android:text="@string/test_userpage_time" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/userpage_time_circle"
+        android:contentDescription="@null" />
+
+</RelativeLayout>

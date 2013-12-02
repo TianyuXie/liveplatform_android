@@ -2,12 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/userpage_bg"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp" >
+        android:layout_height="50dp"
+        android:background="@color/black" >
 
         <Button
             android:id="@+id/btn_userpage_back"
@@ -36,7 +37,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="150dp"
+        android:layout_height="180dp"
         android:background="@drawable/userpage_bg" >
 
         <Button
@@ -66,5 +67,14 @@
             android:background="@drawable/userpage_avatar_change"
             android:contentDescription="@null" />
     </RelativeLayout>
+
+    <ListView
+        android:id="@+id/list_userpage_program"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginLeft="15dp"
+        android:divider="@null"
+        android:listSelector="@android:color/transparent" >
+    </ListView>
 
 </LinearLayout>

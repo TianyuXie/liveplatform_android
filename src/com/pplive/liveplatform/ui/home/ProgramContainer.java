@@ -23,7 +23,7 @@ public class ProgramContainer extends RelativeLayout {
     static final String TAG = "_ProgramsContainer";
 
     private List<Program> mPrograms;
-    private ProgramAdapter mAdapter;
+    private HomeProgramAdapter mAdapter;
     private RefreshGridView mGridView;
 
     private boolean mItemClickable;
@@ -31,12 +31,12 @@ public class ProgramContainer extends RelativeLayout {
     public ProgramContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPrograms = new ArrayList<Program>();
-        mAdapter = new ProgramAdapter(context, mPrograms);
+        mAdapter = new HomeProgramAdapter(context, mPrograms);
         mItemClickable = true;
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_home_container, this);
-        mGridView = (RefreshGridView) root.findViewById(R.id.gridview_home_results);
+        mGridView = (RefreshGridView) root.findViewById(R.id.grid_home_results);
         LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_pull_header);
         head.addView(mGridView.getHeader(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mGridView.setAdapter(mAdapter);

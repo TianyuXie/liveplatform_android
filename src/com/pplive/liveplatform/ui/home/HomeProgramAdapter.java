@@ -14,14 +14,14 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.util.DisplayUtil;
 
-public class ProgramAdapter extends BaseAdapter {
+public class HomeProgramAdapter extends BaseAdapter {
     private static float ratio = 16.0f / 10.0f;
 
     private List<Program> mPrograms;
     private LayoutInflater mInflater;
     private int mHeight;
 
-    public ProgramAdapter(Context context, List<Program> programs) {
+    public HomeProgramAdapter(Context context, List<Program> programs) {
         super();
         this.mPrograms = programs;
         this.mInflater = LayoutInflater.from(context);
@@ -51,7 +51,7 @@ public class ProgramAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_program_itemview, null);
+            convertView = mInflater.inflate(R.layout.layout_program_item, null);
             holder = new ViewHolder();
             holder.previewImageView = (ImageView) convertView.findViewById(R.id.image_program_preview);
             holder.statusTextView = (TextView) convertView.findViewById(R.id.text_program_status);
