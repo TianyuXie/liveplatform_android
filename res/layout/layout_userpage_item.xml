@@ -28,7 +28,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:text="@string/test_userpage_status"
-                android:textSize="16sp" />
+                android:textColor="@color/userpage_program_title_bg"
+                android:textSize="15sp" />
 
             <ImageView
                 android:id="@+id/image_userpage_program_preview"
@@ -45,35 +46,39 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/image_userpage_program_preview"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/image_userpage_program_preview"
+                android:ellipsize="end"
+                android:maxLines="2"
                 android:text="@string/test_userpage_title"
                 android:textColor="@color/white"
-                android:textSize="16sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/text_userpage_program_vv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/text_userpage_program_title"
+                android:layout_alignBottom="@id/image_userpage_program_preview"
                 android:layout_toRightOf="@id/image_userpage_program_preview"
-                android:text="@string/test_userpage_vv" />
+                android:text="@string/test_userpage_vv"
+                android:textColor="@color/userpage_program_title_bg"
+                android:textSize="15sp" />
 
             <TextView
                 android:id="@+id/text_userpage_program_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/image_userpage_program_preview"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/text_userpage_program_title"
-                android:text="@string/test_userpage_time" />
+                android:text="@string/test_userpage_time"
+                android:textColor="@color/userpage_program_title_bg"
+                android:textSize="15sp" />
         </RelativeLayout>
     </LinearLayout>
 
     <ImageView
         android:layout_width="26dp"
         android:layout_height="26dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="18dp"
         android:background="@drawable/userpage_time_circle"
         android:contentDescription="@null" />
 

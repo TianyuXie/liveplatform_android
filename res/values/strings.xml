@@ -12,6 +12,11 @@
     
     <!-- For share -->
     <string name="share_dialog_title">分享我的直播</string>
+    
+    <string name="program_status_deleted">已删除</string>
+    <string name="program_status_notstart">即将开始</string>
+    <string name="program_status_living">正在直播</string>
+    <string name="program_status_stopped">已停止</string>
 
     <!-- For Test -->
     <string name="test_go_player">Go LivePlayer</string>

@@ -8,5 +8,6 @@
     <string name="test_userpage_time">2013:11:22</string>
 
     <color name="userpage_bg">#FF111111</color>
+    <color name="userpage_program_title_bg">#FF919191</color>
 
 </resources>

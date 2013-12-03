@@ -225,10 +225,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             if (getActivity() != null) {
                 mBusy = false;
                 FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_TASK_RESULT);
-                if (!fallList.nextToken().equals("")) {
-                    mNextToken = fallList.nextToken();
-                }
-
+                mNextToken = fallList.nextToken();
                 int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
                 switch (type) {
                 case PULL:

@@ -1,5 +1,9 @@
 package com.pplive.liveplatform.core.rest.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class Program {
 
     long pid;
@@ -30,20 +34,19 @@ public class Program {
         this.title = title;
         this.starttime = starttime;
     }
-    
 
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     public long getId() {
         return pid;
     }
-    
+
     public String getTitle() {
         return title;
     }
-    
+
     public String getOwner() {
         return owner;
     }
@@ -51,7 +54,17 @@ public class Program {
     public long getStartTime() {
         return starttime;
     }
-    
+
+    public String getStartTimeLong() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy.MM.dd", Locale.US);
+        return format.format(new Date(starttime));
+    }
+
+    public String getStartTimeShort() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.US);
+        return format.format(new Date(starttime));
+    }
+
     public LiveStatusEnum getLiveStatus() {
         return livestatus;
     }
@@ -62,6 +75,7 @@ public class Program {
 
     @Override
     public String toString() {
-        return String.format("pid: %d; title: %s; owner: %s; starttime: %d; livestatus: %s; cover_url: %s;", pid, title, owner, starttime, livestatus, cover_url);
+        return String.format(Locale.US, "pid: %d; title: %s; owner: %s; starttime: %d; livestatus: %s; cover_url: %s;", pid, title, owner, starttime,
+                livestatus, cover_url);
     }
 }
