@@ -94,6 +94,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
+        mStatusButton.init(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
         mStatusButtonWrapper.clearAnimation();
         mAnimDoor.hide();
         super.onPause();
@@ -103,8 +104,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
-        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
-        mStatusButton.setClickable(true);
     }
 
     @Override
@@ -219,6 +218,15 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusButton.finishLoading();
     }
 
+    @Override
+    public void doScrollDown(boolean isDown) {
+        if (isDown) {
+            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_slide);
+        } else {
+            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg);
+        }
+    }
+
     private Handler mStatusButtonHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -230,6 +238,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             doSlideBack();
+            mHomeFragment.hideSearchBar();
             switch (checkedId) {
             case R.id.btn_sidebar_original:
                 Log.d(TAG, "btn_sidebar_original");

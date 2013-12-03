@@ -121,6 +121,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStart();
         Log.d(TAG, "onStart");
         if (!mInit) {
+            Log.d(TAG, "init here");
             mInit = true;
             startRefreshTask();
         }
@@ -321,6 +322,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void doLoadResult(String text);
 
         public void doLoadFinish();
+
+        public void doScrollDown(boolean isDown);
     }
 
     public void setCallbackListener(Callback listener) {
@@ -367,6 +370,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
+    public void hideSearchBar() {
+        mSearchBar.hide();
+    }
+
     private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
 
         @Override
@@ -383,6 +390,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onAppend() {
             Log.d(TAG, "onAppend");
             startAppendTask();
+        }
+
+        @Override
+        public void onScrollDown(boolean isDown) {
+            if (!mSlided && mCallbackListener != null) {
+                mCallbackListener.doScrollDown(isDown);
+            }
         }
     };
 

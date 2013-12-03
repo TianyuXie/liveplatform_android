@@ -67,6 +67,22 @@ public class UserpageProgramAdapter extends BaseAdapter {
         holder.statusTextView.setText(data.getLiveStatus().toFriendlyString(context));
         holder.titleTextView.setText(data.getTitle());
         holder.timeTextView.setText(data.getStartTimeLong());
+        switch (data.getLiveStatus()) {
+        case LIVING:
+            holder.viewcountTextView.setVisibility(View.VISIBLE);
+            holder.timeTextView.setVisibility(View.INVISIBLE);
+            holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
+            break;
+        case NOT_START:
+        case PREVIEW:
+        case INIT:
+            holder.viewcountTextView.setVisibility(View.INVISIBLE);
+            holder.timeTextView.setVisibility(View.VISIBLE);
+            holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            break;
+        default:
+            break;
+        }
     }
 
     static class ViewHolder {

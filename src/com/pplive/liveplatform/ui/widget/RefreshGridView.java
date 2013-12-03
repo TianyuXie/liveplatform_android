@@ -40,6 +40,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private boolean mRecorded;
     private boolean mRefreshable;
     private boolean mPulling;
+    private boolean mScrollDown;
     private boolean mAniming;
 
     private boolean mSeeLast;
@@ -73,7 +74,18 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        Log.d(TAG, "onScrollStateChanged");
+        switch (scrollState) {
+        case OnScrollListener.SCROLL_STATE_IDLE:
+            Log.d(TAG, "SCROLL_STATE_IDLE");
+            if (mScrollDown) {
+                mScrollDown = false;
+                mUpdateListener.onScrollDown(false);
+            }
+            break;
+        default:
+            break;
+        }
+
     }
 
     @Override
@@ -238,6 +250,8 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         public void onRefresh();
 
         public void onAppend();
+
+        public void onScrollDown(boolean isDown);
     }
 
     public void onRefreshComplete() {
@@ -268,6 +282,19 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (!mPulling && !mReachBottom) {
+                if (distanceY > 0) {
+                    if (!mScrollDown) {
+                        mScrollDown = true;
+                        mUpdateListener.onScrollDown(true);
+                    }
+                } else if (distanceY < 0) {
+                    if (mScrollDown) {
+                        mScrollDown = false;
+                        mUpdateListener.onScrollDown(false);
+                    }
+                }
+            }
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
             if (absDistanceY > absDistanceX) {

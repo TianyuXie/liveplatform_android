@@ -124,7 +124,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop");
         mVideoView.stopPlayback();
         super.onStop();
     }
