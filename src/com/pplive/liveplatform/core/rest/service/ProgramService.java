@@ -8,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.Protocol;
 import com.pplive.liveplatform.core.rest.URL;
 import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.model.Program;
@@ -16,18 +15,18 @@ import com.pplive.liveplatform.core.rest.resp.ProgramListResp;
 import com.pplive.liveplatform.core.rest.resp.ProgramResp;
 import com.pplive.liveplatform.core.rest.resp.Resp;
 
-public class ProgramService extends AbsService {
+public class ProgramService extends RestService {
 
     private static final String TAG = ProgramService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PROGRAMS = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
+    private static final String TEMPLATE_GET_PROGRAMS = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
 
-    private static final String TEMPLATE_CREATE_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
+    private static final String TEMPLATE_CREATE_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
-    private static final String TEMPLATE_UPDATE_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/info").toString();
+    private static final String TEMPLATE_UPDATE_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/info").toString();
 
-    private static final String TEMPLATE_DELETE_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
+    private static final String TEMPLATE_DELETE_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
 
     private static ProgramService sInstance = new ProgramService();
 

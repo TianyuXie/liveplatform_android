@@ -3,19 +3,18 @@ package com.pplive.liveplatform.core.rest.service;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.rest.Protocol;
 import com.pplive.liveplatform.core.rest.URL;
 import com.pplive.liveplatform.core.rest.model.FallList;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.resp.ProgramFallListResp;
 
-public class SearchService extends AbsService {
+public class SearchService extends RestService {
 
     private static final String TAG = SearchService.class.getSimpleName();
 
     private static final SearchService sInstance = new SearchService();
 
-    private static final String TEMPLATE_SEARCH_PROGRAM = new URL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
+    private static final String TEMPLATE_SEARCH_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/search/v1/pptv/searchcommon?key={keywords}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}")
             .toString();
 

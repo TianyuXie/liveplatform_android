@@ -5,7 +5,6 @@ import java.net.URLEncoder;
 
 import android.content.Context;
 
-import com.pplive.liveplatform.core.rest.Protocol;
 import com.pplive.liveplatform.core.rest.URL;
 import com.pplive.sdk.MediaSDK;
 
@@ -41,7 +40,7 @@ public class PPBoxUtil {
     @SuppressWarnings("deprecation")
     public static URL getRtmpM3U8PlayURL(String playLink, int port) {
         
-        URL url = new URL(Protocol.HTTP, PPBOX_HOST, PPBOX_PLAY_PORT, "/record.m3u8");
+        URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, PPBOX_PLAY_PORT, "/record.m3u8");
         url.addParameter("playlink", URLEncoder.encode(playLink));
         url.addParameter("mux.M3U8.segment_duration", 5);
         url.addParameter("mux.M3U8.back_seek_time", 0);
@@ -56,7 +55,7 @@ public class PPBoxUtil {
     @SuppressWarnings("deprecation")
     public static URL getPPLive2M3U8PlayURL(String playLink, int port) {
         
-        URL url = new URL(Protocol.HTTP, PPBOX_HOST, port, "/play.m3u8");
+        URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, port, "/play.m3u8");
         url.addParameter("type", "pplive3");
         url.addParameter("playlink", URLEncoder.encode(playLink));
         
