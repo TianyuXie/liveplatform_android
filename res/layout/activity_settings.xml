@@ -93,7 +93,9 @@
                         style="@style/settings_text"
                         android:text="@string/settings_prelive" />
 
-                    <ToggleButton style="@style/settings_togglebutton" />
+                    <ToggleButton
+                        android:id="@+id/btn_settings_prelive"
+                        style="@style/settings_togglebutton" />
                 </TableRow>
 
                 <TableRow style="@style/settings_tablerow_switcher" >
@@ -102,7 +104,9 @@
                         style="@style/settings_text"
                         android:text="@string/settings_content" />
 
-                    <ToggleButton style="@style/settings_togglebutton" />
+                    <ToggleButton
+                        android:id="@+id/btn_settings_content"
+                        style="@style/settings_togglebutton" />
                 </TableRow>
             </TableLayout>
 
