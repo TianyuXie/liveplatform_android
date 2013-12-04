@@ -298,7 +298,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
             if (absDistanceY > absDistanceX) {
-                if (distanceY > 10.0f && mReachBottom) {
+                if (distanceY > 10.0f && mReachBottom && !mPulling) {
                     if (mUpdateListener != null) {
                         mUpdateListener.onAppend();
                     }
