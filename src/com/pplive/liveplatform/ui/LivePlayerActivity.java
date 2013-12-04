@@ -13,6 +13,8 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -75,10 +77,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private String mUrl;
 
+    private Context context;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "onCreate");
+        this.context = this;
 
         /* init window */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -105,6 +110,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mDialogView = findViewById(R.id.layout_player_dialog);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
+        mDialogView.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -201,31 +207,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         setLayout(DisplayUtil.isLandscape(this), false);
     }
 
-    View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             startWriting();
         }
     };
 
-    View.OnClickListener onModeBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-        }
-    };
-
-    View.OnClickListener onShareBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mShareDialog.show();
-        }
-    };
-
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
         if (mCurrentOrient != requestedOrientation) {
-            Log.d(TAG, "Update Orientation");
+            Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
             super.setRequestedOrientation(requestedOrientation);
@@ -302,9 +294,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 mWriteBtn.setVisibility(View.VISIBLE);
             }
             mWriting = false;
-            //if (!mWriting) {
-            //    mWriteBtn.setVisibility(View.VISIBLE);
-            //}
         }
     };
 
@@ -414,4 +403,27 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         }
     };
+
+    private View.OnTouchListener onDialogTouchListener = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            gestureDetector.onTouchEvent(event);
+            return false;
+        }
+    };
+
+    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            pauseWriting();
+            return true;
+        }
+    });
 }

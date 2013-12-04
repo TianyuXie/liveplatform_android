@@ -14,17 +14,12 @@ public class EnterSendEditText extends EditText {
 
     private OnEnterListener mOnEnterListener;
 
-    //    private MotionEvent me1;
-    //    private MotionEvent me2;
-
     public void setOnEnterListener(OnEnterListener l) {
         this.mOnEnterListener = l;
     }
 
     public EnterSendEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        //        me1 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
-        //        me2 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
     }
 
     public EnterSendEditText(Context context) {
@@ -38,8 +33,6 @@ public class EnterSendEditText extends EditText {
             Log.d(TAG, "get focus");
             postDelayed(new Runnable() {
                 public void run() {
-                    //                    dispatchTouchEvent(me1);
-                    //                    dispatchTouchEvent(me2);
                     imm.showSoftInput(EnterSendEditText.this, InputMethodManager.SHOW_IMPLICIT);
                 }
             }, 200);
@@ -78,12 +71,4 @@ public class EnterSendEditText extends EditText {
     public interface OnEnterListener {
         public boolean onEnter(View v);
     }
-
-    //    @Override
-    //    protected void onDetachedFromWindow() {
-    //        Log.d(TAG, "onDetachedFromWindow");
-    //        me1.recycle();
-    //        me2.recycle();
-    //        super.onDetachedFromWindow();
-    //    }
 }

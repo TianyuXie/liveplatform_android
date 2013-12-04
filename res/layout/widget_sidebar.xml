@@ -72,4 +72,11 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/sidebar_settings_btn_bg" />
 
+    <LinearLayout
+        android:id="@+id/layout_block_layer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        android:orientation="vertical" />
+
 </RelativeLayout>
