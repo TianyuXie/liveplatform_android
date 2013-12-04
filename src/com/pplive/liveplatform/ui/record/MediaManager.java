@@ -2,13 +2,13 @@ package com.pplive.liveplatform.ui.record;
 
 import android.annotation.TargetApi;
 import android.hardware.Camera;
-import android.media.MediaCodecInfo;
-import android.media.MediaCodecInfo.CodecCapabilities;
-import android.media.MediaRecorder.AudioSource;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecInfo.CodecCapabilities;
 import android.media.MediaCodecList;
 import android.media.MediaFormat;
+import android.media.MediaRecorder.AudioSource;
 import android.os.Build;
 import android.util.Log;
 
@@ -59,6 +59,7 @@ public class MediaManager {
                     int[] colorFormats = caps.colorFormats;
                     int colorFormat = colorFormats[0];
                     for (int k = 0; k < colorFormats.length; ++k) {
+                        Log.d(TAG, "color: " + colorFormats[k]);
                         if (MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar == colorFormats[k]) {
                             colorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar;
                         }

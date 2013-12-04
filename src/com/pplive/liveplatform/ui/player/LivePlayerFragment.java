@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.ui.player;
 
-import java.io.File;
-
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,9 +19,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.ViewUtil;
-import com.pplive.sdk.MediaSDK;
 import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements OnTouchListener, View.OnClickListener {
