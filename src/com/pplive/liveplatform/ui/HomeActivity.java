@@ -61,7 +61,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mAnimDoor.setShutDoorListener(shutAnimationListener);
 
         mStatusButtonWrapper = findViewById(R.id.wrapper_home_status);
-
         mStatusButton = (LoadingButton) findViewById(R.id.btn_home_status);
         mStatusButton.setOnClickListener(onStatusClickListener);
 

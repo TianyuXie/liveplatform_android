@@ -16,6 +16,7 @@
     <!-- optional -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />s
 
     <application
         android:name="com.pplive.liveplatform.LiveApplication"
