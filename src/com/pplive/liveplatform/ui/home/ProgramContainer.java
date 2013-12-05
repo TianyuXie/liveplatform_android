@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 

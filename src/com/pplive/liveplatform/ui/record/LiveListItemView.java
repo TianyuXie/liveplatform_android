@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.widget.AsyncImageView;

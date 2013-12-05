@@ -2,8 +2,8 @@ package com.pplive.liveplatform.core.task.home;
 
 import java.util.List;
 
-import com.pplive.liveplatform.core.rest.model.Watch;
-import com.pplive.liveplatform.core.rest.service.MediaService;
+import com.pplive.liveplatform.core.service.live.MediaService;
+import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;

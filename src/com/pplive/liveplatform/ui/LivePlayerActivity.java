@@ -24,7 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.model.Watch;
+import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;

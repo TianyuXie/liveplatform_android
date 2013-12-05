@@ -11,7 +11,7 @@ import android.view.Window;
 import android.widget.ListView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;

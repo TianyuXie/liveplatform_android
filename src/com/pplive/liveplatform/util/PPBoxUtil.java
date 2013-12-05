@@ -5,7 +5,7 @@ import java.net.URLEncoder;
 
 import android.content.Context;
 
-import com.pplive.liveplatform.core.rest.URL;
+import com.pplive.liveplatform.core.service.URL;
 import com.pplive.sdk.MediaSDK;
 
 public class PPBoxUtil {

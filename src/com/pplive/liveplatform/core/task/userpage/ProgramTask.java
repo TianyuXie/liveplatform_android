@@ -2,8 +2,8 @@ package com.pplive.liveplatform.core.task.userpage;
 
 import java.util.List;
 
-import com.pplive.liveplatform.core.rest.model.Program;
-import com.pplive.liveplatform.core.rest.service.ProgramService;
+import com.pplive.liveplatform.core.service.live.ProgramService;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;

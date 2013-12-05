@@ -1,8 +1,8 @@
 package com.pplive.liveplatform.core.task.home;
 
-import com.pplive.liveplatform.core.rest.model.FallList;
-import com.pplive.liveplatform.core.rest.model.Program;
-import com.pplive.liveplatform.core.rest.service.SearchService;
+import com.pplive.liveplatform.core.service.live.SearchService;
+import com.pplive.liveplatform.core.service.live.model.FallList;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;

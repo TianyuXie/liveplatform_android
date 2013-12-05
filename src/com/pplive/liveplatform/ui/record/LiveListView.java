@@ -15,9 +15,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
-import com.pplive.liveplatform.core.rest.model.Program;
-import com.pplive.liveplatform.core.rest.service.ProgramService;
+import com.pplive.liveplatform.core.service.live.ProgramService;
+import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;

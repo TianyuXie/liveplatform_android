@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.rest.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Program;
 
 public class UserpageProgramAdapter extends BaseAdapter {
     private List<Program> mPrograms;
