@@ -16,6 +16,9 @@
     <color name="light_blue">#FF0090FF</color>
     <color name="light_white">#FF9D9D9D</color>
     <color name="orange">#FFA500</color>
+    
+    <color name="nav_bg">#FF19A0FF</color>
+    <color name="nav_text_bg">#FF191919</color>
 
     <!-- Program -->
     <color name="program_below_image_bg">#FF19A0FF</color>
@@ -24,11 +27,6 @@
     <color name="program_views_bg">#FF001E33</color>
     <color name="program_tag_bg">#BB191919</color>
     <color name="input_text_bg">#FF19A0FF</color>
-
-    <!-- Home -->
-    <color name="home_fragment_nav_bg">#FF19A0FF</color>
-    <color name="home_fragment_nav_text">#FF191919</color>
-    <color name="home_fragment_body_bg">#FF1A1A1A</color>
 
     <!-- Search -->
     <color name="searchbar_body_bg">#DD131313</color>

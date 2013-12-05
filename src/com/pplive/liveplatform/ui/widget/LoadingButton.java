@@ -3,6 +3,7 @@ package com.pplive.liveplatform.ui.widget;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,7 +51,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
         mRoot = (ViewGroup) inflater.inflate(R.layout.widget_loadingbutton, this);
         mBaseButton = (Button) mRoot.findViewById(R.id.btn_loading_base);
         mAnimImageView = (ImageView) mRoot.findViewById(R.id.image_loading_anim);
-        mStatusTextView = (TextView) mRoot.findViewById(R.id.textview_loading_status);
+        mStatusTextView = (TextView) mRoot.findViewById(R.id.text_loading_status);
 
         /* default values */
         mNormalText = "";
@@ -105,23 +106,24 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     }
 
     public void setText(int resid) {
-        setText(getContext().getResources().getString(resid));
+        setText(getContext().getText(resid));
     }
 
     public void setBackgroundResource(int normal) {
-        mNormalBackgroundRes = normal;
-        if (normal > 0) {
+        if (!mLoading && normal > 0) {
             mBaseButton.setBackgroundResource(normal);
         }
     }
 
-    public void setBackgroundResource(int normal, int loading) {
+    public void init(int normal, int loading) {
+        mLoading = false;
         mNormalBackgroundRes = normal;
         mLoadingBackgroundRes = loading;
-        if (normal > 0 && !mLoading) {
-            mBaseButton.setBackgroundResource(normal);
-        } else if (loading > 0 && mLoading) {
-            mBaseButton.setBackgroundResource(loading);
+        setClickable(true);
+        mAnimImageView.setVisibility(INVISIBLE);
+        mStatusTextView.setText(mNormalText);
+        if (mNormalBackgroundRes > 0) {
+            mBaseButton.setBackgroundResource(mNormalBackgroundRes);
         }
     }
 
@@ -144,11 +146,11 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     }
 
     public void startLoading(int resid) {
-        startLoading(getContext().getResources().getText(resid));
+        startLoading(getContext().getText(resid));
     }
 
     public void startLoading(CharSequence text) {
-        if (!mLoading && mAnimation != null) {
+        if (mAnimation != null) {
             mLoading = true;
             setClickable(false);
             mStatusTextView.setText(text);
@@ -169,25 +171,21 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     }
 
     public void showLoadingResult(CharSequence text) {
-//        if (mLoading) {
-            mLoading = false;
-            setClickable(false);
-            mStatusTextView.setText(text);
-            mAnimImageView.setVisibility(INVISIBLE);
-            mAnimImageView.clearAnimation();
-            if (mLoadingBackgroundRes > 0) {
-                mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
-            }
-//        }
+        mLoading = true;
+        setClickable(false);
+        mStatusTextView.setText(text);
+        mAnimImageView.setVisibility(INVISIBLE);
+        mAnimImageView.clearAnimation();
+        if (mLoadingBackgroundRes > 0) {
+            mBaseButton.setBackgroundResource(mLoadingBackgroundRes);
+        }
     }
 
     public void finishLoading() {
-        if (mLoading) {
-            mLoading = false;
-            mAnimImageView.setVisibility(INVISIBLE);
-            mAnimImageView.clearAnimation();
-        }
+        mLoading = false;
         setClickable(true);
+        mAnimImageView.setVisibility(INVISIBLE);
+        mAnimImageView.clearAnimation();
         mStatusTextView.setText(mNormalText);
         if (mNormalBackgroundRes > 0) {
             mBaseButton.setBackgroundResource(mNormalBackgroundRes);
@@ -201,6 +199,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
 
     @Override
     public void setClickable(boolean clickable) {
+        Log.d(TAG, "setClickable:" + clickable);
         mBaseButton.setClickable(clickable);
         super.setClickable(clickable);
     }

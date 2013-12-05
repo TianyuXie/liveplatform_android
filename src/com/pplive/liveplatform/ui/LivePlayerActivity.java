@@ -13,6 +13,8 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -75,10 +77,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private String mUrl;
 
+    private Context context;
+
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "onCreate");
+        this.context = this;
 
         /* init window */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -105,6 +110,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mDialogView = findViewById(R.id.layout_player_dialog);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
+        mDialogView.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -122,7 +128,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mUrl == null) {
             String username = getIntent().getStringExtra("username");
             long pid = getIntent().getLongExtra("pid", -1);
-            Log.d(TAG, pid + "");
+            Log.d(TAG, "pid:" + pid);
             if (pid != -1) {
                 GetMediaTask task = new GetMediaTask();
                 task.addTaskListener(onTaskListener);
@@ -201,31 +207,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         setLayout(DisplayUtil.isLandscape(this), false);
     }
 
-    View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             startWriting();
         }
     };
 
-    View.OnClickListener onModeBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-
-        }
-    };
-
-    View.OnClickListener onShareBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mShareDialog.show();
-        }
-    };
-
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
         if (mCurrentOrient != requestedOrientation) {
-            Log.d(TAG, "Update Orientation");
+            Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
             super.setRequestedOrientation(requestedOrientation);
@@ -297,9 +289,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onSoftInputHide() {
             Log.d(TAG, "onSoftInputHide");
             popdownDialog();
-            if (!mWriting) {
+            mCommentView.setVisibility(View.GONE);
+            if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
                 mWriteBtn.setVisibility(View.VISIBLE);
             }
+            mWriting = false;
         }
     };
 
@@ -313,7 +307,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private void pauseWriting() {
         if (mWriting) {
+            mWriting = false;
             mCommentEditText.clearFocus();
+            mCommentView.setVisibility(View.GONE);
         }
     }
 
@@ -329,7 +325,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void popupDialog() {
         mDialogView.setVisibility(View.INVISIBLE);
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
-        lp.topMargin = mHalfScreenHeight * 3 / 5;
+        lp.topMargin = mRootLayout.getHalfHeight() - DisplayUtil.dp2px(this, 170);
         ViewUtil.showLayoutDelay(mDialogView, 100);
     }
 
@@ -360,6 +356,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.show();
     }
 
+    @Override
+    public void onBackBtnClick() {
+        finish();
+    }
+
     private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
 
         @Override
@@ -372,15 +373,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-
             for (Watch watch : watchs) {
                 if ("rtmp".equals(watch.getProtocol())) {
                     mUrl = watch.getWatchStringList().get(0);
                     break;
                 }
             }
-            
-//            mUrl = watchs.get(0).getWatchStringList().get(0);
             if (mUrl != null) {
                 Log.d(TAG, mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
@@ -405,4 +403,27 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         }
     };
+
+    private View.OnTouchListener onDialogTouchListener = new View.OnTouchListener() {
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            gestureDetector.onTouchEvent(event);
+            return false;
+        }
+    };
+
+    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            pauseWriting();
+            return true;
+        }
+    });
 }

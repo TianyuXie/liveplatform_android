@@ -28,7 +28,9 @@ import com.pplive.liveplatform.util.DisplayUtil;
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
     static final String TAG = "_HomeActivity";
 
-    private static final int NORMAL = 701;
+    private static final int TIME_BUTTON_UP = 400;
+
+    private static final int TIME_BUTTON_SHOW_RESULT = 3000;
 
     private AnimDoor mAnimDoor;
 
@@ -59,7 +61,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mAnimDoor.setShutDoorListener(shutAnimationListener);
 
         mStatusButtonWrapper = findViewById(R.id.wrapper_home_status);
-
         mStatusButton = (LoadingButton) findViewById(R.id.btn_home_status);
         mStatusButton.setOnClickListener(onStatusClickListener);
 
@@ -78,7 +79,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         float upPx = DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 67.5f);
         mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -upPx);
         mStatusUpAnimation.setFillAfter(true);
-        mStatusUpAnimation.setDuration(500);
+        mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
     }
 
@@ -92,6 +93,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     @Override
     protected void onPause() {
         Log.d(TAG, "onPause");
+        mStatusButton.init(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
         mStatusButtonWrapper.clearAnimation();
         mAnimDoor.hide();
         super.onPause();
@@ -101,8 +103,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onResume() {
         Log.d(TAG, "onResume");
         super.onResume();
-        mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg, R.drawable.home_status_btn_loading);
-        mStatusButton.setClickable(true);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
                         return true;
                     }
                 } else if (distanceX < -10.0f) {
-                    if (!mHomeFragment.isBusy() && mFragmentContainer.slide()) {
+                    if (mFragmentContainer.slide()) {
                         return true;
                     }
                 }
@@ -167,7 +167,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         public void onAnimationEnd(Animation animation) {
             Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
             startActivity(intent);
-            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
 
         @Override
@@ -188,16 +187,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            Log.d(TAG, "shutAnimationListener: clear");
             mStatusButtonWrapper.startAnimation(mStatusUpAnimation);
         }
     };
 
     @Override
     public void doSlide() {
-        if (!mHomeFragment.isBusy()) {
-            mFragmentContainer.slide();
-        }
+        mFragmentContainer.slide();
     }
 
     @Override
@@ -207,30 +203,33 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
     @Override
     public void doLoadMore() {
-        mStatusButton.startLoading("正在加载");
+        mStatusButton.startLoading(getString(R.string.home_loading));
     }
 
     @Override
     public void doLoadResult(String text) {
         mStatusButton.showLoadingResult(text);
-        mStatusButtonHandler.sendEmptyMessageDelayed(NORMAL, 3000);
+        mStatusButtonHandler.sendEmptyMessageDelayed(0, TIME_BUTTON_SHOW_RESULT);
     }
 
     @Override
     public void doLoadFinish() {
         mStatusButton.finishLoading();
-        mHomeFragment.setIdle();
+    }
+
+    @Override
+    public void doScrollDown(boolean isDown) {
+        if (isDown) {
+            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_slide);
+        } else {
+            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_bg);
+        }
     }
 
     private Handler mStatusButtonHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case NORMAL:
-                mStatusButton.finishLoading();
-                mHomeFragment.setIdle();
-                break;
-            }
+            mStatusButton.finishLoading();
         }
     };
 
@@ -238,26 +237,27 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             doSlideBack();
+            mHomeFragment.hideSearchBar();
             switch (checkedId) {
             case R.id.btn_sidebar_original:
                 Log.d(TAG, "btn_sidebar_original");
-                mHomeFragment.startRefreshTask(1);
+                mHomeFragment.switchSubject(1);
                 break;
             case R.id.btn_sidebar_tv:
                 Log.d(TAG, "btn_sidebar_tv");
-                mHomeFragment.startRefreshTask(2);
+                mHomeFragment.switchSubject(2);
                 break;
             case R.id.btn_sidebar_game:
                 Log.d(TAG, "btn_sidebar_game");
-                mHomeFragment.startRefreshTask(3);
+                mHomeFragment.switchSubject(3);
                 break;
             case R.id.btn_sidebar_sport:
                 Log.d(TAG, "btn_sidebar_sport");
-                mHomeFragment.startRefreshTask(4);
+                mHomeFragment.switchSubject(4);
                 break;
             case R.id.btn_sidebar_finance:
                 Log.d(TAG, "btn_sidebar_finance");
-                mHomeFragment.startRefreshTask(5);
+                mHomeFragment.switchSubject(5);
                 break;
             default:
                 break;

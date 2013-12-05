@@ -2,22 +2,17 @@ package com.pplive.liveplatform.ui.widget;
 
 import android.content.Context;
 import android.graphics.Rect;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class EnterSendEditText extends EditText {
-    static final String TAG = "EnterSendEditText";
+    static final String TAG = "_EnterSendEditText";
 
     private OnEnterListener mOnEnterListener;
-    private MotionEvent me1;
-    private MotionEvent me2;
 
     public void setOnEnterListener(OnEnterListener l) {
         this.mOnEnterListener = l;
@@ -25,8 +20,6 @@ public class EnterSendEditText extends EditText {
 
     public EnterSendEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-        me1 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0);
-        me2 = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0);
     }
 
     public EnterSendEditText(Context context) {
@@ -35,17 +28,16 @@ public class EnterSendEditText extends EditText {
 
     @Override
     protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+        final InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (focused) {
-            Log.d(TAG, "get forcus");
-            (new Handler()).postDelayed(new Runnable() {
+            Log.d(TAG, "get focus");
+            postDelayed(new Runnable() {
                 public void run() {
-                    dispatchTouchEvent(me1);
-                    dispatchTouchEvent(me2);
+                    imm.showSoftInput(EnterSendEditText.this, InputMethodManager.SHOW_IMPLICIT);
                 }
             }, 200);
         } else {
-            Log.d(TAG, "clear forcus");
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            Log.d(TAG, "clear focus");
             if (imm.isActive()) {
                 imm.hideSoftInputFromWindow(getApplicationWindowToken(), 0);
             }
@@ -78,12 +70,5 @@ public class EnterSendEditText extends EditText {
 
     public interface OnEnterListener {
         public boolean onEnter(View v);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        me1.recycle();
-        me2.recycle();
-        super.onDetachedFromWindow();
     }
 }

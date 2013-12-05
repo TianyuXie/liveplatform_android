@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- test string -->
+    <string name="test_statusbar_time">4:21 PM</string>
+    <string name="test_statusbar_battery">87%</string>
+    <string name="test_titlebar_title">PP直播</string>
+    <string name="test_sidebar_username">心碎无痕</string>
+    <string name="test_program_viewcount">0</string>
+
+    <!-- string -->
+    <string name="home_loading">正在加载</string>
+    <string name="program_live">Live</string>
+    <string name="program_going">即将开播</string>
+    <string name="home_catalog_original">原创</string>
+    <string name="home_catalog_tv">电视</string>
+    <string name="home_catalog_sport">体育</string>
+    <string name="home_catalog_finance">财经</string>
+    <string name="home_catalog_game">游戏</string>
+
+    <!-- color -->
+    <color name="home_fragment_body_bg">#FF1A1A1A</color>
+
+</resources>

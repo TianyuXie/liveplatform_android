@@ -11,7 +11,7 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
     public final static String KEY_TASK_RESULT = "search_task_result";
-    public final static String KEY_APPEND_FLAG = "search_task_type";
+    public final static String KEY_TYPE = "search_task_type";
 
     public final static String KEY_SUBJECT_ID = "subjectId";
     public final static String KEY_SORT = "sort";

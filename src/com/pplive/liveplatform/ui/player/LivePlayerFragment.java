@@ -75,33 +75,21 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
         mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
         Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
+        Button backBtn = (Button) layout.findViewById(R.id.btn_player_back);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mUserView = layout.findViewById(R.id.layout_player_user);
         layout.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
         shareBtn.setOnClickListener(this);
+        backBtn.setOnClickListener(this);
         return layout;
     }
 
     public void setupPlayer(String url) {
         if (getActivity() != null) {
-            // TODO: test code
-//            File cacheDirFile = getActivity().getCacheDir();
-//            String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
-//            String libDir = dataDir + "/lib";
-//            String tmpDir = cacheDirFile.getAbsolutePath();
-//            File tmpDirFile = new File(tmpDir);
-//            tmpDirFile.mkdir();
-//
-//            MediaSDK.libPath = libDir;
-//            MediaSDK.logPath = tmpDir;
-//            MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
-//            MediaSDK.startP2PEngine("161", "12", "111");
-            
             Log.d(TAG, "setupPlayer:" + url);
             Uri uri = Uri.parse(url);
-            // Uri uri = Uri.parse(ConfigUtil.getString(Keys.PLAY_TEST_URL));
             mVideoView.setDecodeMode(DecodeMode.SW);
             mVideoView.setVideoURI(uri);
             mVideoView.setOnPreparedListener(mPreparedListener);
@@ -136,7 +124,6 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
 
     @Override
     public void onStop() {
-        Log.d(TAG, "onStop");
         mVideoView.stopPlayback();
         super.onStop();
     }
@@ -204,6 +191,11 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         case R.id.btn_player_share:
             if (mCallbackListener != null) {
                 mCallbackListener.onShareBtnClick();
+            }
+            break;
+        case R.id.btn_player_back:
+            if (mCallbackListener != null) {
+                mCallbackListener.onBackBtnClick();
             }
             break;
         default:
@@ -302,6 +294,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         public void onTouch();
 
         public void onModeBtnClick();
+
+        public void onBackBtnClick();
 
         public void onShareBtnClick();
 

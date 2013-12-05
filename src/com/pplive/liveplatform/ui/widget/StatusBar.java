@@ -32,8 +32,8 @@ public class StatusBar extends RelativeLayout {
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.widget_statusbar, this);
         mBatteryImageView = (ImageView) root.findViewById(R.id.image_statusbar_battery);
-        mBatteryTextView = (TextView) root.findViewById(R.id.textview_statusbar_battery);
-        mTimeTextView = (TextView) root.findViewById(R.id.textview_statusbar_time);
+        mBatteryTextView = (TextView) root.findViewById(R.id.text_statusbar_battery);
+        mTimeTextView = (TextView) root.findViewById(R.id.text_statusbar_time);
     }
 
     public StatusBar(Context context) {
