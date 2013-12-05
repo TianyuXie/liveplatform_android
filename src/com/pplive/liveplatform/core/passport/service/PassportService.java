@@ -3,7 +3,12 @@ package com.pplive.liveplatform.core.passport.service;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 import java.util.Collections;
 
 import org.apache.http.HttpVersion;
@@ -47,66 +52,76 @@ public class PassportService {
         return sInstance;
     }
 
+    private HttpComponentsClientHttpRequestFactory mFactory;
+
     private PassportService() {
-
-    }
-
-    public String login(String usr, String pwd) {
-
+        
         try {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null);
-
+    
             SSLSocketFactory sslFactory = new SSLSocketFactory(trustStore) {
-
+    
                 @Override
                 public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
                     return getSocketFactory().createSocket(socket, host, port, autoClose);
                 }
             };
-
+    
             sslFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
+    
             SchemeRegistry reg = new SchemeRegistry();
             reg.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
             reg.register(new Scheme("https", sslFactory, 443));
-
+    
             HttpParams params = new BasicHttpParams();
             HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
             HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
+    
             ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, reg);
-
+    
             HttpClient client = new DefaultHttpClient(ccm, params);
-
-            RestTemplate template = new RestTemplate(false);
-            template.getMessageConverters().add(new GsonHttpMessageConverter() {
-                @Override
-                public boolean canRead(Class<?> clazz, MediaType mediaType) {
-                    return true;
-                }
-            });
-            HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
-            factory.setHttpClient(client);
-            template.setRequestFactory(factory);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-            HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-            HttpEntity<LoginResultResp> rep = template.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
-
-            rep.getBody().getResult().getToken();
-
-            Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
-            
-            return rep.getBody().getResult().getToken();
-
-        } catch (Exception e) {
-
-        }
+            mFactory = new HttpComponentsClientHttpRequestFactory();
+            mFactory.setHttpClient(client);
         
-        return null;
+        } catch (IOException e) {
+            
+        } catch (CertificateException e) {
+            
+        } catch (NoSuchAlgorithmException e) {
+            
+        } catch (KeyStoreException e) {
+            
+        } catch (KeyManagementException e) {
+            
+        } catch (UnrecoverableKeyException e) {
+            
+        }
+    }
+
+    public String login(String usr, String pwd) {
+        Log.d(TAG, "user: " + usr + "; password: " + pwd);
+        
+        RestTemplate template = new RestTemplate(false);
+        template.setRequestFactory(mFactory);
+        template.getMessageConverters().add(new GsonHttpMessageConverter() {
+            @Override
+            public boolean canRead(Class<?> clazz, MediaType mediaType) {
+                return true;
+            }
+        });
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+
+        HttpEntity<LoginResultResp> rep = template.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
+
+        rep.getBody().getResult().getToken();
+
+        Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
+
+        return rep.getBody().getResult().getToken();
     }
 }

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.URL;
+import com.pplive.liveplatform.core.rest.http.TokenAuthentication;
 import com.pplive.liveplatform.core.rest.resp.TokenResp;
 
 public class TokenService extends RestService {
@@ -46,7 +47,8 @@ public class TokenService extends RestService {
     private String getToken(TokenType type, long pid, String username, int expiretime) {
         Log.d(TAG, "TokenType: " + type + "; pid: " + pid + "; username: " + username + "; expiretime: " + expiretime);
 
-        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
+        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
         ResponseEntity<TokenResp> rep = mRestTemplate.exchange(TEMPLATE_GET_TOKEN, HttpMethod.GET, req, TokenResp.class, type, pid, username, expiretime);

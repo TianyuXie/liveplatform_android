@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.rest.URL;
+import com.pplive.liveplatform.core.rest.http.TokenAuthentication;
 import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.resp.ProgramListResp;
@@ -61,8 +62,9 @@ public class ProgramService extends RestService {
 
     public Program createProgram(Program program) {
         Log.d(TAG, program.toString());
-
-        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
+        
+        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<Program>(program, mRequestHeaders);
 
         ProgramResp resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM.toString(), req, ProgramResp.class);
@@ -73,7 +75,8 @@ public class ProgramService extends RestService {
     public void updateProgram(Program program) {
         Log.d(TAG, program.toString());
 
-        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
+        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
 
         mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, Resp.class, program.getId());
@@ -82,7 +85,8 @@ public class ProgramService extends RestService {
     public void deleteProgramById(long pid) {
         Log.d(TAG, "pid: " + pid);
 
-        mRequestHeaders.setAuthorization(mCoTokenAuthentication);
+        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
         mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, Resp.class, pid);

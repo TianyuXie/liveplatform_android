@@ -38,10 +38,12 @@ import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder.OnErrorListener;
-import com.pplive.liveplatform.ui.record.OnLiveSelectedListener;
+import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.util.TimeUtil;
+
+import de.greenrobot.event.EventBus;
 
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback, Handler.Callback {
 
@@ -101,16 +103,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     };
 
+    private GetPushUrlTask mGetPushUrlOneStepTask;
     private Program mSelectedProgram;
-    private OnLiveSelectedListener mOnLiveSelectedListener = new OnLiveSelectedListener() {
-
-        @Override
-        public void onLiveSelected(Program program) {
-            mSelectedProgram = program;
-
-            mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +124,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
-        mFooterBarFragment.setOnLiveSelected(mOnLiveSelectedListener);
 
         mTextLive = (TextView) findViewById(R.id.text_live);
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
@@ -153,6 +146,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     protected void onStart() {
         super.onStart();
 
+        EventBus.getDefault().register(this);
+
         mCamera = CameraManager.getInstance().open(mCurrentCameraId);
 
         startPreview();
@@ -167,6 +162,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
 
         stopPreview();
+
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -189,6 +186,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onConfigurationChanged(newConfig);
 
         Log.d(TAG, "onConfigurationChanged");
+    }
+
+    public void onEvent(EventProgramSelected event) {
+        final Program program = event.getObject();
+
+        mSelectedProgram = program;
+
+        mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
     }
 
     @Override
@@ -224,7 +229,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onRecordStart() {
         mTextLive.setVisibility(View.VISIBLE);
         mTextRecordDuration.setVisibility(View.VISIBLE);
-        
+
         mTextLivingTitle.setVisibility(View.VISIBLE);
         mTextLivingTitle.setText(mSelectedProgram.getTitle());
 
@@ -272,7 +277,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             mTextLiveComing.setText(coming);
-            mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
+
+            if (!isFinishing()) {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
+            }
+
         }
     }
 
@@ -434,8 +443,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     }
 
-    private GetPushUrlTask mGetPushUrlOneStepTask;
-
     class GetPushUrlTask extends AsyncTask<Program, Void, String> {
 
         @Override
@@ -450,9 +457,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             } else {
                 Log.d(TAG, "has program");
             }
-            
+
             String token = TokenService.getInstance().getLiveToken(program.getId(), program.getOwner());
-            
+
             LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.INIT, token);
             LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.PREVIEW, token);
             LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.LIVING, token);

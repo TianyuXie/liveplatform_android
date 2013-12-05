@@ -11,9 +11,12 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.Program;
-import com.pplive.liveplatform.ui.record.LiveListView.OnLiveDeletedListener;
+import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
+import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.util.ViewUtil;
+
+import de.greenrobot.event.EventBus;
 
 public class LiveListItemView extends RelativeLayout {
 
@@ -30,9 +33,6 @@ public class LiveListItemView extends RelativeLayout {
 
     private Program mProgram;
     
-    private OnLiveSelectedListener mOnLiveSelectedListener;
-    private OnLiveDeletedListener mOnLiveDeletedListener;
-
     public LiveListItemView(Context context, AttributeSet attrs) {
         this(context, attrs, 0 /* defStyle */);
     }
@@ -54,9 +54,7 @@ public class LiveListItemView extends RelativeLayout {
             
             @Override
             public void onClick(View v) {
-                if (null != mOnLiveSelectedListener) {
-                    mOnLiveSelectedListener.onLiveSelected(getProgram());
-                }
+                EventBus.getDefault().post(new EventProgramSelected(getProgram()));
             }
         });
         
@@ -75,21 +73,12 @@ public class LiveListItemView extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "onClickBtnDelete");
-                if (null != mOnLiveDeletedListener) {
-                    mOnLiveDeletedListener.onLiveDeleted(getProgram());
-                }
+                
+                EventBus.getDefault().post(new EventProgramDeleted(getProgram()));
             }
         });
     }
     
-    public void setOnLiveSelectedListener(OnLiveSelectedListener listener) {
-        mOnLiveSelectedListener = listener;
-    }
-    
-    public void setOnLiveDeletedListener(OnLiveDeletedListener listener) {
-        mOnLiveDeletedListener = listener;
-    }
-
     public void setProgram(Program program) {
         mProgram = program;
 

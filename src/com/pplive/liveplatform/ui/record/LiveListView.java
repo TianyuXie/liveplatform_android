@@ -18,14 +18,17 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.rest.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.rest.model.Program;
 import com.pplive.liveplatform.core.rest.service.ProgramService;
+import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
+import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
+
+import de.greenrobot.event.EventBus;
 
 public class LiveListView extends HorizontalListView implements OnItemClickListener {
 
     private static final String TAG = LiveListView.class.getSimpleName();
 
     private LiveListAdapter mLiveListAdapter;
-    private OnLiveSelectedListener mOnLiveSelectedListener;
 
     private int mSelectedItemPosition = -1;
     private LiveListItemView mSelectedLiveItem;
@@ -46,14 +49,10 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        
+
         mLiveListAdapter = new LiveListAdapter(getContext());
         super.setAdapter(mLiveListAdapter);
         super.setOnItemClickListener(this);
-    }
-
-    public void setOnLiveSelectedListener(OnLiveSelectedListener listener) {
-        mOnLiveSelectedListener = listener;
     }
 
     @Override
@@ -83,6 +82,8 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
         public LiveListAdapter(Context context) {
             mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+            
+            EventBus.getDefault().register(this);
         }
 
         public void refresh() {
@@ -118,38 +119,45 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
             if (convertView instanceof LiveListItemView) {
                 LiveListItemView liveItem = (LiveListItemView) convertView;
-                liveItem.setOnLiveSelectedListener(mOnLiveSelectedListener);
-                liveItem.setOnLiveDeletedListener(new OnLiveDeletedListener() {
-                    
-                    @Override
-                    public void onLiveDeleted(final Program program) {
-                        for (int i = 0, len = mPreLiveList.size(); i < len; ++i) {
-                            Program p = mPreLiveList.get(i);
-                            if (p.getId() == program.getId()) {
-                                mPreLiveList.remove(i);
-                                notifyDataSetChanged();
-                                break;
-                            }
-                        }
-                        
-                        AsyncTask<Void, Void, Void> delTask = new AsyncTask<Void, Void, Void>() {
-                            
-                            @Override
-                            protected Void doInBackground(Void... params) {
-                                
-                                ProgramService.getInstance().deleteProgramById(program.getId());
-                                
-                                return null;
-                            }
-                        };
-                        
-                        delTask.execute();
-                    }
-                });
                 liveItem.setProgram(getItem(position));
             }
 
             return convertView;
+        }
+
+        public void onEvent(EventProgramDeleted event) {
+            final Program program = event.getObject();
+
+            for (int i = 0, len = mPreLiveList.size(); i < len; ++i) {
+                Program p = mPreLiveList.get(i);
+                if (p.getId() == program.getId()) {
+                    mPreLiveList.remove(i);
+                    notifyDataSetChanged();
+                    break;
+                }
+            }
+
+            AsyncTask<Void, Void, Void> delTask = new AsyncTask<Void, Void, Void>() {
+
+                @Override
+                protected Void doInBackground(Void... params) {
+
+                    ProgramService.getInstance().deleteProgramById(program.getId());
+
+                    return null;
+                }
+            };
+
+            delTask.execute();
+        }
+        
+        public void onEvent(EventProgramAdded event) {
+            final Program program = event.getObject();
+            
+            if (null != program) {
+                mPreLiveList.add(0, program);
+                notifyDataSetChanged();
+            }
         }
 
         class GetProgramsTask extends AsyncTask<Void, Void, List<Program>> {

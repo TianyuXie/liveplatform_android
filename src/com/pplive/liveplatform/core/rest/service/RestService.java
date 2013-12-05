@@ -18,16 +18,12 @@ public abstract class RestService {
     
     protected HttpHeaders mRequestHeaders;
     
-    protected HttpAuthentication mCoTokenAuthentication;
-    
     protected RestService() {
         mRestTemplate = new RestTemplate();
         mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
         
         HttpComponentsClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactory();
         mRestTemplate.setRequestFactory(factory);
-        
-        mCoTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK); 
         
         mRequestHeaders = new HttpHeaders();
         mRequestHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
