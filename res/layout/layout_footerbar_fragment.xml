@@ -24,8 +24,8 @@
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:contentDescription="@null"
                 android:src="@drawable/live_record_btn_live_back" />
 
@@ -34,8 +34,8 @@
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:contentDescription="@null"
                 android:src="@drawable/live_record_btn_live_back"
                 android:visibility="gone" />
@@ -55,9 +55,9 @@
                 style="@style/Widget.EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_weight="0.5"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.4"
                 android:inputType="none"
                 android:singleLine="true"
                 android:textColor="@color/edit_normal"
@@ -68,9 +68,9 @@
                 style="@style/Widget.EditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_weight="1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0.6"
                 android:inputType="text"
                 android:singleLine="true"
                 android:textColor="@color/edit_normal" />
@@ -89,8 +89,8 @@
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:contentDescription="@null"
                 android:src="@drawable/live_record_btn_live_share" />
 
@@ -99,8 +99,8 @@
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:contentDescription="@null"
                 android:src="@drawable/live_record_btn_live_prelive" />
 
@@ -109,8 +109,8 @@
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:contentDescription="@null"
                 android:src="@drawable/live_record_btn_live_complete"
                 android:visibility="gone" />
@@ -120,8 +120,8 @@
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:contentDescription="@null"
                 android:src="@drawable/live_record_btn_live_complete"
                 android:visibility="gone" />
