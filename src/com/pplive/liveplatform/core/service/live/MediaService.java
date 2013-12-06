@@ -43,13 +43,13 @@ public class MediaService extends RestService {
 
         String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
-        return getPushByToken(pid, token);
+        return getPushByLiveToken(pid, token);
     }
 
-    public Push getPushByToken(long pid, String token) {
-        Log.d(TAG, "pid: " + pid + "; token: " + token);
+    public Push getPushByLiveToken(long pid, String liveToken) {
+        Log.d(TAG, "pid: " + pid + "; token: " + liveToken);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -59,18 +59,18 @@ public class MediaService extends RestService {
         return body.getData();
     }
 
-    public List<Watch> getPlayWatchList(long pid, String username) {
+    public List<Watch> getPlayWatchList(String coToken, long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getPlayToken(Constants.TEST_COTK, pid, username);
+        String token = TokenService.getInstance().getPlayToken(coToken, pid, username);
 
-        return getPlayWatchListByToken(pid, token);
+        return getPlayWatchListByPlayToken(pid, token);
     }
 
-    public List<Watch> getPlayWatchListByToken(long pid, String token) {
-        Log.d(TAG, "pid: " + pid + "; token: " + token);
+    public List<Watch> getPlayWatchListByPlayToken(long pid, String playToken) {
+        Log.d(TAG, "pid: " + pid + "; token: " + playToken);
 
-        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -80,18 +80,18 @@ public class MediaService extends RestService {
         return body.getList();
     }
 
-    public List<Watch> getPreviewWatchList(long pid, String username) {
+    public List<Watch> getPreviewWatchList(String coToken, long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getLiveToken(Constants.TEST_COTK, pid, username);
+        String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
-        return getPreviewWatchListByToken(pid, token);
+        return getPreviewWatchListByLiveToken(pid, token);
     }
 
-    public List<Watch> getPreviewWatchListByToken(long pid, String token) {
+    public List<Watch> getPreviewWatchListByLiveToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 

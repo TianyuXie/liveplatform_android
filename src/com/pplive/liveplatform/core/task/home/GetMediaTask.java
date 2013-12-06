@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.task.home;
 
 import java.util.List;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
@@ -51,7 +52,7 @@ public class GetMediaTask extends Task {
         String username = (String) context.get(KEY_USERNAME);
         List<Watch> data = null;
         try {
-            data = MediaService.getInstance().getPlayWatchList(pid, username);
+            data = MediaService.getInstance().getPlayWatchList(Constants.TEST_COTK, pid, username);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "get error");
         }
