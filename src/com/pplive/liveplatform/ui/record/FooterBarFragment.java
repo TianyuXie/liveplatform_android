@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -193,7 +194,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                 
                 Program program = new Program("xiety0001", title, starttime);
                 
-                program = ProgramService.getInstance().createProgram(program);
+                program = ProgramService.getInstance().createProgram(Constants.TEST_COTK, program);
                 
                 return program;
             }

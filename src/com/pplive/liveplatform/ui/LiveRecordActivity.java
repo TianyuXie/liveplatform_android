@@ -26,6 +26,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
@@ -452,19 +453,19 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (null == program) {
                 Log.d(TAG, "create program");
                 program = new Program("xiety0001", "My Living", System.currentTimeMillis());
-                program = ProgramService.getInstance().createProgram(program);
+                program = ProgramService.getInstance().createProgram(Constants.TEST_COTK, program);
                 mSelectedProgram = program;
             } else {
                 Log.d(TAG, "has program");
             }
 
-            String token = TokenService.getInstance().getLiveToken(program.getId(), program.getOwner());
+            String token = TokenService.getInstance().getLiveToken(Constants.TEST_COTK, program.getId(), program.getOwner());
 
-            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.INIT, token);
-            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.PREVIEW, token);
-            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.LIVING, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, token);
 
-            Push push = MediaService.getInstance().getPush(program.getId(), "xiety0001");
+            Push push = MediaService.getInstance().getPush(Constants.TEST_COTK, program.getId(), "xiety0001");
 
             String url = null;
             for (int i = 0, len = push.getPushStringList().size(); i < len; ++i) {

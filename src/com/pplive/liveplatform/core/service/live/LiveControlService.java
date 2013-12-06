@@ -28,13 +28,13 @@ public class LiveControlService extends RestService {
     private LiveControlService() {
     }
 
-    public void updateLiveStatus(long pid, LiveStatusEnum livestatus) {
-        String token = TokenService.getInstance().getLiveToken(pid, "xiety0001");
+    public void updateLiveStatusByCoToken(String coToken, long pid, LiveStatusEnum livestatus, String username) {
+        String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
-        updateLiveStatusWithToken(pid, livestatus, token);
+        updateLiveStatusByLiveToken(pid, livestatus, token);
     }
 
-    public void updateLiveStatusWithToken(long pid, LiveStatusEnum livestatus, String token) {
+    public void updateLiveStatusByLiveToken(long pid, LiveStatusEnum livestatus, String token) {
         Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
 
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));

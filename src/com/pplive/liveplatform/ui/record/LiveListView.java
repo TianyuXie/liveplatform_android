@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
@@ -142,7 +143,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 @Override
                 protected Void doInBackground(Void... params) {
 
-                    ProgramService.getInstance().deleteProgramById(program.getId());
+                    ProgramService.getInstance().deleteProgramById(Constants.TEST_COTK, program.getId());
 
                     return null;
                 }
