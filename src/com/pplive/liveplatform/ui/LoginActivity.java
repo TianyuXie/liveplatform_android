@@ -2,8 +2,8 @@ package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.db.PrivateManager;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -24,15 +24,18 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.util.EncryptUtil;
 
 public class LoginActivity extends Activity {
     static final String TAG = "_LoginActivity";
 
     private EditText mUsrEditText;
+
     private EditText mPwdEditText;
+
     private Button mConfirmButton;
+
     private RefreshDialog mRefreshDialog;
+
     private Context mContext;
 
     @Override
@@ -98,12 +101,14 @@ public class LoginActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
-            String imei = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-            String usr = EncryptUtil.encrypt((String) event.getContext().get(LoginTask.KEY_USR), imei, EncryptUtil.EXTRA1);
-            String pwd = EncryptUtil.encrypt((String) event.getContext().get(LoginTask.KEY_PWD), imei, EncryptUtil.EXTRA2);
+            String usrPlain = (String) event.getContext().get(LoginTask.KEY_USR);
+            String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PWD);
             String token = (String) event.getContext().get(LoginTask.KEY_TOKEN);
-            PrivateManager.getInstance(mContext).loginUser(usr, pwd, token);
+            UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(mContext, UserpageActivity.class);
+            mContext.startActivity(intent);
+            finish();
         }
 
         @Override

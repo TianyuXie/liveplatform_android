@@ -1,20 +1,16 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.db.PrivateManager;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.core.settings.UserPrefs;
-import com.pplive.liveplatform.util.EncryptUtil;
 
 public class SettingsActivity extends Activity {
     private UserPrefs mUserPrefs;
@@ -25,14 +21,9 @@ public class SettingsActivity extends Activity {
 
     private ToggleButton mPreliveButton;
 
-    private String mActiveUser;
-
-    private Context mContext;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mContext = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_settings);
         findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
@@ -49,9 +40,7 @@ public class SettingsActivity extends Activity {
         mUserPrefs = SettingsProvider.getInstance(this).getPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
-        mActiveUser = PrivateManager.getInstance(this).getActiveUser();
-        String imei = ((TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        mUserTextView.setText(EncryptUtil.decrypt(mActiveUser, imei, EncryptUtil.EXTRA1));
+        mUserTextView.setText(UserManager.getInstance(getApplicationContext()).getActiveUserPlain());
     }
 
     @Override
@@ -72,9 +61,8 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onLogoutBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!TextUtils.isEmpty(mActiveUser)) {
-                PrivateManager.getInstance(mContext).logoutUser(mActiveUser);
-            }
+            UserManager.getInstance(getApplicationContext()).logout();
+            mUserTextView.setText("");
         }
     };
 

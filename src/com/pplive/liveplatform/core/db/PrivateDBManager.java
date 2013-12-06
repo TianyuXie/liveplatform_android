@@ -4,20 +4,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class PrivateManager {
+public class PrivateDBManager {
     private SQLiteDatabase mPrivateDB;
 
-    private PrivateHelper mPrivateHelper;
-    private static PrivateManager instance;
+    private PrivateDBHelper mPrivateHelper;
+    private static PrivateDBManager instance;
 
-    public static synchronized PrivateManager getInstance(Context context) {
+    public static synchronized PrivateDBManager getInstance(Context context) {
         if (instance == null)
-            instance = new PrivateManager(context.getApplicationContext());
+            instance = new PrivateDBManager(context.getApplicationContext());
         return instance;
     }
 
-    private PrivateManager(Context context) {
-        mPrivateHelper = new PrivateHelper(context);
+    private PrivateDBManager(Context context) {
+        mPrivateHelper = new PrivateDBHelper(context);
         mPrivateDB = mPrivateHelper.getWritableDatabase();
     }
 
