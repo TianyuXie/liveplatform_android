@@ -13,6 +13,8 @@ public class LiveMediaRecoder {
     private PPboxSink mCapture;
 
     private String mOutputPath;
+    
+    private OnPreparedListener mOnPreparedListener;
 
     public LiveMediaRecoder(Context ctx, Camera camera) {
 
@@ -37,10 +39,18 @@ public class LiveMediaRecoder {
             }
         });
     }
+    
+    public void setOnPreparedListener(final OnPreparedListener listener) {
+        mOnPreparedListener = listener;
+    }
 
     public void start() {
         mCapture.open(mOutputPath);
         mCapture.start();
+        
+        if (null != mOnPreparedListener) {
+            mOnPreparedListener.onPrepared();
+        }
     }
 
     public void stop() {
@@ -50,5 +60,9 @@ public class LiveMediaRecoder {
 
     public interface OnErrorListener {
         void onError();
+    }
+    
+    public interface OnPreparedListener {
+        void onPrepared();
     }
 }

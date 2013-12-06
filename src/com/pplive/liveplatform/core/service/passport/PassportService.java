@@ -35,7 +35,7 @@ import org.springframework.web.client.RestTemplate;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.service.URL;
+import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.passport.resp.LoginResultResp;
 
@@ -43,7 +43,7 @@ public class PassportService {
 
     private static final String TAG = PassportService.class.getSimpleName();
 
-    private static final String TEMPLATE_PASSPORT_LOGIN = new URL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
+    private static final String TEMPLATE_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/login/login.do?username={usr}&password={pwd}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();

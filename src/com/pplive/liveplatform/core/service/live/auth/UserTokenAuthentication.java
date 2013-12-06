@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.service.live.http;
+package com.pplive.liveplatform.core.service.live.auth;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
@@ -7,7 +7,7 @@ import org.springframework.http.HttpAuthentication;
 
 import android.text.TextUtils;
 
-public class TokenAuthentication extends HttpAuthentication {
+public class UserTokenAuthentication extends HttpAuthentication {
 
     protected static final String KEY_CO_NAME = "coname";
     protected static final String KEY_CO_TOKEN = "cotk";
@@ -18,11 +18,11 @@ public class TokenAuthentication extends HttpAuthentication {
     
     protected LinkedHashMap<String, String> mKeyValueMap = new LinkedHashMap<String, String>();
     
-    public TokenAuthentication(String coToken) {
+    public UserTokenAuthentication(String coToken) {
         this(DEFAULT_CO_NAME, coToken);
     }
     
-    private TokenAuthentication(String coName, String coToken) {
+    private UserTokenAuthentication(String coName, String coToken) {
         if (!TextUtils.isEmpty(coName)) {
             mKeyValueMap.put(KEY_CO_NAME, coName);
         }

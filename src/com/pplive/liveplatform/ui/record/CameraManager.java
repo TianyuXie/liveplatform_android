@@ -8,11 +8,14 @@ import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 
 @TargetApi(Build.VERSION_CODES.GINGERBREAD)
 public class CameraManager {
+    
+    private static final String TAG = CameraManager.class.getSimpleName();
 
     public static int DEFAULT_NUMBER_OF_CAMERAS = 1;
 
@@ -101,10 +104,15 @@ public class CameraManager {
 
         Camera.Size ms = sizes.get(0);
         for (Camera.Size s : sizes) {
-            if (s.width >= 320 && (ms.width < 320 || s.width < ms.width || s.height < ms.height)) {
+            Log.d(TAG, "s width: " + s.width + "; height: " + s.height);
+            
+            if (s.width >= 480 && (ms.width < 480 || s.width < ms.width || s.height < ms.height)) {
                 ms = s;
             }
         }
+        
+        Log.d(TAG, "Size width: " + ms.width + "; height: " + ms.height);
+        
         return ms;
     }
 
