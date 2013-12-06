@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +35,7 @@ public class LoginActivity extends Activity {
 
     private Button mConfirmButton;
 
-    private RefreshDialog mRefreshDialog;
+    private Dialog mRefreshDialog;
 
     private Context mContext;
 
@@ -67,7 +68,7 @@ public class LoginActivity extends Activity {
         public void onClick(View v) {
             mRefreshDialog.show();
             LoginTask task = new LoginTask();
-            task.addTaskListener(loginTaskListener);
+            task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
             taskContext.set(LoginTask.KEY_USR, mUsrEditText.getText().toString());
             taskContext.set(LoginTask.KEY_PWD, mPwdEditText.getText().toString());
@@ -96,7 +97,7 @@ public class LoginActivity extends Activity {
         }
     };
 
-    private Task.OnTaskListener loginTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {

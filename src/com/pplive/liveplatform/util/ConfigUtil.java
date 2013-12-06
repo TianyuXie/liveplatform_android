@@ -71,7 +71,7 @@ public class ConfigUtil {
      */
     public static String getString(String property) {
 
-        return StringUtil.safeStringEmpty(ConfigUtil.getInstance().getConfig().getProperty(property));
+        return StringUtil.safeString(ConfigUtil.getInstance().getConfig().getProperty(property));
     }
 
     /**

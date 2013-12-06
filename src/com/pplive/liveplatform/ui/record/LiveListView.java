@@ -14,8 +14,8 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 
-import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -83,7 +83,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
         public LiveListAdapter(Context context) {
             mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-            
+
             EventBus.getDefault().register(this);
         }
 
@@ -142,19 +142,18 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
                 @Override
                 protected Void doInBackground(Void... params) {
-
-                    ProgramService.getInstance().deleteProgramById(Constants.TEST_COTK, program.getId());
-
+                    String token = UserManager.getInstance(getContext()).getToken();
+                    ProgramService.getInstance().deleteProgramById(token, program.getId());
                     return null;
                 }
             };
 
             delTask.execute();
         }
-        
+
         public void onEvent(EventProgramAdded event) {
             final Program program = event.getObject();
-            
+
             if (null != program) {
                 mPreLiveList.add(0, program);
                 notifyDataSetChanged();
@@ -166,8 +165,8 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             @Override
             protected List<Program> doInBackground(Void... params) {
                 Log.d(TAG, "doInBackground");
-
-                List<Program> programs = ProgramService.getInstance().getProgramsByOwner("xiety0001", LiveStatusEnum.NOT_START);
+                String username = UserManager.getInstance(getContext()).getActiveUserPlain();
+                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.NOT_START);
 
                 return programs;
             }

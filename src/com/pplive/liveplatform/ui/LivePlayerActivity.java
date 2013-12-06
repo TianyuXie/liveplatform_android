@@ -24,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -126,17 +127,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(getIntent().getStringExtra("title"));
         if (mUrl == null) {
-            String username = getIntent().getStringExtra("username");
+            String username = UserManager.getInstance(this).getActiveUserPlain();
+            String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
-            Log.d(TAG, "pid:" + pid);
             if (pid != -1) {
                 GetMediaTask task = new GetMediaTask();
                 task.addTaskListener(onTaskListener);
                 TaskContext taskContext = new TaskContext();
                 taskContext.set(GetMediaTask.KEY_PID, pid);
                 taskContext.set(GetMediaTask.KEY_USERNAME, username);
+                taskContext.set(GetMediaTask.KEY_TOKEN, token);
                 task.execute(taskContext);
             }
+        } else {
+            Log.d(TAG, "onStart mUrl:" + mUrl);
+            mLivePlayerFragment.setupPlayer(mUrl);
         }
     }
 
@@ -380,7 +385,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 }
             }
             if (mUrl != null) {
-                Log.d(TAG, mUrl);
+                Log.d(TAG, "onTaskFinished:" + mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
             }
         }
@@ -426,4 +431,5 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             return true;
         }
     });
+
 }

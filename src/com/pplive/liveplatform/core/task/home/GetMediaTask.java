@@ -2,7 +2,6 @@ package com.pplive.liveplatform.core.task.home;
 
 import java.util.List;
 
-import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
@@ -13,21 +12,20 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class GetMediaTask extends Task {
     public final static String KEY_RESULT = "play_media_result";
+    public final static String KEY_TOKEN = "token";
     public final static String KEY_PID = "pid";
     public final static String KEY_USERNAME = "username";
-    
+
     private final String ID = StringUtil.newGuid();
     private final String NAME = "GetMedia";
 
     @Override
     public String getID() {
-        // TODO Auto-generated method stub
         return ID;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return NAME;
     }
 
@@ -54,9 +52,10 @@ public class GetMediaTask extends Task {
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
         String username = (String) context.get(KEY_USERNAME);
+        String token = (String) context.get(KEY_TOKEN);
         List<Watch> data = null;
         try {
-            data = MediaService.getInstance().getPlayWatchList(Constants.TEST_COTK, pid, username);
+            data = MediaService.getInstance().getPlayWatchList(token, pid, username);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "get error");
         }

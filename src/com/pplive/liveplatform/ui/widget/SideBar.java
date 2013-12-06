@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -35,6 +37,10 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     private boolean mAnimating;
 
     private boolean mShowing;
+
+    private TextView mUserTextView;
+
+    private Button mUserButton;
 
     public SideBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -64,9 +70,21 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         a.recycle();
         mShowing = (getVisibility() == VISIBLE);
         mRadioGroup = (RadioGroup) mRoot.findViewById(R.id.radiogroup_sidebar_type);
+        mUserTextView = (TextView) mRoot.findViewById(R.id.text_sidebar_user);
+        mUserButton = (Button) mRoot.findViewById(R.id.btn_sidebar_user_icon);
         mBlockLayer = mRoot.findViewById(R.id.layout_block_layer);
+        mUserButton.setOnClickListener(onUserBtnClickListener);
         mRoot.findViewById(R.id.btn_sidebar_settings).setOnClickListener(onSettingsBtnClickListener);
-        mRoot.findViewById(R.id.btn_sidebar_user_icon).setOnClickListener(onUserBtnClickListener);
+    }
+
+    public void updateUsername() {
+        if (UserManager.getInstance(getContext()).isLogin()) {
+            mUserTextView.setText(UserManager.getInstance(getContext()).getActiveUserPlain());
+            mUserButton.setBackgroundResource(R.drawable.user_icon_default);
+        } else {
+            mUserTextView.setText("");
+            mUserButton.setBackgroundResource(R.drawable.user_icon_login);
+        }
     }
 
     public SideBar(Context context) {
@@ -86,6 +104,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     @Override
     public void show() {
         if (!mAnimating && !mShowing && mShowAnimation != null) {
+            updateUsername();
             mRoot.setVisibility(VISIBLE);
             mBlockLayer.setClickable(false);
             mShowing = true;

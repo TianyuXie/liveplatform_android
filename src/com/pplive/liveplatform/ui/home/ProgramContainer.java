@@ -68,7 +68,6 @@ public class ProgramContainer extends RelativeLayout {
                 String title = program.getTitle();
                 Intent intent = new Intent();
                 intent.putExtra("pid", pid);
-                intent.putExtra("username", "xiety0001");
                 intent.putExtra("title", title);
                 intent.setClass(getContext(), LivePlayerActivity.class);
                 getContext().startActivity(intent);

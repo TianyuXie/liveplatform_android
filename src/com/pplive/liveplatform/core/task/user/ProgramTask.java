@@ -2,6 +2,8 @@ package com.pplive.liveplatform.core.task.user;
 
 import java.util.List;
 
+import android.util.Log;
+
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -11,8 +13,11 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class ProgramTask extends Task {
+    static final String TAG = "_ProgramTask";
+
     public final static String KEY_RESULT = "program_result";
-    
+    public final static String KEY_USR = "username";
+
     private final String ID = StringUtil.newGuid();
     private final String NAME = "Program";
 
@@ -47,9 +52,11 @@ public class ProgramTask extends Task {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
         TaskContext context = params[0];
+        String username = context.getString(KEY_USR);
+        Log.d(TAG, username);
         List<Program> data = null;
         try {
-            data = ProgramService.getInstance().getProgramsByOwner("xiety0001");
+            data = ProgramService.getInstance().getProgramsByOwner(username);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "GET Error");
         }

@@ -14,6 +14,8 @@ public class UserManager {
 
     private String mActiveUserPlain;
 
+    private String mToken;
+
     private String mImei;
 
     private Context mContext;
@@ -21,6 +23,11 @@ public class UserManager {
     private UserManager(Context context) {
         mContext = context;
         mImei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+        mActiveUser = PrivateDBManager.getInstance(mContext).getActiveUser();
+        if (!TextUtils.isEmpty(mActiveUser)) {
+            mToken = PrivateDBManager.getInstance(mContext).getToken(mActiveUser);
+            mActiveUserPlain = EncryptUtil.decrypt(mActiveUser, mImei, EncryptUtil.EXTRA1);
+        }
     }
 
     public static synchronized UserManager getInstance(Context context) {
@@ -40,6 +47,7 @@ public class UserManager {
             PrivateDBManager.getInstance(mContext).loginUser(usr, pwd, token);
             mActiveUser = usr;
             mActiveUserPlain = usrPlain;
+            mToken = token;
         }
     }
 
@@ -53,6 +61,14 @@ public class UserManager {
     public String getActiveUserPlain() {
         if (isLogin()) {
             return mActiveUserPlain;
+        } else {
+            return "";
+        }
+    }
+
+    public String getToken() {
+        if (isLogin()) {
+            return mToken;
         } else {
             return "";
         }
