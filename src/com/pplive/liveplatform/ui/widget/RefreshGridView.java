@@ -26,7 +26,9 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private final static int STATUS_REFRESHING = 802;
     private final static int STATUS_DONE = 803;
 
-    private final static float RATIO = 3.0f;
+    private final static float RATIO = 1.7f;
+
+    private final static int POPUP_TIME = 500;
 
     private LinearLayout mHeaderView;
     private ProgressBar mProgressBar;
@@ -38,8 +40,8 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private boolean mRecorded;
     private boolean mRefreshable;
     private boolean mPulling;
+    private boolean mScrollDown;
     private boolean mAniming;
-    private boolean mBusy;
 
     private boolean mSeeLast;
     private boolean mSeeFirst;
@@ -70,13 +72,20 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         return mHeaderView;
     }
 
-    public void setBusy(boolean isbusy) {
-        mBusy = isbusy;
-    }
-
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
-        Log.d(TAG, "onScrollStateChanged");
+        switch (scrollState) {
+        case OnScrollListener.SCROLL_STATE_IDLE:
+            Log.d(TAG, "SCROLL_STATE_IDLE");
+            if (mScrollDown) {
+                mScrollDown = false;
+                mUpdateListener.onScrollDown(false);
+            }
+            break;
+        default:
+            break;
+        }
+
     }
 
     @Override
@@ -110,7 +119,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         Log.v(TAG, "onTouchEvent");
         mGestureDetector.onTouchEvent(event);
 
-        if (mRefreshable && mPulling && !mAniming && !mBusy) {
+        if (mRefreshable && mPulling && !mAniming) {
             switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (!mRecorded) {
@@ -241,14 +250,14 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         public void onRefresh();
 
         public void onAppend();
+
+        public void onScrollDown(boolean isDown);
     }
 
     public void onRefreshComplete() {
-        if (mStatus != STATUS_DONE) {
-            mStatus = STATUS_DONE;
-            updateHeader();
-            bounceHeader(-mHeaderHeight);
-        }
+        mStatus = STATUS_DONE;
+        updateHeader();
+        bounceHeader(-mHeaderHeight);
     }
 
     // Measure headView's width & height 
@@ -273,10 +282,23 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (!mPulling && !mReachBottom) {
+                if (distanceY > 0) {
+                    if (!mScrollDown) {
+                        mScrollDown = true;
+                        mUpdateListener.onScrollDown(true);
+                    }
+                } else if (distanceY < 0) {
+                    if (mScrollDown) {
+                        mScrollDown = false;
+                        mUpdateListener.onScrollDown(false);
+                    }
+                }
+            }
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
             if (absDistanceY > absDistanceX) {
-                if (distanceY > 10.0f && mReachBottom) {
+                if (distanceY > 10.0f && mReachBottom && !mPulling) {
                     if (mUpdateListener != null) {
                         mUpdateListener.onAppend();
                     }
@@ -313,12 +335,12 @@ public class RefreshGridView extends GridView implements OnScrollListener {
             mHeaderView.setPadding(0, -mHeaderHeight, 0, 0);
         }
         TranslateAnimation bodyAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
-        bodyAnim.setDuration(700);
-        bodyAnim.setInterpolator(new OvershootInterpolator(1.7f));
+        bodyAnim.setDuration(POPUP_TIME);
+        bodyAnim.setInterpolator(new OvershootInterpolator(1.2f));
 
         TranslateAnimation headerAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
-        headerAnim.setDuration(700);
-        headerAnim.setInterpolator(new OvershootInterpolator(1.7f));
+        headerAnim.setDuration(POPUP_TIME);
+        headerAnim.setInterpolator(new OvershootInterpolator(1.2f));
 
         startAnimation(bodyAnim);
         mHeaderView.startAnimation(headerAnim);

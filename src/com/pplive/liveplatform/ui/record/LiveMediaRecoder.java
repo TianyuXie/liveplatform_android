@@ -2,8 +2,13 @@ package com.pplive.liveplatform.ui.record;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.util.Log;
+
+import com.pplive.sdk.MediaSDK.Download_Callback;
 
 public class LiveMediaRecoder {
+    
+    private static final String TAG = LiveMediaRecoder.class.getSimpleName();
 
     private PPboxSink mCapture;
 
@@ -19,8 +24,18 @@ public class LiveMediaRecoder {
         mOutputPath = url;
     }
 
-    public void setOnErrorListener(OnErrorListener listener) {
-        mCapture.setOnErrorListener(listener);
+    public void setOnErrorListener(final OnErrorListener listener) {
+        mCapture.setDownloadCallback(new Download_Callback() {
+            
+            @Override
+            public void invoke(long err) {
+                Log.d(TAG, "error: " + err);
+                
+                if (null != listener) {
+                    listener.onError();
+                }
+            }
+        });
     }
 
     public void start() {

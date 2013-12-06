@@ -1,8 +1,8 @@
 package com.pplive.liveplatform.core.task.home;
 
-import com.pplive.liveplatform.core.rest.model.FallList;
-import com.pplive.liveplatform.core.rest.model.Program;
-import com.pplive.liveplatform.core.rest.service.SearchService;
+import com.pplive.liveplatform.core.service.live.SearchService;
+import com.pplive.liveplatform.core.service.live.model.FallList;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -11,7 +11,7 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
     public final static String KEY_TASK_RESULT = "search_task_result";
-    public final static String KEY_APPEND_FLAG = "search_task_type";
+    public final static String KEY_TYPE = "search_task_type";
 
     public final static String KEY_SUBJECT_ID = "subjectId";
     public final static String KEY_SORT = "sort";
@@ -21,7 +21,7 @@ public class SearchTask extends Task {
     public final static String KEY_KEYWORD = "key";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetTask";
+    private final String NAME = "Search";
 
     @Override
     public String getID() {

@@ -6,9 +6,7 @@ import java.nio.ByteBuffer;
 
 import android.content.Context;
 import android.hardware.Camera;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
-import android.media.MediaRecorder.AudioSource;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -33,8 +31,8 @@ public class PPboxSink {
 
     private long mStartTime;
 
-    private LiveMediaRecoder.OnErrorListener mOnErrorListener;
-    
+    private Download_Callback mDownloadCallback;
+
     public static void init(Context c) {
         File cacheDirFile = c.getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
@@ -53,31 +51,19 @@ public class PPboxSink {
         this.mCamera = camera;
     }
     
-    public void setOnErrorListener(LiveMediaRecoder.OnErrorListener listener) {
-        mOnErrorListener = listener;
+    public void setDownloadCallback(Download_Callback callback) {
+        mDownloadCallback = callback;
     }
 
     public void open(String url) {
         Log.d(TAG, "url: " + url);
-        
-        mCaptureId = MediaSDK.CaptureOpen("pprecord://record", "rtmp", url, new Download_Callback() {
 
-            @Override
-            public void invoke(long err) {
-                Log.d(TAG, "err:  " + err);
-                
-                if (null != mOnErrorListener) {
-                    mOnErrorListener.onError();
-                }
-            }
-        });
+        mCaptureId = MediaSDK.CaptureOpen("pprecord://record", "rtmp", url, mDownloadCallback);
 
-        // TODO: DEBUG
-        mAudioRecord = getAudioRecord();
+        mAudioRecord = MediaManager.getInstance().getAudioRecord();
 
         MediaSDK.CaptureConfigData config = new MediaSDK.CaptureConfigData();
 
-        // TODO: Debug
         config.stream_count = 2;
         config.thread_count = 2; // multi_thread
         config.sort_type = 1;
@@ -118,13 +104,12 @@ public class PPboxSink {
                 PPboxStream.InBuffer buffer = mVideoStream.pop();
                 if (buffer == null) {
                     ++num_drop;
-                    // System.out.println("video drop");
                 } else {
                     buffer.byte_buffer().put(data);
                     mVideoStream.put(time / 1000, buffer);
                 }
                 if (time >= next_time) {
-                    System.out.println("video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
+                    Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
                             + num_drop);
                     next_time += 5 * time_scale;
                 }
@@ -192,60 +177,25 @@ public class PPboxSink {
     }
 
     public void close() {
-        //        camera.release();
 
-        // TODO: DEBUG
         if (null != mAudioRecord) {
             mAudioRecord.release();
             mAudioRecord = null;
         }
 
+        if (null != mVideoStream) {
+            mVideoStream.stop();
+            mVideoStream = null;
+        }
+
+        if (null != mAudioStream) {
+            mAudioStream.stop();
+            mAudioStream = null;
+        }
+
         Log.d(TAG, "Before destroy capture");
         MediaSDK.CaptureDestroy(mCaptureId);
         Log.d(TAG, "After destroy capture");
-
-        mVideoStream.stop();
-        mAudioStream.stop();
-
-        mVideoStream = null;
-        mAudioStream = null;
     }
 
-    private static int[] sampleRates = new int[] { 8000, 11025, 22050, 44100 };
-    private static short[] channelConfigs = new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO };
-    private static short[] audioFormats = new short[] { AudioFormat.ENCODING_PCM_16BIT };
-
-    private AudioRecord getAudioRecord() {
-        for (int sampleRate : sampleRates) {
-            for (short channelConfig : channelConfigs) {
-                for (short audioFormat : audioFormats) {
-                    try {
-                        Log.d(TAG, "Attempting rate " + sampleRate + "Hz, channel: " + channelConfig + ", bits: " + audioFormat);
-                        int bufferSize = AudioRecord.getMinBufferSize(sampleRate, channelConfig, audioFormat);
-
-                        if (bufferSize == AudioRecord.ERROR_BAD_VALUE) {
-                            continue;
-                        }
-
-                        Log.d(TAG, "bufferSize: " + bufferSize);
-
-                        bufferSize = PPboxStream.frame_size(1024, channelConfig, audioFormat) * 16;
-                        // check if we can instantiate and have a success
-                        AudioRecord recorder = new AudioRecord(AudioSource.DEFAULT, sampleRate, channelConfig, audioFormat, bufferSize);
-
-                        if (recorder.getState() == AudioRecord.STATE_INITIALIZED) {
-                            Log.d(TAG, "Supported. buffer size: " + bufferSize);
-                            return recorder;
-                        }
-
-                        Log.d(TAG, "release audio recorder");
-                        recorder.release();
-                    } catch (Exception e) {
-                        Log.d(TAG, "Exception, keep trying." + e);
-                    }
-                }
-            }
-        }
-        return null;
-    }
 }

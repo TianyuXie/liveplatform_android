@@ -2,28 +2,32 @@ package com.pplive.liveplatform.core.task.home;
 
 import java.util.List;
 
-import com.pplive.liveplatform.core.rest.model.Watch;
-import com.pplive.liveplatform.core.rest.service.MediaService;
+import com.pplive.liveplatform.core.service.live.MediaService;
+import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
+import com.pplive.liveplatform.util.StringUtil;
 
 public class GetMediaTask extends Task {
     public final static String KEY_RESULT = "play_media_result";
     public final static String KEY_PID = "pid";
     public final static String KEY_USERNAME = "username";
+    
+    private final String ID = StringUtil.newGuid();
+    private final String NAME = "GetMedia";
 
     @Override
     public String getID() {
         // TODO Auto-generated method stub
-        return null;
+        return ID;
     }
 
     @Override
     public String getName() {
         // TODO Auto-generated method stub
-        return null;
+        return NAME;
     }
 
     @Override

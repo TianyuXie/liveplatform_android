@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical"
+    android:paddingBottom="10dp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp" >
+
+        <Button
+            android:id="@+id/btn_settings_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/titlebar_back_btn_bg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/settings_title"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:overScrollMode="never"
+        android:requiresFadingEdge="vertical"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TableLayout style="@style/settings_tablelayout" >
+
+                <TableRow style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_username" />
+
+                    <TextView
+                        android:layout_marginRight="12dp"
+                        android:text="@string/test_settings_username"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout style="@style/settings_tablelayout" >
+
+                <TableRow style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_pptv_user" />
+
+                    <TextView
+                        android:id="@+id/text_settings_user"
+                        android:layout_marginRight="12dp"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </TableRow>
+
+                <TableRow style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_password" />
+
+                    <ImageView
+                        style="@style/settings_right_arrow"
+                        android:contentDescription="@null" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout style="@style/settings_tablelayout" >
+
+                <TableRow style="@style/settings_tablerow_switcher" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_prelive" />
+
+                    <ToggleButton
+                        android:id="@+id/btn_settings_prelive"
+                        style="@style/settings_togglebutton" />
+                </TableRow>
+
+                <TableRow style="@style/settings_tablerow_switcher" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_content" />
+
+                    <ToggleButton
+                        android:id="@+id/btn_settings_content"
+                        style="@style/settings_togglebutton" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout style="@style/settings_tablelayout" >
+
+                <TableRow style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_about" />
+
+                    <ImageView
+                        style="@style/settings_right_arrow"
+                        android:contentDescription="@null" />
+                </TableRow>
+            </TableLayout>
+
+            <Button
+                android:id="@+id/btn_settings_logout"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_btn_logout_bg"
+                android:padding="15dp"
+                android:text="@string/settings_logout"
+                android:textSize="17sp" >
+            </Button>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:text="@string/test_settings_version"
+                android:textColor="@color/settings_version"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

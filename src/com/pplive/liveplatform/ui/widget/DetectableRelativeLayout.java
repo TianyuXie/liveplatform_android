@@ -26,6 +26,10 @@ public class DetectableRelativeLayout extends RelativeLayout {
         this(context, null);
     }
 
+    public int getHalfHeight() {
+        return mHalfHeight;
+    }
+
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         Log.d(TAG, String.format("onSizeChanged: %d, %d, %d, %d", w, h, oldw, oldh));

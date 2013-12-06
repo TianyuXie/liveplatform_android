@@ -112,7 +112,7 @@
         live:left_src="@drawable/animdoor_bottom"
         live:orientation="vertical"
         live:right_src="@drawable/animdoor_top"
-        live:time="1500"
+        live:time="500"
         live:visible="true" />
 
     <LinearLayout

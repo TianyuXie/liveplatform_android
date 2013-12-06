@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.LoginActivity;
+import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
@@ -18,6 +21,8 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     static final String TAG = "_SideBar";
 
     private View mRoot;
+
+    private View mBlockLayer;
 
     private RadioGroup mRadioGroup;
 
@@ -57,6 +62,9 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         a.recycle();
         mShowing = (getVisibility() == VISIBLE);
         mRadioGroup = (RadioGroup) mRoot.findViewById(R.id.radiogroup_sidebar_type);
+        mBlockLayer = mRoot.findViewById(R.id.layout_block_layer);
+        mRoot.findViewById(R.id.btn_sidebar_settings).setOnClickListener(onSettingsBtnClickListener);
+        mRoot.findViewById(R.id.btn_sidebar_user_icon).setOnClickListener(onUserBtnClickListener);
     }
 
     public SideBar(Context context) {
@@ -68,6 +76,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         if (!mAnimating && mShowing && mHideAnimation != null) {
             startAnimation(mHideAnimation);
             mRoot.setVisibility(gone ? GONE : INVISIBLE);
+            mBlockLayer.setClickable(true);
             mShowing = false;
         }
     }
@@ -76,6 +85,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     public void show() {
         if (!mAnimating && !mShowing && mShowAnimation != null) {
             mRoot.setVisibility(VISIBLE);
+            mBlockLayer.setClickable(false);
             mShowing = true;
             startAnimation(mShowAnimation);
         }
@@ -122,5 +132,22 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     public void setOnTypeChangeListener(RadioGroup.OnCheckedChangeListener l) {
         mRadioGroup.setOnCheckedChangeListener(l);
     }
+
+    private View.OnClickListener onSettingsBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+            getContext().startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            //            Intent intent = new Intent(getContext(), UserpageActivity.class);
+            getContext().startActivity(intent);
+        }
+    };
 
 }
