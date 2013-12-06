@@ -18,7 +18,7 @@ public final class Constants {
 
     public static final String TEST_PLAY_URL = "rtsp://127.0.0.1:5054/record.es?playlink=rtmp%3A%2F%2F183.129.205.101%3A1935%2Fflvplayback%2Fmobi124";
 
-    public static final String TEST_COTK = "IUYh6uNebPXXeANzajRMr69rRiPO5IykpkflGv%2BQ9BtUtzBk7ngddgfqfYUcz3ZpJONIitVlMpyz%0AlQ64hp3wGerqjFJkZTnFKNsW9VymbU8XDuYGomFgYECPHPijagkulaPMKtBdyckBaAB74BYOwtky%0AM8QmMTIggHyh%2FGHGrvA%3D";
+    public static final String TEST_COTK = "oeB87zWB3w%2BMxA%2BHVU0pBiVvl%2BTOmeQjECZ0fioqapUmGfqHfSujNZNPXdMVtm3x31Dgn674%2BSwb%0AjS7504rQkVl%2BPjVAXpJxe7X%2FH%2FL7jWQ6nlw%2BaPqloHncjpBik5QI0fcLc2oVMHHbsFc%2BE8mGhyae%0AGDH8eD%2Bdzgg62NxoW2s%3D";
 
     //    public static final String LIVEPLATFORM_API_HOST = "172.16.6.64:80";
 

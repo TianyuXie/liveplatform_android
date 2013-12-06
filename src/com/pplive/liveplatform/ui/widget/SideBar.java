@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.LoginActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
-import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
@@ -144,8 +144,8 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //            Intent intent = new Intent(getContext(), LoginActivity.class);
-            Intent intent = new Intent(getContext(), UserpageActivity.class);
+            Intent intent = new Intent(getContext(), LoginActivity.class);
+            //            Intent intent = new Intent(getContext(), UserpageActivity.class);
             getContext().startActivity(intent);
         }
     };

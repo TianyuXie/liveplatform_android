@@ -36,7 +36,7 @@ import com.pplive.liveplatform.core.task.home.GetMediaTask;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
-import com.pplive.liveplatform.ui.widget.ShareDialog;
+import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 

@@ -4,19 +4,18 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-public class UserCacheHelper extends SQLiteOpenHelper {
+public class PrivateHelper extends SQLiteOpenHelper {
 
-    private static final String DATABASE_NAME = "user_cache.db";
+    private static final String DATABASE_NAME = "private.db";
     private static final int DATABASE_VERSION = 1;
 
-    public UserCacheHelper(Context context) {
+    public PrivateHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS search (_id INTEGER PRIMARY KEY AUTOINCREMENT, stime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, keyword TEXT)");
-        db.execSQL("CREATE INDEX search_index ON search(keyword)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS users (username TEXT PRIMARY KEY NOT NULL, password TEXT NOT NULL, status INTEGER NOT NULL DEFAULT 1, ttime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, token TEXT)");
     }
 
     @Override

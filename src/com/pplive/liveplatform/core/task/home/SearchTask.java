@@ -21,7 +21,7 @@ public class SearchTask extends Task {
     public final static String KEY_KEYWORD = "key";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetTask";
+    private final String NAME = "Search";
 
     @Override
     public String getID() {

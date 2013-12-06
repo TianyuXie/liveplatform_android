@@ -1,15 +1,7 @@
 package com.pplive.liveplatform.core.settings;
 
-import android.content.Context;
-
-import com.pplive.liveplatform.util.AesUtil;
-
 public class UserPrefs {
     private String mNickname;
-
-    private String mUser;
-
-    private String mPassword;
 
     private boolean mPreliveNotify;
 
@@ -39,28 +31,28 @@ public class UserPrefs {
         return mNickname;
     }
 
-    public String getUserPlain(Context context) {
-        return AesUtil.decrypt(mUser, context);
-    }
-
-    public String getUser() {
-        return mUser;
-    }
-
-    public void setUser(String user) {
-        this.mUser = user;
-    }
-
-    public String getPassword() {
-        return mPassword;
-    }
-
-    public void setPassword(String password) {
-        this.mPassword = password;
-    }
-
-    public String getPasswordPlain(Context context) {
-        return AesUtil.decrypt(mPassword, context);
-    }
+//    public String getUserPlain(Context context) {
+//        return EncryptUtil.decrypt(mUser, context);
+//    }
+//
+//    public String getUser() {
+//        return mUser;
+//    }
+//
+//    public void setUser(String user) {
+//        this.mUser = user;
+//    }
+//
+//    public String getPassword() {
+//        return mPassword;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.mPassword = password;
+//    }
+//
+//    public String getPasswordPlain(Context context) {
+//        return EncryptUtil.decrypt(mPassword, context);
+//    }
 
 }

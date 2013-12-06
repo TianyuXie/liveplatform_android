@@ -67,9 +67,9 @@
                         android:text="@string/settings_pptv_user" />
 
                     <TextView
+                        android:id="@+id/text_settings_user"
                         android:layout_marginRight="12dp"
-                        android:text="@string/test_settings_pptv_user"
-                        android:textColor="@color/settings_pptv_user"
+                        android:textColor="@color/white"
                         android:textSize="16sp" />
                 </TableRow>
 
@@ -125,6 +125,7 @@
             </TableLayout>
 
             <Button
+                android:id="@+id/btn_settings_logout"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/settings_btn_logout_bg"

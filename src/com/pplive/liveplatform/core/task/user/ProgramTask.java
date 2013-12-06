@@ -1,32 +1,28 @@
-package com.pplive.liveplatform.core.task.home;
+package com.pplive.liveplatform.core.task.user;
 
 import java.util.List;
 
-import com.pplive.liveplatform.core.service.live.MediaService;
-import com.pplive.liveplatform.core.service.live.model.Watch;
+import com.pplive.liveplatform.core.service.live.ProgramService;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class GetMediaTask extends Task {
-    public final static String KEY_RESULT = "play_media_result";
-    public final static String KEY_PID = "pid";
-    public final static String KEY_USERNAME = "username";
+public class ProgramTask extends Task {
+    public final static String KEY_RESULT = "program_result";
     
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetMedia";
+    private final String NAME = "Program";
 
     @Override
     public String getID() {
-        // TODO Auto-generated method stub
         return ID;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
         return NAME;
     }
 
@@ -51,13 +47,11 @@ public class GetMediaTask extends Task {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String username = (String) context.get(KEY_USERNAME);
-        List<Watch> data = null;
+        List<Program> data = null;
         try {
-            data = MediaService.getInstance().getPlayWatchList(pid, username);
+            data = ProgramService.getInstance().getProgramsByOwner("xiety0001");
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "get error");
+            return new TaskResult(TaskStatus.Failed, "GET Error");
         }
         if (data == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
