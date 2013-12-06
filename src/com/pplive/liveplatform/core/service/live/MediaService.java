@@ -38,10 +38,10 @@ public class MediaService extends RestService {
 
     }
 
-    public Push getPush(long pid, String username) {
+    public Push getPush(String coToken, long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getLiveToken(pid, username);
+        String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
         return getPushByToken(pid, token);
     }
@@ -62,7 +62,7 @@ public class MediaService extends RestService {
     public List<Watch> getPlayWatchList(long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getPlayToken(pid, username);
+        String token = TokenService.getInstance().getPlayToken(Constants.TEST_COTK, pid, username);
 
         return getPlayWatchListByToken(pid, token);
     }
@@ -83,7 +83,7 @@ public class MediaService extends RestService {
     public List<Watch> getPreviewWatchList(long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getLiveToken(pid, username);
+        String token = TokenService.getInstance().getLiveToken(Constants.TEST_COTK, pid, username);
 
         return getPreviewWatchListByToken(pid, token);
     }

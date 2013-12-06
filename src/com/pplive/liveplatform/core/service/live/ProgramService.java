@@ -61,10 +61,10 @@ public class ProgramService extends RestService {
         return null;
     }
 
-    public Program createProgram(Program program) {
+    public Program createProgram(String coToken, Program program) {
         Log.d(TAG, program.toString());
         
-        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<Program>(program, mRequestHeaders);
 
@@ -73,20 +73,20 @@ public class ProgramService extends RestService {
         return resp.getData();
     }
 
-    public void updateProgram(Program program) {
+    public void updateProgram(String coToken, Program program) {
         Log.d(TAG, program.toString());
 
-        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
 
         mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, Resp.class, program.getId());
     }
 
-    public void deleteProgramById(long pid) {
+    public void deleteProgramById(String coToken, long pid) {
         Log.d(TAG, "pid: " + pid);
 
-        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
