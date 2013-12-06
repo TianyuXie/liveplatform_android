@@ -19,6 +19,8 @@ public class Watch {
     int interval;
     
     long starttime;
+    
+    long now;
 
     public long getId() {
         return pid;
@@ -43,8 +45,8 @@ public class Watch {
             String url = null;
             for (String addr : channel.getAddrs()) {
                 if ("live2".equals(protocol)) {
-                    String playLink = String.format("%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=%d", pid, channel.getFt(),
-                            channel.getName(), addr, starttime / 1000, delay, interval, channel.getBwType());
+                    String playLink = String.format("%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=0&bitrate=400&interval=%d&bwtype=-1&sdkmode=1&livepath=live2", pid, channel.getFt(),
+                            channel.getName(), addr, now / 1000, interval);
                     url = PPBoxUtil.getPPLive2M3U8PlayURL(playLink).toString();
                 } else if ("rtmp".equals(protocol)) {
                     String playLink = String.format("%s://%s%s/%s", protocol, addr, channel.getPath(), channel.getName());

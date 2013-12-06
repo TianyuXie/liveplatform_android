@@ -14,7 +14,7 @@ import android.util.Log;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class MediaManager {
-    
+
     private static final String TAG = MediaManager.class.getSimpleName();
 
     public static final String MIME_TYPE_VIDEO_AVC = "video/avc";
@@ -60,10 +60,12 @@ public class MediaManager {
                     int colorFormat = colorFormats[0];
                     for (int k = 0; k < colorFormats.length; ++k) {
                         Log.d(TAG, "color: " + colorFormats[k]);
-                        if (MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar == colorFormats[k]) {
-                            colorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar;
+                        if (colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
+                            colorFormat = colorFormats[k];
                         }
                     }
+                    
+                    Log.d(TAG, "colorFormat: " + colorFormat);
 
                     MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE_VIDEO_AVC, size.width, size.height);
                     format.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_BIT_RATE);

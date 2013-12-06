@@ -8,11 +8,14 @@ import java.util.Map.Entry;
 
 import android.net.Uri;
 import android.text.TextUtils;
+import android.util.Log;
 
-public class URL implements Serializable, Cloneable {
-    
+public class URL implements Serializable {
+
+    private static final String TAG = URL.class.getSimpleName();
+
     private static final long serialVersionUID = -3649683692013310693L;
-    
+
     public enum Protocol {
         HTTP {
             @Override
@@ -113,17 +116,26 @@ public class URL implements Serializable, Cloneable {
     }
 
     public final <T> void addParameter(String key, T value) {
+        Log.d(TAG, "key: " + key);
         mParams.put(key, value);
     }
 
     @Override
     public final String toString() {
+        Log.d(TAG, "toString");
+
         StringBuilder sb = new StringBuilder(mBaseUrl);
 
-        boolean first = true;
-        for (Entry<String, Object> entry : mParams.entrySet()) {
-            sb.append(String.format(first ? "?%s=%s" : "&%s=%s", entry.getKey(), entry.getValue()));
-            first = false;
+        if (mParams.size() > 0) {
+            sb.append(mBaseUrl.contains("?") ? "&" : "?");
+
+            boolean isFirst = true;
+            for (Entry<String, Object> entry : mParams.entrySet()) {
+                sb.append(String.format(isFirst ? "%s=%s" : "&%s=%s", entry.getKey(), entry.getValue()));
+                isFirst = false;
+            }
+
+            Log.d(TAG, "sb.toString: " + sb.toString());
         }
 
         return sb.toString();

@@ -1,8 +1,8 @@
-package com.pplive.liveplatform.core.service.live.http;
+package com.pplive.liveplatform.core.service.live.auth;
 
 import android.text.TextUtils;
 
-public class PlayTokenAuthentication extends TokenAuthentication {
+public class PlayTokenAuthentication extends UserTokenAuthentication {
 
     public PlayTokenAuthentication(String playToken) {
         this(null, playToken);
