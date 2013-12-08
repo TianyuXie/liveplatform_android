@@ -104,7 +104,6 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     @Override
     public void show() {
         if (!mAnimating && !mShowing && mShowAnimation != null) {
-            updateUsername();
             mRoot.setVisibility(VISIBLE);
             mBlockLayer.setClickable(false);
             mShowing = true;
@@ -170,6 +169,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
                 getContext().startActivity(intent);
             } else {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
+                intent.putExtra(LoginActivity.EXTRA_TAGET, UserpageActivity.class.getName());
                 getContext().startActivity(intent);
             }
         }

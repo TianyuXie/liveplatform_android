@@ -40,7 +40,7 @@ public class SettingsActivity extends Activity {
         mUserPrefs = SettingsProvider.getInstance(this).getPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
-        mUserTextView.setText(UserManager.getInstance(getApplicationContext()).getActiveUserPlain());
+        mUserTextView.setText(UserManager.getInstance(this).getActiveUserPlain());
     }
 
     @Override

@@ -29,6 +29,8 @@ import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 public class LoginActivity extends Activity {
     static final String TAG = "_LoginActivity";
 
+    public static final String EXTRA_TAGET = "target";
+
     private EditText mUsrEditText;
 
     private EditText mPwdEditText;
@@ -107,8 +109,15 @@ public class LoginActivity extends Activity {
             String token = (String) event.getContext().get(LoginTask.KEY_TOKEN);
             UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(mContext, UserpageActivity.class);
-            mContext.startActivity(intent);
+
+            String targetClass = getIntent().getStringExtra("target");
+            try {
+                Intent intent = new Intent(mContext, Class.forName(targetClass));
+                mContext.startActivity(intent);
+            } catch (ClassNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
             finish();
         }
 
