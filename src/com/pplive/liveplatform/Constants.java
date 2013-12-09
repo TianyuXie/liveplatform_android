@@ -12,7 +12,7 @@ public final class Constants {
 
     public static final String PLATFORM_ANDROID_PHONE = "aph";
 
-    public static final String TEST_COTK = "IUYh6uNebPXXeANzajRMr69rRiPO5IykpkflGv%2BQ9BtUtzBk7ngddgfqfYUcz3ZpJONIitVlMpyz%0AlQ64hp3wGerqjFJkZTnFKNsW9VymbU8XDuYGomFgYECPHPijagkulaPMKtBdyckBaAB74BYOwtky%0AM8QmMTIggHyh%2FGHGrvA%3D";
+    public static final String TEST_COTK = "hHIHsC5cf4xQv7vnfZ2dw1fVchUA7MGnMkMu%2FL%2FolXjgTh5iFxwxhBHdQsRQKX4ejEYp16zH9Lwd%0AWRxQpVoGnyLqkH6bRnt2ujH9%2BYzVx0mY9A9J%2FP%2B2dnE%2B7E8g3aKL1AkWCLBbjKs9L5MgGFli79fB%0A5rZunz%2FIjWtLeP1PeDQ%3D";
 
     //    public static final String LIVEPLATFORM_API_HOST = "172.16.6.47:80";
 
