@@ -8,6 +8,10 @@ public class LoginResult {
     
     String thirdPartyToken;
     
+    String thirdPartyID;
+    String thirdPartyNickName;
+    String thirdPartyFaceUrl;
+    
     public String getUsername() {
         return username;
     }
@@ -19,4 +23,43 @@ public class LoginResult {
     public String getThirdPartyToken() {
         return thirdPartyToken;
     }
+    
+    public String getThirdPartyNickName()
+    {
+        return thirdPartyNickName;
+        
+    }
+    
+    public String getThirdPartyID()
+    {
+        return thirdPartyID;
+        
+    }
+
+    public String getThirdPartyFaceUrl()
+    {
+        return thirdPartyFaceUrl;
+    }
+    
+    public void setThirdPartyToken(String token) {
+        thirdPartyToken = token;
+    }
+    
+    public void setThirdPartyNickName(String name)
+    {
+        thirdPartyNickName = name;
+        
+    }
+    
+    public void setThirdPartyID(String id)
+    {
+        thirdPartyID = id;
+        
+    }
+
+    public void setThirdPartyFaceUrl(String url)
+    {
+        thirdPartyFaceUrl = url;
+    }
+    
 }
