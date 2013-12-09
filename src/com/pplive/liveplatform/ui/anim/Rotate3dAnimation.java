@@ -34,6 +34,8 @@ public class Rotate3dAnimation extends Animation {
     private final boolean mReverse;
     private Camera mCamera;
 
+    private boolean mReachMiddle;
+
     /**
      * Creates a new 3D rotation on the Y axis. The rotation is defined by its start angle and its end angle. Both
      * angles are in degrees. The rotation is performed around a center point on the 2D space, definied by a pair of X
@@ -90,5 +92,23 @@ public class Rotate3dAnimation extends Animation {
 
         matrix.preTranslate(-centerX, -centerY);
         matrix.postTranslate(centerX, centerY);
+
+        if (!mReachMiddle && interpolatedTime >= 0.5f) {
+            mReachMiddle = true;
+            if (mRotateListener != null) {
+                mRotateListener.onRotateMiddle();
+            }
+        }
     }
+
+    public interface RotateListener {
+        public void onRotateMiddle();
+    }
+
+    private RotateListener mRotateListener;
+
+    public void setRotateListener(RotateListener l) {
+        this.mRotateListener = l;
+    }
+
 }
