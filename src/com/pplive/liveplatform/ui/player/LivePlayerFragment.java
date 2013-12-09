@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.thirdparty.BreakpadUtil;
 
@@ -124,8 +125,14 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
 
     @Override
     public void onStop() {
-        mVideoView.stopPlayback();
+        Log.d(TAG, "onStop");
+        stopPlayback();
         super.onStop();
+    }
+
+    private void stopPlayback() {
+        PPBoxUtil.closeM3U8();
+        mVideoView.stopPlayback();
     }
 
     @Override
@@ -146,6 +153,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
+        
         @Override
         public void onPrepared() {
             mVideoView.start();
@@ -153,8 +161,12 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnCompletionListener mCompletionListener = new MeetVideoView.OnCompletionListener() {
+        
+        @Override
         public void onCompletion() {
-            mVideoView.stopPlayback();
+            
+            stopPlayback();
+
             if (mOnCompletionListener != null) {
                 mOnCompletionListener.onCompletion();
             }
@@ -162,8 +174,12 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnErrorListener mErrorListener = new MeetVideoView.OnErrorListener() {
+        
+        @Override
         public boolean onError(int what, int extra) {
-            mVideoView.stopPlayback();
+
+            stopPlayback();
+
             if (mOnErrorListener != null) {
                 return mOnErrorListener.onError(what, extra);
             }

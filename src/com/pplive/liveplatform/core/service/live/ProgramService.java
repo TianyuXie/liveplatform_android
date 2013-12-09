@@ -8,8 +8,9 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.service.URL;
-import com.pplive.liveplatform.core.service.live.http.TokenAuthentication;
+import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.URL.Protocol;
+import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.resp.ProgramListResp;
@@ -20,14 +21,14 @@ public class ProgramService extends RestService {
 
     private static final String TAG = ProgramService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PROGRAMS = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
+    private static final String TEMPLATE_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
 
-    private static final String TEMPLATE_CREATE_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
+    private static final String TEMPLATE_CREATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
-    private static final String TEMPLATE_UPDATE_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/info").toString();
+    private static final String TEMPLATE_UPDATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/info").toString();
 
-    private static final String TEMPLATE_DELETE_PROGRAM = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
+    private static final String TEMPLATE_DELETE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
 
     private static ProgramService sInstance = new ProgramService();
 
@@ -60,10 +61,10 @@ public class ProgramService extends RestService {
         return null;
     }
 
-    public Program createProgram(Program program) {
+    public Program createProgram(String coToken, Program program) {
         Log.d(TAG, program.toString());
         
-        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<Program>(program, mRequestHeaders);
 
@@ -72,20 +73,20 @@ public class ProgramService extends RestService {
         return resp.getData();
     }
 
-    public void updateProgram(Program program) {
+    public void updateProgram(String coToken, Program program) {
         Log.d(TAG, program.toString());
 
-        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
 
         mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, Resp.class, program.getId());
     }
 
-    public void deleteProgramById(long pid) {
+    public void deleteProgramById(String coToken, long pid) {
         Log.d(TAG, "pid: " + pid);
 
-        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 

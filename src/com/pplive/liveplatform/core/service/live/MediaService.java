@@ -8,9 +8,10 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.service.URL;
-import com.pplive.liveplatform.core.service.live.http.LiveTokenAuthentication;
-import com.pplive.liveplatform.core.service.live.http.PlayTokenAuthentication;
+import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.URL.Protocol;
+import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
+import com.pplive.liveplatform.core.service.live.auth.PlayTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.service.live.resp.PushResp;
@@ -20,11 +21,13 @@ public class MediaService extends RestService {
 
     private static final String TAG = MediaService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PUSH = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/publish").toString();
+    private static final String TEMPLATE_GET_PUSH = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/publish")
+            .toString();
 
-    private static final String TEMPLATE_GET_PLAY = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch").toString();
+    private static final String TEMPLATE_GET_PLAY = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch")
+            .toString();
 
-    private static final String TEMPLATE_GET_PREVIEW = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/preview")
+    private static final String TEMPLATE_GET_PREVIEW = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/preview")
             .toString();
 
     private static final MediaService sInstance = new MediaService();
@@ -37,18 +40,18 @@ public class MediaService extends RestService {
 
     }
 
-    public Push getPush(long pid, String username) {
+    public Push getPush(String coToken, long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getLiveToken(pid, username);
+        String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
-        return getPushByToken(pid, token);
+        return getPushByLiveToken(pid, token);
     }
 
-    public Push getPushByToken(long pid, String token) {
-        Log.d(TAG, "pid: " + pid + "; token: " + token);
+    public Push getPushByLiveToken(long pid, String liveToken) {
+        Log.d(TAG, "pid: " + pid + "; token: " + liveToken);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -58,18 +61,18 @@ public class MediaService extends RestService {
         return body.getData();
     }
 
-    public List<Watch> getPlayWatchList(long pid, String username) {
-        Log.d(TAG, "pid: " + pid + "; username: " + username);
+    public List<Watch> getPlayWatchList(String coToken, long pid, String username) {
+        Log.d(TAG, "coToken:" + coToken + "; pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getPlayToken(pid, username);
+        String token = TokenService.getInstance().getPlayToken(coToken, pid, username);
 
-        return getPlayWatchListByToken(pid, token);
+        return getPlayWatchListByPlayToken(pid, token);
     }
 
-    public List<Watch> getPlayWatchListByToken(long pid, String token) {
-        Log.d(TAG, "pid: " + pid + "; token: " + token);
+    public List<Watch> getPlayWatchListByPlayToken(long pid, String playToken) {
+        Log.d(TAG, "pid: " + pid + "; token: " + playToken);
 
-        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(token));
+        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
@@ -79,18 +82,18 @@ public class MediaService extends RestService {
         return body.getList();
     }
 
-    public List<Watch> getPreviewWatchList(long pid, String username) {
+    public List<Watch> getPreviewWatchList(String coToken, long pid, String username) {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
-        String token = TokenService.getInstance().getLiveToken(pid, username);
+        String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
-        return getPreviewWatchListByToken(pid, token);
+        return getPreviewWatchListByLiveToken(pid, token);
     }
 
-    public List<Watch> getPreviewWatchListByToken(long pid, String token) {
+    public List<Watch> getPreviewWatchListByLiveToken(long pid, String token) {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(Constants.TEST_COTK, token));
+        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 

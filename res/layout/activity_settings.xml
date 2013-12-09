@@ -72,17 +72,6 @@
                         android:textColor="@color/white"
                         android:textSize="16sp" />
                 </TableRow>
-
-                <TableRow style="@style/settings_tablerow" >
-
-                    <TextView
-                        style="@style/settings_text"
-                        android:text="@string/settings_password" />
-
-                    <ImageView
-                        style="@style/settings_right_arrow"
-                        android:contentDescription="@null" />
-                </TableRow>
             </TableLayout>
 
             <TableLayout style="@style/settings_tablelayout" >

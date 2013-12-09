@@ -7,15 +7,16 @@ import org.springframework.http.ResponseEntity;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.service.URL;
-import com.pplive.liveplatform.core.service.live.http.TokenAuthentication;
+import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.URL.Protocol;
+import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.resp.TokenResp;
 
 public class TokenService extends RestService {
 
     private static final String TAG = TokenService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_TOKEN = new URL(URL.Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
+    private static final String TEMPLATE_GET_TOKEN = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/tk/v1/{tokentype}/{programid}?user={username}&expiretime={expiretime}").toString();
 
     private static final TokenService sInstance = new TokenService();
@@ -28,26 +29,26 @@ public class TokenService extends RestService {
 
     }
 
-    public String getLiveToken(long pid, String username) {
-        return getLiveToken(pid, username, 600 /* second */);
+    public String getLiveToken(String coToken, long pid, String username) {
+        return getLiveToken(coToken, pid, username, 600 /* second */);
     }
 
-    public String getLiveToken(long pid, String username, int expiretime) {
-        return getToken(TokenType.LIVE, pid, username, expiretime);
+    public String getLiveToken(String coToken, long pid, String username, int expiretime) {
+        return getToken(coToken, TokenType.LIVE, pid, username, expiretime);
     }
 
-    public String getPlayToken(long pid, String username) {
-        return getPlayToken(pid, username, 600 /* second */);
+    public String getPlayToken(String coToken, long pid, String username) {
+        return getPlayToken(coToken, pid, username, 600 /* second */);
     }
 
-    public String getPlayToken(long pid, String username, int expiretime) {
-        return getToken(TokenType.PLAY, pid, username, expiretime);
+    public String getPlayToken(String coToken, long pid, String username, int expiretime) {
+        return getToken(coToken, TokenType.PLAY, pid, username, expiretime);
     }
 
-    private String getToken(TokenType type, long pid, String username, int expiretime) {
+    private String getToken(String coToken, TokenType type, long pid, String username, int expiretime) {
         Log.d(TAG, "TokenType: " + type + "; pid: " + pid + "; username: " + username + "; expiretime: " + expiretime);
 
-        TokenAuthentication coTokenAuthentication = new TokenAuthentication(Constants.TEST_COTK);
+        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 

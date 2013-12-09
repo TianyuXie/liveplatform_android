@@ -4,13 +4,13 @@
     android:layout_height="wrap_content"
     android:padding="3dp" >
 
-    <ImageView
+    <com.pplive.liveplatform.ui.widget.AsyncImageView
         android:id="@+id/image_program_preview"
         android:layout_width="fill_parent"
         android:layout_height="200dp"
-        android:adjustViewBounds="true"
         android:background="@drawable/program_default_image"
-        android:contentDescription="@string/blank" />
+        android:contentDescription="@string/blank"
+        android:scaleType="fitXY" />
 
     <LinearLayout
         android:id="@+id/layout_program_tag"

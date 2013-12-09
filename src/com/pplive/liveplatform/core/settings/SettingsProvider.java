@@ -9,6 +9,8 @@ public class SettingsProvider {
     private static final String KEY_CONTENT = "content";
     private static final String KEY_PRELIVE = "prelive";
     private static final String KEY_NICKNAME = "nickname";
+    private static final String KEY_PRIVATE = "private";
+    private static final String KEY_TOKEN = "token";
 
     private SharedPreferences sharedPreferences;
 
@@ -37,6 +39,28 @@ public class SettingsProvider {
         editor.putBoolean(KEY_CONTENT, userPrefs.isContentNotify());
         editor.putBoolean(KEY_PRELIVE, userPrefs.isPreliveNotify());
         editor.putString(KEY_NICKNAME, userPrefs.getNickname());
+        editor.commit();
+    }
+
+    public String getUserinfo() {
+        return sharedPreferences.getString(KEY_PRIVATE, "");
+    }
+
+    public String getToken() {
+        return sharedPreferences.getString(KEY_TOKEN, "");
+    }
+
+    public void clearUser() {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putString(KEY_PRIVATE, "");
+        editor.putString(KEY_TOKEN, "");
+        editor.commit();
+    }
+
+    public void setUser(String userInfo, String token) {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putString(KEY_PRIVATE, userInfo);
+        editor.putString(KEY_TOKEN, token);
         editor.commit();
     }
 }

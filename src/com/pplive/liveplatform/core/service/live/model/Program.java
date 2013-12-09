@@ -21,6 +21,8 @@ public class Program {
     int subject_id = 1;
 
     String cover_url;
+    
+    String screenshot_url;
 
     String coname = "pptv";
 
@@ -70,7 +72,17 @@ public class Program {
     }
 
     public String getCoverUrl() {
+        if (cover_url == null || cover_url.equals("null")){
+            return "";
+        }
         return cover_url;
+    }
+    
+    public String getScreenshotUrl() {
+        if (screenshot_url == null || screenshot_url.equals("null")){
+            return "";
+        }
+        return screenshot_url;
     }
 
     @Override

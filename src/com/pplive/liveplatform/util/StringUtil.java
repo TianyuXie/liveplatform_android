@@ -13,16 +13,7 @@ public class StringUtil {
         return !isNullOrEmpty(str);
     }
 
-    public static String safeStringUnknown(String str) {
-        // If the str is null or empty, return unknown
-        if (isNullOrEmpty(str)) {
-            return "Unknown";
-        } else {
-            return str;
-        }
-    }
-
-    public static String safeStringEmpty(String str) {
+    public static String safeString(String str) {
         if (isNullOrEmpty(str)) {
             return "";
         } else {

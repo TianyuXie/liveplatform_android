@@ -27,6 +27,7 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
@@ -447,24 +448,26 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         @Override
         protected String doInBackground(Program... params) {
+            String username = UserManager.getInstance(getApplicationContext()).getActiveUserPlain();
+            String usertoken = UserManager.getInstance(getApplicationContext()).getToken();
 
             Program program = params[0];
             if (null == program) {
                 Log.d(TAG, "create program");
-                program = new Program("xiety0001", "My Living", System.currentTimeMillis());
-                program = ProgramService.getInstance().createProgram(program);
+                program = new Program(username, "My Living", System.currentTimeMillis());
+                program = ProgramService.getInstance().createProgram(usertoken, program);
                 mSelectedProgram = program;
             } else {
                 Log.d(TAG, "has program");
             }
 
-            String token = TokenService.getInstance().getLiveToken(program.getId(), program.getOwner());
+            String token = TokenService.getInstance().getLiveToken(usertoken, program.getId(), program.getOwner());
 
-            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.INIT, token);
-            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.PREVIEW, token);
-            LiveControlService.getInstance().updateLiveStatusWithToken(program.getId(), LiveStatusEnum.LIVING, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, token);
 
-            Push push = MediaService.getInstance().getPush(program.getId(), "xiety0001");
+            Push push = MediaService.getInstance().getPush(usertoken, program.getId(), username);
 
             String url = null;
             for (int i = 0, len = push.getPushStringList().size(); i < len; ++i) {
