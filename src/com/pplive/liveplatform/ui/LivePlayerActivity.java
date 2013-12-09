@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -93,13 +94,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private String mUrl;
 
-    private Context context;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "onCreate");
-        this.context = this;
+        this.mContext = this;
 
         /* init window */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -234,7 +235,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startWriting();
+            if (UserManager.getInstance(mContext).isLogin()) {
+                startWriting();
+            } else {
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                startActivity(intent);
+            }
         }
     };
 
@@ -437,7 +443,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
-    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector gestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {

@@ -110,13 +110,14 @@ public class LoginActivity extends Activity {
             UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
 
-            String targetClass = getIntent().getStringExtra("target");
-            try {
-                Intent intent = new Intent(mContext, Class.forName(targetClass));
-                mContext.startActivity(intent);
-            } catch (ClassNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
+            if (!TextUtils.isEmpty(targetClass)) {
+                try {
+                    Intent intent2 = new Intent(mContext, Class.forName(targetClass));
+                    mContext.startActivity(intent2);
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
             finish();
         }
