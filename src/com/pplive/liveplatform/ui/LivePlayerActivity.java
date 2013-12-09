@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -17,8 +18,10 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -53,6 +56,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private final static int MSG_LOADING_DELAY = 2000;
 
     private final static int MSG_LOADING_FINISH = 2001;
+
+    private final static int LOADING_DELAY_TIME = 5000;
 
     private DetectableRelativeLayout mRootLayout;
 
@@ -112,6 +117,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mLoadingDialog = new LoadingDialog(this);
+        mLoadingDialog.setOnKeyListener(onLoadingKeyListener);
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
@@ -150,7 +156,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             long pid = getIntent().getLongExtra("pid", -1);
             if (pid != -1) {
                 showLoading();
-                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, 8000);
+                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask task = new GetMediaTask();
                 task.addTaskListener(onTaskListener);
                 TaskContext taskContext = new TaskContext();
@@ -304,6 +310,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             Log.d(TAG, "Send: " + keyword);
             stopWriting();
             return true;
+        }
+    };
+
+    private DialogInterface.OnKeyListener onLoadingKeyListener = new DialogInterface.OnKeyListener() {
+        @Override
+        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+                finish();
+                return true;
+            }
+            return false;
         }
     };
 
@@ -483,5 +500,4 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
         }
     };
-
 }
