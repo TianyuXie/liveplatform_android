@@ -4,13 +4,13 @@ import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.pplive.liveplatform.core.db.PrivateDBManager;
+import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.util.EncryptUtil;
 
 public class UserManager {
     private static UserManager instance;
 
-    private String mActiveUser;
+    private String mUserinfo;
 
     private String mActiveUserPlain;
 
@@ -23,10 +23,10 @@ public class UserManager {
     private UserManager(Context context) {
         mContext = context;
         mImei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        mActiveUser = PrivateDBManager.getInstance(mContext).getActiveUser();
-        if (!TextUtils.isEmpty(mActiveUser)) {
-            mToken = PrivateDBManager.getInstance(mContext).getToken(mActiveUser);
-            mActiveUserPlain = EncryptUtil.decrypt(mActiveUser, mImei, EncryptUtil.EXTRA1);
+        mUserinfo = SettingsProvider.getInstance(mContext).getUserinfo();
+        if (!TextUtils.isEmpty(mUserinfo)) {
+            mToken = SettingsProvider.getInstance(mContext).getToken();
+            mActiveUserPlain = EncryptUtil.decrypt(mUserinfo, mImei).split(String.valueOf((char) 0x01))[0];
         }
     }
 
@@ -37,15 +37,16 @@ public class UserManager {
     }
 
     public boolean isLogin() {
-        return !TextUtils.isEmpty(mActiveUser);
+        return !TextUtils.isEmpty(mUserinfo);
     }
 
     public void login(String usrPlain, String pwdPlain, String token) {
         if (!isLogin()) {
-            String usr = EncryptUtil.encrypt(usrPlain, mImei, EncryptUtil.EXTRA1);
-            String pwd = EncryptUtil.encrypt(pwdPlain, mImei, EncryptUtil.EXTRA2);
-            PrivateDBManager.getInstance(mContext).loginUser(usr, pwd, token);
-            mActiveUser = usr;
+            StringBuffer sb = new StringBuffer();
+            sb.append(usrPlain).append((char) 0x01).append(pwdPlain);
+            String userInfo = EncryptUtil.encrypt(sb.toString(), mImei);
+            SettingsProvider.getInstance(mContext).setUser(userInfo, token);
+            mUserinfo = userInfo;
             mActiveUserPlain = usrPlain;
             mToken = token;
         }
@@ -53,8 +54,10 @@ public class UserManager {
 
     public void logout() {
         if (isLogin()) {
-            PrivateDBManager.getInstance(mContext).logoutUser(mActiveUser);
-            mActiveUser = null;
+            SettingsProvider.getInstance(mContext).clearUser();
+            mUserinfo = null;
+            mActiveUserPlain = null;
+            mToken = null;
         }
     }
 
