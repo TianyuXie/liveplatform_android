@@ -16,6 +16,7 @@ import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.resp.ProgramListResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramResp;
 import com.pplive.liveplatform.core.service.live.resp.Resp;
+import com.pplive.liveplatform.util.URLEncoderUtil;
 
 public class ProgramService extends RestService {
 
@@ -51,7 +52,7 @@ public class ProgramService extends RestService {
     private List<Program> getProgramsByOwner(String owner, String liveStatus) {
         Log.d(TAG, "owner: " + owner + "; livestatus: " + liveStatus);
 
-        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, liveStatus);
+        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, URLEncoderUtil.encode(owner), liveStatus);
 
         return rep.getList();
     }
