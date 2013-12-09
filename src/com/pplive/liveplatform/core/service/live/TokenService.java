@@ -8,10 +8,10 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.resp.TokenResp;
 import com.pplive.liveplatform.util.URLEncoderUtil;
+import com.pplive.liveplatform.util.URL.Protocol;
 
 public class TokenService extends RestService {
 

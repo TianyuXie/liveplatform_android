@@ -4,10 +4,10 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.resp.ProgramFallListResp;
+import com.pplive.liveplatform.util.URL.Protocol;
 
 public class SearchService extends RestService {
 
