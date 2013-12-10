@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -11,6 +12,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -24,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -36,7 +40,8 @@ import com.pplive.liveplatform.core.task.home.GetMediaTask;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
-import com.pplive.liveplatform.ui.widget.ShareDialog;
+import com.pplive.liveplatform.ui.widget.dialog.LoadingDialog;
+import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
@@ -44,6 +49,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     static final String TAG = "_LivePlayerActivity";
 
     private static final int SCREEN_ORIENTATION_INVALID = -1;
+
+    private final static int MSG_LOADING_DELAY = 2000;
+
+    private final static int MSG_LOADING_FINISH = 2001;
 
     private DetectableRelativeLayout mRootLayout;
 
@@ -55,7 +64,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mCommentView;
 
+    private View mLoadingView;
+
     private Dialog mShareDialog;
+
+    private Dialog mLoadingDialog;
 
     private Button mWriteBtn;
 
@@ -73,17 +86,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mWriting;
 
+    private boolean mLoadingFinish;
+
+    private boolean mLoadingDelayed;
+
     private int mHalfScreenHeight;
 
     private String mUrl;
 
-    private Context context;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         Log.d(TAG, "onCreate");
-        this.context = this;
+        this.mContext = this;
 
         /* init window */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -94,6 +111,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment = new LivePlayerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
+        mLoadingDialog = new LoadingDialog(this);
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
@@ -108,6 +126,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mDialogView = findViewById(R.id.layout_player_dialog);
+        mLoadingView = findViewById(R.id.layout_player_loading);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
         mDialogView.setOnTouchListener(onDialogTouchListener);
@@ -126,17 +145,23 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(getIntent().getStringExtra("title"));
         if (mUrl == null) {
-            String username = getIntent().getStringExtra("username");
+            String username = UserManager.getInstance(this).getActiveUserPlain();
+            String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
-            Log.d(TAG, "pid:" + pid);
             if (pid != -1) {
+                showLoading();
+                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, 8000);
                 GetMediaTask task = new GetMediaTask();
                 task.addTaskListener(onTaskListener);
                 TaskContext taskContext = new TaskContext();
                 taskContext.set(GetMediaTask.KEY_PID, pid);
                 taskContext.set(GetMediaTask.KEY_USERNAME, username);
+                taskContext.set(GetMediaTask.KEY_TOKEN, token);
                 task.execute(taskContext);
             }
+        } else {
+            Log.d(TAG, "onStart mUrl:" + mUrl);
+            mLivePlayerFragment.setupPlayer(mUrl);
         }
     }
 
@@ -210,7 +235,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startWriting();
+            if (UserManager.getInstance(mContext).isLogin()) {
+                startWriting();
+            } else {
+                Intent intent = new Intent(mContext, LoginActivity.class);
+                startActivity(intent);
+            }
         }
     };
 
@@ -365,7 +395,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            // TODO Auto-generated method stub
 
         }
 
@@ -380,8 +409,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 }
             }
             if (mUrl != null) {
-                Log.d(TAG, mUrl);
+                Log.d(TAG, "onTaskFinished:" + mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
+                mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
             }
         }
 
@@ -413,7 +443,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
-    private GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector gestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -426,4 +456,32 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             return true;
         }
     });
+
+    public void showLoading() {
+        mLoadingView.setVisibility(View.VISIBLE);
+        mLoadingDialog.show();
+    }
+
+    public void hideLoading() {
+        mLoadingView.setVisibility(View.GONE);
+        mLoadingDialog.dismiss();
+    }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_LOADING_DELAY:
+                mLoadingDelayed = true;
+                break;
+            case MSG_LOADING_FINISH:
+                mLoadingFinish = true;
+                break;
+            }
+            if (mLoadingFinish && mLoadingDelayed) {
+                hideLoading();
+            }
+        }
+    };
+
 }

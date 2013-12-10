@@ -7,11 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeProgramAdapter extends BaseAdapter {
@@ -53,7 +53,7 @@ public class HomeProgramAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.layout_program_item, null);
             holder = new ViewHolder();
-            holder.previewImageView = (ImageView) convertView.findViewById(R.id.image_program_preview);
+            holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
             holder.statusTextView = (TextView) convertView.findViewById(R.id.text_program_status);
             holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
@@ -72,10 +72,11 @@ public class HomeProgramAdapter extends BaseAdapter {
         lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwner());
         holder.titleTextView.setText(data.getTitle());
+        holder.previewImageView.setImageAsync(data.getCoverUrl());
     }
 
     static class ViewHolder {
-        ImageView previewImageView;
+        AsyncImageView previewImageView;
 
         TextView statusTextView;
 

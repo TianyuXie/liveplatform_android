@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.ListView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -19,7 +20,7 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.userpage.ProgramTask;
+import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 
 public class UserpageActivity extends Activity {
@@ -47,8 +48,9 @@ public class UserpageActivity extends Activity {
     protected void onStart() {
         super.onStart();
         ProgramTask task = new ProgramTask();
-        task.addTaskListener(getTaskListener);
+        task.addTaskListener(onTaskListener);
         TaskContext taskContext = new TaskContext();
+        taskContext.set(ProgramTask.KEY_USR, UserManager.getInstance(this).getActiveUserPlain());
         task.execute(taskContext);
     }
 
@@ -68,7 +70,7 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private Task.OnTaskListener getTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
 
         @SuppressWarnings("unchecked")
         @Override

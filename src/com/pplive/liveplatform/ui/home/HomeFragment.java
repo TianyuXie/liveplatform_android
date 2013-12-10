@@ -206,7 +206,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         if (!mBusy) {
             mBusy = true;
             SearchTask task = new SearchTask();
-            task.addTaskListener(getTaskListener);
+            task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
             taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
             taskContext.set(SearchTask.KEY_TYPE, type);
@@ -219,7 +219,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     }
 
-    private Task.OnTaskListener getTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {

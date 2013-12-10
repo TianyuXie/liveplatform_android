@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.widget;
+package com.pplive.liveplatform.ui.widget.dialog;
 
 import android.app.Dialog;
 import android.content.Context;

@@ -45,6 +45,9 @@ public class PassportService {
 
     private static final String TEMPLATE_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/login/login.do?username={usr}&password={pwd}&format=json").toString();
+    
+    private static final String THIRDPARTY_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
+            "/v3/register/thirdparty_simple.do?infovalue={infovalue}&apptype={apptype}&index={index}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
 
@@ -124,4 +127,33 @@ public class PassportService {
 
         return rep.getBody().getResult().getToken();
     }
+    
+    /*public int thirdpartyRegister(String id, String faceUrl, String nickName) {
+        
+        RestTemplate template = new RestTemplate(false);
+        template.setRequestFactory(mFactory);
+        template.getMessageConverters().add(new GsonHttpMessageConverter() {
+            @Override
+            public boolean canRead(Class<?> clazz, MediaType mediaType) {
+                return true;
+            }
+        });
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        
+        String infoval =  URLEncoder.encode(id) + "&" + URLEncoder.encode(faceUrl) + "&" +URLEncoder.encode(nickName);
+        
+        infoval = null;//Base64.encodeToString(input, 0)
+
+        //HttpEntity<LoginResultResp> rep = template.exchange(THIRDPARTY_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
+
+        //rep.getBody().getResult().getToken();
+
+        Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
+
+        return rep.getBody().getErrorCode();
+    }*/
 }

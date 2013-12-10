@@ -11,7 +11,7 @@ import android.text.TextUtils;
 public class CacheManager {
     private SQLiteDatabase mUserCache;
 
-    private UserCacheHelper mUserCacheHelper;
+    private CacheHelper mUserCacheHelper;
 
     private static CacheManager instance;
 
@@ -22,7 +22,7 @@ public class CacheManager {
     }
 
     private CacheManager(Context context) {
-        mUserCacheHelper = new UserCacheHelper(context);
+        mUserCacheHelper = new CacheHelper(context);
         mUserCache = mUserCacheHelper.getWritableDatabase();
     }
 
@@ -69,7 +69,7 @@ public class CacheManager {
     public void clearSearchCache() {
         mUserCache.beginTransaction();
         try {
-            mUserCache.execSQL("DELETE FROM search", null);
+            mUserCache.execSQL("DELETE FROM search", new Object[] {});
             mUserCache.setTransactionSuccessful();
         } finally {
             mUserCache.endTransaction();

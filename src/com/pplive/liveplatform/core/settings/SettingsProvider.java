@@ -9,8 +9,8 @@ public class SettingsProvider {
     private static final String KEY_CONTENT = "content";
     private static final String KEY_PRELIVE = "prelive";
     private static final String KEY_NICKNAME = "nickname";
-    private static final String KEY_USER_ENCRYPT = "user_encrypt";
-    private static final String KEY_PW_ENCRYPT = "password_encrypt";
+    private static final String KEY_PRIVATE = "private";
+    private static final String KEY_TOKEN = "token";
 
     private SharedPreferences sharedPreferences;
 
@@ -31,8 +31,6 @@ public class SettingsProvider {
         userPrefs.setContentNotify(sharedPreferences.getBoolean(KEY_CONTENT, true));
         userPrefs.setPreliveNotify(sharedPreferences.getBoolean(KEY_PRELIVE, true));
         userPrefs.setNickname(sharedPreferences.getString(KEY_NICKNAME, ""));
-        userPrefs.setUser(sharedPreferences.getString(KEY_USER_ENCRYPT, ""));
-        userPrefs.setPassword(sharedPreferences.getString(KEY_PW_ENCRYPT, ""));
         return userPrefs;
     }
 
@@ -41,8 +39,28 @@ public class SettingsProvider {
         editor.putBoolean(KEY_CONTENT, userPrefs.isContentNotify());
         editor.putBoolean(KEY_PRELIVE, userPrefs.isPreliveNotify());
         editor.putString(KEY_NICKNAME, userPrefs.getNickname());
-        editor.putString(KEY_USER_ENCRYPT, userPrefs.getUser());
-        editor.putString(KEY_PW_ENCRYPT, userPrefs.getPassword());
+        editor.commit();
+    }
+
+    public String getUserinfo() {
+        return sharedPreferences.getString(KEY_PRIVATE, "");
+    }
+
+    public String getToken() {
+        return sharedPreferences.getString(KEY_TOKEN, "");
+    }
+
+    public void clearUser() {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putString(KEY_PRIVATE, "");
+        editor.putString(KEY_TOKEN, "");
+        editor.commit();
+    }
+
+    public void setUser(String userInfo, String token) {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putString(KEY_PRIVATE, userInfo);
+        editor.putString(KEY_TOKEN, token);
         editor.commit();
     }
 }

@@ -21,9 +21,11 @@ public class MediaService extends RestService {
 
     private static final String TAG = MediaService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PUSH = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/publish").toString();
+    private static final String TEMPLATE_GET_PUSH = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/publish")
+            .toString();
 
-    private static final String TEMPLATE_GET_PLAY = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch").toString();
+    private static final String TEMPLATE_GET_PLAY = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch")
+            .toString();
 
     private static final String TEMPLATE_GET_PREVIEW = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/preview")
             .toString();
@@ -60,7 +62,7 @@ public class MediaService extends RestService {
     }
 
     public List<Watch> getPlayWatchList(String coToken, long pid, String username) {
-        Log.d(TAG, "pid: " + pid + "; username: " + username);
+        Log.d(TAG, "coToken:" + coToken + "; pid: " + pid + "; username: " + username);
 
         String token = TokenService.getInstance().getPlayToken(coToken, pid, username);
 

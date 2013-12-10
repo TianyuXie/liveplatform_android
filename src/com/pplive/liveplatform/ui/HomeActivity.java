@@ -18,6 +18,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.ui.home.HomeFragment;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
@@ -109,6 +110,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     protected void onStart() {
         Log.d(TAG, "onStart");
         super.onStart();
+        mSideBar.updateUsername();
     }
 
     @Override
@@ -151,9 +153,15 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     private View.OnClickListener onStatusClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_rotate);
-            mStatusButton.setClickable(false);
-            mAnimDoor.shut();
+            if (UserManager.getInstance(HomeActivity.this).isLogin()) {
+                mStatusButton.setBackgroundResource(R.drawable.home_status_btn_rotate);
+                mStatusButton.setClickable(false);
+                mAnimDoor.shut();
+            } else {
+                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                intent.putExtra(LoginActivity.EXTRA_TAGET, LiveRecordActivity.class.getName());
+                startActivity(intent);
+            }
         }
     };
 

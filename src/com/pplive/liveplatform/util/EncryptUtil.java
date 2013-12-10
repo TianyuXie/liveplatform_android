@@ -7,16 +7,10 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import android.content.Context;
-import android.telephony.TelephonyManager;
 import android.util.Base64;
 
-public class AesUtil {
+public class EncryptUtil {
     private static final String ALGORITHM = "AES";
-
-    public static String encrypt(String cleartext, Context context) {
-        return encrypt(cleartext, ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId());
-    }
 
     public static String encrypt(String cleartext, String seed) {
         try {
@@ -27,10 +21,6 @@ public class AesUtil {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static String decrypt(String encrypted, Context context) {
-        return decrypt(encrypted, ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId());
     }
 
     public static String decrypt(String encrypted, String seed) {

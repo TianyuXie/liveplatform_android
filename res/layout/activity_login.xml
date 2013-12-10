@@ -103,12 +103,14 @@
         android:orientation="horizontal" >
 
         <Button
+            android:onClick="weiboLogin"
             android:layout_width="127dp"
             android:layout_height="63dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/login_btn_weibo" />
 
         <Button
+            android:onClick="qqlogin"
             android:layout_width="127dp"
             android:layout_height="63dp"
             android:background="@drawable/login_btn_qq" />
