@@ -14,8 +14,10 @@ import android.util.Log;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.comment.auth.PBarTokenAuthentication;
+import com.pplive.liveplatform.core.service.comment.model.Feed;
 import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.comment.resp.FeedDetailListResp;
+import com.pplive.liveplatform.core.service.comment.resp.FeedIdResp;
 import com.pplive.liveplatform.util.URL.Protocol;
 
 public class PbarService {
@@ -24,7 +26,9 @@ public class PbarService {
     
     private static final PbarService sInstance = new PbarService();
 
-    private static final String TEMPLATE_GET_REFS = new BaseURL(Protocol.HTTP, Constants.SC_API_HOST, "/sc/v2/live/ref/{refId}/feed?pagesize={pagesize}").toString();
+    private static final String TEMPLATE_GET_FEEDS = new BaseURL(Protocol.HTTP, Constants.SC_API_HOST, "/sc/v2/live/ref/{refId}/feed?pagesize={pagesize}").toString();
+    
+    private static final String TEMPLATE_PUT_FEED = new BaseURL(Protocol.HTTP, Constants.SC_API_HOST, "/sc/v2/live/feed/info").toString();
     
     public static PbarService getInstance() {
         return sInstance;
@@ -51,8 +55,28 @@ public class PbarService {
         
         HttpEntity<String> req = new HttpEntity<String>(headers);
         
-        HttpEntity<FeedDetailListResp> rep = template.exchange(TEMPLATE_GET_REFS, HttpMethod.GET, req, FeedDetailListResp.class, "LivePlatform-pbar_" + pid, pagesize);
+        HttpEntity<FeedDetailListResp> rep = template.exchange(TEMPLATE_GET_FEEDS, HttpMethod.GET, req, FeedDetailListResp.class, "LivePlatform-pbar_" + pid, pagesize);
         
         return rep.getBody().getData();
+    }
+    
+    public long putFeed(String coToken, Feed feed) {
+        Log.d(TAG, "putFeed");
+        
+        PBarTokenAuthentication authentication = new PBarTokenAuthentication(coToken);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setAuthorization(authentication);
+        
+        RestTemplate template = new RestTemplate();
+        template.getMessageConverters().add(new GsonHttpMessageConverter());
+        
+        HttpEntity<Feed> req = new HttpEntity<Feed>(feed, headers);
+        
+        HttpEntity<FeedIdResp> rep = template.exchange(TEMPLATE_PUT_FEED, HttpMethod.PUT, req, FeedIdResp.class);
+        
+        FeedIdResp body = rep.getBody();
+        
+        return body.getData();
     }
 }

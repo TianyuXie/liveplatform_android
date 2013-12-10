@@ -1,8 +1,9 @@
 package com.pplive.liveplatform.core.service.live.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.pplive.liveplatform.core.service.IUser;
 
-public class User {
+public class User implements IUser {
 
     enum Sex {
 
@@ -22,7 +23,7 @@ public class User {
 
     String icon;
 
-    String coname;
+    String coname = "pptv";
 
     Sex sex;
     
@@ -35,16 +36,22 @@ public class User {
     long insert_time;
     
     long last_update_time;
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
     
-    
+    @Override
     public String getUsername() {
         return username;
     }
     
+    @Override
     public String getNickname() {
         return nickname;
     }
     
+    @Override
     public String getIcon() {
         return icon;
     }
