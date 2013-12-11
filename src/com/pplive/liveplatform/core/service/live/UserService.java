@@ -12,7 +12,6 @@ import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.core.service.live.resp.UserResp;
 import com.pplive.liveplatform.util.URL.Protocol;
-import com.pplive.liveplatform.util.URLEncoderUtil;
 
 public class UserService extends RestService {
 
@@ -39,7 +38,7 @@ public class UserService extends RestService {
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
 
-        HttpEntity<UserResp> rep = mRestTemplate.exchange(TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class, URLEncoderUtil.encode(username));
+        HttpEntity<UserResp> rep = mRestTemplate.exchange(TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class, username);
 
         UserResp body = rep.getBody();
         

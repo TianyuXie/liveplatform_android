@@ -1,10 +1,8 @@
 package com.pplive.liveplatform.core.service.passport;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.URI;
-import java.net.URLEncoder;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -13,6 +11,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Random;
 
 import org.apache.http.HttpVersion;
@@ -47,15 +46,16 @@ import com.pplive.liveplatform.core.service.passport.resp.LoginResultResp;
 import com.pplive.liveplatform.util.ThreeDESUtil;
 import com.pplive.liveplatform.util.ThreeDESUtil.EncryptException;
 import com.pplive.liveplatform.util.URL.Protocol;
+import com.pplive.liveplatform.util.URLEncoderUtil;
 
 public class PassportService {
 
     private static final String TAG = PassportService.class.getSimpleName();
 
     private static final String TEMPLATE_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
-            "/v3/login/login.do?username={usr}&password={pwd}&format=json").toString();
+            "/v3/login/login.do?username={username}&password={password}&format=json").toString();
 
-    private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
+    private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST,
             "/v3/register/thirdparty_simple.do?infovalue={infovalue}&apptype={apptype}&index={index}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
@@ -157,12 +157,9 @@ public class PassportService {
         Random random = new Random();
         int keyIndex = random.nextInt(10) + 1;
         try {
-            infovalue = String.format("%s&%s&%s", URLEncoder.encode(id, "UTF-8"), URLEncoder.encode(faceUrl, "UTF-8"), URLEncoder.encode(nickName, "UTF-8"));
+            infovalue = String.format("%s&%s&%s", URLEncoderUtil.encode(id), URLEncoderUtil.encode(faceUrl), URLEncoderUtil.encode(nickName));
 
-            infovalue = URLEncoder.encode(ThreeDESUtil.encode(infovalue, keyIndex), "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-
-            e.printStackTrace();
+            infovalue = URLEncoderUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
         } catch (EncryptException e) {
 
             e.printStackTrace();
@@ -170,7 +167,7 @@ public class PassportService {
 
         Log.d(TAG, "infovalue: " + infovalue);
 
-        String index = keyIndex < 10 ? ("0" + keyIndex) : keyIndex + "";
+        String index = String.format(Locale.getDefault(), "%02d", keyIndex);
 
         UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_THIRDPARTY_LOGIN).buildAndExpand(infovalue, apptype, index);
         
