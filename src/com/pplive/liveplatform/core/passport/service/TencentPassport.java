@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.os.IInterface;
 import android.os.Message;
 
+import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
@@ -52,6 +53,13 @@ public class TencentPassport
             IUiListener listener = new BaseUiListener() {
                 @Override
                 protected void doComplete(JSONObject values) {
+                    try {
+                        mLoginResult.setThirdPartyID(values.getString("openid"));
+                        mLoginResult.setThirdPartyToken(values.getString("access_token"));
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                     updateUserInfo();
                     //updateLoginButton();
                 }
@@ -95,13 +103,7 @@ public class TencentPassport
         }
 
         protected void doComplete(JSONObject values) {
-            try {
-                mLoginResult.setThirdPartyID(values.getString("openid"));
-                mLoginResult.setThirdPartyToken(values.getString("access_token"));
-            } catch (JSONException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+
         }
 
         @Override
@@ -178,6 +180,7 @@ public class TencentPassport
                     try {
                         mLoginResult.setThirdPartyNickName(response.getString("nickname"));
                         mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_1"));
+                        PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
