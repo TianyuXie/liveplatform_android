@@ -124,7 +124,19 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         return layout;
     }
-
+    
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        if (null != mEditLiveTitle) {
+            String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
+            String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
+            
+            mEditLiveTitle.setText(live_title);
+        }
+    }
+    
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
         mEditLiveSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
@@ -269,6 +281,14 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             mEditLiveTitle.setText(program.getTitle());
         }
 
+    }
+    
+    public String getLiveTitle() {
+        if (null != mEditLiveTitle) {
+            return mEditLiveTitle.getText().toString();
+        }
+        
+        return null;
     }
 
     public LiveListView getLiveListView() {

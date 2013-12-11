@@ -53,7 +53,7 @@ public class LoginTask extends Task {
         String pwd = context.getString(KEY_PWD);
         String token = null;
         try {
-            token = PassportService.getInstance().login(usr, pwd);
+            token = PassportService.getInstance().login(usr, pwd).getToken();
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "GET Error");
         }

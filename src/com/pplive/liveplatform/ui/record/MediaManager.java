@@ -64,7 +64,7 @@ public class MediaManager {
                             colorFormat = colorFormats[k];
                         }
                     }
-                    
+
                     Log.d(TAG, "colorFormat: " + colorFormat);
 
                     MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE_VIDEO_AVC, size.width, size.height);

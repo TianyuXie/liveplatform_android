@@ -9,13 +9,14 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.resp.ProgramListResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramResp;
 import com.pplive.liveplatform.core.service.live.resp.Resp;
+import com.pplive.liveplatform.util.URLEncoderUtil;
+import com.pplive.liveplatform.util.URL.Protocol;
 
 public class ProgramService extends RestService {
 
@@ -51,7 +52,7 @@ public class ProgramService extends RestService {
     private List<Program> getProgramsByOwner(String owner, String liveStatus) {
         Log.d(TAG, "owner: " + owner + "; livestatus: " + liveStatus);
 
-        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, liveStatus);
+        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, URLEncoderUtil.encode(owner), liveStatus);
 
         return rep.getList();
     }

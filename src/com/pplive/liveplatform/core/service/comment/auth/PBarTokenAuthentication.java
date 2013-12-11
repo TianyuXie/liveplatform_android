@@ -2,11 +2,11 @@ package com.pplive.liveplatform.core.service.comment.auth;
 
 import org.springframework.http.HttpAuthentication;
 
-public class CommentTokenAuthentication extends HttpAuthentication {
+public class PBarTokenAuthentication extends HttpAuthentication {
 
     private String mToken;
 
-    public CommentTokenAuthentication(String token) {
+    public PBarTokenAuthentication(String token) {
         mToken = token;
     }
 

@@ -11,8 +11,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
 
-import com.pplive.liveplatform.core.service.URL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
+import com.pplive.liveplatform.util.URL.Protocol;
 import com.pplive.sdk.MediaSDK;
 
 public class PPBoxUtil {

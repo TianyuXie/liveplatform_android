@@ -107,6 +107,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private GetPushUrlTask mGetPushUrlOneStepTask;
     private Program mSelectedProgram;
 
+    private String mPushUrl;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -158,9 +160,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     protected void onStop() {
         super.onStop();
 
-        if (mRecording) {
-            stopRecording();
-        }
+        stopRecording();
 
         stopPreview();
 
@@ -354,7 +354,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void startRecording(String url) {
+    private void startRecording() {
+        if (TextUtils.isEmpty(mPushUrl)) {
+            return;
+        }
+
         if (!mRecording) {
             mMediaRecorder = new LiveMediaRecoder(getApplicationContext(), mCamera);
             mMediaRecorder.setOnErrorListener(new OnErrorListener() {
@@ -365,7 +369,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             });
 
-            mMediaRecorder.setOutputPath(url);
+            mMediaRecorder.setOutputPath(mPushUrl);
 
             mMediaRecorder.start();
 
@@ -446,32 +450,49 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     class GetPushUrlTask extends AsyncTask<Program, Void, String> {
 
+        private String mLiveTitle;
+
+        @Override
+        protected void onPreExecute() {
+            if (null != mFooterBarFragment) {
+                mLiveTitle = mFooterBarFragment.getLiveTitle();
+            }
+        }
+
         @Override
         protected String doInBackground(Program... params) {
             String username = UserManager.getInstance(getApplicationContext()).getActiveUserPlain();
             String usertoken = UserManager.getInstance(getApplicationContext()).getToken();
 
+            if (TextUtils.isEmpty(username) || TextUtils.isEmpty(usertoken)) {
+                return null;
+            }
+
             Program program = params[0];
             if (null == program) {
                 Log.d(TAG, "create program");
-                program = new Program(username, "My Living", System.currentTimeMillis());
+                program = new Program(username, mLiveTitle, System.currentTimeMillis());
                 program = ProgramService.getInstance().createProgram(usertoken, program);
                 mSelectedProgram = program;
             } else {
                 Log.d(TAG, "has program");
             }
 
-            String token = TokenService.getInstance().getLiveToken(usertoken, program.getId(), program.getOwner());
+            String liveToken = program.getLiveToken();
+            if (TextUtils.isEmpty(liveToken)) {
+                Log.d(TAG, "getLiveToken");
+                liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
+            }
 
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, token);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, token);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, token);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, liveToken);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, liveToken);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, liveToken);
 
-            Push push = MediaService.getInstance().getPush(usertoken, program.getId(), username);
+            Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
             String url = null;
-            for (int i = 0, len = push.getPushStringList().size(); i < len; ++i) {
-                url = push.getPushStringList().get(i);
+            for (int i = 0, len = push.getPushUrlList().size(); i < len; ++i) {
+                url = push.getPushUrlList().get(i);
                 if (!TextUtils.isEmpty(url)) {
                     break;
                 }
@@ -481,12 +502,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String url) {
             mGetPushUrlOneStepTask = null;
 
             if (null != mCamera) {
                 if (!mRecording) {
-                    startRecording(result);
+                    mPushUrl = url;
+                    startRecording();
                 }
 
                 mBtnLiveRecord.setChecked(mRecording);
