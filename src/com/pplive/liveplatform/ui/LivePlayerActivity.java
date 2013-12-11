@@ -30,6 +30,7 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -38,7 +39,8 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.home.GetMediaTask;
+import com.pplive.liveplatform.core.task.player.GetFeedTask;
+import com.pplive.liveplatform.core.task.player.GetMediaTask;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
@@ -156,13 +158,16 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (pid != -1) {
                 showLoading();
                 mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
-                GetMediaTask task = new GetMediaTask();
-                task.addTaskListener(onTaskListener);
+                GetMediaTask mediaTask = new GetMediaTask();
+                mediaTask.addTaskListener(onMediaTaskListener);
+                GetFeedTask feedTask = new GetFeedTask();
+                feedTask.addTaskListener(onFeedTaskListener);
                 TaskContext taskContext = new TaskContext();
-                taskContext.set(GetMediaTask.KEY_PID, pid);
-                taskContext.set(GetMediaTask.KEY_USERNAME, username);
-                taskContext.set(GetMediaTask.KEY_TOKEN, token);
-                task.execute(taskContext);
+                taskContext.set(Task.KEY_PID, pid);
+                taskContext.set(Task.KEY_USERNAME, username);
+                taskContext.set(Task.KEY_TOKEN, token);
+                mediaTask.execute(taskContext);
+                feedTask.execute(taskContext);
             }
         } else {
             Log.d(TAG, "onStart mUrl:" + mUrl);
@@ -407,7 +412,53 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         finish();
     }
 
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
+            if (feeds != null) {
+                Log.d(TAG, feeds.getSize() + "");
+            }
+
+            //            for (Watch watch : watchs) {
+            //                if ("rtmp".equals(watch.getProtocol())) {
+            //                    mUrl = watch.getWatchStringList().get(0);
+            //                    break;
+            //                }
+            //            }
+            //            if (mUrl != null) {
+            //                Log.d(TAG, "onTaskFinished:" + mUrl);
+            //                mLivePlayerFragment.setupPlayer(mUrl);
+            //                mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
+            //            }
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+    };
+
+    private Task.OnTaskListener onMediaTaskListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {

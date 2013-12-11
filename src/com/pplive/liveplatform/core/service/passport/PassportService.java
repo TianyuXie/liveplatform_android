@@ -55,7 +55,7 @@ public class PassportService {
     private static final String TEMPLATE_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/login/login.do?username={username}&password={password}&format=json").toString();
 
-    private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST,
+    private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/register/thirdparty_simple.do?infovalue={infovalue}&apptype={apptype}&index={index}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
