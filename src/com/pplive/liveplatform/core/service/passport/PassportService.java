@@ -37,7 +37,6 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UriTemplate;
 
 import android.util.Log;
 
@@ -56,7 +55,7 @@ public class PassportService {
     private static final String TEMPLATE_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/login/login.do?username={usr}&password={pwd}&format=json").toString();
 
-    private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST,
+    private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/register/thirdparty_simple.do?infovalue={infovalue}&apptype={apptype}&index={index}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
@@ -112,7 +111,7 @@ public class PassportService {
         }
     }
 
-    public String login(String usr, String pwd) {
+    public LoginResult login(String usr, String pwd) {
         Log.d(TAG, "user: " + usr + "; password: " + pwd);
 
         RestTemplate template = new RestTemplate(false);
@@ -135,7 +134,7 @@ public class PassportService {
 
         Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
 
-        return rep.getBody().getResult().getToken();
+        return rep.getBody().getResult();
     }
 
     public LoginResult thirdpartyRegister(String id, String faceUrl, String nickName, String apptype) {
