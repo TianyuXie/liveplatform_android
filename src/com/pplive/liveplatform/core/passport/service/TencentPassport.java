@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Bundle;
 import android.os.IInterface;
 import android.os.Message;
 
@@ -18,6 +19,7 @@ import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
+
 import com.tencent.tauth.Constants;
 import com.tencent.tauth.IRequestListener;
 import com.tencent.tauth.IUiListener;
@@ -49,6 +51,8 @@ public class TencentPassport
     
     public void login()
     {
+        
+        mLoginResult = new LoginResult();
         if (!mTencent.isSessionValid()) {
             IUiListener listener = new BaseUiListener() {
                 @Override
@@ -92,7 +96,6 @@ public class TencentPassport
     {
         txContext = context.getApplicationContext();
         mTencent = Tencent.createInstance(mAppid, txContext);
-        mLoginResult = new LoginResult();
     }
     
     private class BaseUiListener implements IUiListener {
@@ -199,6 +202,35 @@ public class TencentPassport
     {
         return mLoginResult;
         
+    }
+    
+    private void doShareToQQ(final Bundle params) {
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                // TODO Auto-generated method stub
+                mTencent.shareToQQ(mActivity, params, new IUiListener() {
+
+                    @Override
+                    public void onComplete(JSONObject response) {
+                        // TODO Auto-generated method stub
+                        
+                    }
+
+                    @Override
+                    public void onError(UiError e) {
+                        
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+
+                });
+            }
+        }).start();
     }
     
 }

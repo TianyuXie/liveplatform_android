@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.core.passport.service.TencentPassport.ThirdpartyLoginListener;
+import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
@@ -70,6 +71,7 @@ public class WeiboPassport
     
     public void login()
     {
+        mLoginResult = new LoginResult();
         mSsoHandler = new SsoHandler(mActivity, mWeiboAuth);
         mSsoHandler.authorize(new AuthListener());
     }
@@ -78,7 +80,7 @@ public class WeiboPassport
     {
         mContext = mActivity;
         mWeiboAuth = new WeiboAuth(mContext, APP_KEY, REDIRECT_URL, SCOPE);
-        mLoginResult = new LoginResult();
+        
     }
     
     class AuthListener implements WeiboAuthListener {
@@ -136,6 +138,7 @@ public class WeiboPassport
                     mLoginResult.setThirdPartyNickName(res.getString("name"));
                     mLoginResult.setThirdPartyID(res.getString("id"));
                     mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
+                    PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "sina");
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

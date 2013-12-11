@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -191,7 +192,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     @Override
     public void LoginSuccess(LoginResult res) {
         // TODO Auto-generated method stub
-        
+        Log.d("zhangxianjia", "success");
     }
 
 
@@ -199,7 +200,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     @Override
     public void LoginFailed() {
         // TODO Auto-generated method stub
-        
+        Log.d("zhangxianjia", "failed");
     }
     
 }
