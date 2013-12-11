@@ -24,7 +24,6 @@
         android:gravity="center_horizontal"
         android:paddingBottom="5dp"
         android:paddingTop="5dp"
-        android:text="@string/test_live_title"
         android:textColor="@color/dim_white" />
 
     <ImageButton

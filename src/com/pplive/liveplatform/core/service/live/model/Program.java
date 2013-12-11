@@ -25,7 +25,9 @@ public class Program {
     String screenshot_url;
 
     String coname = "pptv";
-
+    
+    Token tk;
+    
     public Program(String owner, String title, long starttime) {
         this(owner, LiveModeEnum.CAMERA, title, starttime);
     }
@@ -84,10 +86,16 @@ public class Program {
         }
         return screenshot_url;
     }
-
-    @Override
-    public String toString() {
-        return String.format(Locale.US, "pid: %d; title: %s; owner: %s; starttime: %d; livestatus: %s; cover_url: %s;", pid, title, owner, starttime,
-                livestatus, cover_url);
+    
+    public String getLiveToken() {
+        if (null != tk) {
+            return tk.livetk;
+        }
+        
+        return "";
+    }
+    
+    class Token {
+        String livetk;
     }
 }

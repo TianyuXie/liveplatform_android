@@ -2,16 +2,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- String -->
-    <string name="test_switch_camera">Switch</string>
-    <string name="test_flash_mode_on">Flash on</string>
-    <string name="test_flash_mode_off">Flash off</string>
-    <string name="test_start_record">Record</string>
-    <string name="test_stop_record">Stop</string>
-    <string name="test_back">Back</string>
-    <string name="test_share_program">Share</string>
-    <string name="test_edit_program">Edit</string>
-    <string name="test_live_title">直播秀</string>
     <string name="live"><b>Live</b></string>
+    <string name="default_live_title_fmt"><![CDATA[\"%s\" 的直播]]></string>
 
     <!-- Color -->
     <color name="bottom_bar_bg">#40000000</color>
