@@ -9,6 +9,8 @@ import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.util.EncryptUtil;
 
 public class UserManager {
+    final static String TAG = "_UserManager";
+
     private static UserManager instance;
 
     private String mImei;
@@ -63,13 +65,25 @@ public class UserManager {
         if (isLogin()) {
             mNickname = userinfo.getNickname();
             mIcon = userinfo.getIcon();
-            SettingsProvider.getInstance(mContext).setUserInfo(userinfo);
+            SettingsProvider.getInstance(mContext).setUserInfo(mNickname, mIcon);
+        }
+    }
+
+    public void setUserinfo(String nickname, String icon) {
+        if (isLogin()) {
+            mNickname = nickname;
+            mIcon = icon;
+            SettingsProvider.getInstance(mContext).setUserInfo(mNickname, mIcon);
         }
     }
 
     public String getNickname() {
-        if (isLogin() && mNickname != null) {
-            return mNickname;
+        if (isLogin()) {
+            if (TextUtils.isEmpty(mNickname)) {
+                return getActiveUserPlain();
+            } else {
+                return mNickname;
+            }
         } else {
             return "";
         }
@@ -108,5 +122,13 @@ public class UserManager {
         } else {
             return "";
         }
+    }
+
+    public void setNickname(String nickname) {
+        this.mNickname = nickname;
+    }
+
+    public void setIcon(String icon) {
+        this.mIcon = icon;
     }
 }

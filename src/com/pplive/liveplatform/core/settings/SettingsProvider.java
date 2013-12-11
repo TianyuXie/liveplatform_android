@@ -3,8 +3,6 @@ package com.pplive.liveplatform.core.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.pplive.liveplatform.core.service.live.model.User;
-
 public class SettingsProvider {
     private static final String PREFS_NAME = "com.pplive.liveplatform_preferences";
 
@@ -75,10 +73,10 @@ public class SettingsProvider {
         editor.commit();
     }
 
-    public void setUserInfo(User userInfo) {
+    public void setUserInfo(String nickname, String icon) {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        editor.putString(KEY_NICKNAME, userInfo.getNickname());
-        editor.putString(KEY_ICON, userInfo.getIcon());
+        editor.putString(KEY_NICKNAME, nickname);
+        editor.putString(KEY_ICON, icon);
         editor.commit();
     }
 }

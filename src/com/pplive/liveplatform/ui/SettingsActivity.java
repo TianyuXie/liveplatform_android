@@ -10,11 +10,13 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.core.settings.AppPrefs;
+import com.pplive.liveplatform.core.settings.SettingsProvider;
 
 public class SettingsActivity extends Activity {
     private AppPrefs mUserPrefs;
+
+    private TextView mNicknameTextView;
 
     private TextView mUserTextView;
 
@@ -30,6 +32,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
         findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
 
+        mNicknameTextView = (TextView) findViewById(R.id.text_settings_nickname);
         mUserTextView = (TextView) findViewById(R.id.text_settings_user);
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
@@ -42,6 +45,7 @@ public class SettingsActivity extends Activity {
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mUserTextView.setText(UserManager.getInstance(this).getActiveUserPlain());
+        mNicknameTextView.setText(UserManager.getInstance(this).getNickname());
     }
 
     @Override

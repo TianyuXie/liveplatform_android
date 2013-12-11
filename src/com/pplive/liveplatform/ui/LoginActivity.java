@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -64,11 +65,9 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         if (WeiboPassport.getInstance().mSsoHandler != null) {
             WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
-
     }
 
     public void qqlogin(View v) {
@@ -76,7 +75,6 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         TencentPassport.getInstance().setActivity(this);
         TencentPassport.getInstance().setLoginListener(this);
         TencentPassport.getInstance().login();
-
     }
 
     public void weiboLogin(View v) {
@@ -181,14 +179,25 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
     @Override
     public void LoginSuccess(LoginResult res) {
-        // TODO Auto-generated method stub
-
+        Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
+        //        Log.d(TAG, res.getUsername() + " | " + res.getToken());
+        //        UserManager.getInstance(mContext).login(res.getUsername(), "", res.getToken());
+        //        UserManager.getInstance(mContext).setUserinfo(res.getThirdPartyNickName(), res.getThirdPartyFaceUrl());
+        //        String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
+        //        if (!TextUtils.isEmpty(targetClass)) {
+        //            try {
+        //                Intent intent2 = new Intent(mContext, Class.forName(targetClass));
+        //                mContext.startActivity(intent2);
+        //            } catch (ClassNotFoundException e) {
+        //                e.printStackTrace();
+        //            }
+        //        }
+        //        finish();
     }
 
     @Override
     public void LoginFailed() {
-        // TODO Auto-generated method stub
-
+        Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
     }
 
 }

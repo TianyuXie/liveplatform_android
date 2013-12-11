@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.core.task.user;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;
@@ -66,18 +67,17 @@ public class LoginTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
-        User userinfo = null;
+        Log.d(TAG, "PassportService OK");
+        User userinfo = new User();
         try {
             userinfo = UserService.getInstance().getUserInfo(token, usr);
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "GET Error");
-        }
-        if (userinfo == null) {
-            return new TaskResult(TaskStatus.Failed, "No data");
+            Log.w(TAG, "No userinfo");
         }
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
+        Log.d(TAG, "UserService OK");
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_TOKEN, token);
         context.set(KEY_USERINFO, userinfo);
