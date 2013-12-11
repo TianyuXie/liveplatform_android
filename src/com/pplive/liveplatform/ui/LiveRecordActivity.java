@@ -317,7 +317,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Camera.Size size = CameraManager.getInstance().getMiniSize(params);
 
                 params.setPreviewSize(size.width, size.height);
-                params.setPreviewFormat(ImageFormat.YV12);
+                params.setPreviewFormat(ImageFormat.NV21);
 
                 mCamera.setParameters(params);
                 mConfigured = true;
