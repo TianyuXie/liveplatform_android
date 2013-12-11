@@ -45,7 +45,7 @@
         android:textSize="16sp"
         android:visibility="gone" />
 
-    <Button
+    <ImageButton
         android:id="@+id/btn_camera_change"
         style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
@@ -55,8 +55,9 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:drawableRight="@drawable/live_record_btn_camera_change"
-        android:onClick="onClick" />
+        android:contentDescription="@null"
+        android:onClick="onClick"
+        android:src="@drawable/live_record_btn_camera_change" />
 
     <ToggleButton
         android:id="@+id/btn_flash_light"
@@ -69,16 +70,16 @@
         android:drawableRight="@drawable/live_record_btn_flash_light"
         android:onClick="onClick" />
 
-    <ToggleButton
+    <ImageButton
         android:id="@+id/btn_live_record"
         style="@style/Widget.ToggleButton.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/btn_camera_change"
         android:layout_centerVertical="true"
-        android:checked="false"
-        android:drawableRight="@drawable/live_record_btn_live_record"
-        android:onClick="onClick" />
+        android:contentDescription="@null"
+        android:onClick="onClick"
+        android:src="@drawable/live_record_btn_live_record" />
 
     <TextView
         android:id="@+id/text_living_title"

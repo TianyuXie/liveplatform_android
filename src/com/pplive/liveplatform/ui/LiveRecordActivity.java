@@ -23,6 +23,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -73,7 +74,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private LiveMediaRecoder mMediaRecorder;
     private boolean mRecording = false;
 
-    private ToggleButton mBtnLiveRecord;
+    private ImageButton mBtnLiveRecord;
+    private ImageButton mBtnCameraChange;
     private ToggleButton mBtnFlashLight;
 
     private FooterBarFragment mFooterBarFragment;
@@ -123,7 +125,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mSurfaceHolder = mPreview.getHolder();
         mSurfaceHolder.addCallback(this);
 
-        mBtnLiveRecord = (ToggleButton) findViewById(R.id.btn_live_record);
+        mBtnLiveRecord = (ImageButton) findViewById(R.id.btn_live_record);
+        mBtnCameraChange = (ImageButton) findViewById(R.id.btn_camera_change);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
@@ -314,7 +317,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Camera.Size size = CameraManager.getInstance().getMiniSize(params);
 
                 params.setPreviewSize(size.width, size.height);
-                params.setPreviewFormat(ImageFormat.NV21);
+                params.setPreviewFormat(ImageFormat.YV12);
 
                 mCamera.setParameters(params);
                 mConfigured = true;
@@ -385,7 +388,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mRecording = false;
 
-            mBtnLiveRecord.setChecked(mRecording);
+            mBtnLiveRecord.setSelected(mRecording);
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
@@ -511,7 +514,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     startRecording();
                 }
 
-                mBtnLiveRecord.setChecked(mRecording);
+                mBtnLiveRecord.setSelected(mRecording);
             }
         }
     }
