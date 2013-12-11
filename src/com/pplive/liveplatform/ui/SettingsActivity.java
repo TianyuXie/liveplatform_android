@@ -11,10 +11,10 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
-import com.pplive.liveplatform.core.settings.UserPrefs;
+import com.pplive.liveplatform.core.settings.AppPrefs;
 
 public class SettingsActivity extends Activity {
-    private UserPrefs mUserPrefs;
+    private AppPrefs mUserPrefs;
 
     private TextView mUserTextView;
 

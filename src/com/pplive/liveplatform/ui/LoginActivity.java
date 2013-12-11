@@ -5,7 +5,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -16,10 +15,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.passport.service.TencentPassport;
 import com.pplive.liveplatform.core.passport.service.WeiboPassport;
+import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -31,8 +30,7 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
-
-public class LoginActivity extends Activity implements TencentPassport.ThirdpartyLoginListener{
+public class LoginActivity extends Activity implements TencentPassport.ThirdpartyLoginListener {
     static final String TAG = "_LoginActivity";
 
     public static final String EXTRA_TAGET = "target";
@@ -63,40 +61,32 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         mUsrEditText.addTextChangedListener(textWatcher);
         mPwdEditText.addTextChangedListener(textWatcher);
     }
-    
-    
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
-        if (WeiboPassport.getInstance().getInstance().mSsoHandler != null) {
-            WeiboPassport.getInstance().getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        if (WeiboPassport.getInstance().mSsoHandler != null) {
+            WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
 
     }
 
-
-
-    public void qqlogin(View v)
-    {
+    public void qqlogin(View v) {
         TencentPassport.getInstance().init(this);
         TencentPassport.getInstance().setActivity(this);
-        WeiboPassport.getInstance().getInstance().setLoginListener(this);
+        TencentPassport.getInstance().setLoginListener(this);
         TencentPassport.getInstance().login();
 
     }
-    
-    public void weiboLogin(View v)
-    {
+
+    public void weiboLogin(View v) {
         WeiboPassport.getInstance().setActivity(this);
         WeiboPassport.getInstance().init(this);
-        WeiboPassport.getInstance().getInstance().setLoginListener(this);
+        WeiboPassport.getInstance().setLoginListener(this);
         WeiboPassport.getInstance().login();
     }
 
-
-    private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() 
-    {
+    private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
@@ -146,8 +136,10 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
             String usrPlain = (String) event.getContext().get(LoginTask.KEY_USR);
             String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PWD);
             String token = (String) event.getContext().get(LoginTask.KEY_TOKEN);
+            User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
 
             UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
+            UserManager.getInstance(mContext).setUserinfo(userinfo);
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
 
             String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
@@ -187,19 +179,16 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         }
     };
 
-
     @Override
     public void LoginSuccess(LoginResult res) {
         // TODO Auto-generated method stub
-        
+
     }
-
-
 
     @Override
     public void LoginFailed() {
         // TODO Auto-generated method stub
-        
+
     }
-    
+
 }

@@ -3,6 +3,8 @@ package com.pplive.liveplatform.core.settings;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.pplive.liveplatform.core.service.live.model.User;
+
 public class SettingsProvider {
     private static final String PREFS_NAME = "com.pplive.liveplatform_preferences";
 
@@ -11,6 +13,7 @@ public class SettingsProvider {
     private static final String KEY_NICKNAME = "nickname";
     private static final String KEY_PRIVATE = "private";
     private static final String KEY_TOKEN = "token";
+    private static final String KEY_ICON = "icon";
 
     private SharedPreferences sharedPreferences;
 
@@ -26,23 +29,29 @@ public class SettingsProvider {
         this.sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    public UserPrefs getPrefs() {
-        UserPrefs userPrefs = new UserPrefs();
+    public AppPrefs getPrefs() {
+        AppPrefs userPrefs = new AppPrefs();
         userPrefs.setContentNotify(sharedPreferences.getBoolean(KEY_CONTENT, true));
         userPrefs.setPreliveNotify(sharedPreferences.getBoolean(KEY_PRELIVE, true));
-        userPrefs.setNickname(sharedPreferences.getString(KEY_NICKNAME, ""));
         return userPrefs;
     }
 
-    public void setPrefs(UserPrefs userPrefs) {
+    public void setPrefs(AppPrefs userPrefs) {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putBoolean(KEY_CONTENT, userPrefs.isContentNotify());
         editor.putBoolean(KEY_PRELIVE, userPrefs.isPreliveNotify());
-        editor.putString(KEY_NICKNAME, userPrefs.getNickname());
         editor.commit();
     }
 
-    public String getUserinfo() {
+    public String getIcon() {
+        return sharedPreferences.getString(KEY_ICON, "");
+    }
+
+    public String getNickname() {
+        return sharedPreferences.getString(KEY_NICKNAME, "");
+    }
+
+    public String getUserPrivate() {
         return sharedPreferences.getString(KEY_PRIVATE, "");
     }
 
@@ -54,13 +63,22 @@ public class SettingsProvider {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(KEY_PRIVATE, "");
         editor.putString(KEY_TOKEN, "");
+        editor.putString(KEY_NICKNAME, "");
+        editor.putString(KEY_ICON, "");
         editor.commit();
     }
 
-    public void setUser(String userInfo, String token) {
+    public void setUserPrivate(String userPrivate, String token) {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        editor.putString(KEY_PRIVATE, userInfo);
+        editor.putString(KEY_PRIVATE, userPrivate);
         editor.putString(KEY_TOKEN, token);
+        editor.commit();
+    }
+
+    public void setUserInfo(User userInfo) {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putString(KEY_NICKNAME, userInfo.getNickname());
+        editor.putString(KEY_ICON, userInfo.getIcon());
         editor.commit();
     }
 }
