@@ -34,7 +34,7 @@ public class Push {
         return name;
     }
     
-    public java.util.List<String> getPushStringList() {
+    public java.util.List<String> getPushUrlList() {
         if (null == addr || 0 == addr.length) {
             return null;
         }

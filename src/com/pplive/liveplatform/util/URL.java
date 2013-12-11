@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.service;
+package com.pplive.liveplatform.util;
 
 import java.io.Serializable;
 import java.util.Collections;

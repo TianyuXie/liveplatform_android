@@ -8,9 +8,10 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.resp.TokenResp;
+import com.pplive.liveplatform.util.URLEncoderUtil;
+import com.pplive.liveplatform.util.URL.Protocol;
 
 public class TokenService extends RestService {
 
@@ -51,8 +52,8 @@ public class TokenService extends RestService {
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
-
-        ResponseEntity<TokenResp> rep = mRestTemplate.exchange(TEMPLATE_GET_TOKEN, HttpMethod.GET, req, TokenResp.class, type, pid, username, expiretime);
+        
+        ResponseEntity<TokenResp> rep = mRestTemplate.exchange(TEMPLATE_GET_TOKEN, HttpMethod.GET, req, TokenResp.class, type, pid, URLEncoderUtil.encode(username), expiretime);
         TokenResp body = rep.getBody();
 
         return body.getData();

@@ -6,11 +6,11 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.resp.Resp;
+import com.pplive.liveplatform.util.URL.Protocol;
 
 public class LiveControlService extends RestService {
 

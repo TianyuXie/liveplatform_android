@@ -9,13 +9,13 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
-import com.pplive.liveplatform.core.service.URL.Protocol;
 import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.auth.PlayTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.service.live.resp.PushResp;
 import com.pplive.liveplatform.core.service.live.resp.WatchListResp;
+import com.pplive.liveplatform.util.URL.Protocol;
 
 public class MediaService extends RestService {
 
