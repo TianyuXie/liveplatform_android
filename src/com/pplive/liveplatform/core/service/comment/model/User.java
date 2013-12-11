@@ -1,6 +1,8 @@
 package com.pplive.liveplatform.core.service.comment.model;
 
-public class User {
+import com.pplive.liveplatform.core.service.IUser;
+
+public class User implements IUser {
 
     String userName;
     
@@ -10,8 +12,21 @@ public class User {
     
     String gender;
     
-    
+    @Override
     public String getUsername() {
+        
         return userName;
+    }
+    
+    @Override
+    public String getNickname() {
+        
+        return nickName;
+    }
+    
+    @Override
+    public String getIcon() {
+        
+        return iconUrl;
     }
 }
