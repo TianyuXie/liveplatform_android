@@ -44,6 +44,7 @@ import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder.OnErrorListener;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
+import com.pplive.liveplatform.ui.record.event.EventReset;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.util.DisplayUtil;
@@ -135,7 +136,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private KeepLiveAliveTask mKeepLiveAliveTask;
     private Program mLivingProgram;
 
-    private String mPushUrl;
+    private String mLivingUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +221,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mLivingProgram = program;
 
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
+    }
+    
+    public void onEvent(EventReset event) {
+        mLivingProgram = null;
+        
+        mInnerHandler.removeMessages(WHAT_LIVE_COMING_UPDATE);
+        mTextLiveComing.setVisibility(View.GONE);
     }
 
     @Override
@@ -428,7 +436,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void startRecording() {
-        if (TextUtils.isEmpty(mPushUrl)) {
+        if (TextUtils.isEmpty(mLivingUrl)) {
             return;
         }
 
@@ -442,7 +450,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             });
 
-            mMediaRecorder.setOutputPath(mPushUrl);
+            mMediaRecorder.setOutputPath(mLivingUrl);
 
             mMediaRecorder.start();
 
@@ -457,6 +465,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void stopRecording() {
         if (mRecording) {
             mMediaRecorder.stop();
+            mLivingProgram = null;
+            mLivingUrl = null;
             mRecording = false;
             mBtnLiveRecord.setSelected(mRecording);
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
@@ -500,14 +510,18 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         if (null != mCamera) {
             if (!mRecording) {
-                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 mTextLiveComing.setVisibility(View.GONE);
+
+                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 if (null == mGetPushUrlOneStepTask) {
                     mGetPushUrlOneStepTask = new GetPushUrlTask();
                     mGetPushUrlOneStepTask.execute(mLivingProgram);
                 }
             } else {
+                mTextLivingTitle.setVisibility(View.GONE);
+                
                 stopRecording();
+                getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
             }
         }
     }
@@ -579,7 +593,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (null != mCamera) {
                 if (!mRecording) {
-                    mPushUrl = url;
+                    mLivingUrl = url;
                     startRecording();
                 }
 

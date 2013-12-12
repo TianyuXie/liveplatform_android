@@ -23,6 +23,7 @@ import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
+import com.pplive.liveplatform.ui.record.event.EventReset;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.util.ViewUtil;
@@ -124,19 +125,14 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         return layout;
     }
-    
+
     @Override
     public void onResume() {
         super.onResume();
-        
-        if (null != mEditLiveTitle) {
-            String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
-            String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
-            
-            mEditLiveTitle.setText(live_title);
-        }
+
+        init();
     }
-    
+
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
         mEditLiveSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
@@ -184,7 +180,9 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     }
 
     private void onClickBtnLiveBack(View v) {
-        setMode(Mode.INITIAL);
+        reset();
+        
+        EventBus.getDefault().post(new EventReset());
     }
 
     private void onClickBtnAddPrelive(View v) {
@@ -282,17 +280,33 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         }
 
     }
-    
+
     public String getLiveTitle() {
         if (null != mEditLiveTitle) {
             return mEditLiveTitle.getText().toString();
         }
-        
+
         return null;
     }
 
     public LiveListView getLiveListView() {
         return mLiveListView;
+    }
+
+    private void init() {
+
+        if (null != mEditLiveTitle) {
+            String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
+            String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
+
+            mEditLiveTitle.setText(live_title);
+        }
+    }
+
+    public void reset() {
+        setMode(Mode.INITIAL);
+        
+        init();
     }
 
     private void setMode(Mode mode) {
