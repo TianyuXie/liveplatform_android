@@ -79,7 +79,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
 
     public void updateUsername() {
         if (UserManager.getInstance(getContext()).isLogin()) {
-            mUserTextView.setText(UserManager.getInstance(getContext()).getActiveUserPlain());
+            mUserTextView.setText(UserManager.getInstance(getContext()).getNickname());
             mUserButton.setBackgroundResource(R.drawable.user_icon_default);
         } else {
             mUserTextView.setText("");

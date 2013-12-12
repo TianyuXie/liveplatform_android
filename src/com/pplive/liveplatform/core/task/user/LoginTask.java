@@ -1,7 +1,10 @@
 package com.pplive.liveplatform.core.task.user;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.pplive.liveplatform.core.service.live.UserService;
+import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -12,6 +15,7 @@ import com.pplive.liveplatform.util.StringUtil;
 public class LoginTask extends Task {
     final static String TAG = "_LoginTask";
     public final static String KEY_TOKEN = "token";
+    public final static String KEY_USERINFO = "userinfo";
     public final static String KEY_PWD = "password";
     public final static String KEY_USR = "username";
 
@@ -63,8 +67,19 @@ public class LoginTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
+        Log.d(TAG, "PassportService OK");
+        User userinfo = new User();
+        try {
+            userinfo = UserService.getInstance().getUserInfo(token, usr);
+        } catch (Exception e) {
+            Log.w(TAG, "No userinfo");
+        }
+        if (isCancelled()) {
+            return new TaskResult(TaskStatus.Cancel, "Canceled");
+        }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_TOKEN, token);
+        context.set(KEY_USERINFO, userinfo);
         result.setContext(context);
         return result;
     }

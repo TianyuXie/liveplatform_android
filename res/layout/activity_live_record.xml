@@ -70,16 +70,24 @@
         android:drawableRight="@drawable/live_record_btn_flash_light"
         android:onClick="onClick" />
 
-    <ImageButton
-        android:id="@+id/btn_live_record"
-        style="@style/Widget.ToggleButton.Transparent"
+    <RelativeLayout
+        android:id="@+id/wrapper_live_status_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@+id/btn_camera_change"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:contentDescription="@null"
-        android:onClick="onClick"
-        android:src="@drawable/live_record_btn_live_record" />
+        android:layout_marginRight="10dp"
+        android:visibility="invisible" >
+
+        <ToggleButton
+            android:id="@+id/btn_live_record"
+            style="@style/togglebutton_notext"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:background="@drawable/home_status_btn_rotate"
+            android:checked="false"
+            android:onClick="onClick" />
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/text_living_title"
@@ -113,7 +121,7 @@
         live:left_src="@drawable/animdoor_bottom"
         live:orientation="vertical"
         live:right_src="@drawable/animdoor_top"
-        live:time="500"
+        live:time="400"
         live:visible="true" />
 
     <LinearLayout

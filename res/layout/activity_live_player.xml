@@ -34,7 +34,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:lineSpacingMultiplier="1.2"
-            android:text="@string/test_player_dialog"
             android:textColor="@color/white"
             android:textSize="18sp" />
     </ScrollView>

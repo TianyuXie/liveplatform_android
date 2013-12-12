@@ -17,7 +17,7 @@ import android.widget.Scroller;
 
 public class HorizontalListView extends AdapterView<ListAdapter> {
     
-    private static final String TAG = HorizontalListView.class.getSimpleName();
+    static final String TAG = HorizontalListView.class.getSimpleName();
 
     public boolean mAlwaysOverrideTouch = true;
     protected ListAdapter mAdapter;

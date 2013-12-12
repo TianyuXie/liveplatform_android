@@ -27,7 +27,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:text="@string/test_userpage_status"
                 android:textColor="@color/userpage_program_title_bg"
                 android:textSize="15sp" />
 
@@ -49,7 +48,6 @@
                 android:layout_toRightOf="@id/image_userpage_program_preview"
                 android:ellipsize="end"
                 android:maxLines="2"
-                android:text="@string/test_userpage_title"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -77,7 +75,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/test_userpage_time"
                     android:textColor="@color/userpage_program_title_bg"
                     android:textSize="16sp" />
             </RelativeLayout>

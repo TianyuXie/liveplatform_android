@@ -36,6 +36,8 @@ import com.pplive.liveplatform.core.service.live.TokenService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
+import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
@@ -43,6 +45,7 @@ import com.pplive.liveplatform.ui.record.LiveMediaRecoder.OnErrorListener;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
+import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
 import de.greenrobot.event.EventBus;
@@ -87,7 +90,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private AnimDoor mAnimDoor;
     private View mStatusButtonWrapper;
-    private Animation mStatusUpAnimation;
+    private View mLiveButtonWrapper;
+
     private LoadingButton mStatusButton;
 
     private AnimationListener openDoorListener = new AnimationListener() {
@@ -103,6 +107,24 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         @Override
         public void onAnimationEnd(Animation animation) {
             mAnimDoor.hide();
+        }
+    };
+
+    private AnimationListener moveAnimationListener = new AnimationListener() {
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mStatusButtonWrapper.setVisibility(View.GONE);
+            mLiveButtonWrapper.setVisibility(View.VISIBLE);
+            rotateButton();
         }
     };
 
@@ -140,12 +162,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mAnimDoor.setOpenDoorListener(openDoorListener);
 
         mStatusButtonWrapper = findViewById(R.id.wrapper_live_status);
+        mLiveButtonWrapper = findViewById(R.id.wrapper_live_status_right);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
-
-        mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -mAnimDoor.getAnimX() * 1.3f);
-        mStatusUpAnimation.setFillAfter(true);
-        mStatusUpAnimation.setDuration((int) (mAnimDoor.getDuration() * 1.3f));
-        mStatusUpAnimation.setInterpolator(new LinearInterpolator());
     }
 
     @Override
@@ -220,7 +238,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             break;
         case WHAT_OPEN_DOOR:
             mStatusButton.finishLoading();
-            mStatusButtonWrapper.startAnimation(mStatusUpAnimation);
+            moveButton();
             mAnimDoor.open();
             break;
         default:
@@ -229,6 +247,37 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         return false;
     }
+
+    private void moveButton() {
+        Animation moveAnimation = new TranslateAnimation(0.0f, DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 47.5f), 0.0f, 0.0f);
+        moveAnimation.setFillAfter(false);
+        moveAnimation.setDuration(mAnimDoor.getDuration());
+        moveAnimation.setInterpolator(new LinearInterpolator());
+        moveAnimation.setAnimationListener(moveAnimationListener);
+        mStatusButtonWrapper.startAnimation(moveAnimation);
+    }
+
+    private void rotateButton() {
+        // Find the center of the container
+        final float centerX = mLiveButtonWrapper.getWidth() / 2.0f;
+        final float centerY = mLiveButtonWrapper.getHeight() / 2.0f;
+
+        // Create a new 3D rotation with the supplied parameter
+        // The animation listener is used to trigger the next animation
+        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
+        rotation.setDuration(350);
+        rotation.setFillAfter(true);
+        rotation.setInterpolator(new LinearInterpolator());
+        rotation.setRotateListener(rotateListener);
+        mLiveButtonWrapper.startAnimation(rotation);
+    }
+
+    private RotateListener rotateListener = new RotateListener() {
+        @Override
+        public void onRotateMiddle() {
+            mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
+        }
+    };
 
     private void onRecordStart() {
         mTextLive.setVisibility(View.VISIBLE);
