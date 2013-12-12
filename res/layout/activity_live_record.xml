@@ -79,14 +79,15 @@
         android:layout_marginRight="10dp"
         android:visibility="invisible" >
 
-        <ToggleButton
+        <ImageButton
             android:id="@+id/btn_live_record"
-            style="@style/togglebutton_notext"
+            style="@style/Widget.ToggleButton.Transparent"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:background="@drawable/home_status_btn_rotate"
-            android:checked="false"
-            android:onClick="onClick" />
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:onClick="onClick"
+            android:background="@drawable/home_status_btn_rotate" />
     </RelativeLayout>
 
     <TextView
