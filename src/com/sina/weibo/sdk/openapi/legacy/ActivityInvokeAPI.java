@@ -12,6 +12,7 @@ public class ActivityInvokeAPI {
      * @param activity
      * @param content 微博内容
      */
+    @SuppressWarnings("deprecation")
     public static void openSendWeibo(Activity activity,String content){
         if(activity==null||null==content){
             return;

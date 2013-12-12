@@ -14,11 +14,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
+import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.home.HomeFragment;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
@@ -154,8 +157,8 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         @Override
         public void onClick(View v) {
             if (UserManager.getInstance(HomeActivity.this).isLogin()) {
-                mStatusButton.setBackgroundResource(R.drawable.home_status_btn_rotate);
                 mStatusButton.setClickable(false);
+                rotateButton();
                 mAnimDoor.shut();
             } else {
                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
@@ -169,6 +172,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         @Override
         public void onAnimationStart(Animation animation) {
+            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_rotate);
         }
 
         @Override
@@ -181,6 +185,13 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         public void onAnimationRepeat(Animation animation) {
         }
 
+    };
+
+    private RotateListener rotateListener = new RotateListener() {
+        @Override
+        public void onRotateMiddle() {
+            mStatusButton.setBackgroundResource(R.drawable.home_status_btn_rotate_mirror);
+        }
     };
 
     private AnimationListener shutAnimationListener = new AnimationListener() {
@@ -234,6 +245,21 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         }
     }
 
+    private void rotateButton() {
+        // Find the center of the container
+        final float centerX = mStatusButton.getWidth() / 2.0f;
+        final float centerY = mStatusButton.getHeight() / 2.0f;
+
+        // Create a new 3D rotation with the supplied parameter
+        // The animation listener is used to trigger the next animation
+        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
+        rotation.setDuration(350);
+        rotation.setFillAfter(true);
+        rotation.setInterpolator(new LinearInterpolator());
+        rotation.setRotateListener(rotateListener);
+        mStatusButtonWrapper.startAnimation(rotation);
+    }
+
     private Handler mStatusButtonHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -241,9 +267,10 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         }
     };
 
-    RadioGroup.OnCheckedChangeListener onTypeChangeListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroup.OnCheckedChangeListener onTypeChangeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            Log.d(TAG, "onCheckedChanged");
             doSlideBack();
             mHomeFragment.hideSearchBar();
             switch (checkedId) {
