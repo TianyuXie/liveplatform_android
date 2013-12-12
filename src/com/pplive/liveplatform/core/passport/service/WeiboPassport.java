@@ -8,10 +8,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.pplive.liveplatform.core.passport.service.TencentPassport.ThirdpartyLoginListener;
 import com.pplive.liveplatform.core.service.passport.PassportService;
@@ -24,7 +21,6 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
-
 
 public class WeiboPassport
 {
