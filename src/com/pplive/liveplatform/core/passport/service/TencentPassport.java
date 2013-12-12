@@ -183,7 +183,11 @@ public class TencentPassport
                     try {
                         mLoginResult.setThirdPartyNickName(response.getString("nickname"));
                         mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_1"));
-                        PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
+                        LoginResult temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
+                        if(temp != null) {
+                            mLoginResult.setToken(temp.getToken());
+                            mLoginResult.setUsername(temp.getUsername());
+                        }
                     } catch (JSONException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
