@@ -6,7 +6,7 @@ public class LiveAlive {
     
     long delay; // millisecond
     
-    public long getId() {
+    public long getProgramId() {
         return pid;
     }
     
