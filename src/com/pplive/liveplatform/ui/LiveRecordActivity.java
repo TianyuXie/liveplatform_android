@@ -285,14 +285,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     };
 
     private void onRecordStart() {
-        mTextLive.setVisibility(View.VISIBLE);
-        mTextRecordDuration.setVisibility(View.VISIBLE);
+        if (null != mLivingProgram) {
+            mTextLive.setVisibility(View.VISIBLE);
+            mTextRecordDuration.setVisibility(View.VISIBLE);
 
-        mTextLivingTitle.setVisibility(View.VISIBLE);
-        mTextLivingTitle.setText(mLivingProgram.getTitle());
+            mTextLivingTitle.setVisibility(View.VISIBLE);
+            mTextLivingTitle.setText(mLivingProgram.getTitle());
 
-        Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
-        mInnerHandler.sendMessage(msg);
+            Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
+            mInnerHandler.sendMessage(msg);
+        }
     }
 
     private void onRecordEnd() {
