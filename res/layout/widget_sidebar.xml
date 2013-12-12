@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <Button
+    <com.pplive.liveplatform.ui.widget.CircularImageView
         android:id="@+id/btn_sidebar_user_icon"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/user_icon_login" />
+        android:src="@drawable/user_icon_login" />
 
     <TextView
         android:id="@+id/text_sidebar_user"
@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/btn_sidebar_user_icon"
         android:layout_centerHorizontal="true"
-        android:text="@string/test_titlebar_title"
         android:textColor="@color/white" />
 
     <RadioGroup
