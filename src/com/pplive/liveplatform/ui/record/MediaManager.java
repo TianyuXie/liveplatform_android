@@ -21,17 +21,17 @@ public class MediaManager {
 
     public static final String MIME_TYPE_AUDIO_AAC = "audio/mp4a-latm";
 
-    public static final int VIDEO_BIT_RATE = 200000;
+    public static final int VIDEO_BIT_RATE = 230000;
 
-    public static final int AUDIO_BIT_RATE = 16000;
+    public static final int AUDIO_BIT_RATE = 32000;
 
     public static final int FRAME_RATE = 15;
 
     public static final int IFRAME_INTERVAL = 1;
 
-    public static final int[] SAMPLE_RATES = new int[] { 44100, 22050, 11025, 8000 };
+    public static final int[] SAMPLE_RATES = new int[] { 22050, 44100, 11025, 8000 };
 
-    public static final short[] CHANNEL_CONFIGS = new short[] { AudioFormat.CHANNEL_IN_STEREO, AudioFormat.CHANNEL_IN_MONO };
+    public static final short[] CHANNEL_CONFIGS = new short[] { AudioFormat.CHANNEL_IN_MONO, AudioFormat.CHANNEL_IN_STEREO };
 
     public static final short[] BIT_PER_SAMPLE = new short[] { AudioFormat.ENCODING_PCM_16BIT };
 

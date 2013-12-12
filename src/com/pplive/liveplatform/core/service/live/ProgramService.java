@@ -66,9 +66,9 @@ public class ProgramService extends RestService {
         
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<?> req = new HttpEntity<Program>(program, mRequestHeaders);
+        HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
 
-        ProgramResp resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM.toString(), req, ProgramResp.class);
+        ProgramResp resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM, req, ProgramResp.class);
 
         return resp.getData();
     }
@@ -88,7 +88,7 @@ public class ProgramService extends RestService {
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
 
         mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, Resp.class, pid);
     }
