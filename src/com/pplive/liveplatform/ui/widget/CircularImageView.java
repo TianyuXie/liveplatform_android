@@ -5,15 +5,15 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.pplive.liveplatform.util.ImageUtil;
 
 public class CircularImageView extends AsyncImageView {
     static final String TAG = "_CircularImageView";
+
+    private Bitmap mBitmap;
 
     private Paint mPaint;
 
@@ -21,11 +21,8 @@ public class CircularImageView extends AsyncImageView {
 
     private boolean mRounded;
 
-    private Rect getRect(Bitmap bitmap) {
-        if (mRect == null) {
-            mRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-        }
-        return mRect;
+    public CircularImageView(Context context) {
+        this(context, null);
     }
 
     public CircularImageView(Context context, AttributeSet attrs) {
@@ -37,16 +34,31 @@ public class CircularImageView extends AsyncImageView {
     protected void onDraw(Canvas canvas) {
         Drawable drawable = getDrawable();
         if (null != drawable && mRounded) {
-            Log.d(TAG, "onDraw Rounded");
-            Bitmap bitmap = ImageUtil.getCircleBitmap(ImageUtil.scaleBitmap(((BitmapDrawable) drawable).getBitmap(), getWidth()));
-            Rect rect = getRect(bitmap);
-            canvas.drawBitmap(bitmap, rect, rect, mPaint);
+            if (mBitmap != null && !mBitmap.isRecycled()) {
+                mBitmap.recycle();
+            }
+            mBitmap = ImageUtil.getCircleBitmap(ImageUtil.getScaledBitmap(drawable, getWidth()));
+            Rect rect = getRect(mBitmap);
+            canvas.drawBitmap(mBitmap, rect, rect, mPaint);
         } else {
             super.onDraw(canvas);
         }
     }
 
+    private Rect getRect(Bitmap bitmap) {
+        if (mRect == null) {
+            mRect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+        }
+        return mRect;
+    }
+
     public void setRounded(boolean rounded) {
         this.mRounded = rounded;
+    }
+
+    public void release() {
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            mBitmap.recycle();
+        }
     }
 }

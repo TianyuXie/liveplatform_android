@@ -59,7 +59,18 @@ public class ImageUtil {
         return result;
     }
 
-    public static Bitmap scaleBitmap(Bitmap src, float destSize) {
+    public static Bitmap getScaledBitmap(Drawable src, float destSize) {
+        if (src == null) {
+            return null;
+        }
+        if (src instanceof BitmapDrawable) {
+            return getScaledBitmap(((BitmapDrawable) src).getBitmap(), destSize);
+        } else {
+            throw new UnsupportedException("Unsupported");
+        }
+    }
+
+    public static Bitmap getScaledBitmap(Bitmap src, float destSize) {
         if (src == null) {
             return null;
         }
@@ -69,9 +80,7 @@ public class ImageUtil {
         float scaleHeight = ((float) destSize) / height;
         Matrix matrix = new Matrix();
         matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap result = Bitmap.createBitmap(src, 0, 0, width, height, matrix, true);
-        src.recycle();
-        return result;
+        return Bitmap.createBitmap(src, 0, 0, width, height, matrix, true);
     }
 
     public static Bitmap getCircleBitmap(Drawable src) {

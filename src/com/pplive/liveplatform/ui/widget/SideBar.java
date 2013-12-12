@@ -31,7 +31,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
 
     private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .build();
+            .cacheOnDisc(true).build();
 
     private View mRoot;
 
@@ -47,9 +47,13 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
 
     private boolean mShowing;
 
-    private TextView mUserTextView;
+    private TextView mNicknameText;
 
-    private CircularImageView mUserButton;
+    private CircularImageView mUserIcon;
+
+    public SideBar(Context context) {
+        this(context, null);
+    }
 
     public SideBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -79,33 +83,29 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         a.recycle();
         mShowing = (getVisibility() == VISIBLE);
         mRadioGroup = (RadioGroup) mRoot.findViewById(R.id.radiogroup_sidebar_type);
-        mUserTextView = (TextView) mRoot.findViewById(R.id.text_sidebar_user);
-        mUserButton = (CircularImageView) mRoot.findViewById(R.id.btn_sidebar_user_icon);
+        mNicknameText = (TextView) mRoot.findViewById(R.id.text_sidebar_user);
+        mUserIcon = (CircularImageView) mRoot.findViewById(R.id.btn_sidebar_user_icon);
         mBlockLayer = mRoot.findViewById(R.id.layout_block_layer);
-        mUserButton.setOnClickListener(onUserBtnClickListener);
+        mUserIcon.setOnClickListener(onUserBtnClickListener);
         mRoot.findViewById(R.id.btn_sidebar_settings).setOnClickListener(onSettingsBtnClickListener);
     }
 
     public void updateUsername() {
         if (UserManager.getInstance(getContext()).isLogin()) {
-            mUserTextView.setText(UserManager.getInstance(getContext()).getNickname());
+            mNicknameText.setText(UserManager.getInstance(getContext()).getNickname());
             String iconUrl = UserManager.getInstance(getContext()).getIcon();
             Log.d(TAG, iconUrl);
-            mUserButton.setRounded(false);
+            mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserButton.setImageAsync(UserManager.getInstance(getContext()).getIcon(), DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+                mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
             } else {
-                mUserButton.setImageResource(R.drawable.user_icon_default);
+                mUserIcon.setImageResource(R.drawable.user_icon_default);
             }
         } else {
-            mUserTextView.setText("");
-            mUserButton.setImageResource(R.drawable.user_icon_login);
-            mUserButton.setRounded(false);
+            mNicknameText.setText("");
+            mUserIcon.setImageResource(R.drawable.user_icon_login);
+            mUserIcon.setRounded(false);
         }
-    }
-
-    public SideBar(Context context) {
-        this(context, null);
     }
 
     @Override
@@ -202,20 +202,23 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         @Override
         public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
             Log.d(TAG, "onLoadingFailed");
-            mUserButton.setRounded(false);
+            mUserIcon.setRounded(false);
         }
 
         @Override
         public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
             Log.d(TAG, "onLoadingComplete");
-            mUserButton.setRounded(arg2 != null);
+            mUserIcon.setRounded(arg2 != null);
         }
 
         @Override
         public void onLoadingCancelled(String arg0, View arg1) {
             Log.d(TAG, "onLoadingCancelled");
-            mUserButton.setRounded(false);
+            mUserIcon.setRounded(false);
         }
     };
 
+    public void release() {
+        mUserIcon.release();
+    }
 }

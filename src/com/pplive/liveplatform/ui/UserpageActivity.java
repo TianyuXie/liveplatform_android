@@ -36,12 +36,12 @@ public class UserpageActivity extends Activity {
 
     private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .build();
+            .cacheOnDisc(true).build();
 
     private List<Program> mPrograms;
     private ListView mListView;
-    private CircularImageView mUserButton;
-    private TextView mUserTextView;
+    private CircularImageView mUserIcon;
+    private TextView mNicknameText;
     private UserpageProgramAdapter mAdapter;
 
     @Override
@@ -57,8 +57,8 @@ public class UserpageActivity extends Activity {
         findViewById(R.id.btn_userpage_settings).setOnClickListener(onSettingsBtnClickListener);
         mListView = (ListView) findViewById(R.id.list_userpage_program);
         mListView.setAdapter(mAdapter);
-        mUserButton = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
-        mUserTextView = (TextView) findViewById(R.id.text_userpage_nickname);
+        mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
+        mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
     }
 
     @Override
@@ -72,21 +72,27 @@ public class UserpageActivity extends Activity {
         updateUsername();
     }
 
+    @Override
+    protected void onDestroy() {
+        mUserIcon.release();
+        super.onDestroy();
+    }
+
     private void updateUsername() {
         if (UserManager.getInstance(this).isLogin()) {
-            mUserTextView.setText(UserManager.getInstance(this).getNickname());
+            mNicknameText.setText(UserManager.getInstance(this).getNickname());
             String iconUrl = UserManager.getInstance(this).getIcon();
-            mUserButton.setRounded(false);
             Log.d(TAG, iconUrl);
+            mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserButton.setImageAsync(UserManager.getInstance(this).getIcon(), DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+                mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
             } else {
-                mUserButton.setImageResource(R.drawable.user_icon_default);
+                mUserIcon.setImageResource(R.drawable.user_icon_default);
             }
         } else {
-            mUserTextView.setText("");
-            mUserButton.setImageResource(R.drawable.user_icon_login);
-            mUserButton.setRounded(false);
+            mNicknameText.setText("");
+            mUserIcon.setImageResource(R.drawable.user_icon_login);
+            mUserIcon.setRounded(false);
         }
     }
 
@@ -151,19 +157,19 @@ public class UserpageActivity extends Activity {
         @Override
         public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
             Log.d(TAG, "onLoadingFailed");
-            mUserButton.setRounded(false);
+            mUserIcon.setRounded(false);
         }
 
         @Override
         public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
             Log.d(TAG, "onLoadingComplete");
-            mUserButton.setRounded(arg2 != null);
+            mUserIcon.setRounded(arg2 != null);
         }
 
         @Override
         public void onLoadingCancelled(String arg0, View arg1) {
             Log.d(TAG, "onLoadingCancelled");
-            mUserButton.setRounded(false);
+            mUserIcon.setRounded(false);
         }
     };
 

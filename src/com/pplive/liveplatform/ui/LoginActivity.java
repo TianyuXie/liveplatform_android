@@ -73,6 +73,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     }
 
     public void qqlogin(View v) {
+        mRefreshDialog.show();
         TencentPassport.getInstance().init(this);
         TencentPassport.getInstance().setActivity(this);
         TencentPassport.getInstance().setLoginListener(this);
@@ -80,6 +81,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     }
 
     public void weiboLogin(View v) {
+        mRefreshDialog.show();
         WeiboPassport.getInstance().setActivity(this);
         WeiboPassport.getInstance().init(this);
         WeiboPassport.getInstance().setLoginListener(this);
@@ -141,7 +143,6 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
             String usrPlain = (String) event.getContext().get(LoginTask.KEY_USR);
             String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PWD);
@@ -150,6 +151,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
             User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
             UserManager.getInstance(mContext).setUserinfo(userinfo);
             String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
+            mRefreshDialog.dismiss();
             if (!TextUtils.isEmpty(targetClass)) {
                 try {
                     Intent intent2 = new Intent(mContext, Class.forName(targetClass));
@@ -193,6 +195,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         UserManager.getInstance(mContext).login(res.getUsername(), "", res.getToken());
         UserManager.getInstance(mContext).setUserinfo(res.getThirdPartyNickName(), res.getThirdPartyFaceUrl());
         String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
+        mRefreshDialog.dismiss();
         if (!TextUtils.isEmpty(targetClass)) {
             try {
                 Intent intent2 = new Intent(mContext, Class.forName(targetClass));
@@ -206,8 +209,9 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
     @Override
     public void LoginFailed() {
-        // TODO Auto-generated method stub
+        mRefreshDialog.dismiss();
         Log.w(TAG, "Login failed");
+        Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
     }
 
 }
