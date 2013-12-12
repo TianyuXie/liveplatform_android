@@ -25,12 +25,20 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/btn_player_mode"
+            android:ellipsize="marquee"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
             android:text="@string/test_player_title"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
         <ToggleButton
-            android:id="@+id/btn_player_mode"
+            android:id="@id/btn_player_mode"
             style="@style/togglebutton_notext"
             android:layout_width="45dp"
             android:layout_height="45dp"

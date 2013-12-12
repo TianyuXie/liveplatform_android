@@ -76,12 +76,12 @@ public class UserpageActivity extends Activity {
         if (UserManager.getInstance(this).isLogin()) {
             mUserTextView.setText(UserManager.getInstance(this).getNickname());
             String iconUrl = UserManager.getInstance(this).getIcon();
+            mUserButton.setRounded(false);
             Log.d(TAG, iconUrl);
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserButton.setImageAsync(UserManager.getInstance(this).getIcon(), DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
             } else {
                 mUserButton.setImageResource(R.drawable.user_icon_default);
-                mUserButton.setRounded(false);
             }
         } else {
             mUserTextView.setText("");

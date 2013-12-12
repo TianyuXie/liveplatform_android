@@ -179,7 +179,7 @@ public class TencentPassport
                     // TODO Auto-generated method stub
                     try {
                         mLoginResult.setThirdPartyNickName(response.getString("nickname"));
-                        mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_1"));
+                        mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_2"));
                         LoginResult temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
                         if(temp != null) {
                             mLoginResult.setToken(temp.getToken());

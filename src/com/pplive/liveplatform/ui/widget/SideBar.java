@@ -91,11 +91,11 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             mUserTextView.setText(UserManager.getInstance(getContext()).getNickname());
             String iconUrl = UserManager.getInstance(getContext()).getIcon();
             Log.d(TAG, iconUrl);
+            mUserButton.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserButton.setImageAsync(UserManager.getInstance(getContext()).getIcon(), DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
             } else {
                 mUserButton.setImageResource(R.drawable.user_icon_default);
-                mUserButton.setRounded(false);
             }
         } else {
             mUserTextView.setText("");
