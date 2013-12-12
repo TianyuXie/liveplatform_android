@@ -33,6 +33,7 @@ import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.TokenService;
+import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
@@ -43,6 +44,7 @@ import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder.OnErrorListener;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
+import com.pplive.liveplatform.ui.record.event.EventReset;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.util.DisplayUtil;
@@ -61,7 +63,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_COMING_START = 9004;
     private static final int WHAT_LIVE_COMING_UPDATE = 9005;
 
-    private static final int WHAT_OPEN_DOOR = 9006;
+    private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
+
+    private static final int WHAT_OPEN_DOOR = 9010;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -129,9 +133,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     };
 
     private GetPushUrlTask mGetPushUrlOneStepTask;
-    private Program mSelectedProgram;
+    private KeepLiveAliveTask mKeepLiveAliveTask;
+    private Program mLivingProgram;
 
-    private String mPushUrl;
+    private String mLivingUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,9 +218,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     public void onEvent(EventProgramSelected event) {
         final Program program = event.getObject();
 
-        mSelectedProgram = program;
+        mLivingProgram = program;
 
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
+    }
+    
+    public void onEvent(EventReset event) {
+        mLivingProgram = null;
+        
+        mInnerHandler.removeMessages(WHAT_LIVE_COMING_UPDATE);
+        mTextLiveComing.setVisibility(View.GONE);
     }
 
     @Override
@@ -236,10 +248,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_LIVE_COMING_UPDATE:
             onLiveComingUpdate();
             break;
+        case WHAT_LIVE_KEEP_ALIVE:
+            onKeepLiveAlive();
+            break;
         case WHAT_OPEN_DOOR:
-            mStatusButton.finishLoading();
-            moveButton();
-            mAnimDoor.open();
+            onOpenDoor();
             break;
         default:
             break;
@@ -280,14 +293,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     };
 
     private void onRecordStart() {
-        mTextLive.setVisibility(View.VISIBLE);
-        mTextRecordDuration.setVisibility(View.VISIBLE);
+        if (null != mLivingProgram) {
+            mTextLive.setVisibility(View.VISIBLE);
+            mTextRecordDuration.setVisibility(View.VISIBLE);
 
-        mTextLivingTitle.setVisibility(View.VISIBLE);
-        mTextLivingTitle.setText(mSelectedProgram.getTitle());
+            mTextLivingTitle.setVisibility(View.VISIBLE);
+            mTextLivingTitle.setText(mLivingProgram.getTitle());
 
-        Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
-        mInnerHandler.sendMessage(msg);
+            Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
+            mInnerHandler.sendMessage(msg);
+        }
     }
 
     private void onRecordEnd() {
@@ -316,9 +331,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             return;
         }
 
-        if (null != mSelectedProgram) {
+        if (null != mLivingProgram) {
             long now = System.currentTimeMillis();
-            long start = mSelectedProgram.getStartTime();
+            long start = mLivingProgram.getStartTime();
 
             Log.d(TAG, "now: " + now + "; start: " + start);
 
@@ -336,6 +351,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
         }
+    }
+
+    private void onKeepLiveAlive() {
+        if (null == mKeepLiveAliveTask) {
+            mKeepLiveAliveTask = new KeepLiveAliveTask();
+
+            mKeepLiveAliveTask.execute(mLivingProgram);
+        }
+    }
+
+    private void onOpenDoor() {
+        mStatusButton.finishLoading();
+        moveButton();
+        mAnimDoor.open();
     }
 
     @Override
@@ -407,7 +436,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void startRecording() {
-        if (TextUtils.isEmpty(mPushUrl)) {
+        if (TextUtils.isEmpty(mLivingUrl)) {
             return;
         }
 
@@ -421,19 +450,23 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             });
 
-            mMediaRecorder.setOutputPath(mPushUrl);
+            mMediaRecorder.setOutputPath(mLivingUrl);
 
             mMediaRecorder.start();
 
             mRecording = true;
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
+
+            mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
         }
     }
 
     private void stopRecording() {
         if (mRecording) {
             mMediaRecorder.stop();
+            mLivingProgram = null;
+            mLivingUrl = null;
             mRecording = false;
             mBtnLiveRecord.setSelected(mRecording);
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
@@ -477,14 +510,18 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         if (null != mCamera) {
             if (!mRecording) {
-                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 mTextLiveComing.setVisibility(View.GONE);
+
+                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 if (null == mGetPushUrlOneStepTask) {
                     mGetPushUrlOneStepTask = new GetPushUrlTask();
-                    mGetPushUrlOneStepTask.execute(mSelectedProgram);
+                    mGetPushUrlOneStepTask.execute(mLivingProgram);
                 }
             } else {
+                mTextLivingTitle.setVisibility(View.GONE);
+                
                 stopRecording();
+                getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
             }
         }
     }
@@ -522,7 +559,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Log.d(TAG, "create program");
                 program = new Program(username, mLiveTitle, System.currentTimeMillis());
                 program = ProgramService.getInstance().createProgram(usertoken, program);
-                mSelectedProgram = program;
+                mLivingProgram = program;
             } else {
                 Log.d(TAG, "has program");
             }
@@ -533,9 +570,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
             }
 
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, liveToken);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, liveToken);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, liveToken);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
 
             Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
@@ -556,11 +593,43 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (null != mCamera) {
                 if (!mRecording) {
-                    mPushUrl = url;
+                    mLivingUrl = url;
                     startRecording();
                 }
 
                 mBtnLiveRecord.setSelected(mRecording);
+            }
+        }
+    }
+
+    class KeepLiveAliveTask extends AsyncTask<Program, Void, LiveAlive> {
+
+        @Override
+        protected LiveAlive doInBackground(Program... params) {
+            String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+
+            Program program = params[0];
+
+            if (null != program && !TextUtils.isEmpty(coToken)) {
+                LiveAlive liveAlive = LiveControlService.getInstance().keepLiveAlive(coToken, program.getId());
+
+                return liveAlive;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(LiveAlive result) {
+            mKeepLiveAliveTask = null;
+
+            long delay = 60; // millisecond
+            if (null != result) {
+                delay = result.getDelayInMillis();
+            }
+
+            if (mRecording) {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_KEEP_ALIVE, delay);
             }
         }
     }

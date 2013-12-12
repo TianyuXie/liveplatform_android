@@ -22,7 +22,7 @@ public class Watch {
     
     long now;
 
-    public long getId() {
+    public long getProgramId() {
         return pid;
     }
 

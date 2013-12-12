@@ -60,6 +60,14 @@ public class PbarService {
         return rep.getBody().getData();
     }
     
+    public long putFeet(String coToken, long pid, String content, Feed.Type type) {
+        Log.d(TAG, "pid: " + pid + "; content: " + content + "; type: " + type);
+        
+        Feed feed = new Feed(pid, content, type);
+        
+        return putFeed(coToken, feed);
+    }
+    
     public long putFeed(String coToken, Feed feed) {
         Log.d(TAG, "putFeed");
         
