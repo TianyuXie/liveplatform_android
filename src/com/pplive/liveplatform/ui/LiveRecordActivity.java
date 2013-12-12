@@ -57,8 +57,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int WHAT_LIVE_COMING_START = 9004;
     private static final int WHAT_LIVE_COMING_UPDATE = 9005;
-
-    private static final int WHAT_OPEN_DOOR = 9006;
+    
+    private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
+    
+    private static final int WHAT_OPEN_DOOR = 9010;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -217,6 +219,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             break;
         case WHAT_LIVE_COMING_UPDATE:
             onLiveComingUpdate();
+            break;
+        case WHAT_LIVE_KEEP_ALIVE:
             break;
         case WHAT_OPEN_DOOR:
             mStatusButton.finishLoading();
@@ -379,6 +383,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mRecording = true;
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
+            
+            mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
         }
     }
 
@@ -487,9 +493,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
             }
 
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, liveToken);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, liveToken);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, liveToken);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
 
             Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
