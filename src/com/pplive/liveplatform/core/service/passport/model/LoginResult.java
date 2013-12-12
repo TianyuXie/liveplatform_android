@@ -20,6 +20,14 @@ public class LoginResult {
         return token;
     }
     
+    public void setUsername(String name) {
+        username = name;
+    }
+    
+    public void setToken(String stoken) {
+        token = stoken;
+    }
+    
     public String getThirdPartyToken() {
         return thirdPartyToken;
     }

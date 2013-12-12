@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -69,8 +70,8 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
-        if (WeiboPassport.getInstance().getInstance().mSsoHandler != null) {
-            WeiboPassport.getInstance().getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        if (WeiboPassport.getInstance().mSsoHandler != null) {
+            WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
 
     }
@@ -81,7 +82,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     {
         TencentPassport.getInstance().init(this);
         TencentPassport.getInstance().setActivity(this);
-        WeiboPassport.getInstance().getInstance().setLoginListener(this);
+        TencentPassport.getInstance().setLoginListener(this);
         TencentPassport.getInstance().login();
 
     }
@@ -90,7 +91,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     {
         WeiboPassport.getInstance().setActivity(this);
         WeiboPassport.getInstance().init(this);
-        WeiboPassport.getInstance().getInstance().setLoginListener(this);
+        WeiboPassport.getInstance().setLoginListener(this);
         WeiboPassport.getInstance().login();
     }
 
@@ -191,7 +192,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     @Override
     public void LoginSuccess(LoginResult res) {
         // TODO Auto-generated method stub
-        
+        Log.d("zhangxianjia", "success");
     }
 
 
@@ -199,7 +200,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     @Override
     public void LoginFailed() {
         // TODO Auto-generated method stub
-        
+        Log.d("zhangxianjia", "failed");
     }
     
 }
