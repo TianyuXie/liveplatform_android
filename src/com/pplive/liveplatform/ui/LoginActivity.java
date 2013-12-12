@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -57,6 +58,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         mRefreshDialog = new RefreshDialog(this);
         mUsrEditText = (EditText) findViewById(R.id.edit_login_username);
         mPwdEditText = (EditText) findViewById(R.id.edit_login_password);
+        mPwdEditText.setOnKeyListener(onPwdEditEnterListener);
         mConfirmButton = (Button) findViewById(R.id.btn_login_confirm);
         mConfirmButton.setOnClickListener(onConfirmBtnClickListener);
         mUsrEditText.addTextChangedListener(textWatcher);
@@ -83,6 +85,17 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         WeiboPassport.getInstance().setLoginListener(this);
         WeiboPassport.getInstance().login();
     }
+
+    private View.OnKeyListener onPwdEditEnterListener = new View.OnKeyListener() {
+        @Override
+        public boolean onKey(View v, int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                mConfirmButton.performClick();
+                return true;
+            }
+            return false;
+        }
+    };
 
     private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
         @Override
