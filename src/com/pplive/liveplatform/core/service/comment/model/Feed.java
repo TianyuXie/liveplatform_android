@@ -49,7 +49,7 @@ public class Feed {
 
     @Override
     public String toString() {
-        return String.format("<b>%s: </b>%s", userName, content);
+        return String.format("<b>%s: <font color='#919191'>%s</font></b><br>", userName, content);
     }
 
 }

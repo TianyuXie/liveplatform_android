@@ -62,7 +62,7 @@ public class UserManager {
     }
 
     public void setUserinfo(User userinfo) {
-        if (isLogin()) {
+        if (isLogin() && userinfo != null) {
             mNickname = userinfo.getNickname();
             mIcon = userinfo.getIcon();
             SettingsProvider.getInstance(mContext).setUserInfo(mNickname, mIcon);

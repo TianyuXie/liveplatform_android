@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
@@ -16,6 +17,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -27,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -71,6 +74,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private View mCommentView;
 
     private View mLoadingView;
+
+    private TextView mDialogTextView;
 
     private Dialog mShareDialog;
 
@@ -134,6 +139,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mDialogView = findViewById(R.id.layout_player_dialog);
         mLoadingView = findViewById(R.id.layout_player_loading);
+        mDialogTextView = (TextView) findViewById(R.id.text_player_dialog);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
         mDialogView.setOnTouchListener(onDialogTouchListener);
@@ -423,20 +429,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
             if (feeds != null) {
-                Log.d(TAG, feeds.getSize() + "");
+                mDialogTextView.setText("");
+                Collection<String> contents = feeds.getFeeds();
+                for (String content : contents) {
+                    mDialogTextView.append(Html.fromHtml(content.toString()));
+                }
             }
-
-            //            for (Watch watch : watchs) {
-            //                if ("rtmp".equals(watch.getProtocol())) {
-            //                    mUrl = watch.getWatchStringList().get(0);
-            //                    break;
-            //                }
-            //            }
-            //            if (mUrl != null) {
-            //                Log.d(TAG, "onTaskFinished:" + mUrl);
-            //                mLivePlayerFragment.setupPlayer(mUrl);
-            //                mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
-            //            }
         }
 
         @Override

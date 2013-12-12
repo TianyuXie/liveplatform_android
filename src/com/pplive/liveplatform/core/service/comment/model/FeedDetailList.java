@@ -38,7 +38,7 @@ public class FeedDetailList {
         return mapVoteUpCount;
     }
 
-    public Collection<String> getFeedStrings() {
+    public Collection<String> getFeeds() {
         Collection<String> result = new ArrayList<String>();
         for (long id : feedIds) {
             result.add(mapFeed.get(id).toString());
