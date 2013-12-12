@@ -70,8 +70,8 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // TODO Auto-generated method stub
-        if (WeiboPassport.getInstance().getInstance().mSsoHandler != null) {
-            WeiboPassport.getInstance().getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        if (WeiboPassport.getInstance().mSsoHandler != null) {
+            WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
 
     }
@@ -82,7 +82,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     {
         TencentPassport.getInstance().init(this);
         TencentPassport.getInstance().setActivity(this);
-        WeiboPassport.getInstance().getInstance().setLoginListener(this);
+        TencentPassport.getInstance().setLoginListener(this);
         TencentPassport.getInstance().login();
 
     }
@@ -91,7 +91,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
     {
         WeiboPassport.getInstance().setActivity(this);
         WeiboPassport.getInstance().init(this);
-        WeiboPassport.getInstance().getInstance().setLoginListener(this);
+        WeiboPassport.getInstance().setLoginListener(this);
         WeiboPassport.getInstance().login();
     }
 

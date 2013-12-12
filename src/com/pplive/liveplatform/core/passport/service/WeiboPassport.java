@@ -138,7 +138,11 @@ public class WeiboPassport
                     mLoginResult.setThirdPartyNickName(res.getString("name"));
                     mLoginResult.setThirdPartyID(res.getString("id"));
                     mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
-                    PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "sina");
+                    LoginResult tempresult = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "sina");
+                    if(tempresult != null) {
+                        mLoginResult.setToken(tempresult.getToken());
+                        mLoginResult.setUsername(tempresult.getUsername());
+                    }
                 } catch (JSONException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
