@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.core.service.live.model;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.text.TextUtils;
 
@@ -17,9 +18,9 @@ public class Watch {
     Channel[] channels;
 
     int interval;
-    
+
     long starttime;
-    
+
     long now;
 
     public long getProgramId() {
@@ -45,11 +46,12 @@ public class Watch {
             String url = null;
             for (String addr : channel.getAddrs()) {
                 if ("live2".equals(protocol)) {
-                    String playLink = String.format("%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=-1&sdkmode=1&livepath=%s", pid, channel.getFt(),
-                            channel.getName(), addr, now / 1000, delay , interval, channel.getPath());
+                    String playLink = String.format(Locale.US,
+                            "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=-1&sdkmode=1&livepath=%s", pid,
+                            channel.getFt(), channel.getName(), addr, now / 1000, delay, interval, channel.getPath());
                     url = PPBoxUtil.getPPLive2M3U8PlayURL(playLink).toString();
                 } else if ("rtmp".equals(protocol)) {
-                    String playLink = String.format("%s://%s%s/%s", protocol, addr, channel.getPath(), channel.getName());
+                    String playLink = String.format(Locale.US, "%s://%s%s/%s", protocol, addr, channel.getPath(), channel.getName());
                     url = PPBoxUtil.getRtmpM3U8PlayURL(playLink).toString();
                 }
             }
