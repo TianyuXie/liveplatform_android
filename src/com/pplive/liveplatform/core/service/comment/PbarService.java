@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
@@ -45,12 +46,15 @@ public class PbarService {
     }
 
     public FeedDetailList getFeeds(String coToken, long pid, int pagesize) {
+        
         Log.d(TAG, "pid: " + pid + "; pagesize: " + pagesize);
-
-        PBarTokenAuthentication authentication = new PBarTokenAuthentication(coToken);
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        headers.setAuthorization(authentication);
+
+        if (!TextUtils.isEmpty(coToken)) {
+            PBarTokenAuthentication authentication = new PBarTokenAuthentication(coToken);
+            headers.setAuthorization(authentication);
+        }
 
         RestTemplate template = new RestTemplate();
         template.getMessageConverters().add(new GsonHttpMessageConverter());
