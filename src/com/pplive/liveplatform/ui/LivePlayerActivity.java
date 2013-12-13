@@ -143,7 +143,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
         mRootLayout.setOnSoftInputListener(onSoftInputListener);
         mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
-        mCommentEditText.setOnEnterListener(commentOnEnterListener);
+        mCommentEditText.setOnEnterListener(onCommentEnterListener);
         mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mDialogView = findViewById(R.id.layout_player_dialog);
@@ -175,7 +175,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 showLoading();
                 mLoadingHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
-                mediaTask.addTaskListener(onMediaTaskListener);
+                mediaTask.addTaskListener(onGetMediaListener);
                 GetFeedTask feedTask = new GetFeedTask();
                 feedTask.addTaskListener(onGetFeedListener);
                 TaskContext taskContext = new TaskContext();
@@ -197,6 +197,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
+        mFeedHandler.removeMessages(MSG_GET_FEED);
     }
 
     @Override
@@ -320,10 +321,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
-    private EnterSendEditText.OnEnterListener commentOnEnterListener = new EnterSendEditText.OnEnterListener() {
+    private EnterSendEditText.OnEnterListener onCommentEnterListener = new EnterSendEditText.OnEnterListener() {
 
         @Override
         public boolean onEnter(View v) {
@@ -331,15 +331,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (pid != -1) {
                 String content = mCommentEditText.getText().toString();
                 String token = UserManager.getInstance(mContext).getToken();
-                PutFeedTask feedTask = new PutFeedTask();
-                feedTask.addTaskListener(onPutFeedListener);
                 TaskContext taskContext = new TaskContext();
                 taskContext.set(Task.KEY_PID, pid);
                 taskContext.set(PutFeedTask.KEY_CONTENT, content);
                 taskContext.set(Task.KEY_TOKEN, token);
-                feedTask.execute(taskContext);
-                stopWriting();
+                postFeed(taskContext);
             }
+            stopWriting();
             return true;
         }
     };
@@ -419,7 +417,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onModeBtnClick() {
+    public void onModeClick() {
         if (DisplayUtil.isLandscape(getApplicationContext())) {
             mUserOrient = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -430,13 +428,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onShareBtnClick() {
+    public void onShareClick() {
         mShareDialog.show();
     }
 
     @Override
-    public void onBackBtnClick() {
+    public void onBackClick() {
         finish();
+    }
+
+    private void postFeed(TaskContext taskContext) {
+        PutFeedTask feedTask = new PutFeedTask();
+        feedTask.setBackContext(taskContext);
+        feedTask.addTaskListener(onPutFeedListener);
+        feedTask.execute(taskContext);
     }
 
     private Task.OnTaskListener onPutFeedListener = new Task.OnTaskListener() {
@@ -444,7 +449,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
-
         }
 
         @Override
@@ -456,7 +460,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            Log.d(TAG, "onPutFeedTaskListener onTaskFailed");
+            Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
+//            postFeed(event.getContext());
         }
 
         @Override
@@ -514,7 +519,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
-    private Task.OnTaskListener onMediaTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onGetMediaListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -573,12 +578,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            gestureDetector.onTouchEvent(event);
+            onDialogGestureDetector.onTouchEvent(event);
             return false;
         }
     };
 
-    private GestureDetector gestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector onDialogGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {

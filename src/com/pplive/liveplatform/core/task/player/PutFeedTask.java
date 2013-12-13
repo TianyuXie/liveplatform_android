@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.task.player;
 
+import android.util.Log;
+
 import com.pplive.liveplatform.core.service.comment.PbarService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -48,17 +50,28 @@ public class PutFeedTask extends Task {
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
-        String token = (String) context.get(KEY_TOKEN);
-        String content = (String) context.get(KEY_CONTENT);
+        String token = context.getString(KEY_TOKEN);
+        String content = context.getString(KEY_CONTENT);
+        TaskResult result = new TaskResult(TaskStatus.Finished);
+        long feedId = -1;
         try {
-            PbarService.getInstance().putFeed(token, pid, content);
+            feedId = PbarService.getInstance().putFeed(token, pid, content);
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "get error");
+            result.setStatus(TaskStatus.Failed);
+            result.setMessage("put error");
+            result.setContext(context);
+            return result;
+        }
+        if (feedId <= 0) {
+            result.setStatus(TaskStatus.Failed);
+            result.setMessage("feedId <= 0");
+            result.setContext(context);
+            return result;
         }
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        Log.d("_LivePlayer", feedId + "");
         result.setContext(context);
         return result;
     }

@@ -77,7 +77,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
     private static final int WHAT_OPEN_DOOR = 9010;
-
     private final static int WHAT_GET_FEED = 9011;
 
     private Handler mInnerHandler = new Handler(this);
@@ -106,13 +105,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextLivingTitle;
 
     private AnimDoor mAnimDoor;
+    private LoadingButton mStatusButton;
     private View mStatusButtonWrapper;
     private View mLiveButtonWrapper;
-
     private View mDialogView;
     private TextView mDialogTextView;
-
-    private LoadingButton mStatusButton;
 
     private TaskContext mFeedContext;
 
@@ -305,11 +302,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         rotation.setDuration(350);
         rotation.setFillAfter(true);
         rotation.setInterpolator(new LinearInterpolator());
-        rotation.setRotateListener(rotateListener);
+        rotation.setRotateListener(rotateButtonListener);
         mLiveButtonWrapper.startAnimation(rotation);
     }
 
-    private RotateListener rotateListener = new RotateListener() {
+    private RotateListener rotateButtonListener = new RotateListener() {
         @Override
         public void onRotateMiddle() {
             mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
