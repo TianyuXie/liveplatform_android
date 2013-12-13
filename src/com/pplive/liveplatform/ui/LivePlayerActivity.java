@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -61,7 +62,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_LOADING_DELAY = 2000;
 
-    private final static int MSG_LOADING_FINISH = 2001;
+    private final static int MSG_MEDIA_FINISH = 2001;
 
     private final static int MSG_GET_FEED = 2500;
 
@@ -103,6 +104,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mWriting;
 
+    private boolean mFirstLoading;
+
     private boolean mLoadingFinish;
 
     private boolean mLoadingDelayed;
@@ -140,7 +143,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
         mRootLayout.setOnSoftInputListener(onSoftInputListener);
         mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
-        mCommentEditText.setOnEnterListener(commentOnEnterListener);
+        mCommentEditText.setOnEnterListener(onCommentEnterListener);
         mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mDialogView = findViewById(R.id.layout_player_dialog);
@@ -169,13 +172,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
             if (pid != -1) {
-                Log.d(TAG, "Pid:" + pid);
                 showLoading();
-                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
+                mLoadingHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
-                mediaTask.addTaskListener(onMediaTaskListener);
+                mediaTask.addTaskListener(onGetMediaListener);
                 GetFeedTask feedTask = new GetFeedTask();
-                feedTask.addTaskListener(onFeedTaskListener);
+                feedTask.addTaskListener(onGetFeedListener);
                 TaskContext taskContext = new TaskContext();
                 taskContext.set(Task.KEY_PID, pid);
                 taskContext.set(Task.KEY_USERNAME, username);
@@ -195,6 +197,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
+        mFeedHandler.removeMessages(MSG_GET_FEED);
     }
 
     @Override
@@ -318,10 +321,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
-    private EnterSendEditText.OnEnterListener commentOnEnterListener = new EnterSendEditText.OnEnterListener() {
+    private EnterSendEditText.OnEnterListener onCommentEnterListener = new EnterSendEditText.OnEnterListener() {
 
         @Override
         public boolean onEnter(View v) {
@@ -329,15 +331,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (pid != -1) {
                 String content = mCommentEditText.getText().toString();
                 String token = UserManager.getInstance(mContext).getToken();
-                PutFeedTask feedTask = new PutFeedTask();
-                feedTask.addTaskListener(onPutFeedTaskListener);
                 TaskContext taskContext = new TaskContext();
                 taskContext.set(Task.KEY_PID, pid);
                 taskContext.set(PutFeedTask.KEY_CONTENT, content);
                 taskContext.set(Task.KEY_TOKEN, token);
-                feedTask.execute(taskContext);
-                stopWriting();
+                postFeed(taskContext);
             }
+            stopWriting();
             return true;
         }
     };
@@ -417,7 +417,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onModeBtnClick() {
+    public void onModeClick() {
         if (DisplayUtil.isLandscape(getApplicationContext())) {
             mUserOrient = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -428,21 +428,27 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onShareBtnClick() {
+    public void onShareClick() {
         mShareDialog.show();
     }
 
     @Override
-    public void onBackBtnClick() {
+    public void onBackClick() {
         finish();
     }
 
-    private Task.OnTaskListener onPutFeedTaskListener = new Task.OnTaskListener() {
+    private void postFeed(TaskContext taskContext) {
+        PutFeedTask feedTask = new PutFeedTask();
+        feedTask.setBackContext(taskContext);
+        feedTask.addTaskListener(onPutFeedListener);
+        feedTask.execute(taskContext);
+    }
+
+    private Task.OnTaskListener onPutFeedListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
-
         }
 
         @Override
@@ -454,7 +460,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            Log.d(TAG, "onPutFeedTaskListener onTaskFailed");
+            Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
+//            postFeed(event.getContext());
         }
 
         @Override
@@ -464,15 +471,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
     };
 
-    private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onGetFeedListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
         }
 
         @Override
@@ -480,7 +487,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
             if (feeds != null) {
                 mDialogTextView.setText("");
-                Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.player_dialog_nickname), getResources().getColor(R.color.player_dialog_content));
+                Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.player_dialog_nickname),
+                        getResources().getColor(R.color.player_dialog_content));
                 if (contents.size() != 0) {
                     findViewById(R.id.text_player_no_comment).setVisibility(View.GONE);
                     for (String content : contents) {
@@ -490,29 +498,35 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     findViewById(R.id.text_player_no_comment).setVisibility(View.VISIBLE);
                 }
             }
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
         }
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
     };
 
-    private Task.OnTaskListener onMediaTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onGetMediaListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            //TODO timeout
             Log.d(TAG, "MediaTask onTimeout");
-            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
+            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
@@ -535,27 +549,28 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (!TextUtils.isEmpty(mUrl)) {
                 Log.d(TAG, "MediaTask onTaskFinished:" + mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
+            } else {
+                finish();
             }
-            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
+            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            //TODO failed
             Log.d(TAG, "MediaTask onTaskFailed");
-            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
+            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "MediaTask onTaskCancel");
-            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
-
+            finish();
         }
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
     };
 
@@ -563,12 +578,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            gestureDetector.onTouchEvent(event);
+            onDialogGestureDetector.onTouchEvent(event);
             return false;
         }
     };
 
-    private GestureDetector gestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector onDialogGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -583,27 +598,33 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
-        mLoadingView.setVisibility(View.VISIBLE);
-        mLoadingDialog.show();
+        if (!mFirstLoading) {
+            mFirstLoading = true;
+            mLoadingView.setVisibility(View.VISIBLE);
+            mLoadingDialog.show();
+        }
     }
 
     public void hideLoading() {
-        mLoadingView.setVisibility(View.GONE);
-        mLoadingDialog.dismiss();
+        if (mFirstLoading) {
+            mFirstLoading = false;
+            mLoadingView.setVisibility(View.GONE);
+            mLoadingDialog.dismiss();
+        }
     }
 
-    private Handler mHandler = new Handler() {
+    private Handler mLoadingHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_LOADING_DELAY:
                 mLoadingDelayed = true;
                 break;
-            case MSG_LOADING_FINISH:
+            case MSG_MEDIA_FINISH:
                 mLoadingFinish = true;
                 break;
             }
-            if (mLoadingFinish && mLoadingDelayed && !isFinishing()) {
+            if (mLoadingFinish && mLoadingDelayed && !isFinishing() && mFirstLoading) {
                 hideLoading();
             }
         }
@@ -615,10 +636,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             switch (msg.what) {
             case MSG_GET_FEED:
                 GetFeedTask feedTask = new GetFeedTask();
-                feedTask.addTaskListener(onFeedTaskListener);
+                feedTask.addTaskListener(onGetFeedListener);
                 feedTask.execute(mFeedContext);
                 mFeedHandler.removeMessages(MSG_GET_FEED);
-                mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, 5000);
                 break;
             }
         }
@@ -626,5 +646,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onStartPlay() {
+        //TODO
     }
 }

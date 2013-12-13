@@ -202,17 +202,17 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         switch (v.getId()) {
         case R.id.btn_player_mode:
             if (mCallbackListener != null) {
-                mCallbackListener.onModeBtnClick();
+                mCallbackListener.onModeClick();
             }
             break;
         case R.id.btn_player_share:
             if (mCallbackListener != null) {
-                mCallbackListener.onShareBtnClick();
+                mCallbackListener.onShareClick();
             }
             break;
         case R.id.btn_player_back:
             if (mCallbackListener != null) {
-                mCallbackListener.onBackBtnClick();
+                mCallbackListener.onBackClick();
             }
             break;
         default:
@@ -312,11 +312,11 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
 
         public void onTouch();
 
-        public void onModeBtnClick();
+        public void onModeClick();
 
-        public void onBackBtnClick();
+        public void onBackClick();
 
-        public void onShareBtnClick();
+        public void onShareClick();
 
     }
 

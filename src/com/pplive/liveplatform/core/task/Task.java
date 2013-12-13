@@ -15,7 +15,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     public final static String KEY_TOKEN = "token";
     public final static String KEY_PID = "pid";
     public final static String KEY_USERNAME = "username";
-    
+
     private static final int DEFAULT_TIME_OUT = 20 * 1000;
 
     private boolean isReturn;
@@ -25,6 +25,8 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     private Timer timer = new Timer();
 
     private ArrayList<OnTaskListener> taskListeners = new ArrayList<OnTaskListener>();
+
+    private TaskContext backContext;
 
     public Task(int timeout) {
         this.timeout = timeout;
@@ -58,7 +60,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case 0:
-                onTaskTimeout(Task.this, new TaskTimeoutEvent("Task timeout"));
+                onTaskTimeout(Task.this, new TaskTimeoutEvent("Task timeout", backContext));
                 break;
             default:
                 break;
@@ -78,8 +80,16 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         } else if (result.getStatus() == TaskStatus.Cancel) {
             onTaskCancel(this, new TaskCancelEvent(result.getMessage()));
         } else {
-            onTaskFailed(this, new TaskFailedEvent(result.getMessage()));
+            onTaskFailed(this, new TaskFailedEvent(result.getMessage(), result.getContext()));
         }
+    }
+
+    public void setTimeout(int timeout) {
+        this.timeout = timeout;
+    }
+
+    public void setBackContext(TaskContext backContext) {
+        this.backContext = backContext;
     }
 
     @Override

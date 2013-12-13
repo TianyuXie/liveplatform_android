@@ -77,8 +77,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
     private static final int WHAT_OPEN_DOOR = 9010;
-
-    private final static int MSG_GET_FEED = 2500;
+    private final static int WHAT_GET_FEED = 9011;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -106,13 +105,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextLivingTitle;
 
     private AnimDoor mAnimDoor;
+    private LoadingButton mStatusButton;
     private View mStatusButtonWrapper;
     private View mLiveButtonWrapper;
-
     private View mDialogView;
     private TextView mDialogTextView;
-
-    private LoadingButton mStatusButton;
 
     private TaskContext mFeedContext;
 
@@ -276,6 +273,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_OPEN_DOOR:
             onOpenDoor();
             break;
+        case WHAT_GET_FEED:
+            onGetFeed();
         default:
             break;
         }
@@ -303,11 +302,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         rotation.setDuration(350);
         rotation.setFillAfter(true);
         rotation.setInterpolator(new LinearInterpolator());
-        rotation.setRotateListener(rotateListener);
+        rotation.setRotateListener(rotateButtonListener);
         mLiveButtonWrapper.startAnimation(rotation);
     }
 
-    private RotateListener rotateListener = new RotateListener() {
+    private RotateListener rotateButtonListener = new RotateListener() {
         @Override
         public void onRotateMiddle() {
             mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
@@ -483,7 +482,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mFeedContext.set(Task.KEY_PID, mLivingProgram.getId());
             mFeedContext.set(Task.KEY_TOKEN, UserManager.getInstance(this).getToken());
-            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
+            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
         }
     }
 
@@ -659,25 +658,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private Handler mFeedHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_GET_FEED:
-                GetFeedTask feedTask = new GetFeedTask();
-                feedTask.addTaskListener(onFeedTaskListener);
-                feedTask.execute(mFeedContext);
-                mFeedHandler.removeMessages(MSG_GET_FEED);
-                mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, 5000);
-                break;
-            }
-        }
-    };
+    private void onGetFeed() {
+        GetFeedTask feedTask = new GetFeedTask();
+        feedTask.setTimeout(GetFeedTask.DEFAULT_TIMEOUT);
+        feedTask.addTaskListener(onFeedTaskListener);
+        feedTask.execute(mFeedContext);
+        mInnerHandler.removeMessages(WHAT_GET_FEED);
+    }
 
     private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
         }
 
         @Override
@@ -696,20 +690,24 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     mDialogView.setVisibility(View.GONE);
                 }
             }
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
         }
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
     };
 }
