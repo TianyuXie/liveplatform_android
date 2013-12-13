@@ -27,6 +27,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     static final String TAG = "_LivePlayerFragment";
 
     private static final int HIDE = 301;
+    
+    private static final int SHOW_DELAY = 15000;
 
     private static final int FLAG_TITLE_BAR = 0x1;
 
@@ -240,7 +242,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         }
         setVisibilityByFlags();
         mHandler.removeMessages(HIDE);
-        mHandler.sendEmptyMessageDelayed(HIDE, 6000);
+        mHandler.sendEmptyMessageDelayed(HIDE, SHOW_DELAY);
     }
 
     private void setVisibilityByFlags() {
@@ -293,7 +295,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
             if (mShowBar) {
                 hideBars();
             } else {
-                showBars(6000);
+                showBars(SHOW_DELAY);
             }
             return true;
         }
