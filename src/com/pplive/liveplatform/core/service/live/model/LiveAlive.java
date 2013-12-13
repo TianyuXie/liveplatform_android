@@ -4,13 +4,13 @@ public class LiveAlive {
 
     long pid;
     
-    long delay; // millisecond
+    long delay; // second
     
     public long getProgramId() {
         return pid;
     }
     
-    public long getDelayInMillis() {
+    public long getDelayInSeconds() {
         return delay;
     }
 }
