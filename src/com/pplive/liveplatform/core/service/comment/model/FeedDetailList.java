@@ -40,26 +40,32 @@ public class FeedDetailList {
         return mapVoteUpCount;
     }
 
-    public Collection<String> getFeeds() {
-        Collection<String> result = new ArrayList<String>();
-        for (long id : feedIds) {
-            result.add(buildFeedString(mapFeed.get(id)));
-        }
-        return result;
-    }
-
     public int getSize() {
         return feedIds.length;
     }
 
-    private String buildFeedString(Feed feed) {
+    public Collection<String> getFeedStrings() {
+        return getFeedStrings(0xffffffff, 0xffffffff);
+    }
+
+    public Collection<String> getFeedStrings(int userColor, int contentColor) {
+        Collection<String> result = new ArrayList<String>();
+        for (long id : feedIds) {
+            result.add(formatFeed(mapFeed.get(id), userColor, contentColor));
+        }
+        return result;
+    }
+
+    private String formatFeed(Feed feed, int userColor, int contentColor) {
+        userColor -= 0xff000000;
+        contentColor -= 0xff000000;
         String username = feed.getUserName();
         String content = feed.getContent();
         String nickname = mapUser.get(username).getNickname();
         if (TextUtils.isEmpty(nickname)) {
             nickname = username;
         }
-        return String.format("<b>%s: <font color='#919191'>%s</font></b><br>", nickname, content);
+        return String.format("<b><font color='#%06x'>%s: </font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor, content);
     }
 
 }

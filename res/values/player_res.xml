@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <string name="player_loading">载入中&#8230;</string>
+    <string name="player_no_comment">暂无精彩评论</string>
+
+    <color name="player_bottom_bar">#7F000000</color>
+    <color name="player_dialog_bg">#B3222222</color>
+    <color name="player_loading_bg">#FF1A1A1A</color>
+    <color name="player_dialog_nickname">#FFFFFFFF</color>
+    <color name="player_dialog_content">#FF919191</color>
+</resources>

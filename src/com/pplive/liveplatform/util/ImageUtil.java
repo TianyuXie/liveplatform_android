@@ -55,7 +55,6 @@ public class ImageUtil {
         canvas.drawBitmap(src, -(centerX - radius), -(centerY - radius), getCirclePaint());
         getCirclePaint().setXfermode(null);
         canvas.drawCircle(radius, radius, radius - STROKE_WIDTH / 2, getLinePaint());
-        src.recycle();
         return result;
     }
 
