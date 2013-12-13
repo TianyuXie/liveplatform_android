@@ -18,9 +18,9 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.passport.service.TencentPassport;
-import com.pplive.liveplatform.core.passport.service.WeiboPassport;
 import com.pplive.liveplatform.core.service.live.model.User;
+import com.pplive.liveplatform.core.service.passport.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
