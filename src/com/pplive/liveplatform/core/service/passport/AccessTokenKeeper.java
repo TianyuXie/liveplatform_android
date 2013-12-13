@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.pplive.liveplatform.core.passport.service;
+package com.pplive.liveplatform.core.service.passport;
 
 import android.content.Context;
 import android.content.SharedPreferences;
