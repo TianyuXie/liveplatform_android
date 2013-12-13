@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.passport.service;
+package com.pplive.liveplatform.core.service.passport;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -10,8 +10,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.pplive.liveplatform.core.passport.service.TencentPassport.ThirdpartyLoginListener;
-import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.service.passport.TencentPassport.ThirdpartyLoginListener;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;

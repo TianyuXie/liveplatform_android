@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.passport.service;
+package com.pplive.liveplatform.core.service.passport;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -12,7 +12,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
