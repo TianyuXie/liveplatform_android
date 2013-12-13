@@ -17,8 +17,7 @@
     <string name="program_status_notstart">即将开始</string>
     <string name="program_status_living">正在直播</string>
     <string name="program_status_stopped">已停止</string>
-    <string name="player_loading">载入中&#8230;</string>
-    <string name="player_no_comment">暂无精彩评论</string>
+
 
     <!-- For Test -->
     <string name="test_go_player">Go LivePlayer</string>

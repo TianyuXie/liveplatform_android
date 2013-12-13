@@ -189,7 +189,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
         mDialogView = findViewById(R.id.layout_record_dialog);
         mDialogTextView = (TextView) findViewById(R.id.text_record_dialog);
-        
+
         mFeedContext = new TaskContext();
     }
 
@@ -686,7 +686,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (feeds != null) {
                 mDialogView.setVisibility(View.VISIBLE);
                 mDialogTextView.setText("");
-                Collection<String> contents = feeds.getFeeds("#00ACFF");
+                Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.record_dialog_nickname),
+                        getResources().getColor(R.color.record_dialog_content));
                 if (contents.size() != 0) {
                     for (String content : contents) {
                         mDialogTextView.append(Html.fromHtml(content.toString()));

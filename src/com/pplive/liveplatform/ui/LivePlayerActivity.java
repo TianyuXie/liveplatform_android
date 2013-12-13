@@ -480,7 +480,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
             if (feeds != null) {
                 mDialogTextView.setText("");
-                Collection<String> contents = feeds.getFeeds("white");
+                Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.player_dialog_nickname), getResources().getColor(R.color.player_dialog_content));
                 if (contents.size() != 0) {
                     findViewById(R.id.text_player_no_comment).setVisibility(View.GONE);
                     for (String content : contents) {
