@@ -164,6 +164,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
             if (pid != -1) {
+                Log.d(TAG, "Pid:" + pid);
                 showLoading();
                 mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
@@ -474,8 +475,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (feeds != null) {
                 mDialogTextView.setText("");
                 Collection<String> contents = feeds.getFeeds();
-                for (String content : contents) {
-                    mDialogTextView.append(Html.fromHtml(content.toString()));
+                if (contents.size() != 0) {
+                    findViewById(R.id.text_player_no_comment).setVisibility(View.GONE);
+                    for (String content : contents) {
+                        mDialogTextView.append(Html.fromHtml(content.toString()));
+                    }
+                } else {
+                    findViewById(R.id.text_player_no_comment).setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -600,4 +606,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
         }
     };
+
+    @Override
+    public void onStartPlay() {
+    }
 }
