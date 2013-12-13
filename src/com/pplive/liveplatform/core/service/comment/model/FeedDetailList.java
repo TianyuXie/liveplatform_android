@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+import android.text.TextUtils;
+
 public class FeedDetailList {
 
     long[] feedIds;
@@ -41,13 +43,23 @@ public class FeedDetailList {
     public Collection<String> getFeeds() {
         Collection<String> result = new ArrayList<String>();
         for (long id : feedIds) {
-            result.add(mapFeed.get(id).toString());
+            result.add(buildFeedString(mapFeed.get(id)));
         }
         return result;
     }
 
     public int getSize() {
         return feedIds.length;
+    }
+
+    private String buildFeedString(Feed feed) {
+        String username = feed.getUserName();
+        String content = feed.getContent();
+        String nickname = mapUser.get(username).getNickname();
+        if (TextUtils.isEmpty(nickname)) {
+            nickname = username;
+        }
+        return String.format("<b>%s: <font color='#919191'>%s</font></b><br>", nickname, content);
     }
 
 }

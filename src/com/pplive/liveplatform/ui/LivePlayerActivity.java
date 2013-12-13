@@ -164,6 +164,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
             if (pid != -1) {
+                Log.d(TAG, "Pid:" + pid);
                 showLoading();
                 mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
@@ -474,8 +475,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (feeds != null) {
                 mDialogTextView.setText("");
                 Collection<String> contents = feeds.getFeeds();
-                for (String content : contents) {
-                    mDialogTextView.append(Html.fromHtml(content.toString()));
+                if (contents.size() != 0) {
+                    findViewById(R.id.text_player_no_comment).setVisibility(View.GONE);
+                    for (String content : contents) {
+                        mDialogTextView.append(Html.fromHtml(content.toString()));
+                    }
+                } else {
+                    findViewById(R.id.text_player_no_comment).setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -504,6 +510,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "MediaTask onTimeout");
+            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
         }
 
         @Override
@@ -511,6 +518,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             // TODO rtmp or live2
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
+            for (Watch watch : watchs) {
+                Log.d(TAG, "Protocol:" + watch.getProtocol());
+            }
             for (Watch watch : watchs) {
                 if ("rtmp".equals(watch.getProtocol())) {
                     mUrl = watch.getWatchStringList().get(0);
@@ -523,18 +533,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (!TextUtils.isEmpty(mUrl)) {
                 Log.d(TAG, "MediaTask onTaskFinished:" + mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
-                mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
             }
+            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "MediaTask onTaskFailed");
+            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "MediaTask onTaskCancel");
+            mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
+
         }
 
         @Override
@@ -593,4 +606,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
         }
     };
+
+    @Override
+    public void onStartPlay() {
+    }
 }

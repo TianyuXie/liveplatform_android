@@ -27,7 +27,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     static final String TAG = "_LivePlayerFragment";
 
     private static final int HIDE = 301;
-    
+
     private static final int SHOW_DELAY = 15000;
 
     private static final int FLAG_TITLE_BAR = 0x1;
@@ -155,20 +155,21 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
-        
+
         @Override
         public void onPrepared() {
+            if (mCallbackListener != null) {
+                mCallbackListener.onStartPlay();
+            }
             mVideoView.start();
         }
     };
 
     private MeetVideoView.OnCompletionListener mCompletionListener = new MeetVideoView.OnCompletionListener() {
-        
+
         @Override
         public void onCompletion() {
-            
             stopPlayback();
-
             if (mOnCompletionListener != null) {
                 mOnCompletionListener.onCompletion();
             }
@@ -176,12 +177,10 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnErrorListener mErrorListener = new MeetVideoView.OnErrorListener() {
-        
+
         @Override
         public boolean onError(int what, int extra) {
-
             stopPlayback();
-
             if (mOnErrorListener != null) {
                 return mOnErrorListener.onError(what, extra);
             }
@@ -309,6 +308,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     });
 
     public interface Callback {
+        public void onStartPlay();
+
         public void onTouch();
 
         public void onModeBtnClick();
