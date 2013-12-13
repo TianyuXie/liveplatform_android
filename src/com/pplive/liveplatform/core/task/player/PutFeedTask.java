@@ -1,22 +1,20 @@
 package com.pplive.liveplatform.core.task.player;
 
-import android.util.Log;
-
 import com.pplive.liveplatform.core.service.comment.PbarService;
-import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class GetFeedTask extends Task {
-    static final String TAG = "_GetFeedTask";
+public class PutFeedTask extends Task {
+    static final String TAG = "_PutFeedTask";
 
-    public final static String KEY_RESULT = "get_feed_result";
+    public final static String KEY_RESULT = "put_feed_result";
+    public final static String KEY_CONTENT = "content";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetFeed";
+    private final String NAME = "PutFeed";
 
     @Override
     public String getID() {
@@ -51,22 +49,16 @@ public class GetFeedTask extends Task {
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
         String token = (String) context.get(KEY_TOKEN);
-        FeedDetailList data = null;
+        String content = (String) context.get(KEY_CONTENT);
         try {
-            data = PbarService.getInstance().getFeeds(token, pid);
+            PbarService.getInstance().putFeed(token, pid, content);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "get error");
         }
-        if (data == null) {
-            Log.d(TAG, "data == null");
-            return new TaskResult(TaskStatus.Failed, "No data");
-        }
-        Log.d(TAG, data.getSize() + "");
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Canceled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
-        context.set(KEY_RESULT, data);
         result.setContext(context);
         return result;
     }

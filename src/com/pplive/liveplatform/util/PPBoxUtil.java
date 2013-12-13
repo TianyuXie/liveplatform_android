@@ -16,11 +16,11 @@ import com.pplive.sdk.MediaSDK;
 
 public class PPBoxUtil {
     
-    private static final String PPBOX_HOST = "127.0.0.1";
+    static final String PPBOX_HOST = "127.0.0.1";
     
-    private static final int PPBOX_RTSP_PORT = 5054;
+    static final int PPBOX_RTSP_PORT = 5054;
     
-    private static final int PPBOX_HTTP_PORT = 9006;
+    static final int PPBOX_HTTP_PORT = 9006;
     
     public static void initPPBox(Context ctx) {
         File cacheDirFile = ctx.getCacheDir();

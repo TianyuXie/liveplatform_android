@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -44,6 +45,7 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetFeedTask;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
+import com.pplive.liveplatform.core.task.player.PutFeedTask;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
@@ -61,7 +63,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_LOADING_FINISH = 2001;
 
-    private final static int LOADING_DELAY_TIME = 5000;
+    private final static int LOADING_DELAY_TIME = 3000;
 
     private DetectableRelativeLayout mRootLayout;
 
@@ -315,10 +317,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onEnter(View v) {
-            //TODO
-            String keyword = mCommentEditText.getText().toString();
-            Log.d(TAG, "Send: " + keyword);
-            stopWriting();
+            long pid = getIntent().getLongExtra("pid", -1);
+            if (pid != -1) {
+                String content = mCommentEditText.getText().toString();
+                String token = UserManager.getInstance(mContext).getToken();
+                PutFeedTask feedTask = new PutFeedTask();
+                feedTask.addTaskListener(onPutFeedTaskListener);
+                TaskContext taskContext = new TaskContext();
+                taskContext.set(Task.KEY_PID, pid);
+                taskContext.set(PutFeedTask.KEY_CONTENT, content);
+                taskContext.set(Task.KEY_TOKEN, token);
+                feedTask.execute(taskContext);
+                stopWriting();
+            }
             return true;
         }
     };
@@ -418,6 +429,38 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         finish();
     }
 
+    private Task.OnTaskListener onPutFeedTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTimeout");
+
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            GetFeedTask feedTask = new GetFeedTask();
+            feedTask.addTaskListener(onFeedTaskListener);
+            feedTask.execute(event.getContext());
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTaskFailed");
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTaskCancel");
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+    };
+
     private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
 
         @Override
@@ -460,12 +503,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-
+            Log.d(TAG, "MediaTask onTimeout");
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            // TODO rtmp or live2
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
             for (Watch watch : watchs) {
                 if ("rtmp".equals(watch.getProtocol())) {
@@ -473,8 +517,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     break;
                 }
             }
-            if (mUrl != null) {
-                Log.d(TAG, "onTaskFinished:" + mUrl);
+            if (TextUtils.isEmpty(mUrl)) {
+                mUrl = watchs.get(0).getWatchStringList().get(0);
+            }
+            if (!TextUtils.isEmpty(mUrl)) {
+                Log.d(TAG, "MediaTask onTaskFinished:" + mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
                 mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
             }
@@ -482,14 +529,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
-
+            Log.d(TAG, "MediaTask onTaskFailed");
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
-
+            Log.d(TAG, "MediaTask onTaskCancel");
         }
 
         @Override
@@ -543,7 +588,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 mLoadingFinish = true;
                 break;
             }
-            if (mLoadingFinish && mLoadingDelayed) {
+            if (mLoadingFinish && mLoadingDelayed && !isFinishing()) {
                 hideLoading();
             }
         }

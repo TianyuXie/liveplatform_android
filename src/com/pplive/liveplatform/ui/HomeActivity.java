@@ -90,6 +90,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+        mSideBar.release();
         mFragmentContainer.clearOnSlideListeners();
         super.onDestroy();
     }

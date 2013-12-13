@@ -31,7 +31,7 @@ public class AsyncImageView extends ImageView {
     public void setImageAsync(String imageUri, ImageLoadingListener listener) {
         mImageLoader.displayImage(imageUri, this, listener);
     }
-    
+
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
         mImageLoader.displayImage(imageUri, this, options, listener);
     }
