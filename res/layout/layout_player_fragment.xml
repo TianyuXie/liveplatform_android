@@ -9,7 +9,8 @@
         android:id="@+id/live_player_videoview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_centerInParent="true" >
+        android:layout_centerInParent="true"
+        android:background="@drawable/program_default_image" >
     </android.pplive.media.player.MeetVideoView>
 
     <RelativeLayout

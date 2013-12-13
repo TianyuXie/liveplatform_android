@@ -48,6 +48,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private final static int MSG_PULL_TIMEOUT = 2002;
 
+    private final static int FALL_COUNT = 16;
+
     private TitleBar mTitleBar;
 
     private ProgramContainer mContainer;
@@ -214,7 +216,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
             taskContext.set(SearchTask.KEY_SORT, "starttime");
-            taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
+            taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
             task.execute(taskContext);
         }
     }
