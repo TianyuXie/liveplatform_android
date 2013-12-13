@@ -237,9 +237,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     mContainer.refreshData(fallList.getList());
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
-                            mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                            mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
                         } else {
-                            mCallbackListener.doLoadResult("暂时没有数据");
+                            mCallbackListener.doLoadResult(getString(R.string.home_nodata));
                         }
                     }
                     break;
@@ -247,9 +247,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     mContainer.appendData(fallList.getList());
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
-                            mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                            mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
                         } else {
-                            mCallbackListener.doLoadResult("已全部加载");
+                            mCallbackListener.doLoadResult(getString(R.string.home_all_loaded));
                         }
                     }
                 default:

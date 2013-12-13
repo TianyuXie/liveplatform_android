@@ -128,7 +128,8 @@ public class PPboxStream {
         mStreams[itrack] = this;
 
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            MediaFormat format = MediaManager.getInstance().getSupportedEncodingAudioFormat(MediaManager.MIME_TYPE_AUDIO_AAC, audio.getSampleRate(), audio.getChannelCount());
+            MediaFormat format = MediaManager.getInstance().getSupportedEncodingAudioFormat(MediaManager.MIME_TYPE_AUDIO_AAC, audio.getSampleRate(),
+                    audio.getChannelCount());
             mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_AUDIO_AAC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
@@ -263,6 +264,7 @@ public class PPboxStream {
     private int mWritedBufferCount = 0;
 
     @SuppressLint("SdCardPath")
+    @SuppressWarnings("unused")
     private void writeBuffer(ByteBuffer buffer, int size) {
 
         if (mWritedBufferCount++ < 10) {

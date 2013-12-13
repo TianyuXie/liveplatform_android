@@ -32,7 +32,7 @@ public class Feed {
     long createtime;
 
     Type type;
-    
+
     public Feed(long pid, String content, Type type) {
         this.refId = "LivePlatform-pbar_" + pid;
         this.content = content;
@@ -45,11 +45,6 @@ public class Feed {
 
     public String getUserName() {
         return userName;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("<b>%s: <font color='#919191'>%s</font></b><br>", userName, content);
     }
 
 }
