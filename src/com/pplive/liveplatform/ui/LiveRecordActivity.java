@@ -623,13 +623,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         protected void onPostExecute(LiveAlive result) {
             mKeepLiveAliveTask = null;
 
-            long delay = 60; // millisecond
+            long delay = 60; // second
             if (null != result) {
-                delay = result.getDelayInMillis();
+                delay = result.getDelayInSeconds() /* second */;
             }
 
             if (mRecording) {
-                mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_KEEP_ALIVE, delay);
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_KEEP_ALIVE, delay * 1000 /* millisecond */);
             }
         }
     }

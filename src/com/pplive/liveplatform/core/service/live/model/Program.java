@@ -14,6 +14,8 @@ public class Program {
 
     String owner;
 
+    User user;
+
     LiveModeEnum mode;
 
     long starttime;
@@ -23,13 +25,13 @@ public class Program {
     int subject_id = 1;
 
     String cover_url;
-    
+
     String screenshot_url;
 
     String coname = "pptv";
-    
+
     Token tk;
-    
+
     public Program(String owner, String title, long starttime) {
         this(owner, LiveModeEnum.CAMERA, title, starttime);
     }
@@ -57,6 +59,10 @@ public class Program {
         return owner;
     }
 
+    public User getUserInfo() {
+        return user;
+    }
+
     public long getStartTime() {
         return starttime;
     }
@@ -76,31 +82,31 @@ public class Program {
     }
 
     public String getCoverUrl() {
-        
+
         return (TextUtils.isEmpty(cover_url) || "null".equals(cover_url)) ? "" : cover_url;
     }
-    
+
     public String getScreenshotUrl() {
-        
+
         return (TextUtils.isEmpty(screenshot_url) || "null".equals(screenshot_url)) ? "" : screenshot_url;
     }
-    
+
     public String getLiveToken() {
-        
+
         return (null == tk || TextUtils.isEmpty(tk.livetk) || "null".equals(tk.livetk)) ? "" : tk.livetk;
     }
-    
+
     static class Record {
-        
+
         long pid;
-        
+
         int vv;
-        
+
         int online;
     }
-    
+
     static class Token {
         String livetk;
     }
-    
+
 }
