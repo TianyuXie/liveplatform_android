@@ -50,7 +50,7 @@ public class GetFeedTask extends Task {
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
-        String token = (String) context.get(KEY_TOKEN);
+        String token = context.getString(KEY_TOKEN);
         FeedDetailList data = null;
         try {
             data = PbarService.getInstance().getFeeds(token, pid);

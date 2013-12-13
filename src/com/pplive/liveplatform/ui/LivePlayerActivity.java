@@ -63,7 +63,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_LOADING_FINISH = 2001;
 
+    private final static int MSG_GET_FEED = 2500;
+
     private final static int LOADING_DELAY_TIME = 3000;
+
+    private TaskContext mFeedContext;
 
     private DetectableRelativeLayout mRootLayout;
 
@@ -150,6 +154,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         /* init others */
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mFeedContext = new TaskContext();
     }
 
     @Override
@@ -175,8 +180,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 taskContext.set(Task.KEY_PID, pid);
                 taskContext.set(Task.KEY_USERNAME, username);
                 taskContext.set(Task.KEY_TOKEN, token);
+                mFeedContext.set(Task.KEY_PID, pid);
+                mFeedContext.set(Task.KEY_TOKEN, token);
                 mediaTask.execute(taskContext);
-                feedTask.execute(taskContext);
+                feedTask.execute(mFeedContext);
             }
         } else {
             Log.d(TAG, "onStart mUrl:" + mUrl);
@@ -440,9 +447,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            GetFeedTask feedTask = new GetFeedTask();
-            feedTask.addTaskListener(onFeedTaskListener);
-            feedTask.execute(event.getContext());
+            Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
         }
 
         @Override
@@ -466,7 +473,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-
         }
 
         @Override
@@ -474,7 +480,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
             if (feeds != null) {
                 mDialogTextView.setText("");
-                Collection<String> contents = feeds.getFeeds();
+                Collection<String> contents = feeds.getFeeds("white");
                 if (contents.size() != 0) {
                     findViewById(R.id.text_player_no_comment).setVisibility(View.GONE);
                     for (String content : contents) {
@@ -488,14 +494,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -603,6 +605,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
             if (mLoadingFinish && mLoadingDelayed && !isFinishing()) {
                 hideLoading();
+            }
+        }
+    };
+
+    private Handler mFeedHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_GET_FEED:
+                GetFeedTask feedTask = new GetFeedTask();
+                feedTask.addTaskListener(onFeedTaskListener);
+                feedTask.execute(mFeedContext);
+                mFeedHandler.removeMessages(MSG_GET_FEED);
+                mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, 5000);
+                break;
             }
         }
     };

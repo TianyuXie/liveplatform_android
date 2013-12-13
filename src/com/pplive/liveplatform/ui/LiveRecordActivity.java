@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -29,6 +31,7 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
@@ -37,6 +40,14 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.TaskCancelEvent;
+import com.pplive.liveplatform.core.task.TaskContext;
+import com.pplive.liveplatform.core.task.TaskFailedEvent;
+import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.core.task.player.GetFeedTask;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.record.CameraManager;
@@ -67,6 +78,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int WHAT_OPEN_DOOR = 9010;
 
+    private final static int MSG_GET_FEED = 2500;
+
     private Handler mInnerHandler = new Handler(this);
 
     private SurfaceView mPreview;
@@ -96,7 +109,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private View mStatusButtonWrapper;
     private View mLiveButtonWrapper;
 
+    private View mDialogView;
+    private TextView mDialogTextView;
+
     private LoadingButton mStatusButton;
+
+    private TaskContext mFeedContext;
 
     private AnimationListener openDoorListener = new AnimationListener() {
 
@@ -169,6 +187,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mStatusButtonWrapper = findViewById(R.id.wrapper_live_status);
         mLiveButtonWrapper = findViewById(R.id.wrapper_live_status_right);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
+        mDialogView = findViewById(R.id.layout_record_dialog);
+        mDialogTextView = (TextView) findViewById(R.id.text_record_dialog);
+        
+        mFeedContext = new TaskContext();
     }
 
     @Override
@@ -222,10 +244,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
     }
-    
+
     public void onEvent(EventReset event) {
         mLivingProgram = null;
-        
+
         mInnerHandler.removeMessages(WHAT_LIVE_COMING_UPDATE);
         mTextLiveComing.setVisibility(View.GONE);
     }
@@ -296,7 +318,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (null != mLivingProgram) {
             mTextLive.setVisibility(View.VISIBLE);
             mTextRecordDuration.setVisibility(View.VISIBLE);
-
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
 
@@ -459,6 +480,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
 
             mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
+
+            mFeedContext.set(Task.KEY_PID, mLivingProgram.getId());
+            mFeedContext.set(Task.KEY_TOKEN, UserManager.getInstance(this).getToken());
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
         }
     }
 
@@ -519,7 +544,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             } else {
                 mTextLivingTitle.setVisibility(View.GONE);
-                
+                mDialogView.setVisibility(View.GONE);
                 stopRecording();
                 getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
             }
@@ -633,4 +658,57 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
         }
     }
+
+    private Handler mFeedHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_GET_FEED:
+                GetFeedTask feedTask = new GetFeedTask();
+                feedTask.addTaskListener(onFeedTaskListener);
+                feedTask.execute(mFeedContext);
+                mFeedHandler.removeMessages(MSG_GET_FEED);
+                mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, 5000);
+                break;
+            }
+        }
+    };
+
+    private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
+            if (feeds != null) {
+                mDialogView.setVisibility(View.VISIBLE);
+                mDialogTextView.setText("");
+                Collection<String> contents = feeds.getFeeds("#00ACFF");
+                if (contents.size() != 0) {
+                    for (String content : contents) {
+                        mDialogTextView.append(Html.fromHtml(content.toString()));
+                    }
+                } else {
+                    mDialogView.setVisibility(View.GONE);
+                }
+            }
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+            // TODO Auto-generated method stub
+
+        }
+    };
 }

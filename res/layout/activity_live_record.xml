@@ -85,9 +85,9 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:layout_centerVertical="true"
+            android:background="@drawable/home_status_btn_rotate"
             android:contentDescription="@null"
-            android:onClick="onClick"
-            android:background="@drawable/home_status_btn_rotate" />
+            android:onClick="onClick" />
     </RelativeLayout>
 
     <TextView
@@ -105,6 +105,32 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone" />
+
+    <ScrollView
+        android:id="@+id/layout_record_dialog"
+        android:layout_width="250dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="20dp"
+        android:background="@drawable/live_record_dialog_bg"
+        android:fadingEdgeLength="10dp"
+        android:overScrollMode="never"
+        android:paddingBottom="8dp"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="8dp"
+        android:requiresFadingEdge="vertical"
+        android:visibility="gone" >
+
+        <TextView
+            android:id="@+id/text_record_dialog"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+    </ScrollView>
 
     <fragment
         android:id="@+id/footer_bar"
