@@ -64,7 +64,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_MEDIA_FINISH = 2001;
 
-    private final static int MSG_GET_FEED = 2500;
+    private final static int MSG_GET_FEED = 2002;
 
     private final static int LOADING_DELAY_TIME = 3000;
 
@@ -276,7 +276,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation) {
+        if (mCurrentOrient != requestedOrientation && !mFirstLoading) {
             Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
@@ -583,12 +583,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            onDialogGestureDetector.onTouchEvent(event);
+            onChatGestureDetector.onTouchEvent(event);
             return false;
         }
     };
 
-    private GestureDetector onDialogGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector onChatGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -640,6 +640,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_GET_FEED:
+                Log.d(TAG, "GetFeedTask");
                 GetFeedTask feedTask = new GetFeedTask();
                 feedTask.addTaskListener(onGetFeedListener);
                 feedTask.execute(mFeedContext);
