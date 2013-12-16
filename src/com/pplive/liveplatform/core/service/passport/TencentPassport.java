@@ -204,31 +204,36 @@ public class TencentPassport
         
     }
     
-    private void doShareToQQ(final Bundle params) {
+    public void doShareToQQ(final Bundle params) {
         new Thread(new Runnable() {
             
             @Override
             public void run() {
                 // TODO Auto-generated method stub
-                mTencent.shareToQQ(mActivity, params, new IUiListener() {
+                try{
+                    mTencent.shareToQQ(mActivity, params, new IUiListener() {
 
-                    @Override
-                    public void onComplete(JSONObject response) {
-                        // TODO Auto-generated method stub
-                        
-                    }
+                        @Override
+                        public void onComplete(JSONObject response) {
+                            // TODO Auto-generated method stub
+                            
+                        }
 
-                    @Override
-                    public void onError(UiError e) {
-                        
-                    }
+                        @Override
+                        public void onError(UiError e) {
+                            
+                        }
 
-                    @Override
-                    public void onCancel() {
+                        @Override
+                        public void onCancel() {
 
-                    }
+                        }
 
-                });
+                    });
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+
             }
         }).start();
     }

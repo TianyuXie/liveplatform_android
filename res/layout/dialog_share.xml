@@ -37,12 +37,14 @@
         android:orientation="horizontal" >
 
         <Button
+            android:id="@+id/btn_sharedialog_wechatShare"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:background="@drawable/share_wechat_btn" >
         </Button>
 
         <Button
+            android:id="@+id/btn_sharedialog_wechatSNSShare"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
@@ -50,6 +52,7 @@
         </Button>
 
         <Button
+            android:id="@+id/btn_sharedialog_sinaShare"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
@@ -57,6 +60,7 @@
         </Button>
 
         <Button
+            android:id="@+id/btn_sharedialog_qqShare"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginLeft="10dp"
