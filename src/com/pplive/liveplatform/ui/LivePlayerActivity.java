@@ -440,7 +440,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private void postFeed(TaskContext taskContext) {
         PutFeedTask feedTask = new PutFeedTask();
-        feedTask.setBackContext(taskContext);
+        feedTask.setReturnContext(taskContext);
         feedTask.addTaskListener(onPutFeedListener);
         feedTask.execute(taskContext);
     }

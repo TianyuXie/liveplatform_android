@@ -10,7 +10,9 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
-    public final static String KEY_TASK_RESULT = "search_task_result";
+    static final String TAG = "_SearchTask";
+    
+    public final static String KEY_RESULT = "search_task_result";
     public final static String KEY_TYPE = "search_task_type";
 
     public final static String KEY_SUBJECT_ID = "subjectId";
@@ -49,7 +51,7 @@ public class SearchTask extends Task {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
         int subjectId = (Integer) context.get(KEY_SUBJECT_ID);
@@ -62,16 +64,16 @@ public class SearchTask extends Task {
         try {
             data = SearchService.getInstance().searchProgram(key, subjectId, sort, liveStatus, nextTk, fallCount);
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "GET Error");
+            return new TaskResult(TaskStatus.Failed, "SearchService Error");
         }
         if (data == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
-        context.set(KEY_TASK_RESULT, data);
+        context.set(KEY_RESULT, data);
         result.setContext(context);
         return result;
     }

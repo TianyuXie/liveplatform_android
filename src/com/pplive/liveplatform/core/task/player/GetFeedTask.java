@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.core.task.player;
 
-import android.util.Log;
-
 import com.pplive.liveplatform.core.service.comment.PbarService;
 import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.task.Task;
@@ -14,15 +12,15 @@ public class GetFeedTask extends Task {
     static final String TAG = "_GetFeedTask";
 
     public final static String KEY_RESULT = "get_feed_result";
-
-    private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetFeed";
     
     public final static int DELAY_TIME_SHORT = 5000;
     
     public final static int DELAY_TIME_LONG = 30000;
 
     public final static int DEFAULT_TIMEOUT = 10000;
+    
+    private final String ID = StringUtil.newGuid();
+    private final String NAME = "GetFeed";
 
     @Override
     public String getID() {
@@ -52,7 +50,7 @@ public class GetFeedTask extends Task {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
@@ -61,15 +59,13 @@ public class GetFeedTask extends Task {
         try {
             data = PbarService.getInstance().getFeeds(token, pid);
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "get error");
+            return new TaskResult(TaskStatus.Failed, "PbarService error");
         }
         if (data == null) {
-            Log.d(TAG, "data == null");
             return new TaskResult(TaskStatus.Failed, "No data");
         }
-        Log.d(TAG, data.getSize() + "");
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_RESULT, data);
