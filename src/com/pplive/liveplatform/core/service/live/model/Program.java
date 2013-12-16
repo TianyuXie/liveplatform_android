@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import android.text.TextUtils;
+import com.pplive.liveplatform.util.StringUtil;
 
 public class Program {
 
@@ -59,8 +59,8 @@ public class Program {
         return owner;
     }
 
-    public User getUserInfo() {
-        return user;
+    public String getOwnerNickname() {
+        return user != null ? user.getNickname() : owner;
     }
 
     public long getStartTime() {
@@ -82,18 +82,15 @@ public class Program {
     }
 
     public String getCoverUrl() {
-
-        return (TextUtils.isEmpty(cover_url) || "null".equals(cover_url)) ? "" : cover_url;
+        return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
     }
 
     public String getScreenshotUrl() {
-
-        return (TextUtils.isEmpty(screenshot_url) || "null".equals(screenshot_url)) ? "" : screenshot_url;
+        return StringUtil.isNullOrEmpty(screenshot_url) ? "" : screenshot_url;
     }
 
     public String getLiveToken() {
-
-        return (null == tk || TextUtils.isEmpty(tk.livetk) || "null".equals(tk.livetk)) ? "" : tk.livetk;
+        return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
 
     static class Record {

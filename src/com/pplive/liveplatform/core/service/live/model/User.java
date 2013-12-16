@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.service.live.model;
 
 import com.google.gson.annotations.SerializedName;
 import com.pplive.liveplatform.core.service.IUser;
+import com.pplive.liveplatform.util.StringUtil;
 
 public class User implements IUser {
 
@@ -26,31 +27,35 @@ public class User implements IUser {
     String coname = "pptv";
 
     Sex sex;
-    
+
     long birthday;
-    
+
     String address;
-    
+
     String status;
-    
+
     long insert_time;
-    
+
     long last_update_time;
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-    
+
     @Override
     public String getUsername() {
         return username;
     }
-    
+
     @Override
     public String getNickname() {
-        return nickname;
+        if (StringUtil.isNullOrEmpty(nickname)) {
+            return username;
+        } else {
+            return nickname;
+        }
     }
-    
+
     @Override
     public String getIcon() {
         return icon;

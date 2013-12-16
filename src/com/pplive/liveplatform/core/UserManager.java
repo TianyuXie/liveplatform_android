@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.util.EncryptUtil;
+import com.pplive.liveplatform.util.StringUtil;
 
 public class UserManager {
     final static String TAG = "_UserManager";
@@ -79,11 +80,7 @@ public class UserManager {
 
     public String getNickname() {
         if (isLogin()) {
-            if (TextUtils.isEmpty(mNickname)) {
-                return getActiveUserPlain();
-            } else {
-                return mNickname;
-            }
+            return StringUtil.isNullOrEmpty(mNickname) ? getActiveUserPlain() : mNickname;
         } else {
             return "";
         }

@@ -75,7 +75,7 @@ public class HomeProgramAdapter extends BaseAdapter {
     private void updateView(ViewHolder holder, Program data) {
         ViewGroup.LayoutParams lp = holder.previewImageView.getLayoutParams();
         lp.height = mHeight;
-        holder.ownerTextView.setText(data.getOwner());
+        holder.ownerTextView.setText(data.getOwnerNickname());
         holder.titleTextView.setText(data.getTitle());
         holder.previewImageView.setImageAsync(data.getCoverUrl(), DEFAULT_PREVIEW_DISPLAY_OPTIONS);
     }
