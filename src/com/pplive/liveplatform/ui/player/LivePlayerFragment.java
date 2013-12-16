@@ -28,6 +28,8 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
 
     private static final int HIDE = 301;
 
+    private static final int SHOW_DELAY = 15000;
+
     private static final int FLAG_TITLE_BAR = 0x1;
 
     private static final int FLAG_BOTTOM_BAR = 0x2;
@@ -153,20 +155,21 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
-        
+
         @Override
         public void onPrepared() {
+            if (mCallbackListener != null) {
+                mCallbackListener.onStartPlay();
+            }
             mVideoView.start();
         }
     };
 
     private MeetVideoView.OnCompletionListener mCompletionListener = new MeetVideoView.OnCompletionListener() {
-        
+
         @Override
         public void onCompletion() {
-            
             stopPlayback();
-
             if (mOnCompletionListener != null) {
                 mOnCompletionListener.onCompletion();
             }
@@ -174,12 +177,10 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     };
 
     private MeetVideoView.OnErrorListener mErrorListener = new MeetVideoView.OnErrorListener() {
-        
+
         @Override
         public boolean onError(int what, int extra) {
-
             stopPlayback();
-
             if (mOnErrorListener != null) {
                 return mOnErrorListener.onError(what, extra);
             }
@@ -201,17 +202,17 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         switch (v.getId()) {
         case R.id.btn_player_mode:
             if (mCallbackListener != null) {
-                mCallbackListener.onModeBtnClick();
+                mCallbackListener.onModeClick();
             }
             break;
         case R.id.btn_player_share:
             if (mCallbackListener != null) {
-                mCallbackListener.onShareBtnClick();
+                mCallbackListener.onShareClick();
             }
             break;
         case R.id.btn_player_back:
             if (mCallbackListener != null) {
-                mCallbackListener.onBackBtnClick();
+                mCallbackListener.onBackClick();
             }
             break;
         default:
@@ -240,7 +241,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         }
         setVisibilityByFlags();
         mHandler.removeMessages(HIDE);
-        mHandler.sendEmptyMessageDelayed(HIDE, 6000);
+        mHandler.sendEmptyMessageDelayed(HIDE, SHOW_DELAY);
     }
 
     private void setVisibilityByFlags() {
@@ -293,7 +294,7 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
             if (mShowBar) {
                 hideBars();
             } else {
-                showBars(6000);
+                showBars(SHOW_DELAY);
             }
             return true;
         }
@@ -307,13 +308,15 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
     });
 
     public interface Callback {
+        public void onStartPlay();
+
         public void onTouch();
 
-        public void onModeBtnClick();
+        public void onModeClick();
 
-        public void onBackBtnClick();
+        public void onBackClick();
 
-        public void onShareBtnClick();
+        public void onShareClick();
 
     }
 

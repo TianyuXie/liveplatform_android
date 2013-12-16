@@ -5,11 +5,18 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.ListView;
+import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -22,11 +29,19 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
+import com.pplive.liveplatform.ui.widget.CircularImageView;
 
 public class UserpageActivity extends Activity {
+    static final String TAG = "_UserpageActivity";
+
+    private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
+            .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
+            .cacheOnDisc(true).build();
 
     private List<Program> mPrograms;
     private ListView mListView;
+    private CircularImageView mUserIcon;
+    private TextView mNicknameText;
     private UserpageProgramAdapter mAdapter;
 
     @Override
@@ -42,6 +57,8 @@ public class UserpageActivity extends Activity {
         findViewById(R.id.btn_userpage_settings).setOnClickListener(onSettingsBtnClickListener);
         mListView = (ListView) findViewById(R.id.list_userpage_program);
         mListView.setAdapter(mAdapter);
+        mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
+        mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
     }
 
     @Override
@@ -52,6 +69,31 @@ public class UserpageActivity extends Activity {
         TaskContext taskContext = new TaskContext();
         taskContext.set(ProgramTask.KEY_USR, UserManager.getInstance(this).getActiveUserPlain());
         task.execute(taskContext);
+        updateUsername();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mUserIcon.release();
+        super.onDestroy();
+    }
+
+    private void updateUsername() {
+        if (UserManager.getInstance(this).isLogin()) {
+            mNicknameText.setText(UserManager.getInstance(this).getNickname());
+            String iconUrl = UserManager.getInstance(this).getIcon();
+            Log.d(TAG, iconUrl);
+            mUserIcon.setRounded(false);
+            if (!TextUtils.isEmpty(iconUrl)) {
+                mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+            } else {
+                mUserIcon.setImageResource(R.drawable.user_icon_default);
+            }
+        } else {
+            mNicknameText.setText("");
+            mUserIcon.setImageResource(R.drawable.user_icon_login);
+            mUserIcon.setRounded(false);
+        }
     }
 
     private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
@@ -103,7 +145,32 @@ public class UserpageActivity extends Activity {
             // TODO Auto-generated method stub
 
         }
+    };
 
+    private ImageLoadingListener imageLoadingListener = new ImageLoadingListener() {
+
+        @Override
+        public void onLoadingStarted(String arg0, View arg1) {
+            Log.d(TAG, "onLoadingStarted");
+        }
+
+        @Override
+        public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
+            Log.d(TAG, "onLoadingFailed");
+            mUserIcon.setRounded(false);
+        }
+
+        @Override
+        public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
+            Log.d(TAG, "onLoadingComplete");
+            mUserIcon.setRounded(arg2 != null);
+        }
+
+        @Override
+        public void onLoadingCancelled(String arg0, View arg1) {
+            Log.d(TAG, "onLoadingCancelled");
+            mUserIcon.setRounded(false);
+        }
     };
 
 }

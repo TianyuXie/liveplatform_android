@@ -48,6 +48,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private final static int MSG_PULL_TIMEOUT = 2002;
 
+    private final static int FALL_COUNT = 16;
+
     private TitleBar mTitleBar;
 
     private ProgramContainer mContainer;
@@ -214,7 +216,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
             taskContext.set(SearchTask.KEY_SORT, "starttime");
-            taskContext.set(SearchTask.KEY_FALL_COUNT, 8);
+            taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
             task.execute(taskContext);
         }
     }
@@ -237,9 +239,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     mContainer.refreshData(fallList.getList());
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
-                            mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                            mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
                         } else {
-                            mCallbackListener.doLoadResult("暂时没有数据");
+                            mCallbackListener.doLoadResult(getString(R.string.home_nodata));
                         }
                     }
                     break;
@@ -247,9 +249,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     mContainer.appendData(fallList.getList());
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
-                            mCallbackListener.doLoadResult(String.format(Locale.US, "已加载%d条", fallList.count()));
+                            mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
                         } else {
-                            mCallbackListener.doLoadResult("已全部加载");
+                            mCallbackListener.doLoadResult(getString(R.string.home_all_loaded));
                         }
                     }
                 default:

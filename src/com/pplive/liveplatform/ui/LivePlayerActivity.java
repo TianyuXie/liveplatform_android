@@ -1,9 +1,11 @@
 package com.pplive.liveplatform.ui;
 
+import java.util.Collection;
 import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -15,8 +17,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,9 +30,12 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -36,7 +44,9 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.home.GetMediaTask;
+import com.pplive.liveplatform.core.task.player.GetFeedTask;
+import com.pplive.liveplatform.core.task.player.GetMediaTask;
+import com.pplive.liveplatform.core.task.player.PutFeedTask;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
@@ -52,7 +62,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_LOADING_DELAY = 2000;
 
-    private final static int MSG_LOADING_FINISH = 2001;
+    private final static int MSG_MEDIA_FINISH = 2001;
+
+    private final static int MSG_GET_FEED = 2002;
+
+    private final static int LOADING_DELAY_TIME = 3000;
+
+    private TaskContext mFeedContext;
 
     private DetectableRelativeLayout mRootLayout;
 
@@ -60,14 +76,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mFragmentContainer;
 
-    private View mDialogView;
+    private View mChatView;
 
     private View mCommentView;
 
     private View mLoadingView;
 
     private ShareDialog mShareDialog;
-
+    private TextView mChatTextView;
     private Dialog mLoadingDialog;
 
     private Button mWriteBtn;
@@ -85,6 +101,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private boolean mIsFull;
 
     private boolean mWriting;
+
+    private boolean mFirstLoading;
 
     private boolean mLoadingFinish;
 
@@ -113,6 +131,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
         mLoadingDialog = new LoadingDialog(this);
+        mLoadingDialog.setOnKeyListener(onLoadingKeyListener);
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
@@ -123,19 +142,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
         mRootLayout.setOnSoftInputListener(onSoftInputListener);
         mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
-        mCommentEditText.setOnEnterListener(commentOnEnterListener);
+        mCommentEditText.setOnEnterListener(onCommentEnterListener);
         mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
-        mDialogView = findViewById(R.id.layout_player_dialog);
+        mChatView = findViewById(R.id.layout_player_dialog);
         mLoadingView = findViewById(R.id.layout_player_loading);
+        mChatTextView = (TextView) findViewById(R.id.text_player_dialog);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
-        mDialogView.setOnTouchListener(onDialogTouchListener);
+        mChatView.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mFeedContext = new TaskContext();
     }
 
     @Override
@@ -150,15 +171,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
             if (pid != -1) {
+                Log.d(TAG, "pid: " + pid);
                 showLoading();
-                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, 8000);
-                GetMediaTask task = new GetMediaTask();
-                task.addTaskListener(onTaskListener);
+                mLoadingHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
+                GetMediaTask mediaTask = new GetMediaTask();
+                mediaTask.addTaskListener(onGetMediaListener);
+                GetFeedTask feedTask = new GetFeedTask();
+                feedTask.addTaskListener(onGetFeedListener);
                 TaskContext taskContext = new TaskContext();
-                taskContext.set(GetMediaTask.KEY_PID, pid);
-                taskContext.set(GetMediaTask.KEY_USERNAME, username);
-                taskContext.set(GetMediaTask.KEY_TOKEN, token);
-                task.execute(taskContext);
+                taskContext.set(Task.KEY_PID, pid);
+                taskContext.set(Task.KEY_USERNAME, username);
+                taskContext.set(Task.KEY_TOKEN, token);
+                mFeedContext.set(Task.KEY_PID, pid);
+                mFeedContext.set(Task.KEY_TOKEN, token);
+                mediaTask.execute(taskContext);
+                feedTask.execute(mFeedContext);
             }
         } else {
             Log.d(TAG, "onStart mUrl:" + mUrl);
@@ -170,6 +197,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
         super.onDestroy();
+        mFeedHandler.removeMessages(MSG_GET_FEED);
     }
 
     @Override
@@ -203,15 +231,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         RelativeLayout.LayoutParams containerLp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
         if (mIsFull) {
             containerLp.height = LayoutParams.MATCH_PARENT;
-            mDialogView.setVisibility(View.GONE);
+            mChatView.setVisibility(View.GONE);
             mCommentView.setVisibility(View.GONE);
             mWriteBtn.setVisibility(View.GONE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+            RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mChatView.getLayoutParams();
             containerLp.height = mHalfScreenHeight;
             dialogLp.topMargin = mHalfScreenHeight;
-            mDialogView.setVisibility(View.VISIBLE);
+            mChatView.setVisibility(View.VISIBLE);
             if (mWriting) {
                 mCommentView.setVisibility(View.VISIBLE);
                 mWriteBtn.setVisibility(View.GONE);
@@ -247,7 +275,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation) {
+        if (mCurrentOrient != requestedOrientation && !mFirstLoading) {
             Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
@@ -293,18 +321,35 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
     }
 
-    private EnterSendEditText.OnEnterListener commentOnEnterListener = new EnterSendEditText.OnEnterListener() {
+    private EnterSendEditText.OnEnterListener onCommentEnterListener = new EnterSendEditText.OnEnterListener() {
 
         @Override
         public boolean onEnter(View v) {
-            //TODO
-            String keyword = mCommentEditText.getText().toString();
-            Log.d(TAG, "Send: " + keyword);
+            long pid = getIntent().getLongExtra("pid", -1);
+            if (pid != -1) {
+                String content = mCommentEditText.getText().toString();
+                String token = UserManager.getInstance(mContext).getToken();
+                TaskContext taskContext = new TaskContext();
+                taskContext.set(Task.KEY_PID, pid);
+                taskContext.set(PutFeedTask.KEY_CONTENT, content);
+                taskContext.set(Task.KEY_TOKEN, token);
+                postFeed(taskContext);
+            }
             stopWriting();
             return true;
+        }
+    };
+
+    private DialogInterface.OnKeyListener onLoadingKeyListener = new DialogInterface.OnKeyListener() {
+        @Override
+        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+                finish();
+                return true;
+            }
+            return false;
         }
     };
 
@@ -354,16 +399,16 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void popupDialog() {
-        mDialogView.setVisibility(View.INVISIBLE);
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+        mChatView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mChatView.getLayoutParams();
         lp.topMargin = mRootLayout.getHalfHeight() - DisplayUtil.dp2px(this, 170);
-        ViewUtil.showLayoutDelay(mDialogView, 100);
+        ViewUtil.showLayoutDelay(mChatView, 100);
     }
 
     private void popdownDialog() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mChatView.getLayoutParams();
         lp.topMargin = mHalfScreenHeight;
-        ViewUtil.requestLayoutDelay(mDialogView, 100);
+        ViewUtil.requestLayoutDelay(mChatView, 100);
     }
 
     @Override
@@ -372,7 +417,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onModeBtnClick() {
+    public void onModeClick() {
         if (DisplayUtil.isLandscape(getApplicationContext())) {
             mUserOrient = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
@@ -383,55 +428,153 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onShareBtnClick() {
+    public void onShareClick() {
         mShareDialog.show();
     }
 
     @Override
-    public void onBackBtnClick() {
+    public void onBackClick() {
         finish();
     }
 
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+    private void postFeed(TaskContext taskContext) {
+        PutFeedTask feedTask = new PutFeedTask();
+        feedTask.setBackContext(taskContext);
+        feedTask.addTaskListener(onPutFeedListener);
+        feedTask.execute(taskContext);
+    }
+
+    private Task.OnTaskListener onPutFeedListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTimeout");
+        }
 
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
+            //            postFeed(event.getContext());
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "onPutFeedTaskListener onTaskCancel");
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+    };
+
+    private Task.OnTaskListener onGetFeedListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "FeedTask: onTimeout");
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFinished");
+            FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
+            if (feeds != null) {
+                mChatTextView.setText("");
+                Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.player_dialog_nickname),
+                        getResources().getColor(R.color.player_dialog_content));
+                if (contents.size() != 0) {
+                    findViewById(R.id.text_player_no_chat).setVisibility(View.GONE);
+                    for (String content : contents) {
+                        mChatTextView.append(Html.fromHtml(content.toString()));
+                    }
+                } else {
+                    findViewById(R.id.text_player_no_chat).setVisibility(View.VISIBLE);
+                }
+            }
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME_SHORT);
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFailed");
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "FeedTask: onTaskCancel");
+            mFeedHandler.removeMessages(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+    };
+
+    private Task.OnTaskListener onGetMediaListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            //TODO timeout
+            Log.d(TAG, "MediaTask onTimeout");
+            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            // TODO rtmp or live2
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
+            for (Watch watch : watchs) {
+                Log.d(TAG, "Protocol:" + watch.getProtocol());
+            }
             for (Watch watch : watchs) {
                 if ("rtmp".equals(watch.getProtocol())) {
                     mUrl = watch.getWatchStringList().get(0);
                     break;
                 }
             }
-            if (mUrl != null) {
-                Log.d(TAG, "onTaskFinished:" + mUrl);
-                mLivePlayerFragment.setupPlayer(mUrl);
-                mHandler.sendEmptyMessage(MSG_LOADING_FINISH);
+            if (TextUtils.isEmpty(mUrl)) {
+                mUrl = watchs.get(0).getWatchStringList().get(0);
             }
+            if (!TextUtils.isEmpty(mUrl)) {
+                Log.d(TAG, "MediaTask onTaskFinished:" + mUrl);
+                mLivePlayerFragment.setupPlayer(mUrl);
+            } else {
+                finish();
+            }
+            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
-
+            //TODO failed
+            Log.d(TAG, "MediaTask onTaskFailed");
+            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
-
+            Log.d(TAG, "MediaTask onTaskCancel");
+            finish();
         }
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
     };
 
@@ -439,12 +582,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            gestureDetector.onTouchEvent(event);
+            onChatGestureDetector.onTouchEvent(event);
             return false;
         }
     };
 
-    private GestureDetector gestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector onChatGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -459,30 +602,55 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
-        mLoadingView.setVisibility(View.VISIBLE);
-        mLoadingDialog.show();
+        if (!mFirstLoading) {
+            mFirstLoading = true;
+            mLoadingView.setVisibility(View.VISIBLE);
+            mLoadingDialog.show();
+        }
     }
 
     public void hideLoading() {
-        mLoadingView.setVisibility(View.GONE);
-        mLoadingDialog.dismiss();
+        if (mFirstLoading) {
+            mFirstLoading = false;
+            mLoadingView.setVisibility(View.GONE);
+            mLoadingDialog.dismiss();
+        }
     }
 
-    private Handler mHandler = new Handler() {
+    private Handler mLoadingHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_LOADING_DELAY:
                 mLoadingDelayed = true;
                 break;
-            case MSG_LOADING_FINISH:
+            case MSG_MEDIA_FINISH:
                 mLoadingFinish = true;
                 break;
             }
-            if (mLoadingFinish && mLoadingDelayed) {
+            if (mLoadingFinish && mLoadingDelayed && !isFinishing() && mFirstLoading) {
                 hideLoading();
             }
         }
     };
 
+    private Handler mFeedHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_GET_FEED:
+                Log.d(TAG, "GetFeedTask");
+                GetFeedTask feedTask = new GetFeedTask();
+                feedTask.addTaskListener(onGetFeedListener);
+                feedTask.execute(mFeedContext);
+                mFeedHandler.removeMessages(MSG_GET_FEED);
+                break;
+            }
+        }
+    };
+
+    @Override
+    public void onStartPlay() {
+        //TODO
+    }
 }

@@ -15,9 +15,11 @@ import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.Scroller;
 
+import com.pplive.liveplatform.util.ViewUtil;
+
 public class HorizontalListView extends AdapterView<ListAdapter> {
-    
-    private static final String TAG = HorizontalListView.class.getSimpleName();
+
+    static final String TAG = HorizontalListView.class.getSimpleName();
 
     public boolean mAlwaysOverrideTouch = true;
     protected ListAdapter mAdapter;
@@ -167,13 +169,7 @@ public class HorizontalListView extends AdapterView<ListAdapter> {
         mCurrentX = mNextX;
 
         if (!mScroller.isFinished()) {
-            post(new Runnable() {
-                @Override
-                public void run() {
-                    requestLayout();
-                }
-            });
-
+            ViewUtil.requestLayoutDelay(this, 0);
         }
     }
 

@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.passport.service.TencentPassport;
-import com.pplive.liveplatform.core.passport.service.WeiboPassport;
+import com.pplive.liveplatform.core.service.passport.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.tencent.tauth.Constants;
 
 

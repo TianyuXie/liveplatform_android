@@ -40,21 +40,20 @@
         android:layout_height="180dp"
         android:background="@drawable/userpage_bg" >
 
-        <Button
+        <com.pplive.liveplatform.ui.widget.CircularImageView
             android:id="@+id/btn_userpage_user_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/user_icon_default" />
+            android:src="@drawable/user_icon_default" />
 
         <TextView
-            android:id="@+id/text_userpage_user_name"
+            android:id="@+id/text_userpage_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/btn_userpage_user_icon"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="3dp"
-            android:text="@string/test_titlebar_title"
             android:textColor="@color/white"
             android:textSize="13sp" />
 

@@ -9,12 +9,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeProgramAdapter extends BaseAdapter {
+    private static final DisplayImageOptions DEFAULT_PREVIEW_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
+            .showImageOnFail(R.drawable.program_default_image).showImageForEmptyUri(R.drawable.program_default_image)
+            .showStubImage(R.drawable.program_default_image).cacheOnDisc(true).build();
+
     private static float ratio = 16.0f / 10.0f;
 
     private List<Program> mPrograms;
@@ -72,7 +77,7 @@ public class HomeProgramAdapter extends BaseAdapter {
         lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwner());
         holder.titleTextView.setText(data.getTitle());
-        holder.previewImageView.setImageAsync(data.getCoverUrl());
+        holder.previewImageView.setImageAsync(data.getCoverUrl(), DEFAULT_PREVIEW_DISPLAY_OPTIONS);
     }
 
     static class ViewHolder {

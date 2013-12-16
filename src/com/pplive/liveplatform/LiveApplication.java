@@ -17,5 +17,6 @@ public class LiveApplication extends Application {
         
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
+        
     }
 }

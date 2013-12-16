@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.passport.service;
+package com.pplive.liveplatform.core.service.passport;
 import android.content.Context;
 
 import com.tencent.mm.sdk.openapi.IWXAPI;

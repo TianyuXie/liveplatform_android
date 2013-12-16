@@ -1,14 +1,12 @@
 package com.pplive.liveplatform.ui.record;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 import android.content.Context;
 import android.hardware.Camera;
 import android.media.AudioRecord;
 import android.util.Log;
-import android.view.SurfaceHolder;
 
 import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
@@ -32,6 +30,33 @@ public class PPboxSink {
     private long mStartTime;
 
     private Download_Callback mDownloadCallback;
+    
+    private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
+        
+        private final long time_scale = 1000 * 1000 * 1000;
+        private int num_total = 0;
+        private int num_drop = 0;
+        private long next_time = 5 * time_scale;
+
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            ++num_total;
+            long time = System.nanoTime() - mStartTime;
+            PPboxStream.InBuffer buffer = mVideoStream.pop();
+            if (buffer == null) {
+                ++num_drop;
+            } else {
+                buffer.byte_buffer().put(data);
+                mVideoStream.put(time / 1000, buffer);
+            }
+            if (time >= next_time) {
+                Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
+                        + num_drop);
+                next_time += 5 * time_scale;
+            }
+            camera.addCallbackBuffer(data);
+        }
+    };
 
     public static void init(Context c) {
         File cacheDirFile = c.getCacheDir();
@@ -74,48 +99,22 @@ public class PPboxSink {
         mVideoStream = new PPboxStream(mCaptureId, 0, mCamera);
         mAudioStream = new PPboxStream(mCaptureId, 1, mAudioRecord);
     }
-
-    public void preview(SurfaceHolder holder) {
-        try {
-            mCamera.setPreviewDisplay(holder);
-        } catch (IOException e) {
-
-        } catch (Exception e) {
-
+    
+    public void resetCamera(Camera camera) {
+        mCamera = camera;
+        
+        if (null != mVideoStream) {
+            final byte[] video_buffer = new byte[mVideoStream.bufferSize()];
+            
+            camera.addCallbackBuffer(video_buffer);
+            camera.setPreviewCallbackWithBuffer(mPreviewCallback);
         }
     }
 
     public void start() {
         mVideoStream.start();
 
-        final byte[] video_buffer = new byte[mVideoStream.bufferSize()];
-
-        mCamera.addCallbackBuffer(video_buffer);
-        mCamera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
-            private final long time_scale = 1000 * 1000 * 1000;
-            private int num_total = 0;
-            private int num_drop = 0;
-            private long next_time = 5 * time_scale;
-
-            @Override
-            public void onPreviewFrame(byte[] data, Camera camera) {
-                ++num_total;
-                long time = System.nanoTime() - mStartTime;
-                PPboxStream.InBuffer buffer = mVideoStream.pop();
-                if (buffer == null) {
-                    ++num_drop;
-                } else {
-                    buffer.byte_buffer().put(data);
-                    mVideoStream.put(time / 1000, buffer);
-                }
-                if (time >= next_time) {
-                    Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
-                            + num_drop);
-                    next_time += 5 * time_scale;
-                }
-                camera.addCallbackBuffer(data);
-            }
-        });
+        resetCamera(mCamera);
 
         mAudioStream.start();
         mAudioThread = new Thread() {

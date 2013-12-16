@@ -11,6 +11,9 @@
     <color name="edit_focused">#19a0ff</color>
     <color name="dim_white">#dedede</color>
     <color name="black_transparent">#80000000</color>
+    <color name="record_dialog_nickname">#FF00ACFF</color>
+    <color name="record_dialog_content">#FF919191</color>
+    <color name="record_chat_bg">#80000000</color>
 
     <!-- Style -->
     <style name="Widget.Button.Transparent" parent="@android:style/Widget.Button">

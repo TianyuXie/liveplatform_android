@@ -34,10 +34,7 @@
     <color name="searchbar_list_select">#FF001E33</color>
     <color name="searchbar_list_divider">#FF080808</color>
 
-    <!-- Player -->
-    <color name="player_bottom_bar">#7F000000</color>
-    <color name="player_dialog_bg">#B3000000</color>
     <color name="share_dialog_bg">#FFFFFFFF</color>
-    <color name="player_loading_bg">#FF1A1A1A</color>
+
 
 </resources>

@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -29,27 +31,41 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.TokenService;
+import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.TaskCancelEvent;
+import com.pplive.liveplatform.core.task.TaskContext;
+import com.pplive.liveplatform.core.task.TaskFailedEvent;
+import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.core.task.player.GetFeedTask;
+import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
+import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder.OnErrorListener;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
+import com.pplive.liveplatform.ui.record.event.EventReset;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
+import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
 import de.greenrobot.event.EventBus;
 
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback, Handler.Callback {
 
-    private static final String TAG = LiveRecordActivity.class.getSimpleName();
+    static final String TAG = "_LiveRecordActivity";
 
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
@@ -58,7 +74,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_COMING_START = 9004;
     private static final int WHAT_LIVE_COMING_UPDATE = 9005;
 
-    private static final int WHAT_OPEN_DOOR = 9006;
+    private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
+
+    private static final int WHAT_OPEN_DOOR = 9010;
+    private final static int WHAT_GET_FEED = 9011;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -74,6 +93,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private LiveMediaRecoder mMediaRecorder;
     private boolean mRecording = false;
 
+    private boolean mChating = false;
+    private View mChatContainer;
+    private View mChatView;
+    private TextView mChatTextView;
+    private TextView mNoChatTextView;
+    private ImageButton mChatButton;
+
     private ImageButton mBtnLiveRecord;
     private ImageButton mBtnCameraChange;
     private ToggleButton mBtnFlashLight;
@@ -86,9 +112,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextLivingTitle;
 
     private AnimDoor mAnimDoor;
-    private View mStatusButtonWrapper;
-    private Animation mStatusUpAnimation;
     private LoadingButton mStatusButton;
+    private View mStatusButtonWrapper;
+    private View mLiveButtonWrapper;
+
+    private TaskContext mFeedContext;
 
     private AnimationListener openDoorListener = new AnimationListener() {
 
@@ -106,10 +134,29 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     };
 
-    private GetPushUrlTask mGetPushUrlOneStepTask;
-    private Program mSelectedProgram;
+    private AnimationListener moveAnimationListener = new AnimationListener() {
 
-    private String mPushUrl;
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mStatusButtonWrapper.setVisibility(View.GONE);
+            mLiveButtonWrapper.setVisibility(View.VISIBLE);
+            rotateButton();
+        }
+    };
+
+    private GetPushUrlTask mGetPushUrlOneStepTask;
+    private KeepLiveAliveTask mKeepLiveAliveTask;
+    private Program mLivingProgram;
+
+    private String mLivingUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +172,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mSurfaceHolder = mPreview.getHolder();
         mSurfaceHolder.addCallback(this);
 
+        mChatButton = (ImageButton) findViewById(R.id.btn_record_chat);
         mBtnLiveRecord = (ImageButton) findViewById(R.id.btn_live_record);
         mBtnCameraChange = (ImageButton) findViewById(R.id.btn_camera_change);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
@@ -140,12 +188,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mAnimDoor.setOpenDoorListener(openDoorListener);
 
         mStatusButtonWrapper = findViewById(R.id.wrapper_live_status);
+        mLiveButtonWrapper = findViewById(R.id.wrapper_live_status_right);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
+        mChatView = findViewById(R.id.scroll_record_chat);
+        mChatContainer = findViewById(R.id.layout_record_chat);
+        mChatTextView = (TextView) findViewById(R.id.text_record_chat);
+        mNoChatTextView = (TextView) findViewById(R.id.text_recoder_no_chat);
 
-        mStatusUpAnimation = new TranslateAnimation(0.0f, 0.0f, 0.0f, -mAnimDoor.getAnimX() * 1.3f);
-        mStatusUpAnimation.setFillAfter(true);
-        mStatusUpAnimation.setDuration((int) (mAnimDoor.getDuration() * 1.3f));
-        mStatusUpAnimation.setInterpolator(new LinearInterpolator());
+        mFeedContext = new TaskContext();
     }
 
     @Override
@@ -195,9 +245,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     public void onEvent(EventProgramSelected event) {
         final Program program = event.getObject();
 
-        mSelectedProgram = program;
+        mLivingProgram = program;
 
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_START);
+    }
+
+    public void onEvent(EventReset event) {
+        mLivingProgram = null;
+
+        mInnerHandler.removeMessages(WHAT_LIVE_COMING_UPDATE);
+        mTextLiveComing.setVisibility(View.GONE);
     }
 
     @Override
@@ -218,11 +275,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_LIVE_COMING_UPDATE:
             onLiveComingUpdate();
             break;
-        case WHAT_OPEN_DOOR:
-            mStatusButton.finishLoading();
-            mStatusButtonWrapper.startAnimation(mStatusUpAnimation);
-            mAnimDoor.open();
+        case WHAT_LIVE_KEEP_ALIVE:
+            onKeepLiveAlive();
             break;
+        case WHAT_OPEN_DOOR:
+            onOpenDoor();
+            break;
+        case WHAT_GET_FEED:
+            onGetFeed();
         default:
             break;
         }
@@ -230,15 +290,48 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         return false;
     }
 
+    private void moveButton() {
+        Animation moveAnimation = new TranslateAnimation(0.0f, DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 47.5f), 0.0f, 0.0f);
+        moveAnimation.setFillAfter(false);
+        moveAnimation.setDuration(mAnimDoor.getDuration());
+        moveAnimation.setInterpolator(new LinearInterpolator());
+        moveAnimation.setAnimationListener(moveAnimationListener);
+        mStatusButtonWrapper.startAnimation(moveAnimation);
+    }
+
+    private void rotateButton() {
+        // Find the center of the container
+        final float centerX = mLiveButtonWrapper.getWidth() / 2.0f;
+        final float centerY = mLiveButtonWrapper.getHeight() / 2.0f;
+
+        // Create a new 3D rotation with the supplied parameter
+        // The animation listener is used to trigger the next animation
+        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
+        rotation.setDuration(350);
+        rotation.setFillAfter(true);
+        rotation.setInterpolator(new LinearInterpolator());
+        rotation.setRotateListener(rotateButtonListener);
+        mLiveButtonWrapper.startAnimation(rotation);
+    }
+
+    private RotateListener rotateButtonListener = new RotateListener() {
+        @Override
+        public void onRotateMiddle() {
+            mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
+        }
+    };
+
     private void onRecordStart() {
-        mTextLive.setVisibility(View.VISIBLE);
-        mTextRecordDuration.setVisibility(View.VISIBLE);
+        if (null != mLivingProgram) {
+            mTextLive.setVisibility(View.VISIBLE);
+            mTextRecordDuration.setVisibility(View.VISIBLE);
+            mChatContainer.setVisibility(View.VISIBLE);
+            mTextLivingTitle.setVisibility(View.VISIBLE);
+            mTextLivingTitle.setText(mLivingProgram.getTitle());
 
-        mTextLivingTitle.setVisibility(View.VISIBLE);
-        mTextLivingTitle.setText(mSelectedProgram.getTitle());
-
-        Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
-        mInnerHandler.sendMessage(msg);
+            Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
+            mInnerHandler.sendMessage(msg);
+        }
     }
 
     private void onRecordEnd() {
@@ -267,9 +360,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             return;
         }
 
-        if (null != mSelectedProgram) {
+        if (null != mLivingProgram) {
             long now = System.currentTimeMillis();
-            long start = mSelectedProgram.getStartTime();
+            long start = mLivingProgram.getStartTime();
 
             Log.d(TAG, "now: " + now + "; start: " + start);
 
@@ -287,6 +380,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
         }
+    }
+
+    private void onKeepLiveAlive() {
+        if (null == mKeepLiveAliveTask) {
+            mKeepLiveAliveTask = new KeepLiveAliveTask();
+
+            mKeepLiveAliveTask.execute(mLivingProgram);
+        }
+    }
+
+    private void onOpenDoor() {
+        mStatusButton.finishLoading();
+        moveButton();
+        mAnimDoor.open();
     }
 
     @Override
@@ -357,8 +464,24 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
+    private void startChating() {
+        mChating = true;
+        mChatButton.setSelected(true);
+        mChatView.setVisibility(View.VISIBLE);
+        mNoChatTextView.setVisibility(View.VISIBLE);
+        mInnerHandler.removeMessages(WHAT_GET_FEED);
+        mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
+    }
+
+    private void stopChating() {
+        mChating = false;
+        mChatView.setVisibility(View.GONE);
+        mNoChatTextView.setVisibility(View.GONE);
+        mChatButton.setSelected(false);
+    }
+
     private void startRecording() {
-        if (TextUtils.isEmpty(mPushUrl)) {
+        if (TextUtils.isEmpty(mLivingUrl)) {
             return;
         }
 
@@ -372,24 +495,29 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             });
 
-            mMediaRecorder.setOutputPath(mPushUrl);
+            mMediaRecorder.setOutputPath(mLivingUrl);
 
             mMediaRecorder.start();
 
             mRecording = true;
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
+            mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
+
+            mFeedContext.set(Task.KEY_PID, mLivingProgram.getId());
+            mFeedContext.set(Task.KEY_TOKEN, UserManager.getInstance(this).getToken());
+            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
         }
     }
 
     private void stopRecording() {
         if (mRecording) {
             mMediaRecorder.stop();
-
+            mLivingProgram = null;
+            mLivingUrl = null;
             mRecording = false;
-
+            mChatButton.setSelected(false);
             mBtnLiveRecord.setSelected(mRecording);
-
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
     }
@@ -397,7 +525,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
-
         switch (v.getId()) {
         case R.id.btn_camera_change:
             onClickBtnCameraChange(v);
@@ -408,16 +535,23 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case R.id.btn_flash_light:
             onClickBtnFlashLight(v);
             break;
+        case R.id.btn_record_chat:
+            onClickBtnChat(v);
+            break;
         default:
             break;
         }
     }
 
-    private void onClickBtnCameraChange(View v) {
-        if (mRecording) {
-            stopRecording();
+    private void onClickBtnChat(View v) {
+        if (!mChating) {
+            startChating();
+        } else {
+            stopChating();
         }
+    }
 
+    private void onClickBtnCameraChange(View v) {
         stopPreview();
 
         mCurrentCameraId = (mCurrentCameraId + 1) % mNumberofCameras;
@@ -425,20 +559,28 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         initCamera();
         startPreview();
+        
+        if (mRecording) {
+            mMediaRecorder.resetCamera(mCamera);
+        }
     }
 
     private void onClickBtnLiveRecord(View v) {
 
         if (null != mCamera) {
             if (!mRecording) {
-                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 mTextLiveComing.setVisibility(View.GONE);
+                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 if (null == mGetPushUrlOneStepTask) {
                     mGetPushUrlOneStepTask = new GetPushUrlTask();
-                    mGetPushUrlOneStepTask.execute(mSelectedProgram);
+                    mGetPushUrlOneStepTask.execute(mLivingProgram);
                 }
             } else {
+                mTextLivingTitle.setVisibility(View.GONE);
+                mChatContainer.setVisibility(View.GONE);
                 stopRecording();
+                stopChating();
+                getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
             }
         }
     }
@@ -476,7 +618,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Log.d(TAG, "create program");
                 program = new Program(username, mLiveTitle, System.currentTimeMillis());
                 program = ProgramService.getInstance().createProgram(usertoken, program);
-                mSelectedProgram = program;
+                mLivingProgram = program;
             } else {
                 Log.d(TAG, "has program");
             }
@@ -487,9 +629,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
             }
 
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.INIT, liveToken);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.PREVIEW, liveToken);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(program.getId(), LiveStatusEnum.LIVING, liveToken);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
 
             Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
@@ -510,7 +652,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (null != mCamera) {
                 if (!mRecording) {
-                    mPushUrl = url;
+                    mLivingUrl = url;
                     startRecording();
                 }
 
@@ -518,4 +660,100 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
         }
     }
+
+    class KeepLiveAliveTask extends AsyncTask<Program, Void, LiveAlive> {
+
+        @Override
+        protected LiveAlive doInBackground(Program... params) {
+            String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+
+            Program program = params[0];
+
+            if (null != program && !TextUtils.isEmpty(coToken)) {
+                LiveAlive liveAlive = LiveControlService.getInstance().keepLiveAlive(coToken, program.getId());
+
+                return liveAlive;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(LiveAlive result) {
+            mKeepLiveAliveTask = null;
+
+            long delay = 60; // second
+            if (null != result) {
+                delay = result.getDelayInSeconds() /* second */;
+            }
+
+            if (mRecording) {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_KEEP_ALIVE, delay * 1000 /* millisecond */);
+            }
+        }
+    }
+
+    private void onGetFeed() {
+        if (mRecording) {
+            Log.d(TAG, "onGetFeed");
+            GetFeedTask feedTask = new GetFeedTask();
+            feedTask.setTimeout(GetFeedTask.DEFAULT_TIMEOUT);
+            feedTask.addTaskListener(onFeedTaskListener);
+            feedTask.execute(mFeedContext);
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+        }
+    }
+
+    private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "FeedTask: onTimeout");
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFinished");
+            FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
+            if (feeds != null) {
+                mNoChatTextView.setText("");
+                mChatTextView.setText("");
+                Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.record_dialog_nickname),
+                        getResources().getColor(R.color.record_dialog_content));
+                if (contents.size() != 0) {
+                    for (String content : contents) {
+                        mChatTextView.append(Html.fromHtml(content.toString()));
+                    }
+                } else {
+                    mNoChatTextView.setText(R.string.player_no_comment);
+                }
+            }
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            if (mChating) {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_SHORT);
+            } else {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_LONG);
+            }
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFailed");
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "FeedTask: onTaskCancel");
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+    };
 }

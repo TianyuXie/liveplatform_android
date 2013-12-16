@@ -30,7 +30,7 @@ public class LoadingDialog extends Dialog {
 
     @Override
     public void dismiss() {
-        super.dismiss();
         mButton.finishLoading();
+        super.dismiss();
     }
 }

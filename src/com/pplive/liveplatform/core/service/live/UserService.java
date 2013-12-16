@@ -17,9 +17,9 @@ public class UserService extends RestService {
 
     private static final String TAG = UserService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/user/v1/pptv/{username}").toString();
+    private static final String TEMPLATE_GET_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/user/v1/pptv/{username}/info").toString();
     
-    private static final String TEMPLATE_UPDATE_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/user/v1/pptv/{username}").toString();
+    private static final String TEMPLATE_UPDATE_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/user/v1/pptv/{username}/info").toString();
 
     private static final UserService sInstance = new UserService();
 

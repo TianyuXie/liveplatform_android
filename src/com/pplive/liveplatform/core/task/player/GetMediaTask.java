@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.task.home;
+package com.pplive.liveplatform.core.task.player;
 
 import java.util.List;
 
@@ -12,9 +12,6 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class GetMediaTask extends Task {
     public final static String KEY_RESULT = "play_media_result";
-    public final static String KEY_TOKEN = "token";
-    public final static String KEY_PID = "pid";
-    public final static String KEY_USERNAME = "username";
 
     private final String ID = StringUtil.newGuid();
     private final String NAME = "GetMedia";

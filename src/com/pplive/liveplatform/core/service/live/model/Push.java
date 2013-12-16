@@ -14,7 +14,7 @@ public class Push {
     
     String name;
     
-    public long getId() {
+    public long getProgramId() {
         return pid;
     }
     

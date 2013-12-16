@@ -30,12 +30,21 @@ public class Feed {
     int floor;
 
     long createtime;
-    
+
     Type type;
 
-    public Feed(String content, long pid, Type type) {
-        this.content = content;
+    public Feed(long pid, String content, Type type) {
         this.refId = "LivePlatform-pbar_" + pid;
+        this.content = content;
         this.type = type;
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
 }

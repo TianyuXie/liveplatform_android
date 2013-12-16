@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.passport.service;
+package com.pplive.liveplatform.core.service.passport;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,12 +10,8 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.IInterface;
-import android.os.Message;
 
-import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
@@ -182,7 +178,7 @@ public class TencentPassport
                     // TODO Auto-generated method stub
                     try {
                         mLoginResult.setThirdPartyNickName(response.getString("nickname"));
-                        mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_1"));
+                        mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_2"));
                         LoginResult temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
                         if(temp != null) {
                             mLoginResult.setToken(temp.getToken());

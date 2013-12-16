@@ -14,30 +14,40 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <ScrollView
+    <RelativeLayout
         android:id="@+id/layout_player_dialog"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/wrapper_player_comment"
-        android:background="@color/player_dialog_bg"
-        android:fadingEdgeLength="10dp"
-        android:overScrollMode="never"
-        android:paddingBottom="4dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp"
-        android:paddingTop="4dp"
-        android:requiresFadingEdge="vertical"
-        android:scrollbars="none" >
+        android:layout_above="@+id/wrapper_player_comment" >
+
+        <ScrollView
+            style="@style/chat_scrollview"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/player_dialog_bg"
+            android:paddingBottom="8dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="8dp" >
+
+            <TextView
+                android:id="@+id/text_player_dialog"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.2"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+        </ScrollView>
 
         <TextView
-            android:id="@+id/text_player_dialog"
-            android:layout_width="fill_parent"
+            android:id="@+id/text_player_no_chat"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.2"
-            android:text="@string/test_player_dialog"
+            android:layout_centerInParent="true"
+            android:text="@string/player_no_comment"
             android:textColor="@color/white"
-            android:textSize="18sp" />
-    </ScrollView>
+            android:textSize="16sp" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@id/wrapper_player_comment"
