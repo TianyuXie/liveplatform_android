@@ -12,7 +12,7 @@ public final class Constants {
 
     public static final String PLATFORM_ANDROID_PHONE = "aph";
 
-    //    public static final String LIVEPLATFORM_API_HOST = "172.16.6.47:80";
+    //public static final String LIVEPLATFORM_API_HOST = "172.16.6.47:80";
 
     public static final String LIVEPLATFORM_API_HOST = "api.liveplatform.pptv.com";
 
