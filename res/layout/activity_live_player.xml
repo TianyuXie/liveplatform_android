@@ -21,17 +21,14 @@
         android:layout_above="@+id/wrapper_player_comment" >
 
         <ScrollView
+            style="@style/chat_scrollview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:background="@color/player_dialog_bg"
-            android:fadingEdgeLength="10dp"
-            android:overScrollMode="never"
             android:paddingBottom="8dp"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
-            android:paddingTop="8dp"
-            android:requiresFadingEdge="vertical"
-            android:scrollbars="none" >
+            android:paddingTop="8dp" >
 
             <TextView
                 android:id="@+id/text_player_dialog"
@@ -43,7 +40,7 @@
         </ScrollView>
 
         <TextView
-            android:id="@+id/text_player_no_comment"
+            android:id="@+id/text_player_no_chat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"

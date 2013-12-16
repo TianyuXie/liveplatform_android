@@ -106,31 +106,56 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
-    <ScrollView
-        android:id="@+id/layout_record_dialog"
+    <RelativeLayout
+        android:id="@+id/layout_record_chat"
         android:layout_width="250dp"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="20dp"
-        android:background="@drawable/live_record_dialog_bg"
-        android:fadingEdgeLength="10dp"
-        android:overScrollMode="never"
-        android:paddingBottom="8dp"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:paddingTop="8dp"
-        android:requiresFadingEdge="vertical"
         android:visibility="gone" >
 
-        <TextView
-            android:id="@+id/text_record_dialog"
+        <ScrollView
+            android:id="@+id/scroll_record_chat"
+            style="@style/chat_scrollview"
             android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@drawable/live_record_dialog_bg"
+            android:paddingBottom="10dp"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="10dp"
+            android:visibility="gone" >
+
+            <TextView
+                android:id="@+id/text_record_chat"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:lineSpacingMultiplier="1.2"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
+        </ScrollView>
+
+        <ImageButton
+            android:id="@+id/btn_record_chat"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:background="@drawable/live_record_btn_chat_bg"
+            android:contentDescription="@null"
+            android:onClick="onClick"
+            android:src="@drawable/live_record_btn_live_chat" />
+
+        <TextView
+            android:id="@+id/text_recoder_no_chat"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineSpacingMultiplier="1.2"
+            android:layout_centerInParent="true"
             android:textColor="@color/white"
-            android:textSize="16sp" />
-    </ScrollView>
+            android:textSize="16sp"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <fragment
         android:id="@+id/footer_bar"

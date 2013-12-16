@@ -65,7 +65,7 @@ import de.greenrobot.event.EventBus;
 
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, SurfaceHolder.Callback, Handler.Callback {
 
-    private static final String TAG = LiveRecordActivity.class.getSimpleName();
+    static final String TAG = "_LiveRecordActivity";
 
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
@@ -93,6 +93,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private LiveMediaRecoder mMediaRecorder;
     private boolean mRecording = false;
 
+    private boolean mChating = false;
+    private View mChatContainer;
+    private View mChatView;
+    private TextView mChatTextView;
+    private TextView mNoChatTextView;
+    private ImageButton mChatButton;
+
     private ImageButton mBtnLiveRecord;
     private ImageButton mBtnCameraChange;
     private ToggleButton mBtnFlashLight;
@@ -108,8 +115,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private LoadingButton mStatusButton;
     private View mStatusButtonWrapper;
     private View mLiveButtonWrapper;
-    private View mDialogView;
-    private TextView mDialogTextView;
 
     private TaskContext mFeedContext;
 
@@ -167,6 +172,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mSurfaceHolder = mPreview.getHolder();
         mSurfaceHolder.addCallback(this);
 
+        mChatButton = (ImageButton) findViewById(R.id.btn_record_chat);
         mBtnLiveRecord = (ImageButton) findViewById(R.id.btn_live_record);
         mBtnCameraChange = (ImageButton) findViewById(R.id.btn_camera_change);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
@@ -184,8 +190,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mStatusButtonWrapper = findViewById(R.id.wrapper_live_status);
         mLiveButtonWrapper = findViewById(R.id.wrapper_live_status_right);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
-        mDialogView = findViewById(R.id.layout_record_dialog);
-        mDialogTextView = (TextView) findViewById(R.id.text_record_dialog);
+        mChatView = findViewById(R.id.scroll_record_chat);
+        mChatContainer = findViewById(R.id.layout_record_chat);
+        mChatTextView = (TextView) findViewById(R.id.text_record_chat);
+        mNoChatTextView = (TextView) findViewById(R.id.text_recoder_no_chat);
 
         mFeedContext = new TaskContext();
     }
@@ -317,6 +325,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (null != mLivingProgram) {
             mTextLive.setVisibility(View.VISIBLE);
             mTextRecordDuration.setVisibility(View.VISIBLE);
+            mChatContainer.setVisibility(View.VISIBLE);
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
 
@@ -455,6 +464,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
+    private void startChating() {
+        mChating = true;
+        mChatButton.setSelected(true);
+        mChatView.setVisibility(View.VISIBLE);
+        mNoChatTextView.setVisibility(View.VISIBLE);
+        mInnerHandler.removeMessages(WHAT_GET_FEED);
+        mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
+    }
+
+    private void stopChating() {
+        mChating = false;
+        mChatView.setVisibility(View.GONE);
+        mNoChatTextView.setVisibility(View.GONE);
+        mChatButton.setSelected(false);
+    }
+
     private void startRecording() {
         if (TextUtils.isEmpty(mLivingUrl)) {
             return;
@@ -477,7 +502,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mRecording = true;
 
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
-
             mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
 
             mFeedContext.set(Task.KEY_PID, mLivingProgram.getId());
@@ -492,6 +516,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mLivingProgram = null;
             mLivingUrl = null;
             mRecording = false;
+            mChatButton.setSelected(false);
             mBtnLiveRecord.setSelected(mRecording);
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
@@ -500,7 +525,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
-
         switch (v.getId()) {
         case R.id.btn_camera_change:
             onClickBtnCameraChange(v);
@@ -511,8 +535,19 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case R.id.btn_flash_light:
             onClickBtnFlashLight(v);
             break;
+        case R.id.btn_record_chat:
+            onClickBtnChat(v);
+            break;
         default:
             break;
+        }
+    }
+
+    private void onClickBtnChat(View v) {
+        if (!mChating) {
+            startChating();
+        } else {
+            stopChating();
         }
     }
 
@@ -535,7 +570,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (null != mCamera) {
             if (!mRecording) {
                 mTextLiveComing.setVisibility(View.GONE);
-
                 getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
                 if (null == mGetPushUrlOneStepTask) {
                     mGetPushUrlOneStepTask = new GetPushUrlTask();
@@ -543,8 +577,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             } else {
                 mTextLivingTitle.setVisibility(View.GONE);
-                mDialogView.setVisibility(View.GONE);
+                mChatContainer.setVisibility(View.GONE);
                 stopRecording();
+                stopChating();
                 getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
             }
         }
@@ -659,51 +694,62 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onGetFeed() {
-        GetFeedTask feedTask = new GetFeedTask();
-        feedTask.setTimeout(GetFeedTask.DEFAULT_TIMEOUT);
-        feedTask.addTaskListener(onFeedTaskListener);
-        feedTask.execute(mFeedContext);
-        mInnerHandler.removeMessages(WHAT_GET_FEED);
+        if (mRecording) {
+            Log.d(TAG, "onGetFeed");
+            GetFeedTask feedTask = new GetFeedTask();
+            feedTask.setTimeout(GetFeedTask.DEFAULT_TIMEOUT);
+            feedTask.addTaskListener(onFeedTaskListener);
+            feedTask.execute(mFeedContext);
+            mInnerHandler.removeMessages(WHAT_GET_FEED);
+        }
     }
 
     private Task.OnTaskListener onFeedTaskListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "FeedTask: onTimeout");
             mInnerHandler.removeMessages(WHAT_GET_FEED);
             mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFinished");
             FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
             if (feeds != null) {
-                mDialogView.setVisibility(View.VISIBLE);
-                mDialogTextView.setText("");
+                mNoChatTextView.setText("");
+                mChatTextView.setText("");
                 Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.record_dialog_nickname),
                         getResources().getColor(R.color.record_dialog_content));
                 if (contents.size() != 0) {
                     for (String content : contents) {
-                        mDialogTextView.append(Html.fromHtml(content.toString()));
+                        mChatTextView.append(Html.fromHtml(content.toString()));
                     }
                 } else {
-                    mDialogView.setVisibility(View.GONE);
+                    mNoChatTextView.setText(R.string.player_no_comment);
                 }
             }
             mInnerHandler.removeMessages(WHAT_GET_FEED);
-            mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME);
+            if (mChating) {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_SHORT);
+            } else {
+                mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_LONG);
+            }
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFailed");
             mInnerHandler.removeMessages(WHAT_GET_FEED);
-            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "FeedTask: onTaskCancel");
             mInnerHandler.removeMessages(WHAT_GET_FEED);
-            mInnerHandler.sendEmptyMessage(WHAT_GET_FEED);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
         }
 
         @Override

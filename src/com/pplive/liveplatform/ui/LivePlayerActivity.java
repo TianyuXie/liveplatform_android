@@ -64,7 +64,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_MEDIA_FINISH = 2001;
 
-    private final static int MSG_GET_FEED = 2500;
+    private final static int MSG_GET_FEED = 2002;
 
     private final static int LOADING_DELAY_TIME = 3000;
 
@@ -76,13 +76,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mFragmentContainer;
 
-    private View mDialogView;
+    private View mChatView;
 
     private View mCommentView;
 
     private View mLoadingView;
 
-    private TextView mDialogTextView;
+    private TextView mChatTextView;
 
     private Dialog mShareDialog;
 
@@ -146,12 +146,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentEditText.setOnEnterListener(onCommentEnterListener);
         mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
-        mDialogView = findViewById(R.id.layout_player_dialog);
+        mChatView = findViewById(R.id.layout_player_dialog);
         mLoadingView = findViewById(R.id.layout_player_loading);
-        mDialogTextView = (TextView) findViewById(R.id.text_player_dialog);
+        mChatTextView = (TextView) findViewById(R.id.text_player_dialog);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
-        mDialogView.setOnTouchListener(onDialogTouchListener);
+        mChatView.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -172,6 +172,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             String token = UserManager.getInstance(this).getToken();
             long pid = getIntent().getLongExtra("pid", -1);
             if (pid != -1) {
+                Log.d(TAG, "pid: " + pid);
                 showLoading();
                 mLoadingHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
@@ -231,15 +232,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         RelativeLayout.LayoutParams containerLp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
         if (mIsFull) {
             containerLp.height = LayoutParams.MATCH_PARENT;
-            mDialogView.setVisibility(View.GONE);
+            mChatView.setVisibility(View.GONE);
             mCommentView.setVisibility(View.GONE);
             mWriteBtn.setVisibility(View.GONE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
-            RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+            RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mChatView.getLayoutParams();
             containerLp.height = mHalfScreenHeight;
             dialogLp.topMargin = mHalfScreenHeight;
-            mDialogView.setVisibility(View.VISIBLE);
+            mChatView.setVisibility(View.VISIBLE);
             if (mWriting) {
                 mCommentView.setVisibility(View.VISIBLE);
                 mWriteBtn.setVisibility(View.GONE);
@@ -275,7 +276,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation) {
+        if (mCurrentOrient != requestedOrientation && !mFirstLoading) {
             Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
@@ -399,16 +400,16 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void popupDialog() {
-        mDialogView.setVisibility(View.INVISIBLE);
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+        mChatView.setVisibility(View.INVISIBLE);
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mChatView.getLayoutParams();
         lp.topMargin = mRootLayout.getHalfHeight() - DisplayUtil.dp2px(this, 170);
-        ViewUtil.showLayoutDelay(mDialogView, 100);
+        ViewUtil.showLayoutDelay(mChatView, 100);
     }
 
     private void popdownDialog() {
-        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mDialogView.getLayoutParams();
+        RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mChatView.getLayoutParams();
         lp.topMargin = mHalfScreenHeight;
-        ViewUtil.requestLayoutDelay(mDialogView, 100);
+        ViewUtil.requestLayoutDelay(mChatView, 100);
     }
 
     @Override
@@ -461,7 +462,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
-//            postFeed(event.getContext());
+            //            postFeed(event.getContext());
         }
 
         @Override
@@ -478,40 +479,44 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "FeedTask: onTimeout");
             mFeedHandler.removeMessages(MSG_GET_FEED);
             mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFinished");
             FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
             if (feeds != null) {
-                mDialogTextView.setText("");
+                mChatTextView.setText("");
                 Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.player_dialog_nickname),
                         getResources().getColor(R.color.player_dialog_content));
                 if (contents.size() != 0) {
-                    findViewById(R.id.text_player_no_comment).setVisibility(View.GONE);
+                    findViewById(R.id.text_player_no_chat).setVisibility(View.GONE);
                     for (String content : contents) {
-                        mDialogTextView.append(Html.fromHtml(content.toString()));
+                        mChatTextView.append(Html.fromHtml(content.toString()));
                     }
                 } else {
-                    findViewById(R.id.text_player_no_comment).setVisibility(View.VISIBLE);
+                    findViewById(R.id.text_player_no_chat).setVisibility(View.VISIBLE);
                 }
             }
             mFeedHandler.removeMessages(MSG_GET_FEED);
-            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME_SHORT);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "FeedTask: onTaskFailed");
             mFeedHandler.removeMessages(MSG_GET_FEED);
-            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "FeedTask: onTaskCancel");
             mFeedHandler.removeMessages(MSG_GET_FEED);
-            mFeedHandler.sendEmptyMessage(MSG_GET_FEED);
+            mFeedHandler.sendEmptyMessageDelayed(MSG_GET_FEED, GetFeedTask.DELAY_TIME_SHORT * 2);
         }
 
         @Override
@@ -578,12 +583,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            onDialogGestureDetector.onTouchEvent(event);
+            onChatGestureDetector.onTouchEvent(event);
             return false;
         }
     };
 
-    private GestureDetector onDialogGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector onChatGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -635,6 +640,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_GET_FEED:
+                Log.d(TAG, "GetFeedTask");
                 GetFeedTask feedTask = new GetFeedTask();
                 feedTask.addTaskListener(onGetFeedListener);
                 feedTask.execute(mFeedContext);

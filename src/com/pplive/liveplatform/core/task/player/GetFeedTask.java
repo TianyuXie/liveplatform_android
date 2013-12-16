@@ -18,7 +18,9 @@ public class GetFeedTask extends Task {
     private final String ID = StringUtil.newGuid();
     private final String NAME = "GetFeed";
     
-    public final static int DELAY_TIME = 5000;
+    public final static int DELAY_TIME_SHORT = 5000;
+    
+    public final static int DELAY_TIME_LONG = 30000;
 
     public final static int DEFAULT_TIMEOUT = 10000;
 
