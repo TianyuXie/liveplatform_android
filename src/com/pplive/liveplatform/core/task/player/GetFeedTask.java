@@ -20,7 +20,7 @@ public class GetFeedTask extends Task {
     public final static int DEFAULT_TIMEOUT = 10000;
     
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetFeed";
+    public final static String TYPE = "GetFeed";
 
     @Override
     public String getID() {
@@ -28,8 +28,8 @@ public class GetFeedTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override

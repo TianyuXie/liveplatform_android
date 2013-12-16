@@ -18,7 +18,7 @@ public class LoginTask extends Task {
     public final static String KEY_PASSWORD = "password";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "Login";
+    public final static String TYPE = "Login";
 
     @Override
     public String getID() {
@@ -26,8 +26,8 @@ public class LoginTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override

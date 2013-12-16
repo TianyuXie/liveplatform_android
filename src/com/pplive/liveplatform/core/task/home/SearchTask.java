@@ -11,7 +11,7 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
     static final String TAG = "_SearchTask";
-    
+
     public final static String KEY_RESULT = "search_task_result";
     public final static String KEY_TYPE = "search_task_type";
 
@@ -23,7 +23,7 @@ public class SearchTask extends Task {
     public final static String KEY_KEYWORD = "key";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "Search";
+    public final static String TYPE = "SearchTask";
 
     @Override
     public String getID() {
@@ -31,8 +31,8 @@ public class SearchTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override

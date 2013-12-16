@@ -16,7 +16,7 @@ public class ProgramTask extends Task {
     public final static String KEY_RESULT = "program_result";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "Program";
+    public final static String TYPE = "Program";
 
     @Override
     public String getID() {
@@ -24,8 +24,8 @@ public class ProgramTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override

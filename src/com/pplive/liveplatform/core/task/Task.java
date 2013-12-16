@@ -40,7 +40,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     public abstract String getID();
 
-    public abstract String getName();
+    public abstract String getType();
 
     public abstract void pause();
 

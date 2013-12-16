@@ -16,7 +16,7 @@ public class GetMediaTask extends Task {
     public final static String KEY_RESULT = "play_media_result";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetMedia";
+    public final static String TYPE = "GetMedia";
 
     @Override
     public String getID() {
@@ -24,8 +24,8 @@ public class GetMediaTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override

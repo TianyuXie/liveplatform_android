@@ -13,7 +13,7 @@ public class PutFeedTask extends Task {
     public final static String KEY_CONTENT = "content";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "PutFeed";
+    public final static String TYPE = "PutFeed";
 
     @Override
     public String getID() {
@@ -21,8 +21,8 @@ public class PutFeedTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override

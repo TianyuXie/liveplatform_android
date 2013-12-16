@@ -78,7 +78,7 @@ public class AnimDoor extends RelativeLayout {
             case R.styleable.AnimDoor_orientation:
                 mOrientaion = a.getInt(attr, 0);
                 break;
-            case R.styleable.AnimDoor_time:
+            case R.styleable.AnimDoor_duration:
                 mDuration = a.getInt(attr, 1000);
                 break;
             case R.styleable.AnimDoor_visible:
