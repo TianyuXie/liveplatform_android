@@ -552,10 +552,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onClickBtnCameraChange(View v) {
-        if (mRecording) {
-            stopRecording();
-        }
-
         stopPreview();
 
         mCurrentCameraId = (mCurrentCameraId + 1) % mNumberofCameras;
@@ -563,6 +559,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         initCamera();
         startPreview();
+        
+        if (mRecording) {
+            mMediaRecorder.resetCamera(mCamera);
+        }
     }
 
     private void onClickBtnLiveRecord(View v) {
