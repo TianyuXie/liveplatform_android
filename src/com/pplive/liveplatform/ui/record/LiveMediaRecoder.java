@@ -59,6 +59,12 @@ public class LiveMediaRecoder {
         mCapture.stop();
         mCapture.close();
     }
+    
+    public void resetCamera(Camera camera) {
+        if (null != mCapture) {
+            mCapture.resetCamera(camera);
+        }
+    }
 
     public interface OnErrorListener {
         void onError();
