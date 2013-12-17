@@ -74,7 +74,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private ChatBox mChatBox;
 
-    private Dialog mShareDialog;
+    private ShareDialog mShareDialog;
 
     private Dialog mLoadingDialog;
 
@@ -123,6 +123,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment = new LivePlayerFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
+        mShareDialog.setActivity(this);
         mLoadingDialog = new LoadingDialog(this);
         mLoadingDialog.setOnKeyListener(onLoadingKeyListener);
 
