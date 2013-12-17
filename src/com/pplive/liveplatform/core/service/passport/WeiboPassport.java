@@ -29,9 +29,6 @@ import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
 
-import com.sina.weibo.sdk.demo.AccessTokenKeeper;
-import com.sina.weibo.sdk.demo.WBLoginLogoutActivity;
-import com.sina.weibo.sdk.demo.WBLoginLogoutActivity.LogOutRequestListener;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
@@ -184,23 +181,31 @@ public class WeiboPassport
     }
     
     public void logout(){
-        new LogoutAPI(AccessTokenKeeper.readAccessToken(mActivity)).logout(new LogOutRequestListener(){
+        new LogoutAPI(AccessTokenKeeper.readAccessToken(mActivity)).logout(new RequestListener(){
             @Override
             public void onComplete(String response) {
                 if (!TextUtils.isEmpty(response)) {
-                    try {
-                        JSONObject obj = new JSONObject(response);
-                        String value = obj.getString("result");
-
-                        if ("true".equalsIgnoreCase(value)) {
-                            AccessTokenKeeper.clear(WBLoginLogoutActivity.this);
-                            mTokenView.setText(R.string.weibosdk_demo_logout_success);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    
                 }
-        });
+            }
+
+            @Override
+            public void onComplete4binary(ByteArrayOutputStream responseOS) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onIOException(IOException e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onError(WeiboException e) {
+                // TODO Auto-generated method stub
+            }
+            });
     }
 
     public void updateUserInfo(String uid) {
