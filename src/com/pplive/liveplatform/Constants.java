@@ -18,7 +18,7 @@ public interface Constants {
     
     public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.idc.pplive.cn";
 
-    public static final String PASSPORT_API_HOST = "passport.pptv.com";
+    public static final String PASSPORT_API_HOST = "api.passport.pptv.com";
 
 //    public static final String SC_API_HOST = "172.16.205.230";
     

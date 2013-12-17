@@ -10,9 +10,14 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
@@ -72,13 +77,7 @@ public class PassportService {
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
             trustStore.load(null, null);
 
-            SSLSocketFactory sslFactory = new SSLSocketFactory(trustStore) {
-
-                @Override
-                public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-                    return getSocketFactory().createSocket(socket, host, port, autoClose);
-                }
-            };
+            SSLSocketFactory sslFactory = new SSLSocketFactoryEx(trustStore);
 
             sslFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
@@ -177,5 +176,41 @@ public class PassportService {
         Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
 
         return rep.getBody().getResult();
+    }
+}
+
+class SSLSocketFactoryEx extends SSLSocketFactory {
+    
+    TrustManager mTrustManager = new X509TrustManager() {
+        
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return null;
+        }
+        
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            // TODO Auto-generated method stub
+            
+        }
+        
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            // TODO Auto-generated method stub
+            
+        }
+    };
+    
+    SSLContext mSSLContext = SSLContext.getInstance("TLS");
+    
+    public SSLSocketFactoryEx(KeyStore keystore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+        super(keystore);
+        
+        mSSLContext.init(null, new TrustManager[]{mTrustManager}, null);
+    }
+    
+    @Override
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+        return mSSLContext.getSocketFactory().createSocket(socket, host, port, autoClose);
     }
 }
