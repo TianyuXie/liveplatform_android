@@ -121,13 +121,15 @@
             android:layout_height="fill_parent"
             android:visibility="gone"
             live:background="@drawable/live_record_dialog_bg"
+            live:contentColor="@color/record_dialog_content"
             live:lineSpacingMultiplier="1.2"
             live:paddingBottom="10dp"
             live:paddingLeft="12dp"
             live:paddingRight="12dp"
             live:paddingTop="10dp"
             live:textColor="@color/white"
-            live:textSize="14sp" />
+            live:textSize="14sp"
+            live:userColor="@color/record_dialog_nickname" />
 
         <ImageButton
             android:id="@+id/btn_record_chat"

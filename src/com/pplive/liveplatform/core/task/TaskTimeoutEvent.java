@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.task;
 
+import com.pplive.liveplatform.util.StringUtil;
+
 public class TaskTimeoutEvent {
     private String message;
 
@@ -19,7 +21,7 @@ public class TaskTimeoutEvent {
     }
 
     public String getMessage() {
-        return message;
+        return StringUtil.safeString(message);
     }
 
     public void setMessage(String message) {

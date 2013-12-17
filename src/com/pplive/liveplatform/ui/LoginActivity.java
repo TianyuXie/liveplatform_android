@@ -165,6 +165,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
         }
@@ -177,12 +178,14 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "LoginTask onTimeout");
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
         }

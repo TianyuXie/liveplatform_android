@@ -2,6 +2,8 @@ package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
+import org.springframework.util.CollectionUtils;
+
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,7 +30,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
-import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -450,7 +451,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
-            //            postFeed(event.getContext());
+            //TODO
         }
 
         @Override
@@ -467,43 +468,45 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            //TODO timeout
             Log.d(TAG, "MediaTask onTimeout");
-            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
             mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            // TODO rtmp or live2
+            mUrl = null;
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            for (Watch watch : watchs) {
-                Log.d(TAG, "Protocol:" + watch.getProtocol());
-            }
-            for (Watch watch : watchs) {
-                if ("rtmp".equals(watch.getProtocol())) {
-                    mUrl = watch.getWatchStringList().get(0);
-                    break;
+            // TODO rtmp or live2
+            if (!CollectionUtils.isEmpty(watchs)) {
+                for (Watch watch : watchs) {
+                    if ("rtmp".equals(watch.getProtocol())) {
+                        List<String> watchList = watch.getWatchStringList();
+                        if (!CollectionUtils.isEmpty(watchList)) {
+                            mUrl = watchList.get(0);
+                            break;
+                        }
+                    }
+                }
+                if (TextUtils.isEmpty(mUrl)) {
+                    List<String> watchList = watchs.get(0).getWatchStringList();
+                    if (!CollectionUtils.isEmpty(watchList)) {
+                        mUrl = watchList.get(0);
+                    }
                 }
             }
-            if (TextUtils.isEmpty(mUrl)) {
-                mUrl = watchs.get(0).getWatchStringList().get(0);
-            }
+
             if (!TextUtils.isEmpty(mUrl)) {
-                Log.d(TAG, "MediaTask onTaskFinished:" + mUrl);
                 mLivePlayerFragment.setupPlayer(mUrl);
             } else {
-                finish();
+                Log.w(TAG, "mUrl is empty");
             }
             mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            //TODO failed
-            Log.d(TAG, "MediaTask onTaskFailed");
-            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            Log.d(TAG, "MediaTask onTaskFailed: " + event.getMessage());
             mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
