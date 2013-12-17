@@ -3,7 +3,6 @@ import android.content.Context;
 
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
-import com.tencent.mm.sdk.openapi.WXTextObject;
 
 public class WeChatShare {
 

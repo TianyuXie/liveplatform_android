@@ -26,7 +26,11 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private final static int STATUS_REFRESHING = 802;
     private final static int STATUS_DONE = 803;
 
-    private final static float RATIO = 1.7f;
+    private final static float RATIO = 2.0f;
+    private final static int REVERSE_LIMIT = 5;
+    private final static float MAX_STEP = 100.0f;
+    private final static float MOVE_THRESHOLD = 5.0f;
+    private final static float REVERSE_THRESHOLD = 20.0f;
 
     private final static int POPUP_TIME = 500;
 
@@ -36,6 +40,10 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private int mStatus;
     private int mHeaderHeight;
     private float mStartY;
+
+    private float mSavedDelta;
+    private int mReverseCount;
+    private boolean mDown;
 
     private boolean mRecorded;
     private boolean mRefreshable;
@@ -159,55 +167,72 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                 if (!mRecorded) {
                     mRecorded = true;
                     mStartY = tempY;
+                    mSavedDelta = 0;
+                    mReverseCount = 0;
+                    mDown = true;
                 }
                 if (mStatus != STATUS_REFRESHING && mRecorded) {
-                    // 保证在设置padding的过程中，当前的位置一直是在head，否则如果当列表超出屏幕的话，当在上推的时候，列表会同时进行滚动
-                    // 可以松手去刷新了
-                    if (mStatus == STATUS_RELEASE_TO_REFRESH) {
-                        setSelection(0);
-                        // 往上推了，推到了屏幕足够掩盖head的程度，但是还没有推到全部掩盖的地步
-                        if (((tempY - mStartY) / RATIO < mHeaderHeight) && (tempY - mStartY) > 0) {
+                    float delta = tempY - mStartY;
+                    delta = Math.min(mSavedDelta + MAX_STEP, delta);
+                    delta = Math.max(mSavedDelta - MAX_STEP, delta);
+                    if (((delta > mSavedDelta && mDown) || (delta < mSavedDelta && !mDown)) && Math.abs(mSavedDelta - delta) > MOVE_THRESHOLD) {
+                        mReverseCount = 0;
+                        mSavedDelta = delta;
+                        // 保证在设置padding的过程中，当前的位置一直是在head，否则如果当列表超出屏幕的话，当在上推的时候，列表会同时进行滚动
+                        // 可以松手去刷新了
+                        if (mStatus == STATUS_RELEASE_TO_REFRESH) {
+                            setSelection(0);
+                            // 往上推了，推到了屏幕足够掩盖head的程度，但是还没有推到全部掩盖的地步
+                            if ((mSavedDelta / RATIO < mHeaderHeight) && mSavedDelta > 0) {
+                                mStatus = STATUS_PULL_TO_REFRESH;
+                                updateHeader();
+                                Log.v(TAG, "由松开刷新状态转变到下拉刷新状态");
+                            }
+                            // 一下子推到顶了
+                            else if (mSavedDelta <= 0) {
+                                mStatus = STATUS_DONE;
+                                mAniming = false;
+                                updateHeader();
+                                Log.v(TAG, "由松开刷新状态转变到done状态");
+                            }
+                            // 往下拉了，或者还没有上推到屏幕顶部掩盖head的地步
+                            else {
+                                // 不用进行特别的操作，只用更新paddingTop的值就行了
+                            }
+                        }
+                        // 还没有到达显示松开刷新的时候,DONE或者是PULL_To_REFRESH状态
+                        if (mStatus == STATUS_PULL_TO_REFRESH) {
+                            setSelection(0);
+                            // 下拉到可以进入RELEASE_TO_REFRESH的状态
+                            if (mSavedDelta / RATIO >= mHeaderHeight) {
+                                mStatus = STATUS_RELEASE_TO_REFRESH;
+                                updateHeader();
+                                Log.v(TAG, "由done或者下拉刷新状态转变到松开刷新");
+                            }
+                            // 上推到顶了
+                            else if (mSavedDelta <= 0) {
+                                mStatus = STATUS_DONE;
+                                mAniming = false;
+                                updateHeader();
+                                Log.v(TAG, "由Done或者下拉刷新状态转变到done状态");
+                            }
+                        }
+                        // done状态下
+                        if (mStatus == STATUS_DONE && mSavedDelta > 0) {
                             mStatus = STATUS_PULL_TO_REFRESH;
                             updateHeader();
-                            Log.v(TAG, "由松开刷新状态转变到下拉刷新状态");
                         }
-                        // 一下子推到顶了
-                        else if (tempY - mStartY <= 0) {
-                            mStatus = STATUS_DONE;
-                            mAniming = false;
-                            updateHeader();
-                            Log.v(TAG, "由松开刷新状态转变到done状态");
+                        // 更新headView的size
+                        if (mStatus == STATUS_PULL_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH) {
+                            mHeaderView.setPadding(0, (int) (mSavedDelta / RATIO - mHeaderHeight), 0, 0);
                         }
-                        // 往下拉了，或者还没有上推到屏幕顶部掩盖head的地步
-                        else {
-                            // 不用进行特别的操作，只用更新paddingTop的值就行了
+                    } else if (delta != mSavedDelta && Math.abs(mSavedDelta - delta) > REVERSE_THRESHOLD) {
+                        mReverseCount++;
+                        if (mReverseCount >= REVERSE_LIMIT) {
+                            Log.d(TAG, "Reverse");
+                            mReverseCount = 0;
+                            mDown = !mDown;
                         }
-                    }
-                    // 还没有到达显示松开刷新的时候,DONE或者是PULL_To_REFRESH状态
-                    if (mStatus == STATUS_PULL_TO_REFRESH) {
-                        setSelection(0);
-                        // 下拉到可以进入RELEASE_TO_REFRESH的状态
-                        if ((tempY - mStartY) / RATIO >= mHeaderHeight) {
-                            mStatus = STATUS_RELEASE_TO_REFRESH;
-                            updateHeader();
-                            Log.v(TAG, "由done或者下拉刷新状态转变到松开刷新");
-                        }
-                        // 上推到顶了
-                        else if (tempY - mStartY <= 0) {
-                            mStatus = STATUS_DONE;
-                            mAniming = false;
-                            updateHeader();
-                            Log.v(TAG, "由Done或者下拉刷新状态转变到done状态");
-                        }
-                    }
-                    // done状态下
-                    if (mStatus == STATUS_DONE && tempY - mStartY > 0) {
-                        mStatus = STATUS_PULL_TO_REFRESH;
-                        updateHeader();
-                    }
-                    // 更新headView的size
-                    if (mStatus == STATUS_PULL_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH) {
-                        mHeaderView.setPadding(0, (int) ((tempY - mStartY) / RATIO - mHeaderHeight), 0, 0);
                     }
                 }
                 break;

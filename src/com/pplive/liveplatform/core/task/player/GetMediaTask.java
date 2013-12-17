@@ -11,10 +11,12 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class GetMediaTask extends Task {
+    static final String TAG = "_GetMediaTask";
+
     public final static String KEY_RESULT = "play_media_result";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "GetMedia";
+    public final static String TYPE = "GetMedia";
 
     @Override
     public String getID() {
@@ -22,8 +24,8 @@ public class GetMediaTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class GetMediaTask extends Task {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
@@ -54,13 +56,13 @@ public class GetMediaTask extends Task {
         try {
             data = MediaService.getInstance().getPlayWatchList(token, pid, username);
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "get error");
+            return new TaskResult(TaskStatus.Failed, "MediaService error");
         }
         if (data == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_RESULT, data);

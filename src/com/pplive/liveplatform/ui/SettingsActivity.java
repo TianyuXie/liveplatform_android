@@ -41,7 +41,7 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        mUserPrefs = SettingsProvider.getInstance(this).getPrefs();
+        mUserPrefs = SettingsProvider.getInstance(this).getAppPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mUserTextView.setText(UserManager.getInstance(this).getActiveUserPlain());
@@ -52,7 +52,7 @@ public class SettingsActivity extends Activity {
     protected void onStop() {
         mUserPrefs.setContentNotify(mContentButton.isChecked());
         mUserPrefs.setPreliveNotify(mPreliveButton.isChecked());
-        SettingsProvider.getInstance(this).setPrefs(mUserPrefs);
+        SettingsProvider.getInstance(this).setAppPrefs(mUserPrefs);
         super.onStop();
     }
 

@@ -18,27 +18,29 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     private static final int DEFAULT_TIME_OUT = 20 * 1000;
 
-    private boolean isReturn;
+    private boolean mReturn;
 
-    private int timeout;
+    private int mTimeout;
 
-    private Timer timer = new Timer();
+    private Timer mTimer;
 
-    private ArrayList<OnTaskListener> taskListeners = new ArrayList<OnTaskListener>();
+    private ArrayList<OnTaskListener> mTaskListeners;
 
-    private TaskContext backContext;
+    private TaskContext mReturnContext;
 
     public Task(int timeout) {
-        this.timeout = timeout;
+        this.mTimeout = timeout;
+        this.mTimer = new Timer();
+        this.mTaskListeners = new ArrayList<OnTaskListener>();
     }
 
     public Task() {
-        this.timeout = DEFAULT_TIME_OUT;
+        this(DEFAULT_TIME_OUT);
     }
 
     public abstract String getID();
 
-    public abstract String getName();
+    public abstract String getType();
 
     public abstract void pause();
 
@@ -46,13 +48,12 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     @Override
     protected void onPreExecute() {
-        // Timer, use to count the time, the default time is 20 seconds
-        timer.schedule(new TimerTask() {
+        mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 handler.sendEmptyMessage(0);
             }
-        }, timeout);
+        }, mTimeout);
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -60,7 +61,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case 0:
-                onTaskTimeout(Task.this, new TaskTimeoutEvent("Task timeout", backContext));
+                onTaskTimeout(Task.this, new TaskTimeoutEvent("Task timeout", mReturnContext));
                 break;
             default:
                 break;
@@ -70,10 +71,10 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     @Override
     protected void onPostExecute(TaskResult result) {
-        if (isReturn)
+        if (mReturn)
             return;
         if (result == null) {
-            result = new TaskResult(TaskStatus.Failed, "Can not return null when the task done");
+            result = new TaskResult(TaskStatus.Failed, "TaskResult is null");
         }
         if (result.getStatus() == TaskStatus.Finished) {
             onTaskFinished(this, new TaskFinishedEvent(result.getContext()));
@@ -85,67 +86,67 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     }
 
     public void setTimeout(int timeout) {
-        this.timeout = timeout;
+        this.mTimeout = timeout;
     }
 
-    public void setBackContext(TaskContext backContext) {
-        this.backContext = backContext;
+    public void setReturnContext(TaskContext context) {
+        this.mReturnContext = context;
     }
 
     @Override
     protected void onCancelled() {
-        if (isReturn)
+        if (mReturn)
             return;
-        onTaskCancel(this, new TaskCancelEvent("Canceled"));
+        onTaskCancel(this, new TaskCancelEvent("Cancelled"));
     }
 
     public void addTaskListener(OnTaskListener listener) {
-        taskListeners.add(listener);
+        mTaskListeners.add(listener);
     }
 
     public void removeTaskCancelListener(OnTaskListener listener) {
-        taskListeners.remove(listener);
+        mTaskListeners.remove(listener);
     }
 
     protected void onTaskFinished(Object sender, TaskFinishedEvent event) {
-        if (!isReturn) {
-            isReturn = true;
-            for (OnTaskListener listener : taskListeners) {
+        if (!mReturn) {
+            mReturn = true;
+            for (OnTaskListener listener : mTaskListeners) {
                 listener.onTaskFinished(sender, event);
             }
         }
     }
 
     protected void onTaskFailed(Object sender, TaskFailedEvent event) {
-        if (!isReturn) {
-            isReturn = true;
-            for (OnTaskListener listener : taskListeners) {
+        if (!mReturn) {
+            mReturn = true;
+            for (OnTaskListener listener : mTaskListeners) {
                 listener.onTaskFailed(sender, event);
             }
         }
     }
 
     protected void onTaskProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        if (!isReturn) {
-            for (OnTaskListener listener : taskListeners) {
+        if (!mReturn) {
+            for (OnTaskListener listener : mTaskListeners) {
                 listener.onProgressChanged(sender, event);
             }
         }
     }
 
     protected void onTaskTimeout(Object sender, TaskTimeoutEvent event) {
-        if (!isReturn) {
-            isReturn = true;
-            for (OnTaskListener listener : taskListeners) {
+        if (!mReturn) {
+            mReturn = true;
+            for (OnTaskListener listener : mTaskListeners) {
                 listener.onTimeout(sender, event);
             }
         }
     }
 
     protected void onTaskCancel(Object sender, TaskCancelEvent event) {
-        if (!isReturn) {
-            isReturn = true;
-            for (OnTaskListener listener : taskListeners) {
+        if (!mReturn) {
+            mReturn = true;
+            for (OnTaskListener listener : mTaskListeners) {
                 listener.onTaskCancel(sender, event);
             }
         }

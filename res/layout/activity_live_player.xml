@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.pplive.liveplatform.ui.widget.DetectableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/black"
@@ -14,40 +15,19 @@
         android:orientation="vertical" >
     </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/layout_player_dialog"
+    <com.pplive.liveplatform.ui.widget.ChatBox
+        android:id="@+id/layout_player_chatbox"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/wrapper_player_comment" >
-
-        <ScrollView
-            style="@style/chat_scrollview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:background="@color/player_dialog_bg"
-            android:paddingBottom="8dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="8dp" >
-
-            <TextView
-                android:id="@+id/text_player_dialog"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-        </ScrollView>
-
-        <TextView
-            android:id="@+id/text_player_no_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/player_no_comment"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-    </RelativeLayout>
+        android:layout_above="@+id/wrapper_player_comment"
+        live:background="@color/player_chatbox_bg"
+        live:lineSpacingMultiplier="1.2"
+        live:paddingBottom="8dp"
+        live:paddingLeft="12dp"
+        live:paddingRight="12dp"
+        live:paddingTop="8dp"
+        live:textColor="@color/white"
+        live:textSize="18sp" />
 
     <LinearLayout
         android:id="@id/wrapper_player_comment"

@@ -5,8 +5,10 @@ import java.util.UUID;
 public class StringUtil {
     public final static String EMPTY_STRING = "";
 
+    public final static String NULL_STRING = "null";
+
     public static boolean isNullOrEmpty(String str) {
-        return str == null || str.trim().equals(EMPTY_STRING);
+        return str == null || str.equals(NULL_STRING) || str.trim().equals(EMPTY_STRING);
     }
 
     public static boolean notNullOrEmpty(String str) {

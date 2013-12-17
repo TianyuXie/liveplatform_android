@@ -14,13 +14,11 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class LoginTask extends Task {
     final static String TAG = "_LoginTask";
-    public final static String KEY_TOKEN = "token";
     public final static String KEY_USERINFO = "userinfo";
-    public final static String KEY_PWD = "password";
-    public final static String KEY_USR = "username";
+    public final static String KEY_PASSWORD = "password";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "Login";
+    public final static String TYPE = "Login";
 
     @Override
     public String getID() {
@@ -28,8 +26,8 @@ public class LoginTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override
@@ -50,22 +48,22 @@ public class LoginTask extends Task {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
-        String usr = context.getString(KEY_USR);
-        String pwd = context.getString(KEY_PWD);
+        String usr = context.getString(KEY_USERNAME);
+        String pwd = context.getString(KEY_PASSWORD);
         String token = null;
         try {
             token = PassportService.getInstance().login(usr, pwd).getToken();
         } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "GET Error");
+            return new TaskResult(TaskStatus.Failed, "PassportService error");
         }
         if (TextUtils.isEmpty(token)) {
-            return new TaskResult(TaskStatus.Failed, "No data");
+            return new TaskResult(TaskStatus.Failed, "Invalid token");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         Log.d(TAG, "PassportService OK");
         User userinfo = new User();
@@ -75,7 +73,7 @@ public class LoginTask extends Task {
             Log.w(TAG, "No userinfo");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_TOKEN, token);

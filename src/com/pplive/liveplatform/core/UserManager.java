@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.util.EncryptUtil;
+import com.pplive.liveplatform.util.StringUtil;
 
 public class UserManager {
     final static String TAG = "_UserManager";
@@ -30,11 +31,11 @@ public class UserManager {
     private UserManager(Context context) {
         mContext = context;
         mImei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        mUserPrivate = SettingsProvider.getInstance(mContext).getUserPrivate();
+        mUserPrivate = SettingsProvider.getInstance(context).getUserPrivate();
         if (!TextUtils.isEmpty(mUserPrivate)) {
-            mToken = SettingsProvider.getInstance(mContext).getToken();
-            mNickname = SettingsProvider.getInstance(mContext).getNickname();
-            mIcon = SettingsProvider.getInstance(mContext).getIcon();
+            mToken = SettingsProvider.getInstance(context).getToken();
+            mNickname = SettingsProvider.getInstance(context).getNickname();
+            mIcon = SettingsProvider.getInstance(context).getIcon();
             mUsernamePlain = EncryptUtil.decrypt(mUserPrivate, mImei).split(String.valueOf((char) 0x01))[0];
         }
     }
@@ -79,11 +80,7 @@ public class UserManager {
 
     public String getNickname() {
         if (isLogin()) {
-            if (TextUtils.isEmpty(mNickname)) {
-                return getActiveUserPlain();
-            } else {
-                return mNickname;
-            }
+            return StringUtil.isNullOrEmpty(mNickname) ? getActiveUserPlain() : mNickname;
         } else {
             return "";
         }

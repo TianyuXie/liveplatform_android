@@ -2,7 +2,7 @@ package com.pplive.liveplatform;
 
 import android.os.Build;
 
-public final class Constants {
+public interface Constants {
 
     public static final boolean LARGER_THAN_OR_EQUAL_GINGERBREAD = Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD;
 
@@ -15,11 +15,14 @@ public final class Constants {
     //    public static final String LIVEPLATFORM_API_HOST = "172.16.6.64:80";
 
     public static final String LIVEPLATFORM_API_HOST = "api.liveplatform.pptv.com";
+    
+    public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.idc.pplive.cn";
 
     public static final String PASSPORT_API_HOST = "passport.pptv.com";
 
-    public static final String SC_API_HOST = "172.16.205.230";
+//    public static final String SC_API_HOST = "172.16.205.230";
+    
+    public static final String SC_API_HOST = "api.sc.pptv.com";
+    
 
-    private Constants() {
-    }
 }

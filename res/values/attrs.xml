@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <attr name="textColor" format="color" />
+    <attr name="textSize" format="dimension" />
+    <attr name="text" format="string" />
+    <attr name="duration" format="integer" />
+
     <declare-styleable name="LoadingButton">
-        <attr name="textSize" format="dimension" />
-        <attr name="text" format="string" />
+        <attr name="textSize" />
+        <attr name="text" />
         <attr name="normal_background" format="reference" />
         <attr name="loading_background" format="reference" />
         <attr name="anim_background" format="reference" />
         <attr name="animation" format="reference" />
     </declare-styleable>
     <declare-styleable name="AnimDoor">
+        <attr name="duration" />
         <attr name="left_src" format="reference" />
         <attr name="right_src" format="reference" />
         <attr name="factor" format="float" />
-        <attr name="time" format="integer" />
         <attr name="visible" format="boolean" />
         <attr name="orientation">
             <enum name="horizontal" value="0" />
@@ -25,9 +30,19 @@
         <attr name="anim_hide" format="reference" />
     </declare-styleable>
     <declare-styleable name="SlidableContainer">
+        <attr name="duration" />
         <attr name="distance" format="dimension" />
         <attr name="scale_percent" format="float" />
-        <attr name="duration" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="ChatBox">
+        <attr name="textSize" />
+        <attr name="textColor" />
+        <attr name="paddingBottom" format="dimension" />
+        <attr name="paddingLeft" format="dimension" />
+        <attr name="paddingRight" format="dimension" />
+        <attr name="paddingTop" format="dimension" />
+        <attr name="lineSpacingMultiplier" format="float" />
+        <attr name="background" format="reference" />
     </declare-styleable>
 
 </resources>
