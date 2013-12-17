@@ -8,11 +8,15 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.TencentPassport.ThirdpartyLoginListener;
+import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
@@ -24,10 +28,13 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
+
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
+import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.sina.weibo.sdk.utils.Utility;
+
 
 public class WeiboPassport
 {
@@ -171,6 +178,34 @@ public class WeiboPassport
     public void updateLoginResult(Bundle values) {
         // TODO Auto-generated method stub
         
+    }
+    
+    public void logout(){
+        new LogoutAPI(AccessTokenKeeper.readAccessToken(mActivity)).logout(new RequestListener(){
+            @Override
+            public void onComplete(String response) {
+                if (!TextUtils.isEmpty(response)) {
+                    
+                }
+            }
+
+            @Override
+            public void onComplete4binary(ByteArrayOutputStream responseOS) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onIOException(IOException e) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void onError(WeiboException e) {
+                // TODO Auto-generated method stub
+            }
+            });
     }
 
     public void updateUserInfo(String uid) {

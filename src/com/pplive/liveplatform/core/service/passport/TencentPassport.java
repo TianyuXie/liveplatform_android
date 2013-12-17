@@ -204,6 +204,10 @@ public class TencentPassport
         
     }
     
+    public void logout(){
+        mTencent.logout(mActivity);
+    }
+    
     public void doShareToQQ(final Bundle params) {
         new Thread(new Runnable() {
             
