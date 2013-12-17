@@ -2,31 +2,38 @@ package com.pplive.liveplatform.ui.widget.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.WeiboPassport;
+import com.pplive.liveplatform.util.StringUtil;
 import com.tencent.tauth.Constants;
 
+public class ShareDialog extends Dialog implements View.OnClickListener {
+    static final String TAG = "_ShareDialog";
 
-public class ShareDialog extends Dialog {
-    private String mtitle;
-    private Button mWechart;
-    private Button mWechartSNS;
-    private Button mSinaShare;
-    private Button mQQShare;
+    private String mDialogTitle;
+
     private Activity mActivity;
 
-    public ShareDialog(Context context) {
-        super(context);
-        mtitle = "";
-    }
+    private String mTargetUrl;
+    private String mTitle;
+    private String mImageUrl;
+    private String mSummary;
+
+    public static final String PARAM_TARGET_URL = "targetUrl";
+    public static final String PARAM_TITLE = "title";
+    public static final String PARAM_SUMMARY = "summary";
+    public static final String PARAM_IMAGE_URL = "imageUrl";
+    public static final String PARAM_BITMAP = "bitmap";
 
     public ShareDialog(Context context, int theme) {
         this(context, theme, "");
@@ -34,10 +41,14 @@ public class ShareDialog extends Dialog {
 
     public ShareDialog(Context context, int theme, String title) {
         super(context, theme);
-        mtitle = title;
+        mDialogTitle = title;
+        mTargetUrl = "";
+        mTitle = "";
+        mImageUrl = "";
+        mSummary = "";
     }
-    
-    public void setActivity(Activity activity){
+
+    public void setActivity(Activity activity) {
         mActivity = activity;
     }
 
@@ -45,98 +56,103 @@ public class ShareDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_share);
-        Button closeBtn = (Button) findViewById(R.id.btn_share_dialog_close);
-        TextView titleTextView = (TextView) findViewById(R.id.text_share_dialog_title);
-        mWechart = (Button) findViewById(R.id.btn_sharedialog_wechatShare);
-        mWechartSNS = (Button) findViewById(R.id.btn_sharedialog_wechatSNSShare);
-        mSinaShare = (Button) findViewById(R.id.btn_sharedialog_sinaShare);
-        mQQShare = (Button) findViewById(R.id.btn_sharedialog_qqShare);
-        titleTextView.setText(mtitle);
-        closeBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismiss();
-            }
-        });
-        mWechart.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_SUBJECT, "主题");
-                intent.putExtra(Intent.EXTRA_TEXT, "分享内容");
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                mActivity.startActivity(Intent.createChooser(intent, "liveplatform"));
-            }
-        });
-        mWechartSNS.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                
-            }
-        });
-        mSinaShare.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                sinaShare();
-            }
-        });
-        mQQShare.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                qqShare();
-            }
-        });
+        ((TextView) findViewById(R.id.text_share_dialog_title)).setText(mDialogTitle);
+        findViewById(R.id.btn_share_dialog_close).setOnClickListener(this);
+        findViewById(R.id.btn_share_dialog_sina).setOnClickListener(this);
+        findViewById(R.id.btn_share_dialog_wechat).setOnClickListener(this);
+        findViewById(R.id.btn_share_dialog_wechatSNS).setOnClickListener(this);
+        findViewById(R.id.btn_share_dialog_qq).setOnClickListener(this);
     }
-    
-    public void qqShare() {
-        TencentPassport.getInstance().init(getContext());
-        TencentPassport.getInstance().setActivity(mActivity);
-        TencentPassport.getInstance().doShareToQQ(doShareQQURL());
-    }
-    
-    private Bundle doShareQQURL(){
+
+    private Bundle getShareQQData() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.PARAM_TARGET_URL, "http://connect.qq.com/");
-        bundle.putString(Constants.PARAM_TITLE, "我在测试");
-        bundle.putString(Constants.PARAM_IMAGE_URL, "http://img3.cache.netease.com/photo/0005/2013-03-07/8PBKS8G400BV0005.jpg");
-        bundle.putString(Constants.PARAM_SUMMARY, "测试");
+        bundle.putString(Constants.PARAM_TARGET_URL, mTargetUrl);
+        bundle.putString(Constants.PARAM_TITLE, mTitle);
+        bundle.putString(Constants.PARAM_IMAGE_URL, mImageUrl);
+        bundle.putString(Constants.PARAM_SUMMARY, mSummary);
         return bundle;
     }
-    
-    private Bundle doShareWeiboURL(){
+
+    private Bundle getShareSinaData() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.PARAM_TARGET_URL, "http://open.weibo.com/");
-        bundle.putString(Constants.PARAM_TITLE, "我在测试");
-        
-        bundle.putString(Constants.PARAM_SUMMARY, "测试");
+        bundle.putString(WeiboPassport.PARAM_TARGET_URL, mTargetUrl);
+        bundle.putString(WeiboPassport.PARAM_TITLE, mTitle);
+        bundle.putString(WeiboPassport.PARAM_SUMMARY, mSummary);
         return bundle;
     }
-    
+
     public void sinaShare() {
         WeiboPassport.getInstance().setActivity(mActivity);
         WeiboPassport.getInstance().init(mActivity);
         WeiboPassport.getInstance().initShare(mActivity);
-        WeiboPassport.getInstance().shareToWeibo(doShareWeiboURL());
-
+        WeiboPassport.getInstance().shareToWeibo(getShareSinaData());
     }
-    
+
+    public void qqShare() {
+        TencentPassport.getInstance().init(getContext());
+        TencentPassport.getInstance().setActivity(mActivity);
+        TencentPassport.getInstance().doShareToQQ(getShareQQData());
+    }
+
     public void wechatSNSShare() {
-        
-        
-    }
-    
-    public void wechatShare() {
-        
-        
+        try {
+            //TODO add image
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+            intent.setComponent(comp);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
+        }
     }
 
+    public void wechatShare() {
+        try {
+            //TODO add image
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
+            intent.setComponent(comp);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void setData(Bundle data) {
+        mTitle = StringUtil.safeString(data.getString(PARAM_TITLE));
+        mTargetUrl = StringUtil.safeString(data.getString(PARAM_TARGET_URL));
+        mSummary = StringUtil.safeString(data.getString(PARAM_SUMMARY));
+        mImageUrl = StringUtil.safeString(data.getString(PARAM_IMAGE_URL));
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.btn_share_dialog_close:
+            dismiss();
+            break;
+        case R.id.btn_share_dialog_qq:
+            qqShare();
+            break;
+        case R.id.btn_share_dialog_sina:
+            sinaShare();
+            break;
+        case R.id.btn_share_dialog_wechat:
+            wechatShare();
+            break;
+        case R.id.btn_share_dialog_wechatSNS:
+            wechatSNSShare();
+            break;
+        default:
+            break;
+        }
+    }
 }

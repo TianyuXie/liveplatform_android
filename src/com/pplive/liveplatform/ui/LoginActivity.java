@@ -20,6 +20,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.ThirdpartyLoginListener;
 import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.task.Task;
@@ -32,7 +33,7 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
-public class LoginActivity extends Activity implements TencentPassport.ThirdpartyLoginListener {
+public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     static final String TAG = "_LoginActivity";
 
     public static final String EXTRA_TAGET = "target";

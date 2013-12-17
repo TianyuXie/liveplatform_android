@@ -15,7 +15,6 @@ import android.os.Bundle;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
-
 import com.tencent.tauth.Constants;
 import com.tencent.tauth.IRequestListener;
 import com.tencent.tauth.IUiListener;
@@ -24,13 +23,6 @@ import com.tencent.tauth.UiError;
 
 public class TencentPassport
 {
-    
-    public interface ThirdpartyLoginListener
-    {
-        void LoginSuccess(LoginResult res);
-        void LoginFailed();
-    };
-    
     private static final TencentPassport sInstance = new TencentPassport();
     
     public  Tencent mTencent;

@@ -63,6 +63,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int LOADING_DELAY_TIME = 3 * 1000;
 
+    public final static String EXTRA_PID = "pid";
+
+    public final static String EXTRA_TITLE = "title";
+
     private DetectableRelativeLayout mRootLayout;
 
     private LivePlayerFragment mLivePlayerFragment;
@@ -132,7 +136,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
-        mPid = getIntent().getLongExtra("pid", -1);
+        mPid = getIntent().getLongExtra(EXTRA_PID, -1);
 
         /* init views */
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
@@ -160,7 +164,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
-        mLivePlayerFragment.setTitle(getIntent().getStringExtra("title"));
+        mLivePlayerFragment.setTitle(getIntent().getStringExtra(EXTRA_TITLE));
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getActiveUserPlain();
             String token = UserManager.getInstance(this).getToken();
@@ -318,7 +322,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onEnter(View v) {
-            long pid = getIntent().getLongExtra("pid", -1);
+            long pid = getIntent().getLongExtra(EXTRA_PID, -1);
             if (pid != -1) {
                 String content = mCommentEditText.getText().toString();
                 String token = UserManager.getInstance(mContext).getToken();
@@ -421,6 +425,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onShareClick() {
         mShareDialog.show();
+        String title = getIntent().getStringExtra(EXTRA_TITLE);
+        Bundle data = new Bundle();
+        data.putString(ShareDialog.PARAM_TITLE, title);
+        data.putString(ShareDialog.PARAM_TARGET_URL, getString(R.string.test_share_target_url));
+        data.putString(ShareDialog.PARAM_SUMMARY, String.format(getString(R.string.share_summary_format), getString(R.string.app_name), title));
+        data.putString(ShareDialog.PARAM_IMAGE_URL, getString(R.string.test_share_image_url));
+        mShareDialog.setData(data);
     }
 
     @Override

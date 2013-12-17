@@ -8,15 +8,12 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.passport.TencentPassport.ThirdpartyLoginListener;
-import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
@@ -28,13 +25,11 @@ import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WeiboAuth;
 import com.sina.weibo.sdk.auth.WeiboAuthListener;
 import com.sina.weibo.sdk.auth.sso.SsoHandler;
-
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
 import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.sina.weibo.sdk.utils.Utility;
-
 
 public class WeiboPassport
 {
@@ -49,6 +44,11 @@ public class WeiboPassport
             "email,direct_messages_read,direct_messages_write,"
             + "friendships_groups_read,friendships_groups_write,statuses_to_me_read,"
             + "follow_app_official_microblog," + "invitation_write";
+    
+    public static final String PARAM_TARGET_URL = "targetUrl";
+    public static final String PARAM_TITLE = "title";
+    public static final String PARAM_SUMMARY = "summary";
+    public static final String PARAM_BITMAP = "bitmap";
     
     /** 微博 Web 授权类，提供登陆等功能  */
     private WeiboAuth mWeiboAuth;
@@ -113,7 +113,9 @@ public class WeiboPassport
         if (mWeiboShareAPI.isWeiboAppSupportAPI()) {
             mWeiboShareAPI.registerApp();
             sendSingleMessage(url);
-         }
+        } else {
+            Toast.makeText(mContext, R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void sendSingleMessage(Bundle url) {
@@ -133,11 +135,11 @@ public class WeiboPassport
     private WebpageObject getWebpageObj(Bundle url) {
         WebpageObject mediaObject = new WebpageObject();
         mediaObject.identify = Utility.generateGUID();
-        mediaObject.title = "title";
-        mediaObject.description = "description";
+        mediaObject.title = url.getString(PARAM_TITLE);
+        mediaObject.description = url.getString(PARAM_SUMMARY);
+        mediaObject.actionUrl = url.getString(PARAM_TARGET_URL);
+        mediaObject.defaultText = url.getString(PARAM_SUMMARY);
         mediaObject.setThumbImage(((BitmapDrawable)mActivity.getResources().getDrawable(R.drawable.ic_launcher)).getBitmap());
-        mediaObject.actionUrl = "www.pptv.com";
-        mediaObject.defaultText = "Webpage 默认文案";
         return mediaObject;
     }
     
@@ -260,8 +262,5 @@ public class WeiboPassport
     public LoginResult getLoginResult()
     {
         return mLoginResult;
-        
     }
-    
-    
 }
