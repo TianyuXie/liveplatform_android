@@ -15,6 +15,8 @@ public final class Constants {
     //    public static final String LIVEPLATFORM_API_HOST = "172.16.6.64:80";
 
     public static final String LIVEPLATFORM_API_HOST = "api.liveplatform.pptv.com";
+    
+    public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.idc.pplive.cn";
 
     public static final String PASSPORT_API_HOST = "passport.pptv.com";
 
