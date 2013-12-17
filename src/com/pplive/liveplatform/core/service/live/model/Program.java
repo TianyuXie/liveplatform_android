@@ -7,6 +7,8 @@ import java.util.Locale;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class Program {
+    
+    private static final int SUBJECT_ID_ORIGIN = 1; // 原创
 
     long pid;
 
@@ -22,7 +24,7 @@ public class Program {
 
     LiveStatusEnum livestatus;
 
-    int subject_id = 1;
+    int subject_id = SUBJECT_ID_ORIGIN;
 
     String cover_url;
 
