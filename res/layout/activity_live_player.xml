@@ -21,13 +21,15 @@
         android:layout_height="fill_parent"
         android:layout_above="@+id/wrapper_player_comment"
         live:background="@color/player_chatbox_bg"
+        live:contentColor="@color/player_chat_content"
         live:lineSpacingMultiplier="1.2"
         live:paddingBottom="8dp"
         live:paddingLeft="12dp"
         live:paddingRight="12dp"
         live:paddingTop="8dp"
         live:textColor="@color/white"
-        live:textSize="18sp" />
+        live:textSize="18sp"
+        live:userColor="@color/player_chat_nickname" />
 
     <LinearLayout
         android:id="@id/wrapper_player_comment"

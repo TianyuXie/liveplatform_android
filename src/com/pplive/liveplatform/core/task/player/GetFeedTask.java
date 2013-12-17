@@ -13,6 +13,8 @@ public class GetFeedTask extends Task {
 
     public final static String KEY_RESULT = "get_feed_result";
     
+    public final static String KEY_USERNAME = "username";
+    
     public final static int DELAY_TIME_SHORT = 5000;
     
     public final static int DELAY_TIME_LONG = 30000;

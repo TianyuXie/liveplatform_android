@@ -16,7 +16,7 @@ public class StringUtil {
     }
 
     public static String safeString(String str) {
-        if (isNullOrEmpty(str)) {
+        if (str == null) {
             return "";
         } else {
             return str;

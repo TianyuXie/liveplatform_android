@@ -40,6 +40,10 @@ public class ChatBox extends RelativeLayout {
 
     private boolean mStart;
 
+    private int mUserColor;
+
+    private int mContentColor;
+
     public ChatBox(Context context) {
         this(context, null);
     }
@@ -90,6 +94,12 @@ public class ChatBox extends RelativeLayout {
                 mTextView.setTextColor(color);
                 mNoContentInfo.setTextColor(color);
                 break;
+            case R.styleable.ChatBox_userColor:
+                mUserColor = a.getColor(attr, getResources().getColor(R.color.white));
+                break;
+            case R.styleable.ChatBox_contentColor:
+                mContentColor = a.getColor(attr, getResources().getColor(R.color.white));
+                break;
             case R.styleable.ChatBox_lineSpacingMultiplier:
                 float mult = a.getFloat(attr, 1.0f);
                 mTextView.setLineSpacing(0.0f, mult);
@@ -104,19 +114,18 @@ public class ChatBox extends RelativeLayout {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            Log.d(TAG, "FeedTask: onTimeout");
+            Log.d(TAG, "FeedTask onTimeout");
             refresh(0);
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            Log.d(TAG, "FeedTask: onTaskFinished");
+            Log.d(TAG, "FeedTask onTaskFinished");
             if (mStart) {
                 FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
                 if (feeds != null) {
                     mTextView.setText("");
-                    Collection<String> contents = feeds.getFeedStrings(getResources().getColor(R.color.player_chat_nickname),
-                            getResources().getColor(R.color.player_chat_content));
+                    Collection<String> contents = feeds.getFeedStrings(mUserColor, mContentColor);
                     if (contents.size() != 0) {
                         mNoContentInfo.setVisibility(View.GONE);
                         for (String content : contents) {
@@ -132,13 +141,13 @@ public class ChatBox extends RelativeLayout {
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            Log.d(TAG, "FeedTask: onTaskFailed");
+            Log.d(TAG, "FeedTask onTaskFailed: " + event.getMessage());
             refresh(GetFeedTask.DELAY_TIME_SHORT * 2);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            Log.d(TAG, "FeedTask: onTaskCancel");
+            Log.d(TAG, "FeedTask onTaskCancel");
             refresh(GetFeedTask.DELAY_TIME_SHORT * 2);
         }
 

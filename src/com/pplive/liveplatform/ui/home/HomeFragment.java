@@ -262,6 +262,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             if (getActivity() != null) {
                 mBusy = false;
                 if (mCallbackListener != null) {
@@ -277,6 +278,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "SearchTask onTimeout");
             if (getActivity() != null) {
                 mBusy = false;
                 if (mCallbackListener != null) {
@@ -288,6 +290,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "SearchTask onTaskCancel");
             if (getActivity() != null) {
                 mBusy = false;
                 if (mCallbackListener != null) {

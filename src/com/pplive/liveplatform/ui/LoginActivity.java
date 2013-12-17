@@ -20,6 +20,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.ThirdpartyLoginListener;
 import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.task.Task;
@@ -32,7 +33,7 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
-public class LoginActivity extends Activity implements TencentPassport.ThirdpartyLoginListener {
+public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     static final String TAG = "_LoginActivity";
 
     public static final String EXTRA_TAGET = "target";
@@ -165,6 +166,7 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
         }
@@ -177,12 +179,14 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "LoginTask onTimeout");
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
         }
