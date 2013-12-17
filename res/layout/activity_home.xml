@@ -37,7 +37,7 @@
         live:left_src="@drawable/animdoor_left"
         live:orientation="horizontal"
         live:right_src="@drawable/animdoor_right"
-        live:time="400"
+        live:duration="400"
         live:visible="false" />
 
     <LinearLayout

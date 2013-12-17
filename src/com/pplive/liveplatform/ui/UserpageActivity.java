@@ -67,7 +67,7 @@ public class UserpageActivity extends Activity {
         ProgramTask task = new ProgramTask();
         task.addTaskListener(onTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USR, UserManager.getInstance(this).getActiveUserPlain());
+        taskContext.set(ProgramTask.KEY_USERNAME, UserManager.getInstance(this).getActiveUserPlain());
         task.execute(taskContext);
         updateUsername();
     }

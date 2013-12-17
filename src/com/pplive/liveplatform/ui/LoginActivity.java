@@ -113,8 +113,8 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
             LoginTask task = new LoginTask();
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(LoginTask.KEY_USR, mUsrEditText.getText().toString());
-            taskContext.set(LoginTask.KEY_PWD, mPwdEditText.getText().toString());
+            taskContext.set(LoginTask.KEY_USERNAME, mUsrEditText.getText().toString());
+            taskContext.set(LoginTask.KEY_PASSWORD, mPwdEditText.getText().toString());
             task.execute(taskContext);
         }
     };
@@ -144,8 +144,8 @@ public class LoginActivity extends Activity implements TencentPassport.Thirdpart
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-            String usrPlain = (String) event.getContext().get(LoginTask.KEY_USR);
-            String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PWD);
+            String usrPlain = (String) event.getContext().get(LoginTask.KEY_USERNAME);
+            String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PASSWORD);
             String token = (String) event.getContext().get(LoginTask.KEY_TOKEN);
             UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
             User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);

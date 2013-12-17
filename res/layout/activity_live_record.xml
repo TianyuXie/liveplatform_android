@@ -115,26 +115,19 @@
         android:layout_margin="20dp"
         android:visibility="gone" >
 
-        <ScrollView
-            android:id="@+id/scroll_record_chat"
-            style="@style/chat_scrollview"
+        <com.pplive.liveplatform.ui.widget.ChatBox
+            android:id="@+id/layout_record_chatbox"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:background="@drawable/live_record_dialog_bg"
-            android:paddingBottom="10dp"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
-            android:paddingTop="10dp"
-            android:visibility="gone" >
-
-            <TextView
-                android:id="@+id/text_record_chat"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:lineSpacingMultiplier="1.2"
-                android:textColor="@color/white"
-                android:textSize="14sp" />
-        </ScrollView>
+            android:visibility="gone"
+            live:background="@drawable/live_record_dialog_bg"
+            live:lineSpacingMultiplier="1.2"
+            live:paddingBottom="10dp"
+            live:paddingLeft="12dp"
+            live:paddingRight="12dp"
+            live:paddingTop="10dp"
+            live:textColor="@color/white"
+            live:textSize="14sp" />
 
         <ImageButton
             android:id="@+id/btn_record_chat"
@@ -146,15 +139,6 @@
             android:contentDescription="@null"
             android:onClick="onClick"
             android:src="@drawable/live_record_btn_live_chat" />
-
-        <TextView
-            android:id="@+id/text_recoder_no_chat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:visibility="gone" />
     </RelativeLayout>
 
     <fragment
@@ -169,11 +153,11 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="false"
+        live:duration="400"
         live:factor="1.139"
         live:left_src="@drawable/animdoor_bottom"
         live:orientation="vertical"
         live:right_src="@drawable/animdoor_top"
-        live:time="400"
         live:visible="true" />
 
     <LinearLayout

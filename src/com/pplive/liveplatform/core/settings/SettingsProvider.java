@@ -27,17 +27,17 @@ public class SettingsProvider {
         this.sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
     }
 
-    public AppPrefs getPrefs() {
+    public AppPrefs getAppPrefs() {
         AppPrefs userPrefs = new AppPrefs();
         userPrefs.setContentNotify(sharedPreferences.getBoolean(KEY_CONTENT, true));
         userPrefs.setPreliveNotify(sharedPreferences.getBoolean(KEY_PRELIVE, true));
         return userPrefs;
     }
 
-    public void setPrefs(AppPrefs userPrefs) {
+    public void setAppPrefs(AppPrefs prefs) {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        editor.putBoolean(KEY_CONTENT, userPrefs.isContentNotify());
-        editor.putBoolean(KEY_PRELIVE, userPrefs.isPreliveNotify());
+        editor.putBoolean(KEY_CONTENT, prefs.isContentNotify());
+        editor.putBoolean(KEY_PRELIVE, prefs.isPreliveNotify());
         editor.commit();
     }
 

@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.core.task.player;
 
-import android.util.Log;
-
 import com.pplive.liveplatform.core.service.comment.PbarService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -12,11 +10,10 @@ import com.pplive.liveplatform.util.StringUtil;
 public class PutFeedTask extends Task {
     static final String TAG = "_PutFeedTask";
 
-    public final static String KEY_RESULT = "put_feed_result";
     public final static String KEY_CONTENT = "content";
 
     private final String ID = StringUtil.newGuid();
-    private final String NAME = "PutFeed";
+    public final static String TYPE = "PutFeed";
 
     @Override
     public String getID() {
@@ -24,8 +21,8 @@ public class PutFeedTask extends Task {
     }
 
     @Override
-    public String getName() {
-        return NAME;
+    public String getType() {
+        return TYPE;
     }
 
     @Override
@@ -46,7 +43,7 @@ public class PutFeedTask extends Task {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
@@ -58,20 +55,19 @@ public class PutFeedTask extends Task {
             feedId = PbarService.getInstance().putFeed(token, pid, content);
         } catch (Exception e) {
             result.setStatus(TaskStatus.Failed);
-            result.setMessage("put error");
+            result.setMessage("PbarService error");
             result.setContext(context);
             return result;
         }
         if (feedId <= 0) {
             result.setStatus(TaskStatus.Failed);
-            result.setMessage("feedId <= 0");
+            result.setMessage("Invalid feed id");
             result.setContext(context);
             return result;
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Canceled");
+            return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
-        Log.d("_LivePlayer", feedId + "");
         result.setContext(context);
         return result;
     }

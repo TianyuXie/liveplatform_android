@@ -2,8 +2,6 @@ package com.pplive.liveplatform.core.task;
 
 public class TaskResult {
 
-    public final static TaskResult FINISHED = new TaskResult(TaskStatus.Finished);
-
     public enum TaskStatus {
         Finished, Failed, Cancel
     }
