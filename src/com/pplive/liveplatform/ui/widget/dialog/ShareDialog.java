@@ -82,16 +82,13 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     public void sinaShare() {
-        WeiboPassport.getInstance().setActivity(mActivity);
-        WeiboPassport.getInstance().init(mActivity);
-        WeiboPassport.getInstance().initShare(mActivity);
+        WeiboPassport.getInstance().initShare(getContext());
         WeiboPassport.getInstance().shareToWeibo(getShareSinaData());
     }
 
     public void qqShare() {
         TencentPassport.getInstance().init(getContext());
-        TencentPassport.getInstance().setActivity(mActivity);
-        TencentPassport.getInstance().doShareToQQ(getShareQQData());
+        TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
     }
 
     public void wechatSNSShare() {

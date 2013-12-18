@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,6 +58,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private SearchBar mSearchBar;
 
     private TextView mCatalogTextView;
+
+    private View mRefreshLayout;
 
     private Callback mCallbackListener;
 
@@ -113,6 +116,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
         mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
+        mRefreshLayout = layout.findViewById(R.id.layout_home_nodata);
+        Button retryButton = (Button)layout.findViewById(R.id.btn_home_retry);
+        retryButton.setOnClickListener(onRetryClickListener);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         updateCatalogText();
         return layout;
@@ -240,8 +246,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
                             mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
+                            mRefreshLayout.setVisibility(View.GONE);
                         } else {
-                            mCallbackListener.doLoadResult(getString(R.string.home_nodata));
+                            mCallbackListener.doLoadResult(getString(R.string.home_nodata_button));
+                            mRefreshLayout.setVisibility(View.VISIBLE);
                         }
                     }
                     break;
@@ -431,6 +439,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             if (mSlided && mCallbackListener != null) {
                 mCallbackListener.doSlideBack();
             }
+        }
+    };
+    
+    private View.OnClickListener onRetryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startRefreshTask();
         }
     };
 }

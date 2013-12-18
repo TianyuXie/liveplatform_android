@@ -12,6 +12,7 @@ public class SettingsProvider {
     private static final String KEY_PRIVATE = "private";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_ICON = "icon";
+    private static final String KEY_THIRDPARTY = "thirdparty";
 
     private SharedPreferences sharedPreferences;
 
@@ -57,12 +58,17 @@ public class SettingsProvider {
         return sharedPreferences.getString(KEY_TOKEN, "");
     }
 
+    public int getThirdParty() {
+        return sharedPreferences.getInt(KEY_THIRDPARTY, -1);
+    }
+
     public void clearUser() {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(KEY_PRIVATE, "");
         editor.putString(KEY_TOKEN, "");
         editor.putString(KEY_NICKNAME, "");
         editor.putString(KEY_ICON, "");
+        editor.putInt(KEY_THIRDPARTY, -1);
         editor.commit();
     }
 
@@ -77,6 +83,12 @@ public class SettingsProvider {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(KEY_NICKNAME, nickname);
         editor.putString(KEY_ICON, icon);
+        editor.commit();
+    }
+
+    public void setThirdparty(int thirdparty) {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putInt(KEY_THIRDPARTY, thirdparty);
         editor.commit();
     }
 }

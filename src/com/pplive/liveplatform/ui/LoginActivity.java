@@ -48,6 +48,8 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     private Context mContext;
 
+    private UserManager mUserManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,6 +66,8 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         mConfirmButton.setOnClickListener(onConfirmBtnClickListener);
         mUsrEditText.addTextChangedListener(textWatcher);
         mPwdEditText.addTextChangedListener(textWatcher);
+
+        mUserManager = UserManager.getInstance(this);
     }
 
     @Override
@@ -76,17 +80,14 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     public void qqlogin(View v) {
         mRefreshDialog.show();
         TencentPassport.getInstance().init(this);
-        TencentPassport.getInstance().setActivity(this);
         TencentPassport.getInstance().setLoginListener(this);
-        TencentPassport.getInstance().login();
+        TencentPassport.getInstance().login(this);
     }
 
     public void weiboLogin(View v) {
         mRefreshDialog.show();
-        WeiboPassport.getInstance().setActivity(this);
-        WeiboPassport.getInstance().init(this);
         WeiboPassport.getInstance().setLoginListener(this);
-        WeiboPassport.getInstance().login();
+        WeiboPassport.getInstance().login(this);
     }
 
     private View.OnKeyListener onPwdEditEnterListener = new View.OnKeyListener() {
@@ -148,9 +149,9 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             String usrPlain = (String) event.getContext().get(LoginTask.KEY_USERNAME);
             String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PASSWORD);
             String token = (String) event.getContext().get(LoginTask.KEY_TOKEN);
-            UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
+            mUserManager.login(usrPlain, pwdPlain, token);
             User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
-            UserManager.getInstance(mContext).setUserinfo(userinfo);
+            mUserManager.setUserinfo(userinfo);
             String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
             mRefreshDialog.dismiss();
             if (!TextUtils.isEmpty(targetClass)) {
@@ -196,8 +197,9 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     public void LoginSuccess(LoginResult res) {
         Log.d(TAG, res.getUsername() + " | " + res.getToken());
         Log.d(TAG, res.getThirdPartyNickName() + " | " + res.getThirdPartyFaceUrl());
-        UserManager.getInstance(mContext).login(res.getUsername(), "", res.getToken());
-        UserManager.getInstance(mContext).setUserinfo(res.getThirdPartyNickName(), res.getThirdPartyFaceUrl());
+        mUserManager.login(res.getUsername(), "", res.getToken());
+        mUserManager.setUserinfo(res.getThirdPartyNickName(), res.getThirdPartyFaceUrl());
+        mUserManager.setThirdParty(res.getThirdPartySource());
         String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
         mRefreshDialog.dismiss();
         if (!TextUtils.isEmpty(targetClass)) {
@@ -212,9 +214,9 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     }
 
     @Override
-    public void LoginFailed() {
+    public void LoginFailed(String message) {
         mRefreshDialog.dismiss();
-        Log.w(TAG, "Login failed");
+        Log.w(TAG, "Login failed: " + message);
         Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
     }
 
