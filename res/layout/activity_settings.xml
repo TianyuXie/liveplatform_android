@@ -58,7 +58,9 @@
                 </TableRow>
             </TableLayout>
 
-            <TableLayout style="@style/settings_tablelayout" >
+            <TableLayout
+                android:id="@+id/layout_settings_user"
+                style="@style/settings_tablelayout" >
 
                 <TableRow style="@style/settings_tablerow" >
 
