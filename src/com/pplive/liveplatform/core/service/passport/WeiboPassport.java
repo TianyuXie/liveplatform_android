@@ -10,7 +10,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
@@ -76,23 +78,24 @@ public class WeiboPassport {
         mSsoHandler.authorize(new AuthListener());
     }
 
-    public void initShare(Context context) {
-        mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(context, APP_KEY);
+    public void initShare(Activity activity) {
+        mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(activity, APP_KEY);
         if (!mWeiboShareAPI.isWeiboAppInstalled()) {
             mWeiboShareAPI.registerWeiboDownloadListener(new IWeiboDownloadListener() {
                 @Override
                 public void onCancel() {
-
+                    //TODO
                 }
             });
         }
     }
 
-    public void shareToWeibo(Bundle data) {
+    public void shareToWeibo(Context context, Bundle data) {
         if (mWeiboShareAPI.isWeiboAppSupportAPI()) {
             mWeiboShareAPI.registerApp();
             sendSingleMessage(data);
         } else {
+            Toast.makeText(context, R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
         }
     }
 
