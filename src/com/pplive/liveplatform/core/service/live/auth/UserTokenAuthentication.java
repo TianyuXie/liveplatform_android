@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 
 import org.springframework.http.HttpAuthentication;
 
+import com.pplive.liveplatform.Constants;
+
 import android.text.TextUtils;
 
 public class UserTokenAuthentication extends HttpAuthentication {
@@ -14,7 +16,7 @@ public class UserTokenAuthentication extends HttpAuthentication {
     protected static final String KEY_PLAY_TOKEN = "playtk";
     protected static final String KEY_LIVE_TOKEN = "livetk";
     
-    protected static final String DEFAULT_CO_NAME = "pptv"; 
+    protected static final String DEFAULT_CO_NAME = Constants.DEFAULT_CONAME_PPTV; 
     
     protected LinkedHashMap<String, String> mKeyValueMap = new LinkedHashMap<String, String>();
     
