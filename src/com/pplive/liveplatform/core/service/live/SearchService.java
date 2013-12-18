@@ -3,6 +3,7 @@ package com.pplive.liveplatform.core.service.live;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -27,18 +28,27 @@ public class SearchService extends RestService {
 
     }
 
-    public FallList<Program> searchProgram(int subjectId, String sort, String liveStatus, String nextToken, int fallCount) {
+    public FallList<Program> searchProgram(int subjectId, String sort, String liveStatus, String nextToken, int fallCount) throws LiveHttpException {
 
         return searchProgram("" /* keywords */, subjectId, sort, liveStatus, nextToken, fallCount);
     }
 
-    public FallList<Program> searchProgram(String keywords, int subjectId, String sort, String liveStatus, String nextToken, int fallCount) {
+    public FallList<Program> searchProgram(String keywords, int subjectId, String sort, String liveStatus, String nextToken, int fallCount) throws LiveHttpException {
         Log.d(TAG, "keywords: " + keywords + ";subjectId: " + subjectId + "; sort: " + sort + "; liveStatus: " + liveStatus + "; nextToken: " + nextToken
                 + "; fallCount: " + fallCount);
 
-        ProgramFallListResp rep = mRestTemplate.getForObject(TEMPLATE_SEARCH_PROGRAM, ProgramFallListResp.class, keywords, subjectId, sort, liveStatus,
-                nextToken, fallCount);
+        ProgramFallListResp rep = null;
+        try {
+            rep = mRestTemplate.getForObject(TEMPLATE_SEARCH_PROGRAM, ProgramFallListResp.class, keywords, subjectId, sort, liveStatus, nextToken, fallCount);
 
-        return rep.getFallList();
+            return rep.getFallList();
+        } catch (Exception e) {
+            
+            if (null != rep) {
+                throw new LiveHttpException(rep.getError());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 }

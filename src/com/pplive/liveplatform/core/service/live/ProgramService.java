@@ -4,17 +4,19 @@ import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.resp.ProgramListResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramResp;
-import com.pplive.liveplatform.core.service.live.resp.Resp;
+import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.util.URL.Protocol;
 
 public class ProgramService extends RestService {
@@ -39,21 +41,31 @@ public class ProgramService extends RestService {
     private ProgramService() {
     }
 
-    public List<Program> getProgramsByOwner(String owner) {
+    public List<Program> getProgramsByOwner(String owner) throws LiveHttpException {
         return getProgramsByOwner(owner, "");
     }
 
-    public List<Program> getProgramsByOwner(String owner, LiveStatusEnum livestatus) {
-
+    public List<Program> getProgramsByOwner(String owner, LiveStatusEnum livestatus) throws LiveHttpException {
+        
         return getProgramsByOwner(owner, livestatus.toString());
     }
 
-    private List<Program> getProgramsByOwner(String owner, String liveStatus) {
+    private List<Program> getProgramsByOwner(String owner, String liveStatus) throws LiveHttpException {
         Log.d(TAG, "owner: " + owner + "; livestatus: " + liveStatus);
 
-        ProgramListResp rep = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, liveStatus);
-
-        return rep.getList();
+        ProgramListResp resp = null;
+        try {
+            
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, liveStatus);
+            
+            return resp.getList();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 
     public Program getProgramById() {
@@ -61,35 +73,68 @@ public class ProgramService extends RestService {
         return null;
     }
 
-    public Program createProgram(String coToken, Program program) {
+    public Program createProgram(String coToken, Program program) throws LiveHttpException {
         Log.d(TAG, program.toString());
         
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
-
-        ProgramResp resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM, req, ProgramResp.class);
-
-        return resp.getData();
+        
+        ProgramResp resp = null;
+        try {
+    
+            resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM, req, ProgramResp.class);
+    
+            return resp.getData();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 
-    public void updateProgram(String coToken, Program program) {
+    public boolean updateProgram(String coToken, Program program) throws LiveHttpException {
         Log.d(TAG, program.toString());
 
-        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+        MessageResp resp = null; 
+        try {
+            UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
+            mRequestHeaders.setAuthorization(coTokenAuthentication);
+            HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+            
+            resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, MessageResp.class, program.getId());
+            
+            
+            return null != resp && 0 == resp.getError();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
 
-        mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, Resp.class, program.getId());
+        throw new LiveHttpException();
     }
 
-    public void deleteProgramById(String coToken, long pid) {
+    public boolean deleteProgramById(String coToken, long pid) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid);
 
-        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
-
-        mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, Resp.class, pid);
+        ResponseEntity<MessageResp> resp = null;
+        try {
+            UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
+            mRequestHeaders.setAuthorization(coTokenAuthentication);
+            HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+    
+            resp = mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, MessageResp.class, pid);
+            
+            return null != resp && null != resp.getBody() && 0 == resp.getBody().getError();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getBody().getError());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
@@ -13,7 +14,7 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.resp.LiveAliveResp;
-import com.pplive.liveplatform.core.service.live.resp.Resp;
+import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.util.URL.Protocol;
 
 public class LiveControlService extends RestService {
@@ -35,31 +36,53 @@ public class LiveControlService extends RestService {
     private LiveControlService() {
     }
 
-    public void updateLiveStatusByCoToken(String coToken, long pid, LiveStatusEnum livestatus, String username) {
+    public void updateLiveStatusByCoToken(String coToken, long pid, LiveStatusEnum livestatus, String username) throws LiveHttpException {
         String liveToken = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
         updateLiveStatusByLiveToken(liveToken, pid, livestatus);
     }
 
-    public void updateLiveStatusByLiveToken(String liveToken, long pid, LiveStatusEnum livestatus) {
+    public boolean updateLiveStatusByLiveToken(String liveToken, long pid, LiveStatusEnum livestatus) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
-
+        
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
         HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
-
-        mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVE_STATUS, req, Resp.class, pid);
+        
+        MessageResp resp = null;
+        try {
+    
+            resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVE_STATUS, req, MessageResp.class, pid);
+            
+            return null != resp && 0 == resp.getError();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 
-    public LiveAlive keepLiveAlive(String coToken, long pid) {
+    public LiveAlive keepLiveAlive(String coToken, long pid) throws LiveHttpException {
         Log.d(TAG, "pid: ");
         
         mRequestHeaders.setAuthorization(new UserTokenAuthentication(coToken));
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
         
-        HttpEntity<LiveAliveResp> rep = mRestTemplate.exchange(TEMPLATE_KEEP_LIVE_ALIVE, HttpMethod.GET, req, LiveAliveResp.class, pid);
+        LiveAliveResp resp = null; 
+        try {
+            
+            HttpEntity<LiveAliveResp> rep = mRestTemplate.exchange(TEMPLATE_KEEP_LIVE_ALIVE, HttpMethod.GET, req, LiveAliveResp.class, pid);
+           
+            resp = rep.getBody();
+            
+            return resp.getData();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
         
-        LiveAliveResp body = rep.getBody();
-        
-        return body.getData();
+        throw new LiveHttpException();
     }
 }

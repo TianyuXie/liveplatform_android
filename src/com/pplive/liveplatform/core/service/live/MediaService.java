@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.auth.PlayTokenAuthentication;
@@ -40,7 +41,7 @@ public class MediaService extends RestService {
 
     }
 
-    public Push getPush(String coToken, long pid, String username) {
+    public Push getPush(String coToken, long pid, String username) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
         String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
@@ -61,7 +62,7 @@ public class MediaService extends RestService {
         return body.getData();
     }
 
-    public List<Watch> getPlayWatchList(String coToken, long pid, String username) {
+    public List<Watch> getPlayWatchList(String coToken, long pid, String username) throws LiveHttpException {
         Log.d(TAG, "coToken:" + coToken + "; pid: " + pid + "; username: " + username);
 
         String token = TokenService.getInstance().getPlayToken(coToken, pid, username);
@@ -82,7 +83,7 @@ public class MediaService extends RestService {
         return body.getList();
     }
 
-    public List<Watch> getPreviewWatchList(String coToken, long pid, String username) {
+    public List<Watch> getPreviewWatchList(String coToken, long pid, String username) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; username: " + username);
 
         String token = TokenService.getInstance().getLiveToken(coToken, pid, username);
@@ -90,16 +91,25 @@ public class MediaService extends RestService {
         return getPreviewWatchListByLiveToken(pid, token);
     }
 
-    public List<Watch> getPreviewWatchListByLiveToken(long pid, String token) {
+    public List<Watch> getPreviewWatchListByLiveToken(long pid, String token) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
-        HttpEntity<WatchListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PREVIEW, HttpMethod.GET, req, WatchListResp.class, pid);
-        WatchListResp body = rep.getBody();
+        WatchListResp resp = null;
+        try {
+            HttpEntity<WatchListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PREVIEW, HttpMethod.GET, req, WatchListResp.class, pid);
+            resp = rep.getBody();
 
-        return body.getList();
+            return resp.getList();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
+
+        throw new LiveHttpException();
     }
 }
