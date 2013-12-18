@@ -60,6 +60,10 @@ public class UserManager {
     }
 
     public boolean isThirdPartyLogin() {
+        return isLogin() && mThirdPartySource > 0;
+    }
+
+    public boolean isThirdPartyLoginCurrent() {
         return isLogin() && mThirdPartyLogin && mThirdPartySource > 0;
     }
 
@@ -77,7 +81,7 @@ public class UserManager {
 
     public void logout() {
         if (isLogin()) {
-            if (isThirdPartyLogin()) {
+            if (isThirdPartyLoginCurrent()) {
                 switch (mThirdPartySource) {
                 case LoginResult.FROM_SINA:
                     Log.d(TAG, "Sina logout");

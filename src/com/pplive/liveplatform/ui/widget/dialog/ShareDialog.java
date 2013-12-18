@@ -101,7 +101,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         }
     }
 
-    public void wechatSNSShare() {
+    public void wechatSNSShareDirect() {
         try {
             //TODO add image
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -117,7 +117,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         }
     }
 
-    public void wechatShare() {
+    public void wechatShareDirect() {
         try {
             //TODO add image
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -130,6 +130,38 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void sinaShareDirect() {
+        try {
+            //TODO add image
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            ComponentName comp = new ComponentName("com.sina.weibo", "com.sina.weibo.EditActivity");
+            intent.setComponent(comp);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void qqShareDirect() {
+        try {
+            //TODO add image
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
+            intent.setComponent(comp);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_qq_not_install, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -150,13 +182,13 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             qqShare();
             break;
         case R.id.btn_share_dialog_sina:
-            sinaShare();
+            sinaShareDirect();
             break;
         case R.id.btn_share_dialog_wechat:
-            wechatShare();
+            wechatShareDirect();
             break;
         case R.id.btn_share_dialog_wechatSNS:
-            wechatSNSShare();
+            wechatSNSShareDirect();
             break;
         default:
             break;
