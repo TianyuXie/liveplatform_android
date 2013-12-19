@@ -79,7 +79,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private int mSubjectId;
 
-    private SearchService.Status mLiveStatus;
+    private SearchService.LiveStatusKeyword mLiveStatus;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -107,7 +107,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mSubjectId = 1;
-        mLiveStatus = SearchService.Status.LIVING;
+        mLiveStatus = SearchService.LiveStatusKeyword.LIVING;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         updateCatalogText();
     }
 
-    public void switchLiveStatus(SearchService.Status id) {
+    public void switchLiveStatus(SearchService.LiveStatusKeyword id) {
         mLiveStatus = id;
         startRefreshTask();
     }
@@ -232,7 +232,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
-            taskContext.set(SearchTask.KEY_SORT, SearchService.Sort.START_TIME);
+            taskContext.set(SearchTask.KEY_SORT, SearchService.SortKeyword.START_TIME);
             taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
             task.execute(taskContext);
         }
@@ -430,13 +430,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
             case R.id.btn_status_living:
-                switchLiveStatus(SearchService.Status.LIVING);
+                switchLiveStatus(SearchService.LiveStatusKeyword.LIVING);
                 break;
             case R.id.btn_status_tolive:
-                switchLiveStatus(SearchService.Status.COMING);
+                switchLiveStatus(SearchService.LiveStatusKeyword.COMING);
                 break;
             case R.id.btn_status_replay:
-                switchLiveStatus(SearchService.Status.VOD);
+                switchLiveStatus(SearchService.LiveStatusKeyword.VOD);
                 break;
             default:
                 break;
