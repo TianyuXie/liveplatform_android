@@ -69,14 +69,18 @@ public class PbarService {
             
             resp = rep.getBody();
             
-            return resp.getData();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return resp.getData();
             }
+        } catch (Exception e) {
+           Log.w(TAG, e.toString());
         }
 
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public long putFeed(String coToken, long pid, String content) throws LiveHttpException {
@@ -114,13 +118,17 @@ public class PbarService {
     
             resp = rep.getBody();
     
-            return resp.getData();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return resp.getData();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }

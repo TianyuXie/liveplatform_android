@@ -27,5 +27,7 @@ public interface Constants {
     public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.idc.pplive.cn";
 
     public static final String SC_API_HOST = "api.sc.pptv.com";
+    
+    public static final String BASE_SHARE_LINK_URL = "http://i.pptv.com/play/";
 
 }

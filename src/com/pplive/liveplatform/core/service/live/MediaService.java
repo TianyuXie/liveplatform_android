@@ -49,17 +49,30 @@ public class MediaService extends RestService {
         return getPushByLiveToken(pid, token);
     }
 
-    public Push getPushByLiveToken(long pid, String liveToken) {
+    public Push getPushByLiveToken(long pid, String liveToken) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + liveToken);
 
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
-        HttpEntity<PushResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PUSH, HttpMethod.GET, req, PushResp.class, pid);
-        PushResp body = rep.getBody();
-
-        return body.getData();
+        PushResp resp = null;
+        try {
+            HttpEntity<PushResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PUSH, HttpMethod.GET, req, PushResp.class, pid);
+            resp = rep.getBody();
+    
+            if (0 == resp.getError()) {
+                return resp.getData();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+        
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public List<Watch> getPlayWatchList(String coToken, long pid, String username) throws LiveHttpException {
@@ -70,17 +83,30 @@ public class MediaService extends RestService {
         return getPlayWatchListByPlayToken(pid, token);
     }
 
-    public List<Watch> getPlayWatchListByPlayToken(long pid, String playToken) {
+    public List<Watch> getPlayWatchListByPlayToken(long pid, String playToken) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + playToken);
 
         mRequestHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
 
         HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
 
-        HttpEntity<WatchListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PLAY, HttpMethod.GET, req, WatchListResp.class, pid);
-        WatchListResp body = rep.getBody();
-
-        return body.getList();
+        WatchListResp resp = null;
+        try {
+            HttpEntity<WatchListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PLAY, HttpMethod.GET, req, WatchListResp.class, pid);
+            resp = rep.getBody();
+            
+            if (0 == resp.getError()) {
+                return resp.getList();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+        
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public List<Watch> getPreviewWatchList(String coToken, long pid, String username) throws LiveHttpException {
@@ -102,14 +128,18 @@ public class MediaService extends RestService {
         try {
             HttpEntity<WatchListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_PREVIEW, HttpMethod.GET, req, WatchListResp.class, pid);
             resp = rep.getBody();
-
-            return resp.getList();
-        } catch (Exception e) {
+            
             if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+                return resp.getList();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
-
-        throw new LiveHttpException();
+        
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }

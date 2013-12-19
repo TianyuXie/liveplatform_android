@@ -30,9 +30,9 @@ public class PPboxSink {
     private long mStartTime;
 
     private Download_Callback mDownloadCallback;
-    
+
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
-        
+
         private final long time_scale = 1000 * 1000 * 1000;
         private int num_total = 0;
         private int num_drop = 0;
@@ -46,12 +46,15 @@ public class PPboxSink {
             if (buffer == null) {
                 ++num_drop;
             } else {
+                
+                Log.d(TAG, "image size: " + data.length);
+                
                 buffer.byte_buffer().put(data);
                 mVideoStream.put(time / 1000, buffer);
             }
+            
             if (time >= next_time) {
-                Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
-                        + num_drop);
+                Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
                 next_time += 5 * time_scale;
             }
             camera.addCallbackBuffer(data);
@@ -75,7 +78,7 @@ public class PPboxSink {
     public PPboxSink(Camera camera) {
         this.mCamera = camera;
     }
-    
+
     public void setDownloadCallback(Download_Callback callback) {
         mDownloadCallback = callback;
     }
@@ -99,13 +102,13 @@ public class PPboxSink {
         mVideoStream = new PPboxStream(mCaptureId, 0, mCamera);
         mAudioStream = new PPboxStream(mCaptureId, 1, mAudioRecord);
     }
-    
+
     public void resetCamera(Camera camera) {
         mCamera = camera;
-        
+
         if (null != mVideoStream) {
             final byte[] video_buffer = new byte[mVideoStream.bufferSize()];
-            
+
             camera.addCallbackBuffer(video_buffer);
             camera.setPreviewCallbackWithBuffer(mPreviewCallback);
         }

@@ -103,7 +103,6 @@ public class SearchService extends RestService {
             if (0 == resp.getError()) {
                 return resp.getFallList();
             }
-            return resp.getFallList();
         } catch (Exception e) {
             
         }

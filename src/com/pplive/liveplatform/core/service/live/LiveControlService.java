@@ -53,14 +53,18 @@ public class LiveControlService extends RestService {
     
             resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVE_STATUS, req, MessageResp.class, pid);
             
-            return null != resp && 0 == resp.getError();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return true;
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public LiveAlive keepLiveAlive(String coToken, long pid) throws LiveHttpException {
@@ -76,13 +80,17 @@ public class LiveControlService extends RestService {
            
             resp = rep.getBody();
             
-            return resp.getData();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return resp.getData();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }
