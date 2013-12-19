@@ -34,6 +34,8 @@ public class Program {
     String coname = Constants.DEFAULT_CONAME_PPTV;
 
     Record record;
+    
+    String playencode;
 
     Token tk;
 
@@ -94,14 +96,22 @@ public class Program {
         return StringUtil.isNullOrEmpty(screenshot_url) ? "" : screenshot_url;
     }
 
+    public int getVV() {
+        return null == record ? 0 : record.vv;
+    }
+    
+    public int getOnline() {
+        return null == record ? 0 : record.online;
+    }
+    
+    public String getShareLinkUrl() {
+        return StringUtil.isNullOrEmpty(playencode) ? "" : Constants.BASE_SHARE_LINK_URL + playencode;
+    }
+    
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
-
-    public int getVV() {
-        return record == null ? 0 : record.vv;
-    }
-
+    
     static class Record {
 
         int vv;
