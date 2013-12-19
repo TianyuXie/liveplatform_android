@@ -18,7 +18,7 @@ import com.pplive.liveplatform.util.DisplayUtil;
 public class HomeProgramAdapter extends BaseAdapter {
     private static final DisplayImageOptions DEFAULT_PREVIEW_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.program_default_image).showImageForEmptyUri(R.drawable.program_default_image)
-            .showStubImage(R.drawable.program_default_image).cacheOnDisc(true).build();
+            .showStubImage(R.drawable.program_default_image).cacheInMemory(true).build();
 
     private static float ratio = 16.0f / 10.0f;
 

@@ -41,7 +41,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/layout_home_nav"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="100dp"
         android:background="@color/home_fragment_body_bg"
         android:gravity="center_horizontal"
         android:orientation="vertical"
