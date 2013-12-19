@@ -1,11 +1,15 @@
 package com.pplive.liveplatform.core.service.live.model;
 
+import java.io.Serializable;
+
 import com.google.gson.annotations.SerializedName;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.IUser;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class User implements IUser {
+public class User implements IUser, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     enum Sex {
 

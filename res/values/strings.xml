@@ -21,8 +21,8 @@
     <string name="share_wechat_not_install">未安装微信客户端</string>
     <string name="share_weibo_not_install">未安装新浪微博客户端</string>
     <string name="share_qq_not_install">未安装腾讯QQ客户端</string>
-    <string name="test_share_target_url">http://www.pptv.com</string>
-    <string name="test_share_image_url">http://static9.pplive.cn/pptv/header/images/logo-white.png</string>
+    <string name="default_share_target_url">http://www.pptv.com</string>
+    <string name="default_share_image_url">http://static9.pplive.cn/pptv/header/images/logo-white.png</string>
     
     <!-- For Test -->
     <string name="test_go_player">Go LivePlayer</string>

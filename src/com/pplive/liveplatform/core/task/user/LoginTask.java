@@ -47,6 +47,8 @@ public class LoginTask extends Task {
         if (params == null || params.length <= 0) {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
+
+        //Start PassportService
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
@@ -62,22 +64,31 @@ public class LoginTask extends Task {
         if (TextUtils.isEmpty(token)) {
             return new TaskResult(TaskStatus.Failed, "Invalid token");
         }
+        Log.d(TAG, "PassportService OK");
+
+        //Start UserService
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
-        Log.d(TAG, "PassportService OK");
-        User userinfo = new User();
+        User userinfo = null;
         try {
             userinfo = UserService.getInstance().getUserInfo(token, usr);
         } catch (Exception e) {
-            Log.w(TAG, "No userinfo");
+            Log.w(TAG, "UserService error");
         }
+
+        //Build TaskResult
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_TOKEN, token);
-        context.set(KEY_USERINFO, userinfo);
+        if (userinfo != null) {
+            context.set(KEY_USERINFO, userinfo);
+            context.set(KEY_USERNAME, userinfo.getUsername());
+        } else {
+            Log.w(TAG, "userinfo == null");
+        }
         result.setContext(context);
         return result;
     }
