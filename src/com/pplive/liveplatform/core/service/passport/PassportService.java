@@ -129,14 +129,18 @@ public class PassportService {
             
             resp = rep.getBody();
             
-            return resp.getResult();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getErrorCode()); 
+            if (0 == resp.getErrorCode()) {
+                return resp.getResult();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode()); 
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public LoginResult thirdpartyRegister(String id, String faceUrl, String nickName, String apptype) throws LiveHttpException {
@@ -158,8 +162,7 @@ public class PassportService {
 
             infovalue = URLEncoderUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
         } catch (EncryptException e) {
-
-            e.printStackTrace();
+            Log.w(TAG, e.toString());
         }
 
         Log.d(TAG, "infovalue: " + infovalue);
@@ -176,14 +179,18 @@ public class PassportService {
             
             resp = rep.getBody();
             
-            return resp.getResult();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getErrorCode());
+            if (0 == resp.getErrorCode()) {
+                return resp.getResult();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }
 
