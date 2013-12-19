@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.service.live.SearchService;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -50,12 +51,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private final static int MSG_PULL_TIMEOUT = 2002;
 
-    private final static int STATUS_LIVING = 3001;
-
-    private final static int STATUS_COMING = 3002;
-
-    private final static int STATUS_VOD = 3003;
-
     private final static int FALL_COUNT = 16;
 
     private TitleBar mTitleBar;
@@ -84,7 +79,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private int mSubjectId;
 
-    private int mLiveState;
+    private SearchService.Status mLiveStatus;
 
     private Handler mHandler = new Handler() {
         @Override
@@ -112,7 +107,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mSubjectId = 1;
-        mLiveState = STATUS_LIVING;
+        mLiveStatus = SearchService.Status.LIVING;
     }
 
     @Override
@@ -158,8 +153,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         updateCatalogText();
     }
 
-    public void switchLiveStatus(int id) {
-        mLiveState = id;
+    public void switchLiveStatus(SearchService.Status id) {
+        mLiveStatus = id;
         startRefreshTask();
     }
 
@@ -229,34 +224,17 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private void startTask(String keyword, int type) {
         if (!mBusy) {
             mBusy = true;
-            String status = null;
-            switch (mLiveState) {
-            case STATUS_LIVING:
-                status = "living";
-                break;
-            case STATUS_COMING:
-                status = "coming";
-                break;
-            case STATUS_VOD:
-                status = "vod";
-                break;
-            default:
-                break;
-            }
-            if (!TextUtils.isEmpty(status)){
-                SearchTask task = new SearchTask();
-                task.addTaskListener(onTaskListener);
-                TaskContext taskContext = new TaskContext();
-                taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
-                taskContext.set(SearchTask.KEY_TYPE, type);
-                taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-                taskContext.set(SearchTask.KEY_KEYWORD, keyword);
-                taskContext.set(SearchTask.KEY_LIVE_STATUS, status);
-                taskContext.set(SearchTask.KEY_SORT, "starttime");
-                taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
-                task.execute(taskContext);    
-            }
-            
+            SearchTask task = new SearchTask();
+            task.addTaskListener(onTaskListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
+            taskContext.set(SearchTask.KEY_TYPE, type);
+            taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+            taskContext.set(SearchTask.KEY_KEYWORD, keyword);
+            taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
+            taskContext.set(SearchTask.KEY_SORT, SearchService.Sort.START_TIME);
+            taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
+            task.execute(taskContext);
         }
     }
 
@@ -452,13 +430,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
             case R.id.btn_status_living:
-                switchLiveStatus(STATUS_LIVING);
+                switchLiveStatus(SearchService.Status.LIVING);
                 break;
             case R.id.btn_status_tolive:
-                switchLiveStatus(STATUS_COMING);
+                switchLiveStatus(SearchService.Status.COMING);
                 break;
             case R.id.btn_status_replay:
-                switchLiveStatus(STATUS_VOD);
+                switchLiveStatus(SearchService.Status.VOD);
                 break;
             default:
                 break;
