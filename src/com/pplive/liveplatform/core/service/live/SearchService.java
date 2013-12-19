@@ -31,7 +31,7 @@ public class SearchService extends RestService {
         };
     }
     
-    public enum LiveStatus {
+    public enum Status {
         
         @SerializedName("coming")
         COMING {
@@ -82,12 +82,12 @@ public class SearchService extends RestService {
 
     }
     
-    public FallList<Program> searchProgram(int subjectId, Sort sort, LiveStatus liveStatus, String nextToken, int fallCount) throws LiveHttpException {
+    public FallList<Program> searchProgram(int subjectId, Sort sort, Status liveStatus, String nextToken, int fallCount) throws LiveHttpException {
 
         return searchProgram("" /* keywords */, subjectId, sort, liveStatus, nextToken, fallCount);
     }
     
-    public FallList<Program> searchProgram(String keywords, int subjectId, Sort sort, LiveStatus liveStatus, String nextToken, int fallCount) throws LiveHttpException {
+    public FallList<Program> searchProgram(String keywords, int subjectId, Sort sort, Status liveStatus, String nextToken, int fallCount) throws LiveHttpException {
         
         return searchProgram(keywords, subjectId, sort.toString(), liveStatus.toString(), nextToken, fallCount);
     }

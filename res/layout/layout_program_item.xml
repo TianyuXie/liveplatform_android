@@ -43,7 +43,8 @@
             android:paddingRight="6dp"
             android:paddingTop="3dp"
             android:text="@string/program_live"
-            android:textSize="13sp" />
+            android:textSize="13sp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <LinearLayout
