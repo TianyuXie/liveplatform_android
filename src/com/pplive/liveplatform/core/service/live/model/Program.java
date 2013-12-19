@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class Program {
@@ -30,7 +31,7 @@ public class Program {
 
     String screenshot_url;
 
-    String coname = "pptv";
+    String coname = Constants.DEFAULT_CONAME_PPTV;
 
     Token tk;
 

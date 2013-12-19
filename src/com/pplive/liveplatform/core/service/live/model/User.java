@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.core.service.live.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.IUser;
 import com.pplive.liveplatform.util.StringUtil;
 
@@ -24,7 +25,7 @@ public class User implements IUser {
 
     String icon;
 
-    String coname = "pptv";
+    String coname = Constants.DEFAULT_CONAME_PPTV;
 
     Sex sex;
 

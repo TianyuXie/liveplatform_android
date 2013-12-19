@@ -16,6 +16,7 @@ import android.widget.BaseAdapter;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -138,13 +139,19 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 }
             }
 
-            AsyncTask<Void, Void, Void> delTask = new AsyncTask<Void, Void, Void>() {
+            AsyncTask<Void, Void, Boolean> delTask = new AsyncTask<Void, Void, Boolean>() {
 
                 @Override
-                protected Void doInBackground(Void... params) {
+                protected Boolean doInBackground(Void... params) {
                     String token = UserManager.getInstance(getContext()).getToken();
-                    ProgramService.getInstance().deleteProgramById(token, program.getId());
-                    return null;
+                    try {
+                        
+                        return ProgramService.getInstance().deleteProgramById(token, program.getId());
+                    } catch (LiveHttpException e) {
+                        
+                    }
+                    
+                    return false;
                 }
             };
 
@@ -166,9 +173,16 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             protected List<Program> doInBackground(Void... params) {
                 Log.d(TAG, "doInBackground");
                 String username = UserManager.getInstance(getContext()).getActiveUserPlain();
-                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.NOT_START);
-
-                return programs;
+                
+                try {
+                    List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.NOT_START);
+    
+                    return programs;
+                } catch (LiveHttpException e) {
+                    
+                }
+                
+                return null;
             }
 
             protected void onPostExecute(java.util.List<Program> result) {

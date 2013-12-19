@@ -45,6 +45,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.service.passport.resp.LoginResultResp;
@@ -110,42 +111,39 @@ public class PassportService {
         }
     }
 
-    public LoginResult login(String usr, String pwd) {
+    public LoginResult login(String usr, String pwd) throws LiveHttpException {
         Log.d(TAG, "user: " + usr + "; password: " + pwd);
 
         RestTemplate template = new RestTemplate(false);
         template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverter() {
-            @Override
-            public boolean canRead(Class<?> clazz, MediaType mediaType) {
-                return true;
-            }
-        });
+        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         HttpEntity<String> entity = new HttpEntity<String>(headers);
-
-        HttpEntity<LoginResultResp> rep = template.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
-
-        rep.getBody().getResult().getToken();
-
-        Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
-
-        return rep.getBody().getResult();
+        
+        LoginResultResp resp = null;
+        try {
+            HttpEntity<LoginResultResp> rep = template.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
+            
+            resp = rep.getBody();
+            
+            return resp.getResult();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getErrorCode()); 
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 
-    public LoginResult thirdpartyRegister(String id, String faceUrl, String nickName, String apptype) {
+    public LoginResult thirdpartyRegister(String id, String faceUrl, String nickName, String apptype) throws LiveHttpException {
 
         RestTemplate template = new RestTemplate(false);
         template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverter() {
-            @Override
-            public boolean canRead(Class<?> clazz, MediaType mediaType) {
-                return true;
-            }
-        });
+        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -172,10 +170,20 @@ public class PassportService {
         
         URI uri = URI.create(components.toString());
 
-        HttpEntity<LoginResultResp> rep = template.exchange(uri, HttpMethod.GET, entity, LoginResultResp.class);
-        Log.d(TAG, "token: " + rep.getBody().getResult().getToken());
-
-        return rep.getBody().getResult();
+        LoginResultResp resp = null;
+        try {
+            HttpEntity<LoginResultResp> rep = template.exchange(uri, HttpMethod.GET, entity, LoginResultResp.class);
+            
+            resp = rep.getBody();
+            
+            return resp.getResult();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getErrorCode());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 }
 
@@ -212,5 +220,14 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
     @Override
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
         return mSSLContext.getSocketFactory().createSocket(socket, host, port, autoClose);
+    }
+}
+
+class GsonHttpMessageConverterEx extends GsonHttpMessageConverter {
+    
+    @Override
+    public boolean canRead(Class<?> clazz, MediaType mediaType) {
+        
+        return true;
     }
 }

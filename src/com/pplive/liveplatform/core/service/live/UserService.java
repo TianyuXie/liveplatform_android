@@ -2,10 +2,12 @@ package com.pplive.liveplatform.core.service.live;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.User;
@@ -31,29 +33,47 @@ public class UserService extends RestService {
 
     }
 
-    public User getUserInfo(String coToken, String username) {
+    public User getUserInfo(String coToken, String username) throws LiveHttpException {
         Log.d(TAG, "username: " + username);
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
 
-        HttpEntity<UserResp> rep = mRestTemplate.exchange(TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class, username);
-
-        UserResp body = rep.getBody();
+        UserResp resp = null;
+        try {
+            HttpEntity<UserResp> rep = mRestTemplate.exchange(TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class, username);
+            resp = rep.getBody();
+            
+            return resp.getData();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
         
-        return body.getData();
+        throw new LiveHttpException();
     }
     
-    public User updateOrCreateUser(String coToken, User user) {
+    public boolean updateOrCreateUser(String coToken, User user) throws LiveHttpException {
         Log.d(TAG, "username: " + user.getUsername() + "; nickname: " + user.getNickname());
         
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mRequestHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<User> req = new HttpEntity<User>(user, mRequestHeaders);
         
-        mRestTemplate.exchange(TEMPLATE_UPDATE_USER_INFO, HttpMethod.POST, req, MessageResp.class, user.getUsername());
+        MessageResp resp = null;
+        try {
+            ResponseEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_UPDATE_USER_INFO, HttpMethod.POST, req, MessageResp.class, user.getUsername());
+            resp = rep.getBody();
+            
+            return null != resp && 0 == resp.getError();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
         
-        return user;
+        throw new LiveHttpException();
     }
 }

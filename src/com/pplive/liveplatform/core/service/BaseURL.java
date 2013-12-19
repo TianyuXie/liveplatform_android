@@ -15,6 +15,7 @@ public class BaseURL extends URL {
     public BaseURL(Protocol protocol, String host, int port, String path) {
         super(protocol, host, port, path);
         
+        this.addParameter("_coname", Constants.DEFAULT_CONAME_PPTV);
         this.addParameter("from", Constants.PLATFORM_ANDROID_PHONE);
         this.addParameter("version", LiveApplication.getVersionName());
     }

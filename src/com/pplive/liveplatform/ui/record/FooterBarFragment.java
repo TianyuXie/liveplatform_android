@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
@@ -201,12 +202,20 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             protected Program doInBackground(Void... params) {
                 if (getActivity() != null) {
                     Log.d(TAG, "title: " + (null == title ? "null" : title) + "; starttime: " + starttime);
-                    String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
-                    String token = UserManager.getInstance(getActivity()).getToken();
-                    Program program = new Program(username, title, starttime);
-                    program = ProgramService.getInstance().createProgram(token, program);
-                    return program;
+                    
+                    try {
+                        String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
+                        String token = UserManager.getInstance(getActivity()).getToken();
+                        Program program = new Program(username, title, starttime);
+                        
+                        program = ProgramService.getInstance().createProgram(token, program);
+                        
+                        return program;
+                    } catch (LiveHttpException e) {
+                        
+                    }
                 }
+                
                 return null;
             }
 

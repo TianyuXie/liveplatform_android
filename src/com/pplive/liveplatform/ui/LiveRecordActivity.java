@@ -29,6 +29,7 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
@@ -590,34 +591,51 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             Program program = params[0];
             if (null == program) {
                 Log.d(TAG, "create program");
+
                 program = new Program(username, mLiveTitle, System.currentTimeMillis());
-                program = ProgramService.getInstance().createProgram(usertoken, program);
-                mLivingProgram = program;
+                try {
+                    program = ProgramService.getInstance().createProgram(usertoken, program);
+                    mLivingProgram = program;
+                } catch (LiveHttpException e) {
+                    // TODO Auto-generated catch block
+                }
             } else {
                 Log.d(TAG, "has program");
+
             }
 
-            String liveToken = program.getLiveToken();
-            if (TextUtils.isEmpty(liveToken)) {
-                Log.d(TAG, "getLiveToken");
-                liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
+            if (null == program) {
+
+                return null;
             }
 
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
-            LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
-
-            Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
-
-            String url = null;
-            for (int i = 0, len = push.getPushUrlList().size(); i < len; ++i) {
-                url = push.getPushUrlList().get(i);
-                if (!TextUtils.isEmpty(url)) {
-                    break;
+            try {
+                String liveToken = program.getLiveToken();
+                if (TextUtils.isEmpty(liveToken)) {
+                    Log.d(TAG, "getLiveToken");
+                    liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
                 }
+
+                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+
+                Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
+                
+                String url = null;
+                for (int i = 0, len = push.getPushUrlList().size(); i < len; ++i) {
+                    url = push.getPushUrlList().get(i);
+                    if (!TextUtils.isEmpty(url)) {
+                        break;
+                    }
+                }
+                
+                return url;
+            } catch (LiveHttpException e) {
+
             }
 
-            return url;
+            return null;
         }
 
         @Override
@@ -644,9 +662,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             Program program = params[0];
 
             if (null != program && !TextUtils.isEmpty(coToken)) {
-                LiveAlive liveAlive = LiveControlService.getInstance().keepLiveAlive(coToken, program.getId());
-
-                return liveAlive;
+                try {
+                    LiveAlive liveAlive = LiveControlService.getInstance().keepLiveAlive(coToken, program.getId());
+    
+                    return liveAlive;
+                } catch (LiveHttpException e) {
+                    
+                    Log.w(TAG, "keep alive failed.");
+                }
             }
 
             return null;

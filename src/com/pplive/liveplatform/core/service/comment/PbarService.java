@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.comment.auth.PBarTokenAuthentication;
 import com.pplive.liveplatform.core.service.comment.model.Feed;
@@ -41,11 +42,11 @@ public class PbarService {
 
     }
 
-    public FeedDetailList getFeeds(String coToken, long pid) {
+    public FeedDetailList getFeeds(String coToken, long pid) throws LiveHttpException {
         return getFeeds(coToken, pid, 30 /* pagesize */);
     }
 
-    public FeedDetailList getFeeds(String coToken, long pid, int pagesize) {
+    public FeedDetailList getFeeds(String coToken, long pid, int pagesize) throws LiveHttpException {
         
         Log.d(TAG, "pid: " + pid + "; pagesize: " + pagesize);
         HttpHeaders headers = new HttpHeaders();
@@ -61,13 +62,24 @@ public class PbarService {
 
         HttpEntity<String> req = new HttpEntity<String>(headers);
 
-        HttpEntity<FeedDetailListResp> rep = template.exchange(TEMPLATE_GET_FEEDS, HttpMethod.GET, req, FeedDetailListResp.class, "LivePlatform-pbar_" + pid,
-                pagesize);
+        FeedDetailListResp resp = null;
+        try {
+            HttpEntity<FeedDetailListResp> rep = template.exchange(TEMPLATE_GET_FEEDS, HttpMethod.GET, req, FeedDetailListResp.class, "LivePlatform-pbar_" + pid,
+                    pagesize);
+            
+            resp = rep.getBody();
+            
+            return resp.getData();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
 
-        return rep.getBody().getData();
+        throw new LiveHttpException();
     }
 
-    public long putFeed(String coToken, long pid, String content) {
+    public long putFeed(String coToken, long pid, String content) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; content: " + content);
 
         Feed feed = new Feed(pid, content, Type.COMMENT);
@@ -75,7 +87,7 @@ public class PbarService {
         return putFeed(coToken, feed);
     }
 
-    public long putFeed(String coToken, long pid, String content, Feed.Type type) {
+    public long putFeed(String coToken, long pid, String content, Feed.Type type) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; content: " + content + "; type: " + type);
 
         Feed feed = new Feed(pid, content, type);
@@ -83,7 +95,7 @@ public class PbarService {
         return putFeed(coToken, feed);
     }
 
-    public long putFeed(String coToken, Feed feed) {
+    public long putFeed(String coToken, Feed feed) throws LiveHttpException {
         Log.d(TAG, "putFeed");
 
         PBarTokenAuthentication authentication = new PBarTokenAuthentication(coToken);
@@ -96,10 +108,19 @@ public class PbarService {
 
         HttpEntity<Feed> req = new HttpEntity<Feed>(feed, headers);
 
-        HttpEntity<FeedIdResp> rep = template.exchange(TEMPLATE_PUT_FEED, HttpMethod.PUT, req, FeedIdResp.class);
-
-        FeedIdResp body = rep.getBody();
-
-        return body.getData();
+        FeedIdResp resp = null;
+        try {
+            HttpEntity<FeedIdResp> rep = template.exchange(TEMPLATE_PUT_FEED, HttpMethod.PUT, req, FeedIdResp.class);
+    
+            resp = rep.getBody();
+    
+            return resp.getData();
+        } catch (Exception e) {
+            if (null != resp) {
+                throw new LiveHttpException(resp.getError());
+            }
+        }
+        
+        throw new LiveHttpException();
     }
 }
