@@ -23,7 +23,7 @@ import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.thirdparty.BreakpadUtil;
 
-public class LivePlayerFragment extends Fragment implements OnTouchListener, View.OnClickListener {
+public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
 
     private static final int HIDE = 301;
@@ -143,16 +143,21 @@ public class LivePlayerFragment extends Fragment implements OnTouchListener, Vie
         super.onDestroy();
     }
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case HIDE:
-                hideBars();
-                break;
-            }
+    private Handler mHandler = new Handler(this);
+    
+    @Override
+    public boolean handleMessage(Message msg) {
+        
+        switch (msg.what) {
+        case HIDE:
+            hideBars();
+            break;
+        default:
+            break;
         }
-    };
+        
+        return true;
+    }
 
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
 
