@@ -31,6 +31,7 @@ import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.sina.weibo.sdk.utils.Utility;
 
 public class WeiboPassport {
+    
     private static final String CONSUMER_KEY = "3353159992";
     private static final String CONSUMER_SECRET = "";
 

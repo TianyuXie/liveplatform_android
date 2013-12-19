@@ -59,15 +59,18 @@ public class TokenService extends RestService {
             ResponseEntity<TokenResp> rep = mRestTemplate.exchange(TEMPLATE_GET_TOKEN, HttpMethod.GET, req, TokenResp.class, type, pid, username, expiretime);
             resp = rep.getBody();
 
-            return resp.getData();
-        } catch (Exception e) {
-
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return resp.getData();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
 
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     enum TokenType {

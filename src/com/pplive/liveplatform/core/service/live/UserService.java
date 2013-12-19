@@ -45,14 +45,18 @@ public class UserService extends RestService {
             HttpEntity<UserResp> rep = mRestTemplate.exchange(TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class, username);
             resp = rep.getBody();
             
-            return resp.getData();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return resp.getData();
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
     
     public boolean updateOrCreateUser(String coToken, User user) throws LiveHttpException {
@@ -67,13 +71,18 @@ public class UserService extends RestService {
             ResponseEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_UPDATE_USER_INFO, HttpMethod.POST, req, MessageResp.class, user.getUsername());
             resp = rep.getBody();
             
-            return null != resp && 0 == resp.getError();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return true;
             }
+            
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }
