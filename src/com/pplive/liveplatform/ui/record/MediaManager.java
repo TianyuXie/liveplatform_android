@@ -25,9 +25,7 @@ public class MediaManager {
 
     public static final int AUDIO_BIT_RATE = 32000;
 
-//    public static final int FRAME_RATE = 15;
-    
-    public static final int FRAME_RATE = 12;
+    public static final int FRAME_RATE = 15;
 
     public static final int IFRAME_INTERVAL = 1;
 
