@@ -24,6 +24,8 @@ public class SettingsActivity extends Activity {
 
     private ToggleButton mPreliveButton;
 
+    private View mUserView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +38,7 @@ public class SettingsActivity extends Activity {
         mUserTextView = (TextView) findViewById(R.id.text_settings_user);
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
+        mUserView = findViewById(R.id.layout_settings_user);
     }
 
     @Override
@@ -46,6 +49,11 @@ public class SettingsActivity extends Activity {
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mUserTextView.setText(UserManager.getInstance(this).getActiveUserPlain());
         mNicknameTextView.setText(UserManager.getInstance(this).getNickname());
+        if (UserManager.getInstance(this).isThirdPartyLogin()) {
+            mUserView.setVisibility(View.GONE);
+        } else {
+            mUserView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

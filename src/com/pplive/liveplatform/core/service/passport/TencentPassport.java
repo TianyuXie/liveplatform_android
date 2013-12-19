@@ -21,217 +21,204 @@ import com.tencent.tauth.IUiListener;
 import com.tencent.tauth.Tencent;
 import com.tencent.tauth.UiError;
 
-public class TencentPassport
-{
-    private static final TencentPassport sInstance = new TencentPassport();
-    
-    public  Tencent mTencent;
-    public static String mAppid = "100570681";
-    private Context txContext;
-    private Activity mActivity;
-    private LoginResult mLoginResult;
-    ThirdpartyLoginListener mLoginListener;
+public class TencentPassport {
 
-    public static TencentPassport getInstance() {
+    private final static String mAppid = "100570681";
+
+    private static TencentPassport sInstance;
+
+    private Tencent mTencent;
+
+    private LoginResult mLoginResult;
+
+    private ThirdpartyLoginListener mLoginListener;
+
+    public static synchronized TencentPassport getInstance() {
+        if (sInstance == null) {
+            sInstance = new TencentPassport();
+        }
         return sInstance;
     }
-    
-    
-    public void login()
-    {
-        
+
+    private TencentPassport() {
+    }
+
+    public void setLoginListener(ThirdpartyLoginListener lst) {
+        mLoginListener = lst;
+    }
+
+    public void login(Activity activity) {
         mLoginResult = new LoginResult();
-        if (!mTencent.isSessionValid()) {
+        if (mTencent != null && !mTencent.isSessionValid()) {
             IUiListener listener = new BaseUiListener() {
                 @Override
-                protected void doComplete(JSONObject values) {
+                public void onComplete(JSONObject values) {
                     try {
                         mLoginResult.setThirdPartyID(values.getString("openid"));
                         mLoginResult.setThirdPartyToken(values.getString("access_token"));
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        if (mLoginListener != null) {
+                            mLoginListener.LoginFailed("IUiListener: JSONException");
+                        }
                     }
                     updateUserInfo();
-                    //updateLoginButton();
                 }
-
-                @Override
-                public void onError(UiError e)
-                {
-                    // TODO Auto-generated method stub
-                    super.onError(e);
-                }
-                
-                
             };
-            mTencent.login(mActivity, "all", listener);
-            
+            mTencent.login(activity, "all", listener);
+        } else {
+            if (mLoginListener != null) {
+                mLoginListener.LoginFailed("mTencent == null or invalid");
+            }
         }
     }
-    
-    public void setActivity(Activity activity)
-    {
-        mActivity = activity;
-    }
-    
-    public void setLoginListener(ThirdpartyLoginListener lst)
-    {
-        mLoginListener = lst;
-    }
-    
-    public void init(Context context)
-    {
-        txContext = context.getApplicationContext();
-        mTencent = Tencent.createInstance(mAppid, txContext);
-    }
-    
-    private class BaseUiListener implements IUiListener {
 
-        @Override
-        public void onComplete(JSONObject response) {
-            doComplete(response);
-        }
+    public void init(Context context) {
+        mTencent = Tencent.createInstance(mAppid, context.getApplicationContext());
+    }
 
-        protected void doComplete(JSONObject values) {
-
-        }
+    private abstract class BaseUiListener implements IUiListener {
 
         @Override
         public void onError(UiError e) {
-             mLoginListener.LoginFailed();
+            if (mLoginListener != null) {
+                mLoginListener.LoginFailed("IUiListener: UiError");
+            }
         }
 
         @Override
         public void onCancel() {
-
+            if (mLoginListener != null) {
+                mLoginListener.LoginFailed("IUiListener: onCancel");
+            }
         }
     }
-    
+
     private void updateUserInfo() {
         if (mTencent != null && mTencent.isSessionValid()) {
             IRequestListener requestListener = new IRequestListener() {
 
                 @Override
                 public void onUnknowException(Exception e, Object state) {
-                    // TODO Auto-generated method stub
-
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: UnknowException");
+                    }
                 }
 
                 @Override
-                public void onSocketTimeoutException(SocketTimeoutException e,
-                        Object state) {
-                    // TODO Auto-generated method stub
-
+                public void onSocketTimeoutException(SocketTimeoutException e, Object state) {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: SocketTimeoutException");
+                    }
                 }
 
                 @Override
-                public void onNetworkUnavailableException(
-                        NetworkUnavailableException e, Object state) {
-                    // TODO Auto-generated method stub
-
+                public void onNetworkUnavailableException(NetworkUnavailableException e, Object state) {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: NetworkUnavailableException");
+                    }
                 }
 
                 @Override
-                public void onMalformedURLException(MalformedURLException e,
-                        Object state) {
-                    // TODO Auto-generated method stub
-
+                public void onMalformedURLException(MalformedURLException e, Object state) {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: MalformedURLException");
+                    }
                 }
 
                 @Override
                 public void onJSONException(JSONException e, Object state) {
-                    // TODO Auto-generated method stub
-
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: JSONException");
+                    }
                 }
 
                 @Override
                 public void onIOException(IOException e, Object state) {
-                    // TODO Auto-generated method stub
-
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: IOException");
+                    }
                 }
 
                 @Override
-                public void onHttpStatusException(HttpStatusException e,
-                        Object state) {
-                    // TODO Auto-generated method stub
-
+                public void onHttpStatusException(HttpStatusException e, Object state) {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: HttpStatusException");
+                    }
                 }
 
                 @Override
-                public void onConnectTimeoutException(
-                        ConnectTimeoutException e, Object state) {
-                    // TODO Auto-generated method stub
-
+                public void onConnectTimeoutException(ConnectTimeoutException e, Object state) {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IRequestListener: ConnectTimeoutException");
+                    }
                 }
 
                 @Override
                 public void onComplete(final JSONObject response, Object state) {
-                    // TODO Auto-generated method stub
                     try {
                         mLoginResult.setThirdPartyNickName(response.getString("nickname"));
                         mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_2"));
-                        LoginResult temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
-                        if(temp != null) {
+                        LoginResult temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(),
+                                mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "qq");
+                        if (temp != null) {
                             mLoginResult.setToken(temp.getToken());
                             mLoginResult.setUsername(temp.getUsername());
+                            mLoginResult.setThirdPartySource(LoginResult.FROM_TENCENT);
+                        } else {
+                            if (mLoginListener != null) {
+                                mLoginListener.LoginFailed("IRequestListener: PassportService failed");
+                            }
                         }
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        if (mLoginListener != null) {
+                            mLoginListener.LoginFailed("IRequestListener: JSONException");
+                        }
+                    } catch (Exception e) {
+                        if (mLoginListener != null) {
+                            mLoginListener.LoginFailed("IRequestListener: Exception");
+                        }
                     }
-                    mLoginListener.LoginSuccess(mLoginResult);
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginSuccess(mLoginResult);
+                    }
                 }
             };
-              mTencent.requestAsync(Constants.GRAPH_SIMPLE_USER_INFO, null,
-                        Constants.HTTP_GET, requestListener, null);
+            mTencent.requestAsync(Constants.GRAPH_SIMPLE_USER_INFO, null, Constants.HTTP_GET, requestListener, null);
         } else {
-
+            if (mLoginListener != null) {
+                mLoginListener.LoginFailed("mTencent == null or invalid");
+            }
         }
     }
-    
-    public LoginResult getLoginResult()
-    {
+
+    public LoginResult getLoginResult() {
         return mLoginResult;
-        
+
     }
-    
-    public void logout(){
-        mTencent.logout(mActivity);
+
+    public void logout(Context context) {
+        if (mTencent != null && mTencent.isSessionValid()) {
+            mTencent.logout(context.getApplicationContext());
+        }
     }
-    
-    public void doShareToQQ(final Bundle params) {
+
+    public void doShareToQQ(final Activity activity, final Bundle params) {
         new Thread(new Runnable() {
-            
+
             @Override
             public void run() {
-                // TODO Auto-generated method stub
-                try{
-                    mTencent.shareToQQ(mActivity, params, new IUiListener() {
-
+                if (mTencent != null) {
+                    mTencent.shareToQQ(activity, params, new BaseUiListener() {
                         @Override
                         public void onComplete(JSONObject response) {
                             // TODO Auto-generated method stub
-                            
                         }
-
-                        @Override
-                        public void onError(UiError e) {
-                            
-                        }
-
-                        @Override
-                        public void onCancel() {
-
-                        }
-
                     });
-                }catch (Exception ex){
-                    ex.printStackTrace();
+                } else {
+                    //TODO
                 }
-
             }
         }).start();
     }
-    
+
 }

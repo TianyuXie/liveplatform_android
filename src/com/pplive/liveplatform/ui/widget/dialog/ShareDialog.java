@@ -6,7 +6,9 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +17,6 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.pplive.liveplatform.util.StringUtil;
-import com.tencent.tauth.Constants;
 
 public class ShareDialog extends Dialog implements View.OnClickListener {
     static final String TAG = "_ShareDialog";
@@ -66,10 +67,10 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     private Bundle getShareQQData() {
         Bundle bundle = new Bundle();
-        bundle.putString(Constants.PARAM_TARGET_URL, mTargetUrl);
-        bundle.putString(Constants.PARAM_TITLE, mTitle);
-        bundle.putString(Constants.PARAM_IMAGE_URL, mImageUrl);
-        bundle.putString(Constants.PARAM_SUMMARY, mSummary);
+        bundle.putString(com.tencent.tauth.Constants.PARAM_TARGET_URL, mTargetUrl);
+        bundle.putString(com.tencent.tauth.Constants.PARAM_TITLE, mTitle);
+        bundle.putString(com.tencent.tauth.Constants.PARAM_IMAGE_URL, mImageUrl);
+        bundle.putString(com.tencent.tauth.Constants.PARAM_SUMMARY, mSummary);
         return bundle;
     }
 
@@ -78,23 +79,29 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         bundle.putString(WeiboPassport.PARAM_TARGET_URL, mTargetUrl);
         bundle.putString(WeiboPassport.PARAM_TITLE, mTitle);
         bundle.putString(WeiboPassport.PARAM_SUMMARY, mSummary);
+        bundle.putParcelable(WeiboPassport.PARAM_BITMAP, ((BitmapDrawable) (getContext().getResources().getDrawable(R.drawable.ic_launcher))).getBitmap());
         return bundle;
     }
 
     public void sinaShare() {
-        WeiboPassport.getInstance().setActivity(mActivity);
-        WeiboPassport.getInstance().init(mActivity);
-        WeiboPassport.getInstance().initShare(mActivity);
-        WeiboPassport.getInstance().shareToWeibo(getShareSinaData());
+        if (mActivity != null) {
+            WeiboPassport.getInstance().initShare(mActivity);
+            WeiboPassport.getInstance().shareToWeibo(mActivity, getShareSinaData());
+        } else {
+            Log.e(TAG, "mActivity == null");
+        }
     }
 
     public void qqShare() {
-        TencentPassport.getInstance().init(getContext());
-        TencentPassport.getInstance().setActivity(mActivity);
-        TencentPassport.getInstance().doShareToQQ(getShareQQData());
+        if (mActivity != null) {
+            TencentPassport.getInstance().init(mActivity);
+            TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
+        } else {
+            Log.e(TAG, "mActivity == null");
+        }
     }
 
-    public void wechatSNSShare() {
+    public void wechatSNSShareDirect() {
         try {
             //TODO add image
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -110,7 +117,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         }
     }
 
-    public void wechatShare() {
+    public void wechatShareDirect() {
         try {
             //TODO add image
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -123,6 +130,38 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             getContext().startActivity(intent);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void sinaShareDirect() {
+        try {
+            //TODO add image
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            ComponentName comp = new ComponentName("com.sina.weibo", "com.sina.weibo.EditActivity");
+            intent.setComponent(comp);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void qqShareDirect() {
+        try {
+            //TODO add image
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
+            intent.setComponent(comp);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_qq_not_install, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -143,13 +182,13 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             qqShare();
             break;
         case R.id.btn_share_dialog_sina:
-            sinaShare();
+            sinaShareDirect();
             break;
         case R.id.btn_share_dialog_wechat:
-            wechatShare();
+            wechatShareDirect();
             break;
         case R.id.btn_share_dialog_wechatSNS:
-            wechatSNSShare();
+            wechatSNSShareDirect();
             break;
         default:
             break;
