@@ -232,7 +232,16 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
-            taskContext.set(SearchTask.KEY_SORT, SearchService.SortKeyword.START_TIME);
+            switch (mLiveStatus) {
+            case COMING:
+                taskContext.set(SearchTask.KEY_SORT, SearchService.SortKeyword.START_TIME);
+                break;
+            case VOD:
+            case LIVING:
+            default:
+                taskContext.set(SearchTask.KEY_SORT, SearchService.SortKeyword.VV);
+                break;
+            }
             taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
             task.execute(taskContext);
         }

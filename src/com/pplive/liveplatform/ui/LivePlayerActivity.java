@@ -33,6 +33,7 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -50,6 +51,7 @@ import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 import com.pplive.liveplatform.ui.widget.dialog.LoadingDialog;
 import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
@@ -63,9 +65,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int LOADING_DELAY_TIME = 3 * 1000;
 
-    public final static String EXTRA_PID = "pid";
-
-    public final static String EXTRA_TITLE = "title";
+    public final static String EXTRA_PROGRAM = "program";
 
     private DetectableRelativeLayout mRootLayout;
 
@@ -107,9 +107,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private int mHalfScreenHeight;
 
-    private String mUrl;
+    private Program mProgram;
 
-    private long mPid;
+    private String mUrl;
 
     private Context mContext;
 
@@ -136,7 +136,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
-        mPid = getIntent().getLongExtra(EXTRA_PID, -1);
+        mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
 
         /* init views */
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
@@ -164,17 +164,18 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onStart");
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
-        mLivePlayerFragment.setTitle(getIntent().getStringExtra(EXTRA_TITLE));
+        mLivePlayerFragment.setTitle(mProgram.getTitle());
+        long pid = mProgram.getId();
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getActiveUserPlain();
             String token = UserManager.getInstance(this).getToken();
-            if (mPid != -1) {
+            if (pid > 0) {
                 showLoading();
                 mLoadingHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
                 mediaTask.addTaskListener(onGetMediaListener);
                 TaskContext taskContext = new TaskContext();
-                taskContext.set(Task.KEY_PID, mPid);
+                taskContext.set(Task.KEY_PID, pid);
                 taskContext.set(Task.KEY_USERNAME, username);
                 taskContext.set(Task.KEY_TOKEN, token);
                 mediaTask.execute(taskContext);
@@ -183,8 +184,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             Log.d(TAG, "onStart mUrl:" + mUrl);
             mLivePlayerFragment.setupPlayer(mUrl);
         }
-        if (mPid != -1) {
-            mChatBox.start(mPid);
+        if (pid > 0) {
+            mChatBox.start(pid);
         }
     }
 
@@ -322,8 +323,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public boolean onEnter(View v) {
-            long pid = getIntent().getLongExtra(EXTRA_PID, -1);
-            if (pid != -1) {
+            long pid = mProgram.getId();
+            if (pid > 0) {
                 String content = mCommentEditText.getText().toString();
                 String token = UserManager.getInstance(mContext).getToken();
                 TaskContext taskContext = new TaskContext();
@@ -425,12 +426,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onShareClick() {
         mShareDialog.show();
-        String title = getIntent().getStringExtra(EXTRA_TITLE);
+        String title = StringUtil.safeString(mProgram.getTitle());
+        String shareUrl = mProgram.getShareLinkUrl();
+        String imageUrl = mProgram.getCover();
         Bundle data = new Bundle();
         data.putString(ShareDialog.PARAM_TITLE, title);
-        data.putString(ShareDialog.PARAM_TARGET_URL, getString(R.string.test_share_target_url));
+        data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
         data.putString(ShareDialog.PARAM_SUMMARY, String.format(getString(R.string.share_summary_format), getString(R.string.app_name), title));
-        data.putString(ShareDialog.PARAM_IMAGE_URL, getString(R.string.test_share_image_url));
+        data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? getString(R.string.default_share_image_url) : imageUrl);
         mShareDialog.setData(data);
     }
 

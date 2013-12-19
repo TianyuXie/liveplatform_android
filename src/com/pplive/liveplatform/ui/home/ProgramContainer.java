@@ -68,13 +68,12 @@ public class ProgramContainer extends RelativeLayout {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mGridView.canClick() && mItemClickable) {
                 Program program = mPrograms.get(position);
-                long pid = program.getId();
-                String title = program.getTitle();
-                Intent intent = new Intent();
-                intent.putExtra(LivePlayerActivity.EXTRA_PID, pid);
-                intent.putExtra(LivePlayerActivity.EXTRA_TITLE, title);
-                intent.setClass(getContext(), LivePlayerActivity.class);
-                getContext().startActivity(intent);
+                if (program != null){
+                    Intent intent = new Intent();
+                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                    intent.setClass(getContext(), LivePlayerActivity.class);
+                    getContext().startActivity(intent);
+                }
             }
         }
     };
