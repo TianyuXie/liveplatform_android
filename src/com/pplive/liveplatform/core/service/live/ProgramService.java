@@ -68,11 +68,6 @@ public class ProgramService extends RestService {
         throw new LiveHttpException();
     }
 
-    public Program getProgramById() {
-
-        return null;
-    }
-
     public Program createProgram(String coToken, Program program) throws LiveHttpException {
         Log.d(TAG, program.toString());
         
@@ -85,14 +80,18 @@ public class ProgramService extends RestService {
     
             resp = mRestTemplate.postForObject(TEMPLATE_CREATE_PROGRAM, req, ProgramResp.class);
     
-            return resp.getData();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return resp.getData();
             }
+        } catch (Exception e) {
+            
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public boolean updateProgram(String coToken, Program program) throws LiveHttpException {
@@ -106,35 +105,44 @@ public class ProgramService extends RestService {
             
             resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, MessageResp.class, program.getId());
             
-            
-            return null != resp && 0 == resp.getError();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getError());
+            if (0 == resp.getError()) {
+                return true;
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
 
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public boolean deleteProgramById(String coToken, long pid) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid);
 
-        ResponseEntity<MessageResp> resp = null;
+        MessageResp resp = null;
         try {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
             mRequestHeaders.setAuthorization(coTokenAuthentication);
             HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
     
-            resp = mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, MessageResp.class, pid);
+            ResponseEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, MessageResp.class, pid);
             
-            return null != resp && null != resp.getBody() && 0 == resp.getBody().getError();
-        } catch (Exception e) {
-            if (null != resp) {
-                throw new LiveHttpException(resp.getBody().getError());
+            resp = rep.getBody();
+            
+            if (0 == resp.getError()) {
+                return true;
             }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
         }
         
-        throw new LiveHttpException();
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }

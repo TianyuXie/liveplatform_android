@@ -264,7 +264,6 @@ public class PPboxStream {
     private int mWritedBufferCount = 0;
 
     @SuppressLint("SdCardPath")
-    @SuppressWarnings("unused")
     private void writeBuffer(ByteBuffer buffer, int size) {
 
         if (mWritedBufferCount++ < 10) {
