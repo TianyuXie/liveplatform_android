@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +50,12 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private final static int MSG_PULL_TIMEOUT = 2002;
 
+    private final static int STATUS_LIVING = 3001;
+
+    private final static int STATUS_COMING = 3002;
+
+    private final static int STATUS_VOD = 3003;
+
     private final static int FALL_COUNT = 16;
 
     private TitleBar mTitleBar;
@@ -77,6 +84,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private int mSubjectId;
 
+    private int mLiveState;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -103,6 +112,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mSubjectId = 1;
+        mLiveState = STATUS_LIVING;
     }
 
     @Override
@@ -111,13 +121,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (ProgramContainer) layout.findViewById(R.id.layout_home_body);
         mContainer.setOnUpdateListener(onUpdateListener);
+        mContainer.setOnStatusChangeListener(onStatusChangeListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(onTitleBarClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
         mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
         mRefreshLayout = layout.findViewById(R.id.layout_home_nodata);
-        Button retryButton = (Button)layout.findViewById(R.id.btn_home_retry);
+        Button retryButton = (Button) layout.findViewById(R.id.btn_home_retry);
         retryButton.setOnClickListener(onRetryClickListener);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         updateCatalogText();
@@ -145,6 +156,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSubjectId = id;
         startRefreshTask();
         updateCatalogText();
+    }
+
+    public void switchLiveStatus(int id) {
+        mLiveState = id;
+        startRefreshTask();
     }
 
     private void updateCatalogText() {
@@ -213,17 +229,34 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private void startTask(String keyword, int type) {
         if (!mBusy) {
             mBusy = true;
-            SearchTask task = new SearchTask();
-            task.addTaskListener(onTaskListener);
-            TaskContext taskContext = new TaskContext();
-            taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
-            taskContext.set(SearchTask.KEY_TYPE, type);
-            taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-            taskContext.set(SearchTask.KEY_KEYWORD, keyword);
-            taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-            taskContext.set(SearchTask.KEY_SORT, "starttime");
-            taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
-            task.execute(taskContext);
+            String status = null;
+            switch (mLiveState) {
+            case STATUS_LIVING:
+                status = "living";
+                break;
+            case STATUS_COMING:
+                status = "coming";
+                break;
+            case STATUS_VOD:
+                status = "vod";
+                break;
+            default:
+                break;
+            }
+            if (!TextUtils.isEmpty(status)){
+                SearchTask task = new SearchTask();
+                task.addTaskListener(onTaskListener);
+                TaskContext taskContext = new TaskContext();
+                taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
+                taskContext.set(SearchTask.KEY_TYPE, type);
+                taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+                taskContext.set(SearchTask.KEY_KEYWORD, keyword);
+                taskContext.set(SearchTask.KEY_LIVE_STATUS, status);
+                taskContext.set(SearchTask.KEY_SORT, "starttime");
+                taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
+                task.execute(taskContext);    
+            }
+            
         }
     }
 
@@ -413,6 +446,26 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
+    private RadioGroup.OnCheckedChangeListener onStatusChangeListener = new RadioGroup.OnCheckedChangeListener() {
+
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId) {
+            case R.id.btn_status_living:
+                switchLiveStatus(STATUS_LIVING);
+                break;
+            case R.id.btn_status_tolive:
+                switchLiveStatus(STATUS_COMING);
+                break;
+            case R.id.btn_status_replay:
+                switchLiveStatus(STATUS_VOD);
+                break;
+            default:
+                break;
+            }
+        }
+    };
+
     private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
@@ -441,7 +494,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             }
         }
     };
-    
+
     private View.OnClickListener onRetryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
