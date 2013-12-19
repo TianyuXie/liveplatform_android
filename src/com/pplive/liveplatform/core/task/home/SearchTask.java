@@ -1,6 +1,8 @@
 package com.pplive.liveplatform.core.task.home;
 
 import com.pplive.liveplatform.core.service.live.SearchService;
+import com.pplive.liveplatform.core.service.live.SearchService.LiveStatus;
+import com.pplive.liveplatform.core.service.live.SearchService.Sort;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -62,7 +64,7 @@ public class SearchTask extends Task {
         String key = context.getString(KEY_KEYWORD);
         FallList<Program> data = null;
         try {
-            data = SearchService.getInstance().searchProgram(key, subjectId, sort, liveStatus, nextTk, fallCount);
+            data = SearchService.getInstance().searchProgram(key, subjectId, Sort.START_TIME, LiveStatus.LIVING, nextTk, fallCount);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "SearchService Error");
         }
