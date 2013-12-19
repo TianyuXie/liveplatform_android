@@ -8,7 +8,7 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class Program {
-    
+
     private static final int SUBJECT_ID_ORIGIN = 1; // 原创
 
     long pid;
@@ -32,7 +32,7 @@ public class Program {
     String screenshot_url;
 
     String coname = Constants.DEFAULT_CONAME_PPTV;
-    
+
     Record record;
 
     Token tk;
@@ -98,9 +98,11 @@ public class Program {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
 
-    static class Record {
+    public int getVV() {
+        return record == null ? 0 : record.vv;
+    }
 
-        long pid;
+    static class Record {
 
         int vv;
 

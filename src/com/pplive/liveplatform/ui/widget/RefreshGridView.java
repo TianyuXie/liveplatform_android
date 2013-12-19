@@ -34,7 +34,8 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
     private final static int POPUP_TIME = 500;
 
-    private LinearLayout mHeaderView;
+    private View mHeaderView;
+    private LinearLayout mPullView;
     private ProgressBar mProgressBar;
 
     private int mStatus;
@@ -68,16 +69,20 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         mStatus = STATUS_DONE;
         setOnScrollListener(this);
         LayoutInflater inflater = LayoutInflater.from(context);
-        mHeaderView = (LinearLayout) inflater.inflate(R.layout.layout_home_pull_header, null);
-        mProgressBar = (ProgressBar) mHeaderView.findViewById(R.id.progress_header);
-        measureView(mHeaderView);
-        mHeaderHeight = mHeaderView.getMeasuredHeight();
-        mHeaderView.setPadding(0, -mHeaderHeight, 0, 0);
-        mHeaderView.invalidate();
+        mPullView = (LinearLayout) inflater.inflate(R.layout.layout_home_pull_header, null);
+        mProgressBar = (ProgressBar) mPullView.findViewById(R.id.progress_header);
+        measureView(mPullView);
+        mHeaderHeight = mPullView.getMeasuredHeight();
+        mPullView.setPadding(0, -mHeaderHeight, 0, 0);
+        mPullView.invalidate();
     }
 
-    public View getHeader() {
-        return mHeaderView;
+    public View getPullView() {
+        return mPullView;
+    }
+
+    public void setHeader(View v) {
+        mHeaderView = v;
     }
 
     @Override
@@ -144,14 +149,14 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                     if (mStatus == STATUS_PULL_TO_REFRESH) {
                         mStatus = STATUS_DONE;
                         updateHeader();
-                        bounceHeader(-mHeaderView.getHeight());
+                        bounceHeader(-mPullView.getHeight());
                         Log.v(TAG, "由下拉刷新状态，到done状态");
                     }
 
                     if (mStatus == STATUS_RELEASE_TO_REFRESH) {
                         mStatus = STATUS_REFRESHING;
                         updateHeader();
-                        bounceHeader(mHeaderHeight - mHeaderView.getHeight());
+                        bounceHeader(mHeaderHeight - mPullView.getHeight());
                         if (mUpdateListener != null) {
                             mUpdateListener.onRefresh();
                         }
@@ -224,7 +229,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                         }
                         // 更新headView的size
                         if (mStatus == STATUS_PULL_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH) {
-                            mHeaderView.setPadding(0, (int) (mSavedDelta / RATIO - mHeaderHeight), 0, 0);
+                            mPullView.setPadding(0, (int) (mSavedDelta / RATIO - mHeaderHeight), 0, 0);
                         }
                     } else if (delta != mSavedDelta && Math.abs(mSavedDelta - delta) > REVERSE_THRESHOLD) {
                         mReverseCount++;
@@ -355,20 +360,27 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private void bounceHeader(int yTranslate) {
         mAniming = true;
         if (mStatus == STATUS_REFRESHING) {
-            mHeaderView.setPadding(0, 0, 0, 0);
+            mPullView.setPadding(0, 0, 0, 0);
         } else if (mStatus == STATUS_DONE) {
-            mHeaderView.setPadding(0, -mHeaderHeight, 0, 0);
+            mPullView.setPadding(0, -mHeaderHeight, 0, 0);
         }
         TranslateAnimation bodyAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
         bodyAnim.setDuration(POPUP_TIME);
         bodyAnim.setInterpolator(new OvershootInterpolator(1.2f));
 
-        TranslateAnimation headerAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
-        headerAnim.setDuration(POPUP_TIME);
-        headerAnim.setInterpolator(new OvershootInterpolator(1.2f));
+        TranslateAnimation headAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
+        headAnim.setDuration(POPUP_TIME);
+        headAnim.setInterpolator(new OvershootInterpolator(1.2f));
+
+        TranslateAnimation pullAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
+        pullAnim.setDuration(POPUP_TIME);
+        pullAnim.setInterpolator(new OvershootInterpolator(1.2f));
 
         startAnimation(bodyAnim);
-        mHeaderView.startAnimation(headerAnim);
+        mPullView.startAnimation(pullAnim);
+        if (mHeaderView != null) {
+            mHeaderView.startAnimation(headAnim);
+        }
     }
 
     @Override
@@ -376,7 +388,10 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         super.onAnimationEnd();
         mAniming = false;
         clearAnimation();
-        mHeaderView.clearAnimation();
+        mPullView.clearAnimation();
+        if (mHeaderView != null) {
+            mHeaderView.clearAnimation();
+        }
     }
 
     public boolean canClick() {

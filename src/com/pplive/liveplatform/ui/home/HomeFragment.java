@@ -13,10 +13,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.service.live.SearchService;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -77,6 +79,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private int mSubjectId;
 
+    private SearchService.Status mLiveStatus;
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -103,6 +107,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mSubjectId = 1;
+        mLiveStatus = SearchService.Status.LIVING;
     }
 
     @Override
@@ -111,13 +116,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
         mContainer = (ProgramContainer) layout.findViewById(R.id.layout_home_body);
         mContainer.setOnUpdateListener(onUpdateListener);
+        mContainer.setOnStatusChangeListener(onStatusChangeListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(onTitleBarClickListener);
         mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
         mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
         mRefreshLayout = layout.findViewById(R.id.layout_home_nodata);
-        Button retryButton = (Button)layout.findViewById(R.id.btn_home_retry);
+        Button retryButton = (Button) layout.findViewById(R.id.btn_home_retry);
         retryButton.setOnClickListener(onRetryClickListener);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         updateCatalogText();
@@ -145,6 +151,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSubjectId = id;
         startRefreshTask();
         updateCatalogText();
+    }
+
+    public void switchLiveStatus(SearchService.Status id) {
+        mLiveStatus = id;
+        startRefreshTask();
     }
 
     private void updateCatalogText() {
@@ -220,8 +231,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             taskContext.set(SearchTask.KEY_TYPE, type);
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
-            taskContext.set(SearchTask.KEY_LIVE_STATUS, "living");
-            taskContext.set(SearchTask.KEY_SORT, "starttime");
+            taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
+            taskContext.set(SearchTask.KEY_SORT, SearchService.Sort.START_TIME);
             taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
             task.execute(taskContext);
         }
@@ -413,6 +424,26 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
     };
 
+    private RadioGroup.OnCheckedChangeListener onStatusChangeListener = new RadioGroup.OnCheckedChangeListener() {
+
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            switch (checkedId) {
+            case R.id.btn_status_living:
+                switchLiveStatus(SearchService.Status.LIVING);
+                break;
+            case R.id.btn_status_tolive:
+                switchLiveStatus(SearchService.Status.COMING);
+                break;
+            case R.id.btn_status_replay:
+                switchLiveStatus(SearchService.Status.VOD);
+                break;
+            default:
+                break;
+            }
+        }
+    };
+
     private InterceptDetector.OnGestureListener onGestureListener = new InterceptDetector.OnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {
@@ -441,7 +472,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             }
         }
     };
-    
+
     private View.OnClickListener onRetryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

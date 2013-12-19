@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
@@ -25,6 +26,7 @@ public class ProgramContainer extends RelativeLayout {
     private List<Program> mPrograms;
     private HomeProgramAdapter mAdapter;
     private RefreshGridView mGridView;
+    private RadioGroup mRadioGroup;
 
     private boolean mItemClickable;
 
@@ -36,10 +38,12 @@ public class ProgramContainer extends RelativeLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_home_container, this);
+        mRadioGroup = (RadioGroup) root.findViewById(R.id.layout_grid_header);
         mGridView = (RefreshGridView) root.findViewById(R.id.grid_home_results);
-        LinearLayout head = (LinearLayout) root.findViewById(R.id.layout_pull_header);
-        head.addView(mGridView.getHeader(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        LinearLayout pullHeader = (LinearLayout) root.findViewById(R.id.layout_pull_header);
+        pullHeader.addView(mGridView.getPullView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mGridView.setAdapter(mAdapter);
+        mGridView.setHeader(mRadioGroup);
         mGridView.setOnItemClickListener(onItemClickListener);
     }
 
@@ -86,4 +90,9 @@ public class ProgramContainer extends RelativeLayout {
     public void setOnUpdateListener(RefreshGridView.OnUpdateListener l) {
         mGridView.setOnUpdateListener(l);
     }
+
+    public void setOnStatusChangeListener(RadioGroup.OnCheckedChangeListener l) {
+        mRadioGroup.setOnCheckedChangeListener(l);
+    }
+
 }
