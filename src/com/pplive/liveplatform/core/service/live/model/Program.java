@@ -32,6 +32,8 @@ public class Program {
     String screenshot_url;
 
     String coname = Constants.DEFAULT_CONAME_PPTV;
+    
+    Record record;
 
     Token tk;
 
