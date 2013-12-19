@@ -78,7 +78,7 @@ public class HomeProgramAdapter extends BaseAdapter {
         holder.ownerTextView.setText(data.getOwnerNickname());
         holder.titleTextView.setText(data.getTitle());
         holder.viewcountTextView.setText(String.valueOf(data.getVV()));
-        holder.previewImageView.setImageAsync(data.getCoverUrl(), DEFAULT_PREVIEW_DISPLAY_OPTIONS);
+        holder.previewImageView.setImageAsync(data.getCover(), DEFAULT_PREVIEW_DISPLAY_OPTIONS);
     }
 
     static class ViewHolder {

@@ -86,6 +86,11 @@ public class Program {
         return livestatus;
     }
 
+    public String getCover() {
+        String coverUrl = getCoverUrl();
+        return StringUtil.isNullOrEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
+    }
+
     public String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
     }

@@ -6,15 +6,6 @@
     android:layout_height="fill_parent"
     android:background="@drawable/home_bg" >
 
-    <com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer
-        android:id="@+id/layout_home_fragment_container"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        live:distance="100dp"
-        live:duration="250"
-        live:scale_percent="0.95" />
-
     <com.pplive.liveplatform.ui.widget.SideBar
         android:id="@+id/home_sidebar"
         android:layout_width="70dp"
@@ -28,16 +19,25 @@
         live:anim_hide="@anim/sidebar_hide"
         live:anim_show="@anim/sidebar_show" />
 
+    <com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer
+        android:id="@+id/layout_home_fragment_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        live:distance="100dp"
+        live:duration="250"
+        live:scale_percent="0.95" />
+
     <com.pplive.liveplatform.ui.widget.AnimDoor
         android:id="@+id/home_animdoor"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:clickable="false"
+        live:duration="400"
         live:factor="1.139"
         live:left_src="@drawable/animdoor_left"
         live:orientation="horizontal"
         live:right_src="@drawable/animdoor_right"
-        live:duration="400"
         live:visible="false" />
 
     <LinearLayout

@@ -114,6 +114,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             startAnimation(mHideAnimation);
             mRoot.setVisibility(gone ? GONE : INVISIBLE);
             mBlockLayer.setClickable(true);
+            setClickable(false);
             mShowing = false;
         }
     }
@@ -122,6 +123,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     public void show() {
         if (!mAnimating && !mShowing && mShowAnimation != null) {
             mRoot.setVisibility(VISIBLE);
+            setClickable(true);
             mBlockLayer.setClickable(false);
             mShowing = true;
             startAnimation(mShowAnimation);
