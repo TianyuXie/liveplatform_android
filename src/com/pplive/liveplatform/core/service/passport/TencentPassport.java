@@ -50,7 +50,7 @@ public class TencentPassport {
     public void login(Activity activity) {
         mLoginResult = new LoginResult();
         if (mTencent != null && !mTencent.isSessionValid()) {
-            IUiListener listener = new BaseUiListener() {
+            IUiListener listener = new IUiListener() {
                 @Override
                 public void onComplete(JSONObject values) {
                     try {
@@ -63,6 +63,20 @@ public class TencentPassport {
                     }
                     updateUserInfo();
                 }
+
+                @Override
+                public void onError(UiError e) {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IUiListener: UiError");
+                    }
+                }
+
+                @Override
+                public void onCancel() {
+                    if (mLoginListener != null) {
+                        mLoginListener.LoginFailed("IUiListener: onCancel");
+                    }
+                }
             };
             mTencent.login(activity, "all", listener);
         } else {
@@ -74,23 +88,6 @@ public class TencentPassport {
 
     public void init(Context context) {
         mTencent = Tencent.createInstance(mAppid, context.getApplicationContext());
-    }
-
-    private abstract class BaseUiListener implements IUiListener {
-
-        @Override
-        public void onError(UiError e) {
-            if (mLoginListener != null) {
-                mLoginListener.LoginFailed("IUiListener: UiError");
-            }
-        }
-
-        @Override
-        public void onCancel() {
-            if (mLoginListener != null) {
-                mLoginListener.LoginFailed("IUiListener: onCancel");
-            }
-        }
     }
 
     private void updateUserInfo() {
@@ -208,9 +205,19 @@ public class TencentPassport {
             @Override
             public void run() {
                 if (mTencent != null) {
-                    mTencent.shareToQQ(activity, params, new BaseUiListener() {
+                    mTencent.shareToQQ(activity, params, new IUiListener() {
                         @Override
                         public void onComplete(JSONObject response) {
+                            // TODO Auto-generated method stub
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            // TODO Auto-generated method stub
+                        }
+
+                        @Override
+                        public void onError(UiError arg0) {
                             // TODO Auto-generated method stub
                         }
                     });

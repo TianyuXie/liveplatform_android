@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.service.live.model;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -7,9 +8,11 @@ import java.util.Locale;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class Program {
+public class Program implements Serializable {
 
-    private static final int SUBJECT_ID_ORIGIN = 1; // 原创
+    private static final long serialVersionUID = 1L;
+
+    private static final int SUBJECT_ID_ORIGIN = 1;
 
     long pid;
 
@@ -88,6 +91,11 @@ public class Program {
         return livestatus;
     }
 
+    public String getCover() {
+        String coverUrl = getCoverUrl();
+        return StringUtil.isNullOrEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
+    }
+
     public String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
     }
@@ -112,14 +120,19 @@ public class Program {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
     
-    static class Record {
+    static class Record implements Serializable{
+
+        private static final long serialVersionUID = 1L;
 
         int vv;
 
         int online;
     }
 
-    static class Token {
+    static class Token implements Serializable{
+
+        private static final long serialVersionUID = 1L;
+        
         String livetk;
     }
 
