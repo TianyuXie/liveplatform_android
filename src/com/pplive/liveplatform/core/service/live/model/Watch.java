@@ -34,6 +34,16 @@ public class Watch {
     public Channel[] getChannels() {
         return channels;
     }
+    
+    public Channel getChannel(final int ft) {
+        for (Channel channel : getChannels()) {
+            if (ft == channel.getFt()) {
+                return channel;
+            }
+        }
+        
+        return null;
+    }
 
     public java.util.List<String> getWatchStringList() {
         if (null == channels || 0 == channels.length) {
