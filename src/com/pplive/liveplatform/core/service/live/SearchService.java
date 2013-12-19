@@ -13,7 +13,7 @@ import com.pplive.liveplatform.util.URL.Protocol;
 
 public class SearchService extends RestService {
     
-    public enum Sort {
+    public enum SortKeyword {
         @SerializedName("starttime")
         START_TIME {
             @Override
@@ -31,7 +31,7 @@ public class SearchService extends RestService {
         };
     }
     
-    public enum Status {
+    public enum LiveStatusKeyword {
         
         @SerializedName("coming")
         COMING {
@@ -82,12 +82,12 @@ public class SearchService extends RestService {
 
     }
     
-    public FallList<Program> searchProgram(int subjectId, Sort sort, Status liveStatus, String nextToken, int fallCount) throws LiveHttpException {
+    public FallList<Program> searchProgram(int subjectId, SortKeyword sort, LiveStatusKeyword liveStatus, String nextToken, int fallCount) throws LiveHttpException {
 
         return searchProgram("" /* keywords */, subjectId, sort, liveStatus, nextToken, fallCount);
     }
     
-    public FallList<Program> searchProgram(String keywords, int subjectId, Sort sort, Status liveStatus, String nextToken, int fallCount) throws LiveHttpException {
+    public FallList<Program> searchProgram(String keywords, int subjectId, SortKeyword sort, LiveStatusKeyword liveStatus, String nextToken, int fallCount) throws LiveHttpException {
         
         return searchProgram(keywords, subjectId, sort.toString(), liveStatus.toString(), nextToken, fallCount);
     }

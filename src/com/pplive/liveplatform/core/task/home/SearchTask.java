@@ -55,8 +55,8 @@ public class SearchTask extends Task {
         }
         TaskContext context = params[0];
         int subjectId = (Integer) context.get(KEY_SUBJECT_ID);
-        SearchService.Sort sort = (SearchService.Sort) context.get(KEY_SORT);
-        SearchService.Status liveStatus = (SearchService.Status) context.get(KEY_LIVE_STATUS);
+        SearchService.SortKeyword sort = (SearchService.SortKeyword) context.get(KEY_SORT);
+        SearchService.LiveStatusKeyword liveStatus = (SearchService.LiveStatusKeyword) context.get(KEY_LIVE_STATUS);
         String nextTk = context.getString(KEY_NEXT_TK);
         int fallCount = (Integer) context.get(KEY_FALL_COUNT);
         String key = context.getString(KEY_KEYWORD);
