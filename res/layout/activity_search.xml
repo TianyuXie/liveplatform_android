@@ -3,38 +3,43 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.pplive.liveplatform.ui.home.ProgramContainer
-        android:id="@+id/layout_search_body"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_marginTop="50dp"
-        android:background="@color/home_fragment_body_bg" />
-
-    <LinearLayout
-        android:id="@+id/layout_search_nodata"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="150dp"
         android:background="@color/home_fragment_body_bg"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone" >
+        android:orientation="vertical" >
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/text_search_result"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/home_nodata_text"
+            android:gravity="center_horizontal"
+            android:padding="10dp"
+            android:text="@string/search_nodata_text"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            android:visibility="gone" />
 
-        <Button
-            android:id="@+id/btn_search_retry"
-            style="@style/home_retry_button"
-            android:layout_marginTop="20dp"
-            android:text="@string/home_retry" />
+        <com.pplive.liveplatform.ui.home.ProgramContainer
+            android:id="@+id/layout_search_body"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/layout_search_nodata"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="200dp"
+        android:background="@color/home_fragment_body_bg"
+        android:gravity="center_horizontal"
+        android:text="@string/search_nodata_text"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
 
     <com.pplive.liveplatform.ui.widget.SearchBar
         android:id="@+id/searchbar_search"

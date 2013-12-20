@@ -48,6 +48,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
     private boolean mRecorded;
     private boolean mRefreshable;
+    private boolean mPullable;
     private boolean mPulling;
     private boolean mScrollDown;
     private boolean mAniming;
@@ -67,6 +68,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         super(context, attrs);
         mGestureDetector = new GestureDetector(getContext(), onGestureListener);
         mStatus = STATUS_DONE;
+        mPullable = true;
         setOnScrollListener(this);
         LayoutInflater inflater = LayoutInflater.from(context);
         mPullView = (LinearLayout) inflater.inflate(R.layout.layout_home_pull_header, null);
@@ -338,13 +340,17 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                     if (mUpdateListener != null) {
                         mUpdateListener.onAppend();
                     }
-                } else if (distanceY < -10.0f && mReachTop) {
+                } else if (distanceY < -10.0f && mReachTop && mPullable) {
                     mPulling = true;
                 }
             }
             return super.onScroll(e1, e2, distanceX, distanceY);
         }
     };
+
+    public void setPullable(boolean enabled) {
+        this.mPullable = enabled;
+    }
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {

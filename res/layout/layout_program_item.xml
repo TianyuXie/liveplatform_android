@@ -98,7 +98,7 @@
             android:background="@drawable/program_views_bg"
             android:gravity="center"
             android:singleLine="true"
-            android:text="@string/test_program_viewcount"
+            android:text="@string/default_program_viewcount"
             android:textColor="@color/program_views_text" />
     </RelativeLayout>
 

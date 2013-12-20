@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="search_hint_text">搜点什么好呢</string>
+    <string name="search_nodata_text">暂时没有数据</string>
+
+    <color name="searchbar_body_bg">#DD131313</color>
+    <color name="searchbar_list_text_select">#FF5AC7FF</color>
+    <color name="searchbar_list_normal">#FF222222</color>
+    <color name="searchbar_list_select">#FF001E33</color>
+    <color name="searchbar_list_divider">#FF080808</color>
+    <color name="search_hint">#FF555555</color>
+
+</resources>

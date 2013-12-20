@@ -2,11 +2,13 @@ package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
@@ -22,6 +24,7 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
+import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 
 public class SearchActivity extends Activity {
@@ -45,6 +48,8 @@ public class SearchActivity extends Activity {
 
     private View mRetryLayout;
 
+    private TextView mResultText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,23 +60,29 @@ public class SearchActivity extends Activity {
         mSearchBar.setOnClickListener(onSearchBarClickListener);
 
         mContainer = (ProgramContainer) findViewById(R.id.layout_search_body);
-        //        mContainer.setOnUpdateListener(onUpdateListener);
+        mContainer.setOnUpdateListener(onUpdateListener);
         mContainer.setOnStatusChangeListener(onStatusChangeListener);
+        mContainer.setPullable(false);
         mRetryLayout = findViewById(R.id.layout_search_nodata);
+        mResultText = (TextView) findViewById(R.id.text_search_result);
 
         mLiveStatus = SearchService.LiveStatusKeyword.LIVING;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mSearchBar.forcusEditText();
     }
 
     private View.OnClickListener onSearchBarClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "onClick");
             switch (v.getId()) {
             case R.id.btn_searchbar_close:
                 finish();
                 break;
             case R.id.btn_searchbar_search:
-                Log.d(TAG, "btn_searchbar_search");
                 mSearchBar.hideRecordList();
                 String keyword = mSearchBar.getText().toString();
                 startSearchTask(keyword);
@@ -87,6 +98,10 @@ public class SearchActivity extends Activity {
             mNextToken = "";
             startTask(keyword, REFRESH);
         }
+    }
+    
+    public void startAppendTask() {
+        startTask(mKeyword, APPEND);
     }
 
     private void startTask(String keyword, int type) {
@@ -121,6 +136,8 @@ public class SearchActivity extends Activity {
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            mResultText.setVisibility(View.VISIBLE);
+            mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>", mKeyword)));
             FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
             mNextToken = fallList.nextToken();
             int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
@@ -182,5 +199,22 @@ public class SearchActivity extends Activity {
             }
         }
     };
+    
+    private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
+        @Override
+        public void onRefresh() {
+        }
+
+        @Override
+        public void onAppend() {
+            Log.d(TAG, "onAppend");
+            startAppendTask();
+        }
+
+        @Override
+        public void onScrollDown(boolean isDown) {
+        }
+    };
+
 
 }

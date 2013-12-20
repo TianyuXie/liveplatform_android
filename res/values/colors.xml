@@ -27,14 +27,4 @@
     <color name="program_tag_bg">#BB191919</color>
     <color name="input_text_bg">#FF19A0FF</color>
 
-    <!-- Search -->
-    <color name="searchbar_body_bg">#DD131313</color>
-    <color name="searchbar_list_text_select">#FF5AC7FF</color>
-    <color name="searchbar_list_normal">#FF222222</color>
-    <color name="searchbar_list_select">#FF001E33</color>
-    <color name="searchbar_list_divider">#FF080808</color>
-
-    <color name="share_dialog_bg">#FFFFFFFF</color>
-
-
 </resources>

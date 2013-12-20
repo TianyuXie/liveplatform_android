@@ -21,7 +21,7 @@ import android.widget.SimpleAdapter;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.db.CacheManager;
 
-public class SearchBar extends LinearLayout{
+public class SearchBar extends LinearLayout {
     final static String TAG = "_SearchBar";
 
     private final static String LIST_ITEM_KEY = "ItemTitle";
@@ -76,6 +76,10 @@ public class SearchBar extends LinearLayout{
             return true;
         }
     };
+    
+    public void forcusEditText(){
+        mSearchEditText.requestFocus();
+    }
 
     public String getText() {
         return mSearchEditText.getEditableText().toString();
@@ -103,8 +107,8 @@ public class SearchBar extends LinearLayout{
             }
         }
     };
-    
-    public void hideRecordList(){
+
+    public void hideRecordList() {
         mRecordListView.setVisibility(GONE);
         mSearchEditText.clearFocus();
     }
@@ -141,40 +145,4 @@ public class SearchBar extends LinearLayout{
         super.clearFocus();
         mSearchEditText.clearFocus();
     }
-
-//    @Override
-//    public void hide() {
-//        hide(true);
-//    }
-//
-//    @Override
-//    public void hide(boolean gone) {
-//        if (mShowing) {
-//            mRoot.setVisibility(gone ? GONE : INVISIBLE);
-//            //            mSearchEditText.clearFocus();
-//            mRecordListView.setVisibility(INVISIBLE);
-//            mShowing = false;
-//        }
-//    }
-//
-//    @Override
-//    public void show() {
-//        if (!mShowing) {
-//            mRoot.setVisibility(VISIBLE);
-//            mSearchEditText.requestFocus();
-//            mShowing = true;
-//        }
-//    }
-
-//    @Override
-//    @Deprecated
-//    public void setVisibility(int visibility) {
-//        if (visibility == VISIBLE) {
-//            mShowing = true;
-//        } else {
-//            mShowing = false;
-//        }
-//        super.setVisibility(visibility);
-//    }
-
 }

@@ -41,7 +41,9 @@
                 android:layout_marginLeft="10dp"
                 android:background="@color/input_text_bg"
                 android:imeOptions="actionSearch"
+                android:hint="@string/search_hint_text"
                 android:inputType="text"
+                android:textColorHint="@color/search_hint"
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="15sp" >
