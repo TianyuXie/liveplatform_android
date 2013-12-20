@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/searchbar_body_bg"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -63,6 +62,6 @@
         android:divider="@color/searchbar_list_divider"
         android:dividerHeight="1dp"
         android:fadingEdge="none"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
 </LinearLayout>

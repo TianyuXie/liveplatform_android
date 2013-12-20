@@ -3,12 +3,6 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.pplive.liveplatform.ui.widget.SearchBar
-        android:id="@+id/searchbar_search"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true" />
-
     <com.pplive.liveplatform.ui.home.ProgramContainer
         android:id="@+id/layout_search_body"
         android:layout_width="fill_parent"
@@ -22,7 +16,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="150dp"
         android:background="@color/home_fragment_body_bg"
         android:gravity="center_horizontal"
         android:orientation="vertical"
@@ -41,5 +35,11 @@
             android:layout_marginTop="20dp"
             android:text="@string/home_retry" />
     </LinearLayout>
+
+    <com.pplive.liveplatform.ui.widget.SearchBar
+        android:id="@+id/searchbar_search"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

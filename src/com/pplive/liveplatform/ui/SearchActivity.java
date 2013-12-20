@@ -57,7 +57,7 @@ public class SearchActivity extends Activity {
         mContainer = (ProgramContainer) findViewById(R.id.layout_search_body);
         //        mContainer.setOnUpdateListener(onUpdateListener);
         mContainer.setOnStatusChangeListener(onStatusChangeListener);
-        mRetryLayout = findViewById(R.id.layout_home_nodata);
+        mRetryLayout = findViewById(R.id.layout_search_nodata);
 
         mLiveStatus = SearchService.LiveStatusKeyword.LIVING;
     }
@@ -94,6 +94,7 @@ public class SearchActivity extends Activity {
         task.addTaskListener(onTaskListener);
         TaskContext taskContext = new TaskContext();
         taskContext.set(SearchTask.KEY_TYPE, type);
+        taskContext.set(SearchTask.KEY_SUBJECT_ID, -1);
         taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
         taskContext.set(SearchTask.KEY_KEYWORD, keyword);
         taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);

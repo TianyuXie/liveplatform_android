@@ -105,7 +105,8 @@ public class SearchBar extends LinearLayout{
     };
     
     public void hideRecordList(){
-        mRecordListView.setVisibility(INVISIBLE);
+        mRecordListView.setVisibility(GONE);
+        mSearchEditText.clearFocus();
     }
 
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {

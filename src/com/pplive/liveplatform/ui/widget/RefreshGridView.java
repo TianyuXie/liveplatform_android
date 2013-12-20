@@ -92,7 +92,9 @@ public class RefreshGridView extends GridView implements OnScrollListener {
             Log.d(TAG, "SCROLL_STATE_IDLE");
             if (mScrollDown) {
                 mScrollDown = false;
-                mUpdateListener.onScrollDown(false);
+                if (mUpdateListener != null) {
+                    mUpdateListener.onScrollDown(false);
+                }
             }
             break;
         default:
@@ -316,12 +318,16 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                 if (distanceY > 0) {
                     if (!mScrollDown) {
                         mScrollDown = true;
-                        mUpdateListener.onScrollDown(true);
+                        if (mUpdateListener != null) {
+                            mUpdateListener.onScrollDown(true);
+                        }
                     }
                 } else if (distanceY < 0) {
                     if (mScrollDown) {
                         mScrollDown = false;
-                        mUpdateListener.onScrollDown(false);
+                        if (mUpdateListener != null) {
+                            mUpdateListener.onScrollDown(false);
+                        }
                     }
                 }
             }
