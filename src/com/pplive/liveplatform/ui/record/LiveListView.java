@@ -172,7 +172,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             @Override
             protected List<Program> doInBackground(Void... params) {
                 Log.d(TAG, "doInBackground");
-                String username = UserManager.getInstance(getContext()).getActiveUserPlain();
+                String username = UserManager.getInstance(getContext()).getUsernamePlain();
                 
                 try {
                     List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.NOT_START);

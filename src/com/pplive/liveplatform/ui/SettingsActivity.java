@@ -1,7 +1,6 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -14,6 +13,10 @@ import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 
 public class SettingsActivity extends Activity {
+    public static final int FROM_USERPAGE = 5001;
+
+    public static final int LOGOUT = 5001;
+
     private AppPrefs mUserPrefs;
 
     private TextView mNicknameTextView;
@@ -47,7 +50,7 @@ public class SettingsActivity extends Activity {
         mUserPrefs = SettingsProvider.getInstance(this).getAppPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
-        mUserTextView.setText(UserManager.getInstance(this).getActiveUserPlain());
+        mUserTextView.setText(UserManager.getInstance(this).getUsernamePlain());
         mNicknameTextView.setText(UserManager.getInstance(this).getNickname());
         if (UserManager.getInstance(this).isThirdPartyLogin()) {
             mUserView.setVisibility(View.GONE);
@@ -75,8 +78,7 @@ public class SettingsActivity extends Activity {
         @Override
         public void onClick(View v) {
             UserManager.getInstance(getApplicationContext()).logout();
-            Intent intent = new Intent(SettingsActivity.this, HomeActivity.class);
-            startActivity(intent);
+            setResult(LOGOUT);
             finish();
         }
     };

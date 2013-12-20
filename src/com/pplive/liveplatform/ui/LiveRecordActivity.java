@@ -103,6 +103,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private LoadingButton mStatusButton;
     private View mStatusButtonWrapper;
     private View mLiveButtonWrapper;
+    
+    private boolean mOpened;
+    private boolean mAttached;
 
     private AnimationListener openDoorListener = new AnimationListener() {
 
@@ -206,12 +209,25 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
     }
+    
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mAttached = true;
+    }
+    
+    @Override
+    public void onDetachedFromWindow() {
+        mAttached = false;
+        super.onDetachedFromWindow();
+    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
+        if (hasFocus && mAttached && !mOpened) {
             Log.d(TAG, "open");
+            mOpened = true;
             mStatusButton.startLoading();
             mInnerHandler.sendEmptyMessageDelayed(WHAT_OPEN_DOOR, 2000);
         }
@@ -581,7 +597,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         @Override
         protected String doInBackground(Program... params) {
-            String username = UserManager.getInstance(getApplicationContext()).getActiveUserPlain();
+            String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
             String usertoken = UserManager.getInstance(getApplicationContext()).getToken();
 
             if (TextUtils.isEmpty(username) || TextUtils.isEmpty(usertoken)) {

@@ -66,19 +66,23 @@ public class UserpageProgramAdapter extends BaseAdapter {
     private void updateView(ViewHolder holder, Program data) {
         holder.statusTextView.setText(data.getLiveStatus().toFriendlyString(context));
         holder.titleTextView.setText(data.getTitle());
-        holder.timeTextView.setText(data.getStartTimeLong());
         switch (data.getLiveStatus()) {
         case LIVING:
-            holder.viewcountTextView.setVisibility(View.VISIBLE);
-            holder.timeTextView.setVisibility(View.INVISIBLE);
-            holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
+            holder.timeTextView.setText("");
+            holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+            holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_watch, 0, 0, 0);
             break;
         case NOT_START:
         case PREVIEW:
         case INIT:
-            holder.viewcountTextView.setVisibility(View.INVISIBLE);
-            holder.timeTextView.setVisibility(View.VISIBLE);
+            holder.timeTextView.setText(data.getStartTimeLong());
+            holder.viewcountTextView.setText("");
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            break;
+        case STOPPED:
+            holder.timeTextView.setText(data.getStartTimeShort());
+            holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+            holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
             break;
         default:
             break;

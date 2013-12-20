@@ -132,7 +132,7 @@ public class UserManager {
 
     public String getNickname() {
         if (isLogin()) {
-            return StringUtil.isNullOrEmpty(mNickname) ? getActiveUserPlain() : mNickname;
+            return StringUtil.isNullOrEmpty(mNickname) ? getUsernamePlain() : mNickname;
         } else {
             return "";
         }
@@ -146,7 +146,7 @@ public class UserManager {
         }
     }
 
-    public String getActiveUserPlain() {
+    public String getUsernamePlain() {
         if (isLogin()) {
             return mUsernamePlain;
         } else {
