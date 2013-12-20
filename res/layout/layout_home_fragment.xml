@@ -61,11 +61,4 @@
             android:text="@string/home_retry" />
     </LinearLayout>
 
-    <com.pplive.liveplatform.ui.widget.SearchBar
-        android:id="@+id/searchbar_home"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:visibility="gone" />
-
 </com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout>

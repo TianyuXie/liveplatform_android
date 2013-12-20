@@ -20,9 +20,8 @@ import android.widget.SimpleAdapter;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.db.CacheManager;
-import com.pplive.liveplatform.ui.widget.attr.IHidable;
 
-public class SearchBar extends LinearLayout implements IHidable {
+public class SearchBar extends LinearLayout{
     final static String TAG = "_SearchBar";
 
     private final static String LIST_ITEM_KEY = "ItemTitle";
@@ -36,10 +35,6 @@ public class SearchBar extends LinearLayout implements IHidable {
     private CacheManager mCacheManager;
 
     private EnterSendEditText mSearchEditText;
-
-    private ViewGroup mRoot;
-
-    private boolean mShowing;
 
     private List<String> mRecords;
 
@@ -58,20 +53,19 @@ public class SearchBar extends LinearLayout implements IHidable {
         mRecords = new ArrayList<String>();
 
         LayoutInflater inflater = LayoutInflater.from(context);
-        mRoot = (ViewGroup) inflater.inflate(R.layout.widget_searchbar, this);
-        mCloseButton = (Button) mRoot.findViewById(R.id.btn_searchbar_close);
-        mSearchButton = (Button) mRoot.findViewById(R.id.btn_searchbar_search);
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.widget_searchbar, this);
+        mCloseButton = (Button) root.findViewById(R.id.btn_searchbar_close);
+        mSearchButton = (Button) root.findViewById(R.id.btn_searchbar_search);
 
-        mSearchEditText = (EnterSendEditText) mRoot.findViewById(R.id.edit_searchbar);
+        mSearchEditText = (EnterSendEditText) root.findViewById(R.id.edit_searchbar);
         mSearchEditText.setOnEnterListener(onEnterListener);
         mSearchEditText.setOnFocusChangeListener(onFocusChangeListener);
 
-        mRecordListView = (ListView) mRoot.findViewById(R.id.list_searchbar_records);
+        mRecordListView = (ListView) root.findViewById(R.id.list_searchbar_records);
         mRecordItemAdapter = new SimpleAdapter(context, mRecordItems, R.layout.layout_searchbar_item, new String[] { LIST_ITEM_KEY },
                 new int[] { R.id.text_searchbar_item });
         mRecordListView.setAdapter(mRecordItemAdapter);
         mRecordListView.setOnItemClickListener(onItemClickListener);
-        mShowing = (getVisibility() == VISIBLE);
     }
 
     private EnterSendEditText.OnEnterListener onEnterListener = new EnterSendEditText.OnEnterListener() {
@@ -109,6 +103,10 @@ public class SearchBar extends LinearLayout implements IHidable {
             }
         }
     };
+    
+    public void hideRecordList(){
+        mRecordListView.setVisibility(INVISIBLE);
+    }
 
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
@@ -143,39 +141,39 @@ public class SearchBar extends LinearLayout implements IHidable {
         mSearchEditText.clearFocus();
     }
 
-    @Override
-    public void hide() {
-        hide(true);
-    }
+//    @Override
+//    public void hide() {
+//        hide(true);
+//    }
+//
+//    @Override
+//    public void hide(boolean gone) {
+//        if (mShowing) {
+//            mRoot.setVisibility(gone ? GONE : INVISIBLE);
+//            //            mSearchEditText.clearFocus();
+//            mRecordListView.setVisibility(INVISIBLE);
+//            mShowing = false;
+//        }
+//    }
+//
+//    @Override
+//    public void show() {
+//        if (!mShowing) {
+//            mRoot.setVisibility(VISIBLE);
+//            mSearchEditText.requestFocus();
+//            mShowing = true;
+//        }
+//    }
 
-    @Override
-    public void hide(boolean gone) {
-        if (mShowing) {
-            mRoot.setVisibility(gone ? GONE : INVISIBLE);
-            //            mSearchEditText.clearFocus();
-            mRecordListView.setVisibility(INVISIBLE);
-            mShowing = false;
-        }
-    }
-
-    @Override
-    public void show() {
-        if (!mShowing) {
-            mRoot.setVisibility(VISIBLE);
-            mSearchEditText.requestFocus();
-            mShowing = true;
-        }
-    }
-
-    @Override
-    @Deprecated
-    public void setVisibility(int visibility) {
-        if (visibility == VISIBLE) {
-            mShowing = true;
-        } else {
-            mShowing = false;
-        }
-        super.setVisibility(visibility);
-    }
+//    @Override
+//    @Deprecated
+//    public void setVisibility(int visibility) {
+//        if (visibility == VISIBLE) {
+//            mShowing = true;
+//        } else {
+//            mShowing = false;
+//        }
+//        super.setVisibility(visibility);
+//    }
 
 }
