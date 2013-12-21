@@ -3,7 +3,8 @@
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:gravity="center_vertical"
-    android:paddingRight="10dp" >
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
 
     <com.pplive.liveplatform.ui.widget.AsyncImageView
         android:id="@+id/image_prelive"
@@ -26,9 +27,8 @@
         android:paddingTop="5dp"
         android:textColor="@color/dim_white" />
 
-    <ImageButton
-        android:id="@+id/btn_delete"
-        style="@style/Widget.ToggleButton.Transparent"
+    <View
+        android:id="@+id/view_btn_delete_masking"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignBottom="@+id/image_prelive"
@@ -36,6 +36,15 @@
         android:layout_alignRight="@+id/image_prelive"
         android:layout_alignTop="@+id/image_prelive"
         android:background="@color/black_transparent"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/btn_delete"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_prelive_delete"
+        android:layout_centerHorizontal="true"
         android:contentDescription="@null"
         android:src="@drawable/live_record_btn_delete"
         android:visibility="invisible" />
