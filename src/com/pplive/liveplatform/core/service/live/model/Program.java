@@ -37,7 +37,7 @@ public class Program implements Serializable {
     String coname = Constants.DEFAULT_CONAME_PPTV;
 
     Record record;
-    
+
     String playencode;
 
     Token tk;
@@ -71,6 +71,10 @@ public class Program implements Serializable {
 
     public String getOwnerNickname() {
         return user != null ? user.getNickname() : owner;
+    }
+
+    public String getOwnerIcon() {
+        return user != null ? user.getIcon() : "";
     }
 
     public long getStartTime() {
@@ -107,20 +111,20 @@ public class Program implements Serializable {
     public int getVV() {
         return null == record ? 0 : record.vv;
     }
-    
+
     public int getOnline() {
         return null == record ? 0 : record.online;
     }
-    
+
     public String getShareLinkUrl() {
         return StringUtil.isNullOrEmpty(playencode) ? "" : Constants.BASE_SHARE_LINK_URL + playencode;
     }
-    
+
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
-    
-    static class Record implements Serializable{
+
+    static class Record implements Serializable {
 
         private static final long serialVersionUID = 1L;
 
@@ -129,10 +133,10 @@ public class Program implements Serializable {
         int online;
     }
 
-    static class Token implements Serializable{
+    static class Token implements Serializable {
 
         private static final long serialVersionUID = 1L;
-        
+
         String livetk;
     }
 
