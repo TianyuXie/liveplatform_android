@@ -122,9 +122,23 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         setMode(Mode.INITIAL);
 
-        EventBus.getDefault().register(this);
-
         return layout;
+    }
+    
+    @Override
+    public void onStart() {
+        super.onStart();
+        
+        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(mLiveListView);
+    }
+    
+    @Override
+    public void onStop() {
+        super.onStop();
+        
+        EventBus.getDefault().unregister(this);
+        EventBus.getDefault().unregister(mLiveListView);
     }
 
     @Override
