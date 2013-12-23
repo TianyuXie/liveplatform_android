@@ -2,11 +2,11 @@ package com.pplive.liveplatform.ui.home;
 
 import java.util.Locale;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -29,8 +29,8 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
+import com.pplive.liveplatform.ui.SearchActivity;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
-import com.pplive.liveplatform.ui.widget.SearchBar;
 import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
@@ -57,11 +57,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private ProgramContainer mContainer;
 
-    private SearchBar mSearchBar;
-
     private TextView mCatalogTextView;
 
-    private View mRefreshLayout;
+    private View mRetryLayout;
 
     private Callback mCallbackListener;
 
@@ -119,10 +117,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mContainer.setOnStatusChangeListener(onStatusChangeListener);
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(onTitleBarClickListener);
-        mSearchBar = (SearchBar) layout.findViewById(R.id.searchbar_home);
-        mSearchBar.setOnClickListener(onSearchBarClickListener);
         mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
-        mRefreshLayout = layout.findViewById(R.id.layout_home_nodata);
+        mRetryLayout = layout.findViewById(R.id.layout_home_nodata);
         Button retryButton = (Button) layout.findViewById(R.id.btn_home_retry);
         retryButton.setOnClickListener(onRetryClickListener);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
@@ -153,7 +149,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         updateCatalogText();
     }
 
-    public void switchLiveStatus(SearchService.LiveStatusKeyword id) {
+    private void switchLiveStatus(SearchService.LiveStatusKeyword id) {
         mLiveStatus = id;
         startRefreshTask();
     }
@@ -177,14 +173,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             break;
         default:
             break;
-        }
-    }
-
-    public void startSearchTask(String keyword) {
-        if (!mBusy) {
-            Log.d(TAG, "SearchTask");
-            mNextToken = "";
-            startTask(keyword, REFRESH);
         }
     }
 
@@ -266,10 +254,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
                             mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
-                            mRefreshLayout.setVisibility(View.GONE);
+                            mRetryLayout.setVisibility(View.GONE);
                         } else {
                             mCallbackListener.doLoadResult(getString(R.string.home_nodata_button));
-                            mRefreshLayout.setVisibility(View.VISIBLE);
+                            mRetryLayout.setVisibility(View.VISIBLE);
                         }
                     }
                     break;
@@ -334,7 +322,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSlided = true;
         mTitleBar.setMenuButtonHighlight(true);
         mContainer.setItemClickable(false);
-        mSearchBar.setFocusable(false);
     }
 
     @Override
@@ -342,7 +329,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mSlided = false;
         mTitleBar.setMenuButtonHighlight(false);
         mContainer.setItemClickable(true);
-        mSearchBar.setFocusable(true);
     }
 
     public interface Callback {
@@ -373,39 +359,16 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 }
                 break;
             case R.id.btn_titlebar_search:
-                mSearchBar.show();
+                if (getActivity() != null) {
+                    Intent intent = new Intent(getActivity(), SearchActivity.class);
+                    startActivity(intent);
+                }
                 break;
             default:
                 break;
             }
         }
     };
-
-    private View.OnClickListener onSearchBarClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Log.d(TAG, "onClick");
-            switch (v.getId()) {
-            case R.id.btn_searchbar_close:
-                Log.d(TAG, "btn_searchbar_close");
-                mSearchBar.hide();
-                break;
-            case R.id.btn_searchbar_search:
-                Log.d(TAG, "btn_searchbar_search");
-                mSearchBar.hide();
-                String keyword = mSearchBar.getText().toString();
-                if (!TextUtils.isEmpty(keyword)) {
-                    startSearchTask(keyword);
-                    mSearchBar.clearText();
-                }
-                break;
-            }
-        }
-    };
-
-    public void hideSearchBar() {
-        mSearchBar.hide();
-    }
 
     private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
 

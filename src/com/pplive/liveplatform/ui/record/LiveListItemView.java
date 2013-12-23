@@ -23,7 +23,7 @@ public class LiveListItemView extends RelativeLayout {
 
     private static final DisplayImageOptions DEFAULT_PRELIVE_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.live_record_default_prelive_image).showImageForEmptyUri(R.drawable.live_record_default_prelive_image)
-            .showStubImage(R.drawable.live_record_default_prelive_image).build();
+            .showStubImage(R.drawable.live_record_default_prelive_image).cacheInMemory(true).build();
 
     private AsyncImageView mImagePrelive;
     private ImageButton mBtnPreliveDelete;

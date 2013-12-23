@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -30,19 +31,20 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.widget.CircularImageView;
+import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";
 
     private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .cacheOnDisc(true).build();
+            .cacheInMemory(true).build();
 
     private List<Program> mPrograms;
-    private ListView mListView;
     private CircularImageView mUserIcon;
     private TextView mNicknameText;
     private UserpageProgramAdapter mAdapter;
+    private RefreshDialog refreshDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,19 +57,29 @@ public class UserpageActivity extends Activity {
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
         findViewById(R.id.btn_userpage_settings).setOnClickListener(onSettingsBtnClickListener);
-        mListView = (ListView) findViewById(R.id.list_userpage_program);
-        mListView.setAdapter(mAdapter);
+        findViewById(R.id.btn_userpage_record).setOnClickListener(onRecordBtnClickListener);
+
+        ListView listView = (ListView) findViewById(R.id.list_userpage_program);
+        listView.setAdapter(mAdapter);
+        listView.setOnItemClickListener(onItemClickListener);
         mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
+        refreshDialog = new RefreshDialog(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        Log.d(TAG, "onStart");
+        refreshData();
+    }
+
+    private void refreshData() {
+        refreshDialog.show();
         ProgramTask task = new ProgramTask();
         task.addTaskListener(onTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USERNAME, UserManager.getInstance(this).getActiveUserPlain());
+        taskContext.set(ProgramTask.KEY_USERNAME, UserManager.getInstance(this).getUsernamePlain());
         task.execute(taskContext);
         updateUsername();
     }
@@ -82,7 +94,6 @@ public class UserpageActivity extends Activity {
         if (UserManager.getInstance(this).isLogin()) {
             mNicknameText.setText(UserManager.getInstance(this).getNickname());
             String iconUrl = UserManager.getInstance(this).getIcon();
-            Log.d(TAG, iconUrl);
             mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
@@ -96,6 +107,33 @@ public class UserpageActivity extends Activity {
         }
     }
 
+    private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Program program = mPrograms.get(position);
+            if (program != null) {
+                Intent intent = new Intent();
+                switch (program.getLiveStatus()) {
+                case LIVING:
+                case STOPPED:
+                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                    intent.setClass(UserpageActivity.this, LivePlayerActivity.class);
+                    startActivity(intent);
+                    break;
+                case NOT_START:
+                case PREVIEW:
+                case INIT:
+                    intent.setClass(UserpageActivity.this, LiveRecordActivity.class);
+                    startActivity(intent);
+                    break;
+                default:
+                    break;
+                }
+            }
+        }
+    };
+
     private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
 
         @Override
@@ -108,7 +146,22 @@ public class UserpageActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(UserpageActivity.this, SettingsActivity.class);
+            startActivityForResult(intent, SettingsActivity.FROM_USERPAGE);
+        }
+    };
+
+    private View.OnClickListener onRecordBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(UserpageActivity.this, LiveRecordActivity.class);
             startActivity(intent);
+        }
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SettingsActivity.FROM_USERPAGE && resultCode == SettingsActivity.LOGOUT) {
+            finish();
         }
     };
 
@@ -117,33 +170,34 @@ public class UserpageActivity extends Activity {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            refreshDialog.dismiss();
             mPrograms.clear();
             mPrograms.addAll((List<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
             mAdapter.notifyDataSetChanged();
+            if (mPrograms.isEmpty()) {
+                findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
+            } else {
+                findViewById(R.id.layout_userpage_nodata).setVisibility(View.GONE);
+            }
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
-
+            refreshDialog.dismiss();
         }
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            // TODO Auto-generated method stub
-
+            refreshDialog.dismiss();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
-
+            refreshDialog.dismiss();
         }
     };
 

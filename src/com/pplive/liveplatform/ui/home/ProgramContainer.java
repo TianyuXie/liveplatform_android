@@ -93,5 +93,9 @@ public class ProgramContainer extends RelativeLayout {
     public void setOnStatusChangeListener(RadioGroup.OnCheckedChangeListener l) {
         mRadioGroup.setOnCheckedChangeListener(l);
     }
+    
+    public void setPullable(boolean enabled){
+        mGridView.setPullable(enabled);
+    }
 
 }

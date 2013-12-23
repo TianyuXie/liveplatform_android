@@ -31,7 +31,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
 
     private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .cacheOnDisc(true).build();
+            .cacheInMemory(true).build();
 
     private View mRoot;
 

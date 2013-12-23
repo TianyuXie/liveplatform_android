@@ -204,7 +204,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                     Log.d(TAG, "title: " + (null == title ? "null" : title) + "; starttime: " + starttime);
                     
                     try {
-                        String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
+                        String username = UserManager.getInstance(getActivity()).getUsernamePlain();
                         String token = UserManager.getInstance(getActivity()).getToken();
                         Program program = new Program(username, title, starttime);
                         
@@ -305,7 +305,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private void init() {
 
         if (null != mEditLiveTitle) {
-            String username = UserManager.getInstance(getActivity()).getActiveUserPlain();
+            String username = UserManager.getInstance(getActivity()).getUsernamePlain();
             String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
 
             mEditLiveTitle.setText(live_title);

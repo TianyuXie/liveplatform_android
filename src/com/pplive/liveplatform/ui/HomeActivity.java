@@ -273,7 +273,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             Log.d(TAG, "onCheckedChanged");
             doSlideBack();
-            mHomeFragment.hideSearchBar();
             switch (checkedId) {
             case R.id.btn_sidebar_original:
                 Log.d(TAG, "btn_sidebar_original");

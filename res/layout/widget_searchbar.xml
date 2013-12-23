@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/searchbar_body_bg"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -42,7 +41,9 @@
                 android:layout_marginLeft="10dp"
                 android:background="@color/input_text_bg"
                 android:imeOptions="actionSearch"
+                android:hint="@string/search_hint_text"
                 android:inputType="text"
+                android:textColorHint="@color/search_hint"
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="15sp" >
@@ -63,6 +64,6 @@
         android:divider="@color/searchbar_list_divider"
         android:dividerHeight="1dp"
         android:fadingEdge="none"
-        android:visibility="invisible" />
+        android:visibility="gone" />
 
 </LinearLayout>
