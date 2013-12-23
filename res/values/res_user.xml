@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="userpage_title">我的主页</string>
+    <string name="userpage_nodata">您还没有创建过节目</string>
+    <string name="userpage_record">创建直播</string>
+    <string name="userpage_default_vv">0</string>
+
+    <color name="userpage_bg">#FF151515</color>
+    <color name="userpage_program_title_bg">#FF919191</color>
+
+</resources>

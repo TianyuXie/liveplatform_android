@@ -14,8 +14,8 @@
             android:id="@+id/layout_userpage_program"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="1.5dp"
-            android:layout_marginLeft="1.5dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="2dp"
             android:background="@color/userpage_bg"
             android:paddingBottom="20dp"
             android:paddingLeft="30dp"
@@ -65,7 +65,7 @@
                     android:layout_centerVertical="true"
                     android:drawablePadding="3dp"
                     android:gravity="center_vertical"
-                    android:text="@string/test_userpage_vv"
+                    android:text="@string/userpage_default_vv"
                     android:textColor="@color/userpage_program_title_bg"
                     android:textSize="16sp" />
 

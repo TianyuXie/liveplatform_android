@@ -167,7 +167,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setTitle(mProgram.getTitle());
         long pid = mProgram.getId();
         if (mUrl == null) {
-            String username = UserManager.getInstance(this).getActiveUserPlain();
+            String username = UserManager.getInstance(this).getUsernamePlain();
             String token = UserManager.getInstance(this).getToken();
             if (pid > 0) {
                 showLoading();
