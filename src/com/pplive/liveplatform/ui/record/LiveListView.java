@@ -63,7 +63,45 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
         
         EventBus.getDefault().post(new EventProgramSelected(program));
     }
+    
+    public void onEvent(EventProgramDeleted event) {
+        final Program program = event.getObject();
 
+        for (int i = 0, len = mLiveListAdapter.getCount(); i < len; ++i) {
+            Program p = mLiveListAdapter.getItem(i);
+            if (p.getId() == program.getId()) {
+                mLiveListAdapter.removeItem(i);
+                break;
+            }
+        }
+
+        AsyncTask<Void, Void, Boolean> delTask = new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                String token = UserManager.getInstance(getContext()).getToken();
+                try {
+                    
+                    return ProgramService.getInstance().deleteProgramById(token, program.getId());
+                } catch (LiveHttpException e) {
+                    
+                }
+                
+                return false;
+            }
+        };
+
+        delTask.execute();
+    }
+
+    public void onEvent(EventProgramAdded event) {
+        final Program program = event.getObject();
+
+        if (null != program) {
+            mLiveListAdapter.addItem(0 /* position */ , program);
+        }
+    }
+    
     class LiveListAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
@@ -74,8 +112,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
         public LiveListAdapter(Context context) {
             mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-
-            EventBus.getDefault().register(this);
         }
 
         public void refresh() {
@@ -84,6 +120,20 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 Log.d(TAG, "Refresh 2");
                 mGetProgramsTask = new GetProgramsTask();
                 mGetProgramsTask.execute();
+            }
+        }
+        
+        void addItem(int position, Program program) {
+            if (null != mPreLiveList) {
+                mPreLiveList.add(position, program);
+                notifyDataSetChanged();
+            }
+        }
+        
+        void removeItem(int position) {
+            if (null != mPreLiveList) {
+                mPreLiveList.remove(position);
+                notifyDataSetChanged();
             }
         }
 
@@ -116,46 +166,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             }
 
             return convertView;
-        }
-
-        public void onEvent(EventProgramDeleted event) {
-            final Program program = event.getObject();
-
-            for (int i = 0, len = mPreLiveList.size(); i < len; ++i) {
-                Program p = mPreLiveList.get(i);
-                if (p.getId() == program.getId()) {
-                    mPreLiveList.remove(i);
-                    notifyDataSetChanged();
-                    break;
-                }
-            }
-
-            AsyncTask<Void, Void, Boolean> delTask = new AsyncTask<Void, Void, Boolean>() {
-
-                @Override
-                protected Boolean doInBackground(Void... params) {
-                    String token = UserManager.getInstance(getContext()).getToken();
-                    try {
-                        
-                        return ProgramService.getInstance().deleteProgramById(token, program.getId());
-                    } catch (LiveHttpException e) {
-                        
-                    }
-                    
-                    return false;
-                }
-            };
-
-            delTask.execute();
-        }
-
-        public void onEvent(EventProgramAdded event) {
-            final Program program = event.getObject();
-
-            if (null != program) {
-                mPreLiveList.add(0, program);
-                notifyDataSetChanged();
-            }
         }
 
         class GetProgramsTask extends AsyncTask<Void, Void, List<Program>> {
