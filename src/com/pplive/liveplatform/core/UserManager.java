@@ -59,6 +59,10 @@ public class UserManager {
         return !TextUtils.isEmpty(mUserPrivate);
     }
 
+    public boolean isPPTVLogin() {
+        return isLogin() && !isThirdPartyLogin();
+    }
+
     public boolean isThirdPartyLogin() {
         return isLogin() && mThirdPartySource > 0;
     }

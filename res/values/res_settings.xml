@@ -5,6 +5,8 @@
     <string name="settings_nickname">昵称</string>
     <string name="settings_pptv_user">PPTV帐号</string>
     <string name="settings_password">修改密码</string>
+    <string name="settings_change_nickname">修改昵称</string>
+    <string name="settings_hint_nickname">昵称</string>
     <string name="settings_prelive">预播提醒</string>
     <string name="settings_content">内容提醒</string>
     <string name="settings_about">关于Bobo</string>

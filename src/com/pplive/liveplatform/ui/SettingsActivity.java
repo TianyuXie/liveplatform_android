@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -38,6 +39,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
 
         mNicknameTextView = (TextView) findViewById(R.id.text_settings_nickname);
+        mNicknameTextView.setOnClickListener(onNicknameClickListener);
         mUserTextView = (TextView) findViewById(R.id.text_settings_user);
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
@@ -77,9 +79,19 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onLogoutBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            UserManager.getInstance(getApplicationContext()).logout();
+            UserManager.getInstance(SettingsActivity.this).logout();
             setResult(LOGOUT);
             finish();
+        }
+    };
+
+    private View.OnClickListener onNicknameClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (UserManager.getInstance(SettingsActivity.this).isPPTVLogin()) {
+                Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
+                startActivity(intent);
+            }
         }
     };
 
