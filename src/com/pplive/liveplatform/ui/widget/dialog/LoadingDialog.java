@@ -3,6 +3,8 @@ package com.pplive.liveplatform.ui.widget.dialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.widget.LoadingButton;

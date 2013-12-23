@@ -9,8 +9,16 @@
         android:id="@+id/live_player_videoview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_centerInParent="true" >
-    </android.pplive.media.player.MeetVideoView>
+        android:layout_centerInParent="true" />
+
+    <ImageView
+        android:id="@+id/image_player_loading"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/player_loading_bg"
+        android:contentDescription="@null"
+        android:scaleType="fitStart"
+        android:src="@drawable/player_loading_bg" />
 
     <RelativeLayout
         android:id="@+id/layout_player_titlebar"
@@ -33,7 +41,6 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:text="@string/test_player_title"
             android:textColor="@color/white"
             android:textSize="20sp" />
 
@@ -42,6 +49,7 @@
             style="@style/togglebutton_notext"
             android:layout_width="45dp"
             android:layout_height="45dp"
+            android:enabled="false"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
@@ -75,30 +83,29 @@
             android:background="@drawable/live_record_btn_live_share" />
     </RelativeLayout>
 
-    <LinearLayout
-        android:id="@+id/layout_player_user"
+    <RelativeLayout
+        android:id="@+id/wrapper_player_user_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="5dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:visibility="invisible" >
 
-        <Button
+        <com.pplive.liveplatform.ui.widget.CircularImageView
             android:id="@+id/btn_player_user_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:background="@drawable/user_icon_default" />
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/home_status_btn_loading" />
 
         <TextView
-            android:id="@+id/text_player_name"
+            android:id="@+id/text_loading_finish"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/test_player_name"
+            android:layout_centerInParent="true"
+            android:text="@string/player_finish"
             android:textColor="@color/white"
-            android:textSize="13sp"
-            android:visibility="gone" />
-    </LinearLayout>
+            android:textSize="12sp" />
+    </RelativeLayout>
 
 </RelativeLayout>

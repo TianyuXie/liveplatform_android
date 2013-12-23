@@ -7,8 +7,8 @@
 
     <com.pplive.liveplatform.ui.widget.LoadingButton
         android:id="@+id/btn_loading_status"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
         android:clickable="false"
         live:anim_background="@drawable/home_status_btn_anim"
         live:animation="@anim/home_status_rotate"
