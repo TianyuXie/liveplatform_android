@@ -38,25 +38,37 @@ public class PPboxSink {
         private int num_drop = 0;
         private long next_time = 5 * time_scale;
 
+        private long put_preview_interval = 1000 / MediaManager.FRAME_RATE;
+
+        private long last_put_preview_time = System.currentTimeMillis();
+
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
             ++num_total;
-            long time = System.nanoTime() - mStartTime;
-            PPboxStream.InBuffer buffer = mVideoStream.pop();
-            if (buffer == null) {
-                ++num_drop;
-            } else {
-                
-                Log.d(TAG, "image size: " + data.length);
-                
-                buffer.byte_buffer().put(data);
-                mVideoStream.put(time / 1000, buffer);
+
+            long cur_time = System.currentTimeMillis();
+            long time_stamp = System.nanoTime() - mStartTime;
+
+            Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
+
+            if (cur_time - last_put_preview_time > put_preview_interval) {
+                PPboxStream.InBuffer buffer = mVideoStream.pop();
+                if (buffer == null) {
+                    ++num_drop;
+                } else {
+                    Log.d(TAG, "image size: " + data.length);
+
+                    buffer.byte_buffer().put(data);
+                    mVideoStream.put(time_stamp / 1000, buffer);
+                    last_put_preview_time = cur_time;
+                }
+
+                if (time_stamp >= next_time) {
+                    Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
+                    next_time += 5 * time_scale;
+                }
             }
-            
-            if (time >= next_time) {
-                Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
-                next_time += 5 * time_scale;
-            }
+
             camera.addCallbackBuffer(data);
         }
     };

@@ -38,6 +38,7 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.record.CameraManager;
@@ -50,6 +51,7 @@ import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
 import de.greenrobot.event.EventBus;
@@ -237,6 +239,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mInnerHandler.removeMessages(WHAT_LIVE_COMING_UPDATE);
         mTextLiveComing.setVisibility(View.GONE);
+    }
+
+    public void onEvent(EventNetworkChanged event) {
+        Log.d(TAG, "state: " + event.getNetworkState());
     }
 
     @Override
@@ -498,6 +504,23 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
+    private void performOnClickStartRecording() {
+        mTextLiveComing.setVisibility(View.GONE);
+        getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
+        if (null == mGetPushUrlOneStepTask) {
+            mGetPushUrlOneStepTask = new GetPushUrlTask();
+            mGetPushUrlOneStepTask.execute(mLivingProgram);
+        }
+    }
+
+    private void performOnClickStopRecording() {
+        mTextLivingTitle.setVisibility(View.GONE);
+        stopRecording();
+        stopChating();
+        getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
+        mFooterBarFragment.reset();
+    }
+
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
@@ -545,17 +568,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         if (null != mCamera) {
             if (!mRecording) {
-                mTextLiveComing.setVisibility(View.GONE);
-                getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
-                if (null == mGetPushUrlOneStepTask) {
-                    mGetPushUrlOneStepTask = new GetPushUrlTask();
-                    mGetPushUrlOneStepTask.execute(mLivingProgram);
-                }
+                performOnClickStartRecording();
             } else {
-                mTextLivingTitle.setVisibility(View.GONE);
-                stopRecording();
-                stopChating();
-                getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
+                performOnClickStopRecording();
             }
         }
     }
@@ -621,7 +636,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
-                
+
                 String url = null;
                 for (int i = 0, len = push.getPushUrlList().size(); i < len; ++i) {
                     url = push.getPushUrlList().get(i);
@@ -629,7 +644,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                         break;
                     }
                 }
-                
+
                 return url;
             } catch (LiveHttpException e) {
 
@@ -641,6 +656,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         @Override
         protected void onPostExecute(String url) {
             mGetPushUrlOneStepTask = null;
+
+            if (StringUtil.isNullOrEmpty(url)) {
+                performOnClickStopRecording();
+                return;
+            }
 
             if (null != mCamera) {
                 if (!mRecording) {
@@ -664,10 +684,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (null != program && !TextUtils.isEmpty(coToken)) {
                 try {
                     LiveAlive liveAlive = LiveControlService.getInstance().keepLiveAlive(coToken, program.getId());
-    
+
                     return liveAlive;
                 } catch (LiveHttpException e) {
-                    
+
                     Log.w(TAG, "keep alive failed.");
                 }
             }
