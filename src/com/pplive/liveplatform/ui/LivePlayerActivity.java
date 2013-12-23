@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.util.CollectionUtils;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -41,6 +43,8 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
+import com.pplive.liveplatform.net.event.EventNetworkChanged;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
@@ -50,6 +54,8 @@ import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.ViewUtil;
+
+import de.greenrobot.event.EventBus;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
     static final String TAG = "_LivePlayerActivity";
@@ -204,6 +210,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onPause() {
         Log.d(TAG, "onPause");
         pauseWriting();
+        EventBus.getDefault().unregister(this);
         mSensorManager.unregisterListener(this);
         super.onPause();
     }
@@ -212,6 +219,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        EventBus.getDefault().register(this);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
@@ -615,4 +623,23 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     public void onStartPlay() {
         mLoadingHandler.sendEmptyMessage(MSG_START_PLAY);
     }
+
+    public void onEvent(EventNetworkChanged event) {
+        Log.d(TAG, "state: " + event.getNetworkState());
+        switch (event.getNetworkState()) {
+        case MOBILE:
+        case THIRD_GENERATION:
+            DialogManager.mobileAlertDialog(this, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO continue playing
+                }
+            }).show();
+            break;
+
+        default:
+            break;
+        }
+    }
+
 }

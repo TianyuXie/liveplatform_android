@@ -23,4 +23,13 @@
     <string name="test_player_back">返回</string>
     <string name="test_player_name">sevengram</string>
 
+    <!-- For network -->
+    <string name="mobile_alert_title">PPTV提醒您</string>
+    <string name="mobile_go_settings">去设置</string>
+    <string name="mobile_i_know">知道了</string>
+    <string name="mobile_next_time">下次再说</string>
+    <string name="mobile_play_start">继续播放</string>
+    <string name="mobile_play_stop">停止播放</string>
+    <string name="mobile_not_unicom">"您正在使用移动数据网络，会产生流量费用，建议使用Wifi网络。"</string>
+
 </resources>

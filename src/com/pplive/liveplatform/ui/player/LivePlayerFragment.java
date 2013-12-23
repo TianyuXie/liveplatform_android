@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui.player;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,8 +16,8 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation.AnimationListener;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,8 +27,10 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.widget.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.ViewUtil;
@@ -89,6 +92,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mShowBar = true;
+        mLoading = true;
         mFlagMask = 0xffffffff;
         mViewFlags = 0xffffffff;
         BreakpadUtil.registerBreakpad(getActivity().getCacheDir());
@@ -124,17 +128,44 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     }
 
-    public void setupPlayer(String url) {
+    public void setupPlayer(final String url) {
         if (getActivity() != null) {
-            Log.d(TAG, "setupPlayer:" + url);
-            Uri uri = Uri.parse(url);
-            mVideoView.setDecodeMode(DecodeMode.SW);
-            mVideoView.setVideoURI(uri);
-            mVideoView.setOnPreparedListener(mPreparedListener);
-            mVideoView.setOnCompletionListener(mCompletionListener);
-            mVideoView.setOnErrorListener(mErrorListener);
-            mLoading = true;
+            switch (NetworkManager.getCurrentNetworkState()) {
+            case WIFI:
+            case UNKNOWN:
+                setupVideoView(url);
+                break;
+            case THIRD_GENERATION:
+            case MOBILE:
+                DialogManager.mobileAlertDialog(getActivity(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setupVideoView(url);
+                    }
+                }).show();
+                break;
+            case DISCONNECTED:
+                DialogManager.noNetworkAlertDialog(getActivity(), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        setupVideoView(url);
+                    }
+                }).show();
+                break;
+            default:
+                break;
+            }
         }
+    }
+
+    private void setupVideoView(String url) {
+        Log.d(TAG, "setupVideoView:" + url);
+        Uri uri = Uri.parse(url);
+        mVideoView.setDecodeMode(DecodeMode.SW);
+        mVideoView.setVideoURI(uri);
+        mVideoView.setOnPreparedListener(mPreparedListener);
+        mVideoView.setOnCompletionListener(mCompletionListener);
+        mVideoView.setOnErrorListener(mErrorListener);
     }
 
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
