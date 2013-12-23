@@ -38,7 +38,7 @@ public class PPboxSink {
         private int num_drop = 0;
         private long next_time = 5 * time_scale;
 
-        private long put_preview_interval = 1000 / MediaManager.FRAME_RATE;
+        private long put_preview_interval = 50 /* millisecond */;
 
         private long last_put_preview_time = System.currentTimeMillis();
 
