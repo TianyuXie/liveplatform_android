@@ -48,6 +48,7 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
+import com.pplive.liveplatform.core.service.passport.resp.GuidResp;
 import com.pplive.liveplatform.core.service.passport.resp.LoginResultResp;
 import com.pplive.liveplatform.util.ThreeDESUtil;
 import com.pplive.liveplatform.util.ThreeDESUtil.EncryptException;
@@ -63,6 +64,10 @@ public class PassportService {
 
     private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/register/thirdparty_simple.do?infovalue={infovalue}&apptype={apptype}&index={index}&format=json").toString();
+
+    private static final String TEMPLATE_PASSPORT_GET_GUID = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST, "/v3/checkcode/guid.do?format=json").toString();
+    
+    private static final String TEMPLATE_PASSPORT_GET_GUID_IMAGE = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST, "/v3/checkcode/image.do?guid={guid}").toString();
 
     private static final PassportService sInstance = new PassportService();
 
@@ -122,22 +127,22 @@ public class PassportService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
 
         HttpEntity<String> entity = new HttpEntity<String>(headers);
-        
+
         LoginResultResp resp = null;
         try {
             HttpEntity<LoginResultResp> rep = template.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
-            
+
             resp = rep.getBody();
-            
+
             if (0 == resp.getErrorCode()) {
                 return resp.getResult();
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());
         }
-        
+
         if (null != resp) {
-            throw new LiveHttpException(resp.getErrorCode()); 
+            throw new LiveHttpException(resp.getErrorCode());
         } else {
             throw new LiveHttpException();
         }
@@ -170,14 +175,41 @@ public class PassportService {
         String index = String.format(Locale.getDefault(), "%02d", keyIndex);
 
         UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_THIRDPARTY_LOGIN).buildAndExpand(infovalue, apptype, index);
-        
+
         URI uri = URI.create(components.toString());
 
         LoginResultResp resp = null;
         try {
             HttpEntity<LoginResultResp> rep = template.exchange(uri, HttpMethod.GET, entity, LoginResultResp.class);
-            
+
             resp = rep.getBody();
+
+            if (0 == resp.getErrorCode()) {
+                return resp.getResult();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode());
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+    
+    public String getCheckCodeGUID() throws LiveHttpException {
+        
+        RestTemplate template = new RestTemplate(false);
+        template.setRequestFactory(mFactory);
+        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        
+        GuidResp resp = null;
+        try {
+            resp = template.getForObject(TEMPLATE_PASSPORT_GET_GUID, GuidResp.class);
             
             if (0 == resp.getErrorCode()) {
                 return resp.getResult();
@@ -192,38 +224,46 @@ public class PassportService {
             throw new LiveHttpException();
         }
     }
+    
+    public String getCheckCodeImageUrl(String guid) {
+        
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_GET_GUID_IMAGE).buildAndExpand(guid);
+        
+        return components.toString();
+    }
+
 }
 
 class SSLSocketFactoryEx extends SSLSocketFactory {
-    
+
     TrustManager mTrustManager = new X509TrustManager() {
-        
+
         @Override
         public X509Certificate[] getAcceptedIssuers() {
             return null;
         }
-        
+
         @Override
         public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             // TODO Auto-generated method stub
-            
+
         }
-        
+
         @Override
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             // TODO Auto-generated method stub
-            
+
         }
     };
-    
+
     SSLContext mSSLContext = SSLContext.getInstance("TLS");
-    
+
     public SSLSocketFactoryEx(KeyStore keystore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
         super(keystore);
-        
-        mSSLContext.init(null, new TrustManager[]{mTrustManager}, null);
+
+        mSSLContext.init(null, new TrustManager[] { mTrustManager }, null);
     }
-    
+
     @Override
     public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
         return mSSLContext.getSocketFactory().createSocket(socket, host, port, autoClose);
@@ -231,10 +271,10 @@ class SSLSocketFactoryEx extends SSLSocketFactory {
 }
 
 class GsonHttpMessageConverterEx extends GsonHttpMessageConverter {
-    
+
     @Override
     public boolean canRead(Class<?> clazz, MediaType mediaType) {
-        
+
         return true;
     }
 }
