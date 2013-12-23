@@ -122,8 +122,6 @@ public class URL implements Serializable {
 
     @Override
     public final String toString() {
-        Log.d(TAG, "toString");
-
         StringBuilder sb = new StringBuilder(mBaseUrl);
 
         if (mParams.size() > 0) {
@@ -134,8 +132,6 @@ public class URL implements Serializable {
                 sb.append(String.format(isFirst ? "%s=%s" : "&%s=%s", entry.getKey(), entry.getValue()));
                 isFirst = false;
             }
-
-            Log.d(TAG, "sb.toString: " + sb.toString());
         }
 
         return sb.toString();
