@@ -136,7 +136,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
-        mEditLiveSchedule.setText(String.format("%d/%d/%d %d:%d", year, month, day, hour, minute));
+        mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d", year, month, day, hour, minute));
     }
 
     @Override

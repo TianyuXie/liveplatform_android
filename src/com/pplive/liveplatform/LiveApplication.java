@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.util.PPBoxUtil;
 
 public class LiveApplication extends Application {
@@ -23,6 +24,7 @@ public class LiveApplication extends Application {
         super.onCreate();
         
         init(getApplicationContext());
+        NetworkManager.init(getApplicationContext());
         
         Log.d(TAG, "version code: " + getVersionCode() + "; name: " + getVersionName());
         

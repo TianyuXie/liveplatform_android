@@ -22,6 +22,7 @@ import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
+import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.widget.HorizontalListView;
 
 import de.greenrobot.event.EventBus;
@@ -32,9 +33,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
     private LiveListAdapter mLiveListAdapter;
 
-    private int mSelectedItemPosition = -1;
-    private LiveListItemView mSelectedLiveItem;
-
     public LiveListView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -43,7 +41,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
 
-        if (View.VISIBLE == visibility) {
+        if (View.VISIBLE != visibility) {
             mLiveListAdapter.refresh();
         }
     }
@@ -60,18 +58,10 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Log.d(TAG, "onItemClick position: " + position + "; id: " + id);
-
-        if (position == mSelectedItemPosition) {
-            return;
-        }
-
-        if (null != mSelectedLiveItem) {
-            mSelectedLiveItem.setSelected(false);
-        }
-
-        mSelectedItemPosition = position;
-        mSelectedLiveItem = (LiveListItemView) view;
-        mSelectedLiveItem.setSelected(true);
+        
+        Program program = mLiveListAdapter.getItem(position);
+        
+        EventBus.getDefault().post(new EventProgramSelected(program));
     }
 
     class LiveListAdapter extends BaseAdapter {
@@ -121,6 +111,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
             if (convertView instanceof LiveListItemView) {
                 LiveListItemView liveItem = (LiveListItemView) convertView;
+                liveItem.setSelected(false);
                 liveItem.setProgram(getItem(position));
             }
 

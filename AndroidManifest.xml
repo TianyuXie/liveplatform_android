@@ -102,6 +102,14 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" >
         </activity>
+
+        <!-- Receivers -->
+        <receiver android:name="com.pplive.liveplatform.net.NetworkManager" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
