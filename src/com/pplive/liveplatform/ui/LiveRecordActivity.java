@@ -75,6 +75,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int WHAT_OPEN_DOOR = 9010;
 
+    private static final int CHAT_SHORT_DELAY = 5000;
+
+    private static final int CHAT_LONG_DELAY = 20000;
+
     private Handler mInnerHandler = new Handler(this);
 
     private SurfaceView mPreview;
@@ -489,12 +493,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mChating = true;
         mChatButton.setSelected(true);
         mChatBox.setVisibility(View.VISIBLE);
+        mChatBox.setDelay(CHAT_SHORT_DELAY, CHAT_SHORT_DELAY);
         mChatBox.refresh(0);
     }
 
     private void stopChating() {
         mChating = false;
         mChatBox.setVisibility(View.GONE);
+        mChatBox.setDelay(CHAT_LONG_DELAY, CHAT_LONG_DELAY);
         mChatButton.setSelected(false);
     }
 
@@ -541,6 +547,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
             mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
 
+            mChatBox.setDelay(CHAT_LONG_DELAY, CHAT_LONG_DELAY);
             mChatBox.start(mLivingProgram.getId());
         }
     }

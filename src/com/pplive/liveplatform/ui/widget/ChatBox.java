@@ -32,6 +32,10 @@ public class ChatBox extends RelativeLayout {
 
     private final static int MSG_GET_FEED = 2002;
 
+    private final static int DEFAULT_REFRESH_DELAY = 5000;
+
+    private final static int DEFAULT_RETRY_DELAY = 10000;
+
     private TextView mTextView;
 
     private TextView mNoContentInfo;
@@ -43,6 +47,10 @@ public class ChatBox extends RelativeLayout {
     private int mUserColor;
 
     private int mContentColor;
+
+    private int mRefreshDelay;
+
+    private int mRetryDelay;
 
     public ChatBox(Context context) {
         this(context, null);
@@ -58,10 +66,14 @@ public class ChatBox extends RelativeLayout {
         mNoContentInfo = (TextView) root.findViewById(R.id.text_chatbox_nocontent);
         View scrollView = root.findViewById(R.id.scroll_chatbox);
 
+        // init values
         int paddingLeft = 0;
         int paddingRight = 0;
         int paddingTop = 0;
         int paddingBottom = 0;
+        mRefreshDelay = DEFAULT_REFRESH_DELAY;
+        mRetryDelay = DEFAULT_RETRY_DELAY;
+
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ChatBox);
         int n = a.getIndexCount();
         for (int i = 0; i < n; i++) {
@@ -82,6 +94,12 @@ public class ChatBox extends RelativeLayout {
                 break;
             case R.styleable.ChatBox_paddingBottom:
                 paddingBottom = a.getDimensionPixelSize(attr, 0);
+                break;
+            case R.styleable.ChatBox_refreshDelay:
+                mRefreshDelay = a.getInteger(attr, DEFAULT_REFRESH_DELAY);
+                break;
+            case R.styleable.ChatBox_retryDelay:
+                mRetryDelay = a.getInteger(attr, DEFAULT_RETRY_DELAY);
                 break;
             case R.styleable.ChatBox_background:
                 int background = a.getResourceId(attr, -1);
@@ -136,19 +154,19 @@ public class ChatBox extends RelativeLayout {
                     }
                 }
             }
-            refresh(GetFeedTask.DELAY_TIME_SHORT);
+            refresh(mRefreshDelay);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "FeedTask onTaskFailed: " + event.getMessage());
-            refresh(GetFeedTask.DELAY_TIME_SHORT * 2);
+            refresh(mRetryDelay);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "FeedTask onTaskCancel");
-            refresh(GetFeedTask.DELAY_TIME_SHORT * 2);
+            refresh(mRetryDelay);
         }
 
         @Override
@@ -162,6 +180,7 @@ public class ChatBox extends RelativeLayout {
             switch (msg.what) {
             case MSG_GET_FEED:
                 if (mStart) {
+                    Log.d(TAG, "Get feed");
                     GetFeedTask feedTask = new GetFeedTask();
                     feedTask.addTaskListener(onGetFeedListener);
                     feedTask.execute(mFeedContext);
@@ -193,5 +212,10 @@ public class ChatBox extends RelativeLayout {
         Log.d(TAG, "stop");
         mStart = false;
         mFeedHandler.removeMessages(MSG_GET_FEED);
+    }
+
+    public void setDelay(int refreshDelay, int retryDelay) {
+        mRefreshDelay = refreshDelay;
+        mRetryDelay = retryDelay;
     }
 }

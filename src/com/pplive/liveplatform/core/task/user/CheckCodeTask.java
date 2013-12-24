@@ -1,22 +1,24 @@
-package com.pplive.liveplatform.core.task.player;
+package com.pplive.liveplatform.core.task.user;
 
-import com.pplive.liveplatform.core.service.comment.PbarService;
-import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
+import android.text.TextUtils;
+
+import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.service.passport.model.CheckCode;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class GetFeedTask extends Task {
-    static final String TAG = "_GetFeedTask";
+public class CheckCodeTask extends Task {
+    final static String TAG = "_CheckCodeTask";
 
-    public final static String KEY_RESULT = "get_feed_result";
-
-    public final static String KEY_USERNAME = "username";
+    public final static String KEY_GUID = "guid";
+    public final static String KEY_IMAGE = "image";
 
     private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "GetFeed";
+    public final static String TYPE = "CheckCode";
 
     @Override
     public String getID() {
@@ -42,29 +44,27 @@ public class GetFeedTask extends Task {
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
-        if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
-        }
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
-        TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String token = context.getString(KEY_TOKEN);
-        FeedDetailList data = null;
+        CheckCode code = null;
         try {
-            data = PbarService.getInstance().getFeeds(token, pid);
-        } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "PbarService error");
+            code = PassportService.getInstance().getCheckCode();
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.Failed, "PassportService error");
         }
-        if (data == null) {
+        if (code == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
+        } else if (TextUtils.isEmpty(code.getGUID()) || TextUtils.isEmpty(code.getImageUrl())) {
+            return new TaskResult(TaskStatus.Failed, "Invalid data");
         }
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
-        context.set(KEY_RESULT, data);
+        TaskContext context = new TaskContext();
+        context.set(KEY_GUID, code.getGUID());
+        context.set(KEY_IMAGE, code.getImageUrl());
         result.setContext(context);
         return result;
     }

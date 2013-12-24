@@ -66,8 +66,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@color/login_input_bg"
+            android:digits="@string/number_and_letter"
             android:hint="@string/login_username"
-            android:inputType="text"
+            android:imeOptions="actionNext"
+            android:inputType="textUri"
             android:padding="12dp"
             android:singleLine="true"
             android:textColor="@color/login_input_text_bg"
@@ -77,7 +79,7 @@
             android:id="@+id/edit_login_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="2dp"
             android:background="@color/login_input_bg"
             android:hint="@string/login_password"
             android:inputType="textPassword"
@@ -88,12 +90,13 @@
     </LinearLayout>
 
     <TextView
+        android:id="@+id/text_login_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:text="@string/login_no_pptv"
-        android:textSize="15sp"
-        android:textColor="@color/login_no_pptv_bg" />
+        android:textColor="@color/login_no_pptv_bg"
+        android:textSize="16sp" />
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -103,17 +106,17 @@
         android:orientation="horizontal" >
 
         <Button
-            android:onClick="weiboLogin"
             android:layout_width="127dp"
             android:layout_height="63dp"
             android:layout_marginRight="8dp"
-            android:background="@drawable/login_btn_weibo" />
+            android:background="@drawable/login_btn_weibo"
+            android:onClick="weiboLogin" />
 
         <Button
-            android:onClick="qqlogin"
             android:layout_width="127dp"
             android:layout_height="63dp"
-            android:background="@drawable/login_btn_qq" />
+            android:background="@drawable/login_btn_qq"
+            android:onClick="qqlogin" />
     </LinearLayout>
 
 </LinearLayout>
