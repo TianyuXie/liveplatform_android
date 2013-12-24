@@ -73,7 +73,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int CHAT_SHORT_DELAY = 5000;
 
-    private static final int CHAT_LONG_DELAY = 20000;
+    private static final int CHAT_LONG_DELAY = 10000;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -114,6 +114,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private boolean mOpened;
     private boolean mAttached;
+
+    private boolean mFirstPopped;
 
     private AnimationListener openDoorListener = new AnimationListener() {
 
@@ -188,6 +190,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mLiveButtonWrapper = findViewById(R.id.wrapper_live_status_right);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
         mChatBox = (ChatBox) findViewById(R.id.layout_record_chatbox);
+        mChatBox.setNewMessageListener(newMessageListener);
         mChatContainer = findViewById(R.id.layout_record_chat);
     }
 
@@ -260,10 +263,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     public void onEvent(EventProgramDeleted event) {
         final Program program = event.getObject();
-        
+
         if (null != mLivingProgram && mLivingProgram.getId() == program.getId()) {
             mLivingProgram = null;
-            
+
             stopCountDown();
         }
     }
@@ -762,4 +765,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
         }
     }
+
+    private ChatBox.INewMessageListener newMessageListener = new ChatBox.INewMessageListener() {
+
+        @Override
+        public void notifyMessage() {
+            if (!mFirstPopped) {
+                startChating();
+            }
+            mFirstPopped = true;
+        }
+    };
 }
