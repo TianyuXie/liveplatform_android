@@ -2,6 +2,7 @@
 <resources>
 
     <string name="blank"></string>
+    <string name="number_and_letter">0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_</string>
 
     <!-- For debug -->
     <string name="toast_failed">失败</string>

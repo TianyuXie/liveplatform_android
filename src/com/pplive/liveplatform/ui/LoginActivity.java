@@ -58,16 +58,18 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         setContentView(R.layout.activity_login);
 
         findViewById(R.id.btn_login_back).setOnClickListener(onBackBtnClickListener);
-        mRefreshDialog = new RefreshDialog(this);
+        findViewById(R.id.text_login_register).setOnClickListener(onRegisterClickListener);
+
         mUsrEditText = (EditText) findViewById(R.id.edit_login_username);
         mPwdEditText = (EditText) findViewById(R.id.edit_login_password);
-        mPwdEditText.setOnKeyListener(onPwdEditEnterListener);
+        mPwdEditText.setOnKeyListener(onFinalEnterListener);
         mConfirmButton = (Button) findViewById(R.id.btn_login_confirm);
         mConfirmButton.setOnClickListener(onConfirmBtnClickListener);
         mUsrEditText.addTextChangedListener(textWatcher);
         mPwdEditText.addTextChangedListener(textWatcher);
 
         mUserManager = UserManager.getInstance(this);
+        mRefreshDialog = new RefreshDialog(this);
     }
 
     @Override
@@ -90,10 +92,10 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         WeiboPassport.getInstance().login(this);
     }
 
-    private View.OnKeyListener onPwdEditEnterListener = new View.OnKeyListener() {
+    private View.OnKeyListener onFinalEnterListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN && mConfirmButton.isEnabled()) {
                 mConfirmButton.performClick();
                 return true;
             }
@@ -105,6 +107,15 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         @Override
         public void onClick(View v) {
             finish();
+        }
+    };
+
+    private View.OnClickListener onRegisterClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(intent);
+
         }
     };
 

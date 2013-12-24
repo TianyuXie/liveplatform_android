@@ -48,7 +48,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="12dp"
-            android:text="@string/register_nav"
             android:textColor="@color/nav_text_bg"
             android:textSize="14sp" />
     </LinearLayout>
@@ -66,9 +65,10 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@color/login_input_bg"
-            android:hint="@string/register_email"
+            android:digits="@string/number_and_letter"
+            android:hint="@string/register_username"
             android:imeOptions="actionNext"
-            android:inputType="text"
+            android:inputType="textUri"
             android:padding="12dp"
             android:singleLine="true"
             android:textColor="@color/login_input_text_bg"
@@ -78,15 +78,46 @@
             android:id="@+id/edit_register_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="2dp"
             android:background="@color/login_input_bg"
             android:hint="@string/login_password"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:inputType="textPassword"
             android:padding="12dp"
             android:singleLine="true"
             android:textColor="@color/login_input_text_bg"
             android:textSize="17sp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edit_register_checkcode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@color/login_input_bg"
+                android:digits="@string/number_and_letter"
+                android:hint="@string/register_checkcode"
+                android:imeOptions="actionDone"
+                android:inputType="textUri"
+                android:padding="12dp"
+                android:singleLine="true"
+                android:textColor="@color/login_input_text_bg"
+                android:textSize="17sp" />
+
+            <com.pplive.liveplatform.ui.widget.AsyncImageView
+                android:id="@+id/image_register_checkcode"
+                android:layout_width="120dp"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                android:scaleType="fitXY" />
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
