@@ -12,15 +12,9 @@ public class GetFeedTask extends Task {
     static final String TAG = "_GetFeedTask";
 
     public final static String KEY_RESULT = "get_feed_result";
-    
-    public final static String KEY_USERNAME = "username";
-    
-    public final static int DELAY_TIME_SHORT = 5000;
-    
-    public final static int DELAY_TIME_LONG = 30000;
 
-    public final static int DEFAULT_TIMEOUT = 10000;
-    
+    public final static String KEY_USERNAME = "username";
+
     private final String ID = StringUtil.newGuid();
     public final static String TYPE = "GetFeed";
 
