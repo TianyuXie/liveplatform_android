@@ -48,6 +48,19 @@ public class LoginTask extends Task {
             return new TaskResult(TaskStatus.Failed, "TaskContext is null");
         }
 
+        //Delay
+        if (mDelay != 0) {
+            if (isCancelled()) {
+                return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            }
+            try {
+                Log.d(TAG, "start sleep");
+                Thread.sleep(mDelay);
+            } catch (InterruptedException e1) {
+            }
+        }
+
+        Log.d(TAG, "leave sleep");
         //Start PassportService
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
@@ -84,6 +97,7 @@ public class LoginTask extends Task {
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_TOKEN, token);
         if (userinfo != null) {
+            Log.d(TAG, "UserService OK");
             context.set(KEY_USERINFO, userinfo);
             context.set(KEY_USERNAME, userinfo.getUsername());
         } else {

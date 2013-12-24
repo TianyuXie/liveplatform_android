@@ -38,6 +38,10 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     public static final String EXTRA_TAGET = "target";
 
+    public static final String EXTRA_USERNAME = "username";
+
+    public static final String EXTRA_PASSWORD = "password";
+
     private EditText mUsrEditText;
 
     private EditText mPwdEditText;
@@ -74,7 +78,12 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (WeiboPassport.getInstance().mSsoHandler != null) {
+        if (requestCode == RegisterActivity.FROM_LOGIN && resultCode == RegisterActivity.REGISTER_SUCCESS) {
+            String username = data.getStringExtra(EXTRA_USERNAME);
+            String password = data.getStringExtra(EXTRA_PASSWORD);
+            mRefreshDialog.show();
+            startLogin(username, password, 3000);
+        } else if (WeiboPassport.getInstance().mSsoHandler != null) {
             WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
     }
@@ -114,8 +123,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(intent);
-
+            startActivityForResult(intent, RegisterActivity.FROM_LOGIN);
         }
     };
 
@@ -123,14 +131,19 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         @Override
         public void onClick(View v) {
             mRefreshDialog.show();
-            LoginTask task = new LoginTask();
-            task.addTaskListener(onTaskListener);
-            TaskContext taskContext = new TaskContext();
-            taskContext.set(LoginTask.KEY_USERNAME, mUsrEditText.getText().toString());
-            taskContext.set(LoginTask.KEY_PASSWORD, mPwdEditText.getText().toString());
-            task.execute(taskContext);
+            startLogin(mUsrEditText.getText().toString(), mPwdEditText.getText().toString(), 0);
         }
     };
+
+    private void startLogin(String username, String password, int dalay) {
+        LoginTask task = new LoginTask();
+        task.addTaskListener(onTaskListener);
+        task.setDelay(dalay);
+        TaskContext taskContext = new TaskContext();
+        taskContext.set(LoginTask.KEY_USERNAME, username);
+        taskContext.set(LoginTask.KEY_PASSWORD, password);
+        task.execute(taskContext);
+    }
 
     private TextWatcher textWatcher = new TextWatcher() {
 

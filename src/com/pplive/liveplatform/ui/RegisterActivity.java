@@ -3,6 +3,7 @@ package com.pplive.liveplatform.ui;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -29,6 +30,11 @@ import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
 public class RegisterActivity extends Activity {
+
+    public static final int FROM_LOGIN = 7101;
+
+    public static final int REGISTER_SUCCESS = 8201;
+
     final static String TAG = "_RegisterActivity";
 
     private EditText mUsrEditText;
@@ -188,7 +194,11 @@ public class RegisterActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
+            Intent data = new Intent();
+            data.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_USERNAME));
+            data.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
+            setResult(REGISTER_SUCCESS, data);
+            finish();
         }
 
         @Override
@@ -205,8 +215,6 @@ public class RegisterActivity extends Activity {
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
-
         }
 
         @Override
