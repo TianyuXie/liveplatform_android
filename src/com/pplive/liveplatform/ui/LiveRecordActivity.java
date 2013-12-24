@@ -1,7 +1,10 @@
 package com.pplive.liveplatform.ui;
 
 import java.io.IOException;
+import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -41,6 +44,7 @@ import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.record.CameraManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
@@ -150,6 +154,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     };
 
     private GetPushUrlTask mGetPushUrlOneStepTask;
+    private GetUserLivingTask mGetUserLivingTask;
     private KeepLiveAliveTask mKeepLiveAliveTask;
 
     private Program mLivingProgram;
@@ -200,6 +205,17 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mCamera = CameraManager.getInstance().open(mCurrentCameraId);
 
         startPreview();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (null == mGetUserLivingTask) {
+            mGetUserLivingTask = new GetUserLivingTask();
+            mGetUserLivingTask.execute();
+        }
     }
 
     @Override
@@ -260,10 +276,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     public void onEvent(EventProgramDeleted event) {
         final Program program = event.getObject();
-        
+
         if (null != mLivingProgram && mLivingProgram.getId() == program.getId()) {
             mLivingProgram = null;
-            
+
             stopCountDown();
         }
     }
@@ -579,23 +595,23 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         Log.d(TAG, "onClick");
         switch (v.getId()) {
         case R.id.btn_camera_change:
-            onClickBtnCameraChange(v);
+            onClickBtnCameraChange();
             break;
         case R.id.btn_live_record:
-            onClickBtnLiveRecord(v);
+            onClickBtnLiveRecord();
             break;
         case R.id.btn_flash_light:
-            onClickBtnFlashLight(v);
+            onClickBtnFlashLight();
             break;
         case R.id.btn_record_chat:
-            onClickBtnChat(v);
+            onClickBtnChat();
             break;
         default:
             break;
         }
     }
 
-    private void onClickBtnChat(View v) {
+    private void onClickBtnChat() {
         if (!mChating) {
             startChating();
         } else {
@@ -603,7 +619,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void onClickBtnCameraChange(View v) {
+    private void onClickBtnCameraChange() {
         stopPreview();
 
         mCurrentCameraId = (mCurrentCameraId + 1) % mNumberofCameras;
@@ -617,7 +633,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void onClickBtnLiveRecord(View v) {
+    private void onClickBtnLiveRecord() {
 
         if (null != mCamera) {
             if (!mRecording) {
@@ -628,7 +644,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void onClickBtnFlashLight(View v) {
+    private void onClickBtnFlashLight() {
         boolean isFlashOn = mBtnFlashLight.isChecked();
 
         isFlashOn = setFlashMode(isFlashOn);
@@ -722,6 +738,54 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
 
                 mBtnLiveRecord.setSelected(mRecording);
+            }
+        }
+    }
+
+    class GetUserLivingTask extends AsyncTask<Void, Void, Program> {
+
+        @Override
+        protected Program doInBackground(Void... arg0) {
+            String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+
+            try {
+                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.LIVING);
+
+                if (null != programs && programs.size() > 0) {
+                    return programs.get(0);
+                }
+            } catch (LiveHttpException e) {
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final Program program) {
+            mGetUserLivingTask = null;
+
+            if (null == program) {
+                return;
+            }
+
+            if (!mRecording) {
+                DialogManager.alertHasLivingProgram(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+                        String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+                        
+                        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
+                    }
+                }, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        onClickBtnLiveRecord();
+                    }
+                }).show();
             }
         }
     }

@@ -3,6 +3,8 @@ package com.pplive.liveplatform.ui.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 
 import com.pplive.liveplatform.R;
@@ -37,6 +39,18 @@ public class DialogManager {
                 playerActivity.finish();
             }
         });
+        return builder.create();
+    }
+    
+    public static Dialog alertHasLivingProgram(final Context context, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.mobile_alert_title);
+        builder.setMessage("你要继续直播吗?");
+        builder.setPositiveButton("不要", positiveListener);
+        builder.setNegativeButton("继续直播", negativeListener);
+        
         return builder.create();
     }
 }
