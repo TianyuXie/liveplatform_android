@@ -19,10 +19,11 @@
             android:background="@drawable/titlebar_back_btn_bg" />
 
         <TextView
+            android:id="@+id/text_userpage_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/userpage_title"
+            android:text="@string/userpage_default_title"
             android:textColor="@color/white"
             android:textSize="22sp" />
 
@@ -58,6 +59,7 @@
             android:textSize="13sp" />
 
         <ImageView
+            android:id="@+id/image_userpage_camera"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignBottom="@id/btn_userpage_user_icon"

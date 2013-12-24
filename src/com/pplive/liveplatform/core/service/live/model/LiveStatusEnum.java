@@ -7,6 +7,20 @@ import com.pplive.liveplatform.R;
 
 public enum LiveStatusEnum {
     
+    @SerializedName("living")
+    LIVING {
+
+        @Override
+        public String toString() {
+            return "living";
+        }
+        
+        @Override
+        public String toFriendlyString(Context context) {
+            return context.getString(R.string.program_status_living);
+        }
+    },
+    
     @SerializedName("notstart")
     NOT_START {
 
@@ -46,20 +60,6 @@ public enum LiveStatusEnum {
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_notstart);
-        }
-    },
-
-    @SerializedName("living")
-    LIVING {
-
-        @Override
-        public String toString() {
-            return "living";
-        }
-        
-        @Override
-        public String toFriendlyString(Context context) {
-            return context.getString(R.string.program_status_living);
         }
     },
 

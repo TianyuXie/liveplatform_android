@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
@@ -21,7 +21,6 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,15 +43,19 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
+import com.pplive.liveplatform.net.event.EventNetworkChanged;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
-import com.pplive.liveplatform.ui.widget.dialog.LoadingDialog;
+import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.ViewUtil;
+
+import de.greenrobot.event.EventBus;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
     static final String TAG = "_LivePlayerActivity";
@@ -62,6 +65,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private final static int MSG_LOADING_DELAY = 2000;
 
     private final static int MSG_MEDIA_FINISH = 2001;
+
+    private final static int MSG_START_PLAY = 2002;
 
     private final static int LOADING_DELAY_TIME = 3 * 1000;
 
@@ -75,13 +80,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mCommentView;
 
+    private View mCommentWrapper;
+
     private View mLoadingView;
 
     private ChatBox mChatBox;
 
     private ShareDialog mShareDialog;
 
-    private Dialog mLoadingDialog;
+    private LoadingButton mLoadingButton;
 
     private Button mWriteBtn;
 
@@ -101,9 +108,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mFirstLoading;
 
-    private boolean mLoadingFinish;
+    private boolean mSecondLoading;
 
-    private boolean mLoadingDelayed;
+    private boolean mFirstLoadFinish;
+
+    private boolean mSecondLoadFinish;
+
+    private boolean mLoadDelayed;
 
     private int mHalfScreenHeight;
 
@@ -129,8 +140,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
-        mLoadingDialog = new LoadingDialog(this);
-        mLoadingDialog.setOnKeyListener(onLoadingKeyListener);
 
         /* init values */
         mUserOrient = SCREEN_ORIENTATION_INVALID;
@@ -144,10 +153,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
         mCommentEditText.setOnEnterListener(onCommentEnterListener);
         mCommentView = findViewById(R.id.layout_player_comment);
+        mCommentWrapper = findViewById(R.id.wrapper_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
         mLoadingView = findViewById(R.id.layout_player_loading);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
+        mLoadingButton = (LoadingButton) findViewById(R.id.btn_player_loading);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
         mChatBox.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
@@ -155,7 +166,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         /* init others */
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
     }
 
     @Override
@@ -165,6 +175,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
+        mLivePlayerFragment.initUserIcon(mProgram.getOwnerIcon());
         long pid = mProgram.getId();
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getUsernamePlain();
@@ -199,6 +210,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onPause() {
         Log.d(TAG, "onPause");
         pauseWriting();
+        EventBus.getDefault().unregister(this);
         mSensorManager.unregisterListener(this);
         super.onPause();
     }
@@ -207,6 +219,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
+        EventBus.getDefault().register(this);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
     }
 
@@ -233,15 +246,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
             RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mChatBox.getLayoutParams();
+            RelativeLayout.LayoutParams loadingLp = (RelativeLayout.LayoutParams) mLoadingButton.getLayoutParams();
+            loadingLp.topMargin = mHalfScreenHeight - DisplayUtil.dp2px(mContext, 75);
             containerLp.height = mHalfScreenHeight;
             dialogLp.topMargin = mHalfScreenHeight;
-            mChatBox.setVisibility(View.VISIBLE);
-            if (mWriting) {
-                mCommentView.setVisibility(View.VISIBLE);
-                mWriteBtn.setVisibility(View.GONE);
-            } else {
-                mCommentView.setVisibility(View.GONE);
-                mWriteBtn.setVisibility(View.VISIBLE);
+            if (mFirstLoadFinish) {
+                mChatBox.setVisibility(View.VISIBLE);
+                if (mWriting) {
+                    mCommentView.setVisibility(View.VISIBLE);
+                    mWriteBtn.setVisibility(View.GONE);
+                } else {
+                    mCommentView.setVisibility(View.GONE);
+                    mWriteBtn.setVisibility(View.VISIBLE);
+                }
             }
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
@@ -271,7 +288,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation && !mFirstLoading) {
+        if (mCurrentOrient != requestedOrientation && !mFirstLoading && !mSecondLoading) {
             Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
@@ -335,17 +352,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
             stopWriting();
             return true;
-        }
-    };
-
-    private DialogInterface.OnKeyListener onLoadingKeyListener = new DialogInterface.OnKeyListener() {
-        @Override
-        public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
-                finish();
-                return true;
-            }
-            return false;
         }
     };
 
@@ -559,19 +565,23 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
-        if (!mFirstLoading) {
-            mFirstLoading = true;
-            mLoadingView.setVisibility(View.VISIBLE);
-            mLoadingDialog.show();
-        }
+        mFirstLoading = true;
+        mSecondLoading = true;
+        mLoadingView.setVisibility(View.VISIBLE);
+        mLoadingButton.startLoading(R.string.player_loading);
     }
 
-    public void hideLoading() {
-        if (mFirstLoading) {
-            mFirstLoading = false;
-            mLoadingView.setVisibility(View.GONE);
-            mLoadingDialog.dismiss();
-        }
+    public void hideFirstLoading() {
+        mFirstLoading = false;
+        mLoadingView.setVisibility(View.GONE);
+        mChatBox.setVisibility(View.VISIBLE);
+        mCommentWrapper.setVisibility(View.VISIBLE);
+        mWriteBtn.setVisibility(View.VISIBLE);
+    }
+
+    public void hideSecondLoading() {
+        mSecondLoading = false;
+        mLoadingButton.hide(true);
     }
 
     private Handler mLoadingHandler = new Handler() {
@@ -579,20 +589,57 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_LOADING_DELAY:
-                mLoadingDelayed = true;
+                mLoadDelayed = true;
+                checkFirstLoading();
+                checkSecondLoading();
                 break;
             case MSG_MEDIA_FINISH:
-                mLoadingFinish = true;
+                mFirstLoadFinish = true;
+                checkFirstLoading();
+                break;
+            case MSG_START_PLAY:
+                mSecondLoadFinish = true;
+                checkSecondLoading();
                 break;
             }
-            if (mLoadingFinish && mLoadingDelayed && !isFinishing() && mFirstLoading) {
-                hideLoading();
-            }
+
         }
     };
 
+    private void checkFirstLoading() {
+        if (mFirstLoadFinish && mLoadDelayed && !isFinishing() && mFirstLoading) {
+            hideFirstLoading();
+        }
+    }
+
+    private void checkSecondLoading() {
+        if (mSecondLoadFinish && mLoadDelayed && !isFinishing() && mSecondLoading) {
+            hideSecondLoading();
+            mLivePlayerFragment.onStartPlay();
+        }
+    }
+
     @Override
     public void onStartPlay() {
-        //TODO
+        mLoadingHandler.sendEmptyMessage(MSG_START_PLAY);
     }
+
+    public void onEvent(EventNetworkChanged event) {
+        Log.d(TAG, "state: " + event.getNetworkState());
+        switch (event.getNetworkState()) {
+        case MOBILE:
+        case THIRD_GENERATION:
+            DialogManager.mobileAlertDialog(this, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO continue playing
+                }
+            }).show();
+            break;
+
+        default:
+            break;
+        }
+    }
+
 }
