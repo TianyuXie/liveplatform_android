@@ -341,6 +341,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onRecordEnd() {
+        mChatBox.stop();
+        mChatContainer.setVisibility(View.GONE);
+        
         mTextLive.setVisibility(View.GONE);
         mTextRecordDuration.setVisibility(View.GONE);
     }
@@ -517,14 +520,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void stopRecording() {
         if (mRecording) {
             mMediaRecorder.stop();
+            
+            stopLiving(mLivingProgram.getId());
+            
             mLivingProgram = null;
             mLivingUrl = null;
             mRecording = false;
-            mChatContainer.setVisibility(View.GONE);
-            mChatBox.stop();
             mBtnLiveRecord.setSelected(mRecording);
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
+    }
+    
+    private void stopLiving(long pid) {
+        String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+        String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+        
+        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, pid, LiveStatusEnum.STOPPED, username);
     }
 
     private void performOnClickStartRecording() {

@@ -3,6 +3,7 @@ package com.pplive.liveplatform.core.service.live;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
@@ -35,13 +36,33 @@ public class LiveControlService extends RestService {
 
     private LiveControlService() {
     }
-
-    public void updateLiveStatusByCoToken(String coToken, long pid, LiveStatusEnum livestatus, String username) throws LiveHttpException {
+    
+    public void updateLiveStatusByCoTokenAsync(final String coToken, final long pid, final LiveStatusEnum livestatus, final String username) {
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+            
+            @Override
+            protected Boolean doInBackground(Void... params) {
+                
+                try {
+                    
+                    return updateLiveStatusByCoToken(coToken, pid, livestatus, username);
+                } catch (LiveHttpException e) {
+                    
+                }
+                
+                return false;
+            }
+        };
+        
+        task.execute();
+    }
+    
+    public boolean updateLiveStatusByCoToken(String coToken, long pid, LiveStatusEnum livestatus, String username) throws LiveHttpException {
         String liveToken = TokenService.getInstance().getLiveToken(coToken, pid, username);
 
-        updateLiveStatusByLiveToken(liveToken, pid, livestatus);
+        return updateLiveStatusByLiveToken(liveToken, pid, livestatus);
     }
-
+    
     public boolean updateLiveStatusByLiveToken(String liveToken, long pid, LiveStatusEnum livestatus) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
         
