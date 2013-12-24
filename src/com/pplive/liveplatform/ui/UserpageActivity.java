@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,6 +40,12 @@ import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";
 
+    public static final String EXTRA_USER = "UserpageActivity_username";
+
+    public static final String EXTRA_ICON = "UserpageActivity_icon";
+
+    public static final String EXTRA_NICKNAME = "UserpageActivity_nickname";
+
     private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
             .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
             .cacheInMemory(true).build();
@@ -46,7 +54,8 @@ public class UserpageActivity extends Activity {
     private CircularImageView mUserIcon;
     private TextView mNicknameText;
     private UserpageProgramAdapter mAdapter;
-    private RefreshDialog refreshDialog;
+    private RefreshDialog mRefreshDialog;
+    private Button mSettingsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +67,32 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
-        findViewById(R.id.btn_userpage_settings).setOnClickListener(onSettingsBtnClickListener);
         findViewById(R.id.btn_userpage_record).setOnClickListener(onRecordBtnClickListener);
+        mSettingsButton = (Button) findViewById(R.id.btn_userpage_settings);
+        mSettingsButton.setOnClickListener(onSettingsBtnClickListener);
 
         ListView listView = (ListView) findViewById(R.id.list_userpage_program);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(onItemClickListener);
         mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
-        refreshDialog = new RefreshDialog(this);
+        mRefreshDialog = new RefreshDialog(this);
+
+        initViews();
+    }
+
+    private void initViews() {
+        TextView title = (TextView) findViewById(R.id.text_userpage_title);
+        View cameraIcon = findViewById(R.id.image_userpage_camera);
+        if (UserManager.getInstance(this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+            title.setText(R.string.userpage_my_title);
+            mSettingsButton.setVisibility(View.VISIBLE);
+            cameraIcon.setVisibility(View.VISIBLE);
+        } else {
+            title.setText(R.string.userpage_others_title);
+            mSettingsButton.setVisibility(View.GONE);
+            cameraIcon.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -77,36 +103,26 @@ public class UserpageActivity extends Activity {
     }
 
     private void refreshData() {
-        refreshDialog.show();
+        mRefreshDialog.show();
+        mNicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
+        String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
+        mUserIcon.setRounded(false);
+        if (!TextUtils.isEmpty(iconUrl)) {
+            mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+        } else {
+            mUserIcon.setImageResource(R.drawable.user_icon_default);
+        }
         ProgramTask task = new ProgramTask();
         task.addTaskListener(onTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USERNAME, UserManager.getInstance(this).getUsernamePlain());
+        taskContext.set(ProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
         task.execute(taskContext);
-        updateUsername();
     }
 
     @Override
     protected void onDestroy() {
         mUserIcon.release();
         super.onDestroy();
-    }
-
-    private void updateUsername() {
-        if (UserManager.getInstance(this).isLogin()) {
-            mNicknameText.setText(UserManager.getInstance(this).getNickname());
-            String iconUrl = UserManager.getInstance(this).getIcon();
-            mUserIcon.setRounded(false);
-            if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
-            } else {
-                mUserIcon.setImageResource(R.drawable.user_icon_default);
-            }
-        } else {
-            mNicknameText.setText("");
-            mUserIcon.setImageResource(R.drawable.user_icon_login);
-            mUserIcon.setRounded(false);
-        }
     }
 
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
@@ -172,7 +188,7 @@ public class UserpageActivity extends Activity {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            refreshDialog.dismiss();
+            mRefreshDialog.dismiss();
             mPrograms.clear();
             mPrograms.addAll((List<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
             Collections.sort(mPrograms, comparator);
@@ -186,7 +202,7 @@ public class UserpageActivity extends Activity {
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            refreshDialog.dismiss();
+            mRefreshDialog.dismiss();
         }
 
         @Override
@@ -195,12 +211,12 @@ public class UserpageActivity extends Activity {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            refreshDialog.dismiss();
+            mRefreshDialog.dismiss();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            refreshDialog.dismiss();
+            mRefreshDialog.dismiss();
         }
     };
 

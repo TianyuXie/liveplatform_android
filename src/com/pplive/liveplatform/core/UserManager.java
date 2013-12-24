@@ -59,6 +59,10 @@ public class UserManager {
         return !TextUtils.isEmpty(mUserPrivate);
     }
 
+    public boolean isLogin(String username) {
+        return !TextUtils.isEmpty(mUserPrivate) && !TextUtils.isEmpty(mUsernamePlain) && mUsernamePlain.equals(username);
+    }
+
     public boolean isPPTVLogin() {
         return isLogin() && !isThirdPartyLogin();
     }

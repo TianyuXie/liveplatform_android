@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui.player;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,7 +28,10 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.net.NetworkManager;
+import com.pplive.liveplatform.ui.LivePlayerActivity;
+import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
@@ -171,7 +175,14 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            //TODO open userpage
+            if (getActivity() != null) {
+                Program program = (Program) getActivity().getIntent().getSerializableExtra(LivePlayerActivity.EXTRA_PROGRAM);
+                Intent intent = new Intent(getActivity(), UserpageActivity.class);
+                intent.putExtra(UserpageActivity.EXTRA_USER, program.getOwner());
+                intent.putExtra(UserpageActivity.EXTRA_ICON, program.getOwnerIcon());
+                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, program.getOwnerNickname());
+                getActivity().startActivity(intent);
+            }
         }
     };
 
