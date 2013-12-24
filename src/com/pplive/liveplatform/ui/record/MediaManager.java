@@ -21,7 +21,7 @@ public class MediaManager {
 
     public static final String MIME_TYPE_AUDIO_AAC = "audio/mp4a-latm";
 
-    public static final int VIDEO_BIT_RATE = 300000;
+    public static final int VIDEO_BIT_RATE = 230000;
 
     public static final int AUDIO_BIT_RATE = 32000;
 
