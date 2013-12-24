@@ -185,6 +185,9 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         public void onClick(View v) {
             if (UserManager.getInstance(getContext()).isLogin()) {
                 Intent intent = new Intent(getContext(), UserpageActivity.class);
+                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(getContext()).getUsernamePlain());
+                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(getContext()).getIcon());
+                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(getContext()).getNickname());
                 getContext().startActivity(intent);
             } else {
                 Intent intent = new Intent(getContext(), LoginActivity.class);

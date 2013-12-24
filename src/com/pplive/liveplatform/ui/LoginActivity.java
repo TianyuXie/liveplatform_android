@@ -156,8 +156,11 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             mRefreshDialog.dismiss();
             if (!TextUtils.isEmpty(targetClass)) {
                 try {
-                    Intent intent2 = new Intent(mContext, Class.forName(targetClass));
-                    mContext.startActivity(intent2);
+                    Intent intent = new Intent(mContext, Class.forName(targetClass));
+                    intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
+                    intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
+                    intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
+                    mContext.startActivity(intent);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();
                 }
@@ -204,8 +207,11 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         mRefreshDialog.dismiss();
         if (!TextUtils.isEmpty(targetClass)) {
             try {
-                Intent intent2 = new Intent(mContext, Class.forName(targetClass));
-                mContext.startActivity(intent2);
+                Intent intent = new Intent(mContext, Class.forName(targetClass));
+                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(this).getUsernamePlain());
+                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(this).getIcon());
+                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(this).getNickname());
+                mContext.startActivity(intent);
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
