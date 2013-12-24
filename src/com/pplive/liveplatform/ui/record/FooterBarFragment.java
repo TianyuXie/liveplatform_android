@@ -319,7 +319,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private void init() {
 
         if (null != mEditLiveTitle) {
-            String username = UserManager.getInstance(getActivity()).getUsernamePlain();
+            String username = UserManager.getInstance(getActivity()).getNickname();
             String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
 
             mEditLiveTitle.setText(live_title);

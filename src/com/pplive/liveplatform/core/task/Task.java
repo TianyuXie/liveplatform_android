@@ -22,6 +22,8 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     private int mTimeout;
 
+    protected int mDelay;
+
     private Timer mTimer;
 
     private ArrayList<OnTaskListener> mTaskListeners;
@@ -29,6 +31,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     private TaskContext mReturnContext;
 
     public Task(int timeout) {
+        this.mDelay = 0;
         this.mTimeout = timeout;
         this.mTimer = new Timer();
         this.mTaskListeners = new ArrayList<OnTaskListener>();
@@ -53,7 +56,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
             public void run() {
                 handler.sendEmptyMessage(0);
             }
-        }, mTimeout);
+        }, mTimeout + mDelay);
     }
 
     private Handler handler = new Handler(Looper.getMainLooper()) {
@@ -91,6 +94,10 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     public void setReturnContext(TaskContext context) {
         this.mReturnContext = context;
+    }
+
+    public void setDelay(int delay) {
+        this.mDelay = delay;
     }
 
     @Override

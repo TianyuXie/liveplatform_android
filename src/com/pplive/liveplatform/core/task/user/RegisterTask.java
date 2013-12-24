@@ -1,22 +1,21 @@
-package com.pplive.liveplatform.core.task.player;
+package com.pplive.liveplatform.core.task.user;
 
-import com.pplive.liveplatform.core.service.comment.PbarService;
-import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class GetFeedTask extends Task {
-    static final String TAG = "_GetFeedTask";
-
-    public final static String KEY_RESULT = "get_feed_result";
-
-    public final static String KEY_USERNAME = "username";
+public class RegisterTask extends Task {
+    final static String TAG = "_RegisterTask";
+    public final static String KEY_CHECKCODE = "checkcode";
+    public final static String KEY_PASSWORD = "password";
+    public final static String KEY_GUID = "guid";
 
     private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "GetFeed";
+    public final static String TYPE = "Register";
 
     @Override
     public String getID() {
@@ -49,22 +48,20 @@ public class GetFeedTask extends Task {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String token = context.getString(KEY_TOKEN);
-        FeedDetailList data = null;
+        String username = context.getString(KEY_USERNAME);
+        String password = context.getString(KEY_PASSWORD);
+        String checkcode = context.getString(KEY_CHECKCODE);
+        String guid = context.getString(KEY_GUID);
+        boolean status = false;
         try {
-            data = PbarService.getInstance().getFeeds(token, pid);
-        } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "PbarService error");
+            status = PassportService.getInstance().register(username, password, "", checkcode, guid);
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.Failed, e.getMessage());
         }
-        if (data == null) {
-            return new TaskResult(TaskStatus.Failed, "No data");
-        }
-        if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+        if (!status) {
+            return new TaskResult(TaskStatus.Failed);
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
-        context.set(KEY_RESULT, data);
         result.setContext(context);
         return result;
     }

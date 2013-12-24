@@ -14,7 +14,7 @@ import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 
 public class SettingsActivity extends Activity {
-    public static final int FROM_USERPAGE = 5001;
+    public static final int FROM_USERPAGE = 6001;
 
     public static final int LOGOUT = 5001;
 
