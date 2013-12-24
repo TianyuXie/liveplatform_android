@@ -57,6 +57,7 @@ public class RegisterActivity extends Activity {
         findViewById(R.id.btn_register_back).setOnClickListener(onBackBtnClickListener);
 
         mCheckCodeImage = (AsyncImageView) findViewById(R.id.image_register_checkcode);
+        mCheckCodeImage.setOnClickListener(onImageClickListener);
         mUsrEditText = (EditText) findViewById(R.id.edit_register_username);
         mPwdEditText = (EditText) findViewById(R.id.edit_register_password);
         mCheckEditText = (EditText) findViewById(R.id.edit_register_checkcode);
@@ -86,6 +87,13 @@ public class RegisterActivity extends Activity {
         @Override
         public void onClick(View v) {
             finish();
+        }
+    };
+
+    private View.OnClickListener onImageClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            refreshCheckCode();
         }
     };
 
@@ -123,7 +131,8 @@ public class RegisterActivity extends Activity {
     private View.OnKeyListener onFinalEnterListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN && mConfirmButton.isEnabled()) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+                Log.d(TAG, "onFinalEnterListener");
                 mConfirmButton.performClick();
                 return true;
             }
@@ -144,8 +153,10 @@ public class RegisterActivity extends Activity {
         @Override
         public void afterTextChanged(Editable s) {
             if (!TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText()) && !TextUtils.isEmpty(mCheckEditText.getText())) {
+                Log.d(TAG, "mConfirmButton.setEnabled(true)");
                 mConfirmButton.setEnabled(true);
             } else {
+                Log.d(TAG, "mConfirmButton.setEnabled(false)");
                 mConfirmButton.setEnabled(false);
             }
         }
@@ -172,21 +183,23 @@ public class RegisterActivity extends Activity {
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
-
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
-
+            String message = event.getMessage();
+            if (TextUtils.isEmpty(message)) {
+                message = getString(R.string.register_fail);
+            }
+            Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
+            refreshCheckCode();
         }
 
         @Override
@@ -198,7 +211,6 @@ public class RegisterActivity extends Activity {
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-
         }
     };
 

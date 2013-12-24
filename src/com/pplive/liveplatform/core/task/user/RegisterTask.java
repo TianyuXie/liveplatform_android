@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.task.user;
 
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -54,11 +55,11 @@ public class RegisterTask extends Task {
         boolean status = false;
         try {
             status = PassportService.getInstance().register(username, password, "", checkcode, guid);
-        } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "PassportService error");
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.Failed, e.getMessage());
         }
         if (!status) {
-            return new TaskResult(TaskStatus.Failed, "Fail to register");
+            return new TaskResult(TaskStatus.Failed);
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
         result.setContext(context);

@@ -68,6 +68,7 @@
             android:background="@color/login_input_bg"
             android:digits="@string/number_and_letter"
             android:hint="@string/login_username"
+            android:imeOptions="actionNext"
             android:inputType="textUri"
             android:padding="12dp"
             android:singleLine="true"
