@@ -54,6 +54,8 @@ public class DateTimePicker extends LinearLayout {
         });
 
         mTimePicker.setIs24HourView(true);
+        mTimePicker.setCurrentHour(mCalendar.get(Calendar.HOUR_OF_DAY));
+        mTimePicker.setCurrentMinute(mCalendar.get(Calendar.MINUTE));
         mTimePicker.setOnTimeChangedListener(new OnTimeChangedListener() {
 
             @Override

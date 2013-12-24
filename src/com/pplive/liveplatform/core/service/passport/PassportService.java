@@ -205,11 +205,11 @@ public class PassportService {
         }
     }
     
-    public boolean register(String username, String password, String email, String checkCode, String guid) {
+    public boolean register(String username, String password, String email, String checkCode, String guid) throws LiveHttpException {
         
         RestTemplate template = new RestTemplate(false);
         template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverter());
+        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
         
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -226,8 +226,11 @@ public class PassportService {
             
         }
         
-        
-        return false;
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode(), URLEncoderUtil.decode(resp.getMessage()));
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public String getCheckCodeGUID() throws LiveHttpException {
