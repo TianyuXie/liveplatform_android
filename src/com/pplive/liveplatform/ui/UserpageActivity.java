@@ -1,6 +1,8 @@
 package com.pplive.liveplatform.ui;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
@@ -173,6 +175,7 @@ public class UserpageActivity extends Activity {
             refreshDialog.dismiss();
             mPrograms.clear();
             mPrograms.addAll((List<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
+            Collections.sort(mPrograms, comparator);
             mAdapter.notifyDataSetChanged();
             if (mPrograms.isEmpty()) {
                 findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
@@ -227,4 +230,18 @@ public class UserpageActivity extends Activity {
         }
     };
 
+    private Comparator<Program> comparator = new Comparator<Program>() {
+
+        @Override
+        public int compare(Program lhs, Program rhs) {
+
+            if (lhs.getLiveStatus().ordinal() < rhs.getLiveStatus().ordinal()) {
+                return -1;
+            } else if (lhs.getLiveStatus().ordinal() > rhs.getLiveStatus().ordinal()) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+    };
 }
