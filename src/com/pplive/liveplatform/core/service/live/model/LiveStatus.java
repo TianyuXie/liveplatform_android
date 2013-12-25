@@ -5,9 +5,9 @@ public class LiveStatus {
 
     LiveStatusEnum livestatus;
     
-    Long pid;
+    long pid;
     
-    Long delay;  // second
+    long delay;  // second
     
     public LiveStatus(LiveStatusEnum livestatus) {
         this.livestatus = livestatus;

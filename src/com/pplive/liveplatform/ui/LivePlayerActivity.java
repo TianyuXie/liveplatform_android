@@ -32,6 +32,7 @@ import android.widget.RelativeLayout.LayoutParams;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Watch;
 import com.pplive.liveplatform.core.task.Task;
@@ -42,6 +43,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
+import com.pplive.liveplatform.core.task.player.LiveStatusTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
@@ -67,6 +69,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private final static int MSG_MEDIA_FINISH = 2001;
 
     private final static int MSG_START_PLAY = 2002;
+
+    private final static int MSG_KEEP_ALIVE = 2003;
 
     private final static int LOADING_DELAY_TIME = 3 * 1000;
 
@@ -182,7 +186,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             String token = UserManager.getInstance(this).getToken();
             if (pid > 0) {
                 showLoading();
-                mLoadingHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
+                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
                 GetMediaTask mediaTask = new GetMediaTask();
                 mediaTask.addTaskListener(onGetMediaListener);
                 TaskContext taskContext = new TaskContext();
@@ -197,6 +201,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
         if (pid > 0) {
             mChatBox.start(pid);
+            keepAliveDelay(0);
         }
     }
 
@@ -484,12 +489,42 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
+    private Task.OnTaskListener onLiveStatusTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            keepAliveDelay(0);
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
+            long delay = liveStatus.getDelayInSeconds();
+            Log.d(TAG, "Delay: " + delay);
+            keepAliveDelay(delay * 1000);
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            keepAliveDelay(30000);
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            keepAliveDelay(30000);
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+    };
+
     private Task.OnTaskListener onGetMediaListener = new Task.OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "MediaTask onTimeout");
-            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
+            mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
@@ -521,13 +556,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             } else {
                 Log.w(TAG, "mUrl is empty");
             }
-            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
+            mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "MediaTask onTaskFailed: " + event.getMessage());
-            mLoadingHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
+            mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
@@ -584,7 +619,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLoadingButton.hide(true);
     }
 
-    private Handler mLoadingHandler = new Handler() {
+    private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -600,6 +635,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case MSG_START_PLAY:
                 mSecondLoadFinish = true;
                 checkSecondLoading();
+                break;
+            case MSG_KEEP_ALIVE:
+                keepAlive();
                 break;
             }
 
@@ -621,7 +659,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onStartPlay() {
-        mLoadingHandler.sendEmptyMessage(MSG_START_PLAY);
+        mHandler.sendEmptyMessage(MSG_START_PLAY);
     }
 
     public void onEvent(EventNetworkChanged event) {
@@ -640,6 +678,23 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         default:
             break;
         }
+    }
+
+    private void keepAlive() {
+        long pid = mProgram.getId();
+        if (pid > 0) {
+            Log.d(TAG, "keepAlive:" + pid);
+            LiveStatusTask task = new LiveStatusTask();
+            task.addTaskListener(onLiveStatusTaskListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(LiveStatusTask.KEY_PID, pid);
+            task.execute(taskContext);
+        }
+    }
+
+    private void keepAliveDelay(long delay) {
+        mHandler.removeMessages(MSG_KEEP_ALIVE);
+        mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
     }
 
 }
