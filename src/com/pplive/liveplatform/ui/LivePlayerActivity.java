@@ -74,6 +74,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int LOADING_DELAY_TIME = 3 * 1000;
 
+    private final static int KEEP_ALIVE_DELAY_TIME = 30 * 1000;
+
     public final static String EXTRA_PROGRAM = "program";
 
     private DetectableRelativeLayout mRootLayout;
@@ -222,8 +224,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     protected void onResume() {
-        super.onResume();
         Log.d(TAG, "onResume");
+        super.onResume();
         EventBus.getDefault().register(this);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
     }
@@ -232,6 +234,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     protected void onStop() {
         Log.d(TAG, "onStop");
         mChatBox.stop();
+        mHandler.removeMessages(MSG_KEEP_ALIVE);
         mLivePlayerFragment.setCallbackListener(null);
         super.onStop();
     }
@@ -506,12 +509,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            keepAliveDelay(30000);
+            keepAliveDelay(KEEP_ALIVE_DELAY_TIME);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            keepAliveDelay(30000);
+            keepAliveDelay(KEEP_ALIVE_DELAY_TIME);
         }
 
         @Override
@@ -670,7 +673,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             DialogManager.alertMobileDialog(this, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //TODO continue playing
+                    mLivePlayerFragment.setupPlayerDirect(mUrl);
                 }
             }).show();
             break;

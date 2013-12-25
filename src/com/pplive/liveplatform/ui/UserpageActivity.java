@@ -52,11 +52,8 @@ public class UserpageActivity extends Activity {
     private List<Program> mPrograms;
     private CircularImageView mUserIcon;
     private TextView mNicknameText;
-    private TextView mNodataText;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
-    private Button mSettingsButton;
-    private Button mRecordButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,37 +65,34 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
-        mRecordButton = (Button) findViewById(R.id.btn_userpage_record);
-        mRecordButton.setOnClickListener(onRecordBtnClickListener);
-        mSettingsButton = (Button) findViewById(R.id.btn_userpage_settings);
-        mSettingsButton.setOnClickListener(onSettingsBtnClickListener);
+        Button recordButton = (Button) findViewById(R.id.btn_userpage_record);
+        recordButton.setOnClickListener(onRecordBtnClickListener);
+        Button settingsButton = (Button) findViewById(R.id.btn_userpage_settings);
+        settingsButton.setOnClickListener(onSettingsBtnClickListener);
 
         ListView listView = (ListView) findViewById(R.id.list_userpage_program);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(onItemClickListener);
         mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
-        mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         mRefreshDialog = new RefreshDialog(this);
 
-        initViews();
-    }
-
-    private void initViews() {
+        //init views
+        TextView nodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         TextView title = (TextView) findViewById(R.id.text_userpage_title);
         View cameraIcon = findViewById(R.id.image_userpage_camera);
         if (UserManager.getInstance(this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
             title.setText(R.string.userpage_my_title);
-            mSettingsButton.setVisibility(View.VISIBLE);
+            settingsButton.setVisibility(View.VISIBLE);
             cameraIcon.setVisibility(View.VISIBLE);
-            mNodataText.setText(R.string.userpage_user_nodata);
-            mRecordButton.setEnabled(true);
+            nodataText.setText(R.string.userpage_user_nodata);
+            recordButton.setEnabled(true);
         } else {
             title.setText(R.string.userpage_others_title);
-            mSettingsButton.setVisibility(View.GONE);
+            settingsButton.setVisibility(View.GONE);
             cameraIcon.setVisibility(View.GONE);
-            mRecordButton.setEnabled(false);
-            mNodataText.setText(R.string.userpage_others_nodata);
+            recordButton.setEnabled(false);
+            nodataText.setText(R.string.userpage_others_nodata);
         }
     }
 
@@ -160,7 +154,6 @@ public class UserpageActivity extends Activity {
     };
 
     private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
-
         @Override
         public void onClick(View v) {
             finish();
@@ -254,10 +247,8 @@ public class UserpageActivity extends Activity {
     };
 
     private Comparator<Program> comparator = new Comparator<Program>() {
-
         @Override
         public int compare(Program lhs, Program rhs) {
-
             if (lhs.getLiveStatus().ordinal() < rhs.getLiveStatus().ordinal()) {
                 return -1;
             } else if (lhs.getLiveStatus().ordinal() > rhs.getLiveStatus().ordinal()) {

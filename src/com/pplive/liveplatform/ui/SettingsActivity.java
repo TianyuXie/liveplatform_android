@@ -14,9 +14,11 @@ import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 
 public class SettingsActivity extends Activity {
+    static final String TAG = "_SettingsActivity";
+
     public static final int FROM_USERPAGE = 6001;
 
-    public static final int LOGOUT = 5001;
+    public static final int LOGOUT = 5801;
 
     private AppPrefs mUserPrefs;
 
@@ -37,9 +39,9 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
         findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
         findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
+        findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
 
         mNicknameTextView = (TextView) findViewById(R.id.text_settings_nickname);
-        mNicknameTextView.setOnClickListener(onNicknameClickListener);
         mUserTextView = (TextView) findViewById(R.id.text_settings_user);
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);

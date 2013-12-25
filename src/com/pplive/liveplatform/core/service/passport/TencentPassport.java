@@ -201,7 +201,6 @@ public class TencentPassport {
 
     public void doShareToQQ(final Activity activity, final Bundle params) {
         new Thread(new Runnable() {
-
             @Override
             public void run() {
                 if (mTencent != null) {

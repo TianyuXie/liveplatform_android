@@ -30,12 +30,11 @@ import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
 public class RegisterActivity extends Activity {
+    final static String TAG = "_RegisterActivity";
 
     public static final int FROM_LOGIN = 7101;
 
     public static final int REGISTER_SUCCESS = 8201;
-
-    final static String TAG = "_RegisterActivity";
 
     private EditText mUsrEditText;
 
@@ -114,15 +113,12 @@ public class RegisterActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mGuid = event.getContext().getString(CheckCodeTask.KEY_GUID);
-            String url = event.getContext().getString(CheckCodeTask.KEY_IMAGE);
-            mCheckCodeImage.setImageAsync(url);
-            Log.d(TAG, String.format("mGuid: %s, url: %s", mGuid, url));
+            mCheckCodeImage.setImageAsync(event.getContext().getString(CheckCodeTask.KEY_IMAGE));
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -159,10 +155,8 @@ public class RegisterActivity extends Activity {
         @Override
         public void afterTextChanged(Editable s) {
             if (!TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText()) && !TextUtils.isEmpty(mCheckEditText.getText())) {
-                Log.d(TAG, "mConfirmButton.setEnabled(true)");
                 mConfirmButton.setEnabled(true);
             } else {
-                Log.d(TAG, "mConfirmButton.setEnabled(false)");
                 mConfirmButton.setEnabled(false);
             }
         }

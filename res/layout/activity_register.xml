@@ -67,7 +67,7 @@
             android:background="@color/login_input_bg"
             android:hint="@string/register_username"
             android:imeOptions="actionNext"
-            android:inputType="textUri"
+            android:inputType="textVisiblePassword"
             android:padding="12dp"
             android:singleLine="true"
             android:textColor="@color/login_input_text_bg"

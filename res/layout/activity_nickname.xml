@@ -43,7 +43,7 @@
         android:orientation="vertical"
         android:padding="10dp" >
 
-        <EditText
+        <com.pplive.liveplatform.ui.widget.EnterSendEditText
             android:id="@+id/edit_nickname"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
