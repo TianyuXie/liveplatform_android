@@ -141,7 +141,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 break;
             case THIRD_GENERATION:
             case MOBILE:
-                DialogManager.mobileAlertDialog(getActivity(), new DialogInterface.OnClickListener() {
+                DialogManager.alertMobileDialog(getActivity(), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setupVideoView(url);
@@ -149,7 +149,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 }).show();
                 break;
             case DISCONNECTED:
-                DialogManager.noNetworkAlertDialog(getActivity(), new DialogInterface.OnClickListener() {
+                DialogManager.alertNoNetworkDialog(getActivity(), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         setupVideoView(url);

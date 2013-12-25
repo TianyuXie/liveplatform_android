@@ -9,7 +9,7 @@ import android.content.DialogInterface;
 import com.pplive.liveplatform.R;
 
 public class DialogManager {
-    public static Dialog mobileAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
+    public static Dialog alertMobileDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
@@ -25,7 +25,7 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog noNetworkAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
+    public static Dialog alertNoNetworkDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);

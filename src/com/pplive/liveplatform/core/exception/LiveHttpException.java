@@ -30,4 +30,8 @@ public class LiveHttpException extends Exception {
         return mMessage;
     }
     
+    @Override
+    public String toString() {
+        return "error: " + mError + "; message: " + mMessage;
+    }
 }
