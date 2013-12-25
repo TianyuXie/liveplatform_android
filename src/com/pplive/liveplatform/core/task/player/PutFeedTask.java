@@ -12,6 +12,8 @@ public class PutFeedTask extends Task {
 
     public final static String KEY_CONTENT = "content";
 
+    public final static String KEY_FID = "fid";
+
     private final String ID = StringUtil.newGuid();
     public final static String TYPE = "PutFeed";
 
@@ -68,6 +70,7 @@ public class PutFeedTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
+        context.set(KEY_FID, feedId);
         result.setContext(context);
         return result;
     }

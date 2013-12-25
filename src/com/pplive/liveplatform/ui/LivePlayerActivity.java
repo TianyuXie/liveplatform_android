@@ -350,9 +350,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 String content = mCommentEditText.getText().toString();
                 String token = UserManager.getInstance(mContext).getToken();
                 TaskContext taskContext = new TaskContext();
-                taskContext.set(Task.KEY_PID, pid);
+                taskContext.set(PutFeedTask.KEY_PID, pid);
                 taskContext.set(PutFeedTask.KEY_CONTENT, content);
-                taskContext.set(Task.KEY_TOKEN, token);
+                taskContext.set(PutFeedTask.KEY_TOKEN, token);
                 postFeed(taskContext);
             }
             stopWriting();
