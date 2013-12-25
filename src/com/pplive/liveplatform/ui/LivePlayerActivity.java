@@ -629,7 +629,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         switch (event.getNetworkState()) {
         case MOBILE:
         case THIRD_GENERATION:
-            DialogManager.mobileAlertDialog(this, new OnClickListener() {
+            DialogManager.alertMobileDialog(this, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     //TODO continue playing

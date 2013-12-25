@@ -3,14 +3,13 @@ package com.pplive.liveplatform.ui.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 
 import com.pplive.liveplatform.R;
 
 public class DialogManager {
-    public static Dialog mobileAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
+    public static Dialog alertMobileDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
@@ -26,7 +25,7 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog noNetworkAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
+    public static Dialog alertNoNetworkDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
@@ -50,6 +49,18 @@ public class DialogManager {
         builder.setMessage("你要继续直播吗?");
         builder.setPositiveButton("不要", positiveListener);
         builder.setNegativeButton("继续直播", negativeListener);
+        
+        return builder.create();
+    }
+    
+    public static Dialog alertLivingfailed(final Context context, DialogInterface.OnClickListener positiveListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.mobile_alert_title);
+        builder.setMessage("推送失败");
+        
+        builder.setPositiveButton("知道了", positiveListener);
         
         return builder.create();
     }

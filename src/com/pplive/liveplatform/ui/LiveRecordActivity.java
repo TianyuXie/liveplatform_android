@@ -3,8 +3,8 @@ package com.pplive.liveplatform.ui;
 import java.io.IOException;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
@@ -41,6 +41,7 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
@@ -74,6 +75,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
     private static final int WHAT_OPEN_DOOR = 9010;
+    
+    private static final int WHAT_LIVE_FAILED = 9100;
 
     private static final int CHAT_SHORT_DELAY = 5000;
 
@@ -292,6 +295,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     public void onEvent(EventNetworkChanged event) {
         Log.d(TAG, "state: " + event.getNetworkState());
+
+        switch (event.getNetworkState()) {
+        case MOBILE:
+        case THIRD_GENERATION:
+            DialogManager.alertMobileDialog(this, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //TODO continue playing
+                }
+            }).show();
+            break;
+
+        default:
+            break;
+        }
     }
 
     @Override
@@ -314,6 +332,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             break;
         case WHAT_OPEN_DOOR:
             onOpenDoor();
+            break;
+        case WHAT_LIVE_FAILED:
+            onLiveFailed();
             break;
         default:
             break;
@@ -419,6 +440,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mStatusButton.finishLoading();
         moveButton();
         mAnimDoor.open();
+    }
+    
+    private void onLiveFailed() {
+        DialogManager.alertLivingfailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                performOnClickStopRecording();
+            }
+        }).show();
     }
 
     @Override
@@ -534,7 +565,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 @Override
                 public void onError() {
-                    //                    stopRecording();
+                    Log.d(TAG, "onError");
+                    
+                    if (mRecording) {
+                        mInnerHandler.sendEmptyMessage(WHAT_LIVE_FAILED);
+                    }
                 }
             });
 
@@ -554,13 +589,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void stopRecording() {
         if (mRecording) {
+            mRecording = false;
+            
             mMediaRecorder.stop();
 
             stopLiving(mLivingProgram.getId());
 
             mLivingProgram = null;
             mLivingUrl = null;
-            mRecording = false;
             mBtnLiveRecord.setSelected(mRecording);
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
@@ -634,6 +670,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onClickBtnLiveRecord() {
+        switch (NetworkManager.getCurrentNetworkState()) {
+        case WIFI:
+        case UNKNOWN:
+            break;
+        case THIRD_GENERATION:
+        case MOBILE:
+            DialogManager.alertMobileDialog(this, null).show();
+            break;
+        case DISCONNECTED:
+            DialogManager.alertNoNetworkDialog(this, null).show();
+            break;
+        default:
+            break;
+        }
 
         if (null != mCamera) {
             if (!mRecording) {
@@ -771,12 +821,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (!mRecording) {
                 DialogManager.alertHasLivingProgram(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
-                    
+
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
                         String coToken = UserManager.getInstance(getApplicationContext()).getToken();
-                        
+
                         LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
                     }
                 }, new DialogInterface.OnClickListener() {

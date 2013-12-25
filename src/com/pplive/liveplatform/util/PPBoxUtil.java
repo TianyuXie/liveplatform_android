@@ -2,7 +2,6 @@ package com.pplive.liveplatform.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -46,6 +45,7 @@ public class PPBoxUtil {
     public static URL getRtmpM3U8PlayURL(String playLink, int port) {
         
         URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, PPBOX_HTTP_PORT, "/record.m3u8");
+        url.addParameter("realtime", "high");
         url.addParameter("playlink", URLEncoderUtil.encode(playLink));
         url.addParameter("mux.M3U8.segment_duration", 5);
         url.addParameter("mux.M3U8.back_seek_time", 0);
@@ -57,12 +57,12 @@ public class PPBoxUtil {
         return getPPLive2M3U8PlayURL(playLink, PPBOX_HTTP_PORT);
     }
     
-    @SuppressWarnings("deprecation")
     public static URL getPPLive2M3U8PlayURL(String playLink, int port) {
         
         URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, port, "/record.m3u8");
+        url.addParameter("realtime", "low");
         url.addParameter("type", "pplive3");
-        url.addParameter("playlink", URLEncoder.encode(playLink));
+        url.addParameter("playlink", URLEncoderUtil.encode(playLink));
         
         return url;
     }
