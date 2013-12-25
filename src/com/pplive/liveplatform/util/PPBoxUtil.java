@@ -45,7 +45,7 @@ public class PPBoxUtil {
     
     public static URL getRtmpM3U8PlayURL(String playLink, int port) {
         
-        URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, PPBOX_HTTP_PORT, "/record.m3u8");
+        URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, PPBOX_HTTP_PORT, "/play.m3u8");
         url.addParameter("playlink", URLEncoderUtil.encode(playLink));
         url.addParameter("mux.M3U8.segment_duration", 5);
         url.addParameter("mux.M3U8.back_seek_time", 0);
@@ -60,7 +60,7 @@ public class PPBoxUtil {
     @SuppressWarnings("deprecation")
     public static URL getPPLive2M3U8PlayURL(String playLink, int port) {
         
-        URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, port, "/record.m3u8");
+        URL url = new URL(URL.Protocol.HTTP, PPBOX_HOST, port, "/play.m3u8");
         url.addParameter("type", "pplive3");
         url.addParameter("playlink", URLEncoder.encode(playLink));
         

@@ -552,6 +552,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 @Override
                 public void onError() {
                     //                    stopRecording();
+                    Log.d(TAG, "onError");
                 }
             });
 
