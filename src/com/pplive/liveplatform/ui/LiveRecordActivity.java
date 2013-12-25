@@ -589,13 +589,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void stopRecording() {
         if (mRecording) {
+            mRecording = false;
+            
             mMediaRecorder.stop();
 
             stopLiving(mLivingProgram.getId());
 
             mLivingProgram = null;
             mLivingUrl = null;
-            mRecording = false;
             mBtnLiveRecord.setSelected(mRecording);
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
