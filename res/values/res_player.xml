@@ -3,7 +3,7 @@
 
     <string name="player_loading">载入中&#8230;</string>
     <string name="player_finish">载入完成</string>
-    <string name="player_no_comment">暂无精彩评论</string>
+    <string name="player_no_comment">暂无聊天内容,&#160;快来抢沙发!</string>
 
     <color name="player_bottom_bar">#7F000000</color>
     <color name="player_chatbox_bg">#B3111111</color>

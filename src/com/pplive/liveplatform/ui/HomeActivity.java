@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.RadioGroup;
@@ -29,7 +30,7 @@ import com.pplive.liveplatform.ui.widget.SideBar;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.util.DisplayUtil;
 
-public class HomeActivity extends FragmentActivity implements HomeFragment.Callback {
+public class HomeActivity extends FragmentActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
     static final String TAG = "_HomeActivity";
 
     private static final int TIME_BUTTON_UP = 400;
@@ -77,6 +78,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
 
         mFragmentContainer.attachOnSlideListener(mSideBar);
         mFragmentContainer.attachOnSlideListener(mHomeFragment);
+        mFragmentContainer.attachOnSlideListener(this);
 
         mGlobalDetector = new GestureDetector(getApplicationContext(), onGestureListener);
 
@@ -299,5 +301,17 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
             }
         }
     };
+
+    @Override
+    public void onSlide() {
+        mStatusButtonWrapper.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.loadbtn_hide));
+        mStatusButtonWrapper.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onSlideBack() {
+        mStatusButtonWrapper.setVisibility(View.VISIBLE);
+        mStatusButtonWrapper.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.loadbtn_show));
+    }
 
 }

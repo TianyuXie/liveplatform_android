@@ -17,6 +17,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.pplive.liveplatform.util.StringUtil;
+import com.pplive.liveplatform.util.SysUtil;
 
 public class ShareDialog extends Dialog implements View.OnClickListener {
     static final String TAG = "_ShareDialog";
@@ -93,11 +94,16 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     public void qqShare() {
-        if (mActivity != null) {
-            TencentPassport.getInstance().init(mActivity);
-            TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
+        if (SysUtil.checkPackage("com.tencent.mobileqq", getContext())) {
+            if (mActivity != null) {
+                TencentPassport.getInstance().init(mActivity);
+                TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
+                dismiss();
+            } else {
+                Log.e(TAG, "mActivity == null");
+            }
         } else {
-            Log.e(TAG, "mActivity == null");
+            Toast.makeText(getContext(), R.string.share_qq_not_install, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -112,6 +118,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
+            dismiss();
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
         }
@@ -128,6 +135,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
+            dismiss();
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
         }
@@ -144,6 +152,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
+            dismiss();
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
         }
@@ -160,6 +169,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
+            dismiss();
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_qq_not_install, Toast.LENGTH_SHORT).show();
         }

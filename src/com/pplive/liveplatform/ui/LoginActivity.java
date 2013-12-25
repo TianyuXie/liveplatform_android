@@ -202,7 +202,6 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
             // TODO Auto-generated method stub
-
         }
 
         @Override

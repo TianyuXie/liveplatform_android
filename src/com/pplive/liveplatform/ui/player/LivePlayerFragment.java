@@ -132,6 +132,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     }
 
+    public void setupPlayerDirect(String url) {
+        setupVideoView(url);
+    }
+
     public void setupPlayer(final String url) {
         if (getActivity() != null) {
             switch (NetworkManager.getCurrentNetworkState()) {

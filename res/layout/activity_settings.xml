@@ -44,7 +44,9 @@
 
             <TableLayout style="@style/settings_tablelayout" >
 
-                <TableRow style="@style/settings_tablerow" >
+                <TableRow
+                    android:id="@+id/layout_settings_nickname"
+                    style="@style/settings_tablerow" >
 
                     <TextView
                         style="@style/settings_text"
@@ -89,7 +91,9 @@
                         style="@style/settings_togglebutton" />
                 </TableRow>
 
-                <TableRow style="@style/settings_tablerow_switcher" >
+                <TableRow
+                    style="@style/settings_tablerow_switcher"
+                    android:visibility="gone" >
 
                     <TextView
                         style="@style/settings_text"
@@ -99,9 +103,6 @@
                         android:id="@+id/btn_settings_content"
                         style="@style/settings_togglebutton" />
                 </TableRow>
-            </TableLayout>
-
-            <TableLayout style="@style/settings_tablelayout" >
 
                 <TableRow style="@style/settings_tablerow" >
 

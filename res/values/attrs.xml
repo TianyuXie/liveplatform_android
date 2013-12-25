@@ -9,6 +9,8 @@
     <declare-styleable name="LoadingButton">
         <attr name="textSize" />
         <attr name="text" />
+        <attr name="anim_show" />
+        <attr name="anim_hide" />
         <attr name="normal_background" format="reference" />
         <attr name="loading_background" format="reference" />
         <attr name="anim_background" format="reference" />
