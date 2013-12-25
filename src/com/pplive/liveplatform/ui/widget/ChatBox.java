@@ -7,6 +7,7 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -51,6 +52,10 @@ public class ChatBox extends RelativeLayout {
     private int mRefreshDelay;
 
     private int mRetryDelay;
+
+    private INewMessageListener mNewMessageListener;
+
+    private long mTopFid;
 
     public ChatBox(Context context) {
         this(context, null);
@@ -149,8 +154,16 @@ public class ChatBox extends RelativeLayout {
                         for (String content : contents) {
                             mTextView.append(Html.fromHtml(content.toString()));
                         }
+                        long topFid = feeds.getTopFeedId();
+                        if (topFid > 0 && topFid != mTopFid) {
+                            mTopFid = topFid;
+                            if (mNewMessageListener != null) {
+                                mNewMessageListener.notifyMessage();
+                            }
+                        }
                     } else {
                         mNoContentInfo.setVisibility(View.VISIBLE);
+                        mTopFid = -1;
                     }
                 }
             }
@@ -194,6 +207,7 @@ public class ChatBox extends RelativeLayout {
     public void start(long pid) {
         Log.d(TAG, "start");
         mStart = true;
+        mTopFid = -1;
         mFeedHandler.removeMessages(MSG_GET_FEED);
         GetFeedTask feedTask = new GetFeedTask();
         feedTask.addTaskListener(onGetFeedListener);
@@ -217,5 +231,19 @@ public class ChatBox extends RelativeLayout {
     public void setDelay(int refreshDelay, int retryDelay) {
         mRefreshDelay = refreshDelay;
         mRetryDelay = retryDelay;
+    }
+
+    public interface INewMessageListener {
+        public void notifyMessage();
+    }
+    
+
+    public void setNewMessageListener(INewMessageListener l) {
+        this.mNewMessageListener = l;
+    }
+
+
+    public boolean isEmpty() {
+        return TextUtils.isEmpty(mTextView.getText().toString());
     }
 }

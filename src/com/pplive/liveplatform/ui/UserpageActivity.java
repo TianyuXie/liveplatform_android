@@ -52,9 +52,11 @@ public class UserpageActivity extends Activity {
     private List<Program> mPrograms;
     private CircularImageView mUserIcon;
     private TextView mNicknameText;
+    private TextView mNodataText;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
     private Button mSettingsButton;
+    private Button mRecordButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +68,8 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
-        findViewById(R.id.btn_userpage_record).setOnClickListener(onRecordBtnClickListener);
+        mRecordButton = (Button) findViewById(R.id.btn_userpage_record);
+        mRecordButton.setOnClickListener(onRecordBtnClickListener);
         mSettingsButton = (Button) findViewById(R.id.btn_userpage_settings);
         mSettingsButton.setOnClickListener(onSettingsBtnClickListener);
 
@@ -75,6 +78,7 @@ public class UserpageActivity extends Activity {
         listView.setOnItemClickListener(onItemClickListener);
         mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
+        mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         mRefreshDialog = new RefreshDialog(this);
 
         initViews();
@@ -87,10 +91,14 @@ public class UserpageActivity extends Activity {
             title.setText(R.string.userpage_my_title);
             mSettingsButton.setVisibility(View.VISIBLE);
             cameraIcon.setVisibility(View.VISIBLE);
+            mNodataText.setText(R.string.userpage_user_nodata);
+            mRecordButton.setEnabled(true);
         } else {
             title.setText(R.string.userpage_others_title);
             mSettingsButton.setVisibility(View.GONE);
             cameraIcon.setVisibility(View.GONE);
+            mRecordButton.setEnabled(false);
+            mNodataText.setText(R.string.userpage_others_nodata);
         }
     }
 

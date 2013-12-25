@@ -1,21 +1,21 @@
 package com.pplive.liveplatform.core.task.player;
 
-import com.pplive.liveplatform.core.service.comment.PbarService;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.live.ProgramService;
+import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class PutFeedTask extends Task {
-    static final String TAG = "_PutFeedTask";
+public class LiveStatusTask extends Task {
+    static final String TAG = "_LiveStatusTask";
 
-    public final static String KEY_CONTENT = "content";
-
-    public final static String KEY_FID = "fid";
+    public final static String KEY_RESULT = "live_status_result";
 
     private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "PutFeed";
+    public final static String TYPE = "LiveStatus";
 
     @Override
     public String getID() {
@@ -49,28 +49,17 @@ public class PutFeedTask extends Task {
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
-        String token = context.getString(KEY_TOKEN);
-        String content = context.getString(KEY_CONTENT);
-        TaskResult result = new TaskResult(TaskStatus.Finished);
-        long feedId = -1;
+        LiveStatus data = null;
         try {
-            feedId = PbarService.getInstance().putFeed(token, pid, content);
-        } catch (Exception e) {
-            result.setStatus(TaskStatus.Failed);
-            result.setMessage("PbarService error");
-            result.setContext(context);
-            return result;
+            data = ProgramService.getInstance().getLiveStatus(pid);
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.Failed, "ProgramService error");
         }
-        if (feedId <= 0) {
-            result.setStatus(TaskStatus.Failed);
-            result.setMessage("Invalid feed id");
-            result.setContext(context);
-            return result;
+        if (data == null) {
+            return new TaskResult(TaskStatus.Failed, "No data");
         }
-        if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
-        }
-        context.set(KEY_FID, feedId);
+        TaskResult result = new TaskResult(TaskStatus.Finished);
+        context.set(KEY_RESULT, data);
         result.setContext(context);
         return result;
     }

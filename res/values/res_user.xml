@@ -4,7 +4,8 @@
     <string name="userpage_default_title">个人主页</string>
     <string name="userpage_my_title">我的主页</string>
     <string name="userpage_others_title">关于播主</string>
-    <string name="userpage_nodata">您还没有创建过节目</string>
+    <string name="userpage_others_nodata">播主还没有创建过节目</string>
+    <string name="userpage_user_nodata">您还没有创建过节目\n点击上图开始直播</string>
     <string name="userpage_record">创建直播</string>
     <string name="userpage_default_vv">0</string>
 

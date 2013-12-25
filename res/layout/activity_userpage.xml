@@ -86,23 +86,28 @@
             android:id="@+id/layout_userpage_nodata"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginTop="80dp"
+            android:layout_centerInParent="true"
             android:gravity="center_horizontal"
             android:orientation="vertical"
             android:visibility="gone" >
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/userpage_nodata"
-                android:textColor="@color/white"
-                android:textSize="18sp" />
-
             <Button
                 android:id="@+id/btn_userpage_record"
-                style="@style/home_retry_button"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/home_empty_btn_bg" />
+
+            <TextView
+                android:id="@+id/text_userpage_nodata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="@string/userpage_record" />
+                android:gravity="center_horizontal"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/userpage_user_nodata"
+                android:textColor="@color/true_gray"
+                android:textSize="18sp" />
         </LinearLayout>
     </RelativeLayout>
 

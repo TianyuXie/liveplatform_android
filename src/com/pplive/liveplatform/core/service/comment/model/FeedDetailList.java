@@ -28,6 +28,14 @@ public class FeedDetailList {
         return feedIds;
     }
 
+    public long getTopFeedId() {
+        if (feedIds.length != 0) {
+            return feedIds[0];
+        } else {
+            return -1;
+        }
+    }
+
     public Map<String, User> getUserMap() {
         return mapUser;
     }
