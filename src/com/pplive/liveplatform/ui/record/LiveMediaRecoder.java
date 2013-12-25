@@ -34,7 +34,7 @@ public class LiveMediaRecoder {
             @Override
             public void invoke(long err) {
                 Log.d(TAG, "error: " + err);
-
+                
                 if (null != listener) {
                     listener.onError();
                 }
