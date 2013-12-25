@@ -24,7 +24,7 @@ public interface Constants {
 
     public static final String LIVEPLATFORM_API_HOST = "api.liveplatform.pptv.com";
 
-    public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.idc.pplive.cn";
+    public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.pptv.com";
 
     public static final String SC_API_HOST = "api.sc.pptv.com";
 
