@@ -3,10 +3,9 @@ package com.pplive.liveplatform.ui;
 import java.io.IOException;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -76,6 +75,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
     private static final int WHAT_OPEN_DOOR = 9010;
+    
+    private static final int WHAT_LIVE_FAILED = 9100;
 
     private static final int CHAT_SHORT_DELAY = 5000;
 
@@ -332,6 +333,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_OPEN_DOOR:
             onOpenDoor();
             break;
+        case WHAT_LIVE_FAILED:
+            onLiveFailed();
+            break;
         default:
             break;
         }
@@ -436,6 +440,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mStatusButton.finishLoading();
         moveButton();
         mAnimDoor.open();
+    }
+    
+    private void onLiveFailed() {
+        DialogManager.alertLivingfailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                performOnClickStopRecording();
+            }
+        }).show();
     }
 
     @Override
@@ -551,8 +565,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 @Override
                 public void onError() {
-                    //                    stopRecording();
                     Log.d(TAG, "onError");
+                    
+                    if (mRecording) {
+                        mInnerHandler.sendEmptyMessage(WHAT_LIVE_FAILED);
+                    }
                 }
             });
 

@@ -53,4 +53,16 @@ public class DialogManager {
         
         return builder.create();
     }
+    
+    public static Dialog alertLivingfailed(final Context context, DialogInterface.OnClickListener positiveListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.mobile_alert_title);
+        builder.setMessage("推送失败");
+        
+        builder.setPositiveButton("知道了", positiveListener);
+        
+        return builder.create();
+    }
 }
