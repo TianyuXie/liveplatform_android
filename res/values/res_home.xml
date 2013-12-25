@@ -7,7 +7,7 @@
     <string name="home_loaded_count">已加载%d条</string>
     <string name="home_all_loaded">已全部加载</string>
     <string name="home_nodata_button">没有数据</string>
-    <string name="home_nodata_text">暂时没有数据,请刷新重试</string>
+    <string name="home_nodata_text">暂无直播\n点击上图尝试刷新</string>
     <string name="home_retry">刷新</string>
     <string name="program_live">Live</string>
     <string name="default_program_viewcount">0</string>

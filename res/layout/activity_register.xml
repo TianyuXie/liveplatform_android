@@ -39,15 +39,14 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/nav_bg"
-        android:gravity="center_vertical"
+        android:background="@drawable/navbar_bg"
         android:orientation="horizontal"
         android:padding="2dp" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="12dp"
+            android:layout_marginLeft="15dp"
             android:text="@string/register_nav"
             android:textColor="@color/nav_text_bg"
             android:textSize="14sp" />
@@ -66,7 +65,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:background="@color/login_input_bg"
-            android:digits="@string/number_and_letter"
             android:hint="@string/register_username"
             android:imeOptions="actionNext"
             android:inputType="textUri"
