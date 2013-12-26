@@ -95,6 +95,10 @@ public class Program implements Serializable {
         return livestatus;
     }
 
+    public boolean isComing() {
+        return livestatus == LiveStatusEnum.INIT || livestatus == LiveStatusEnum.PREVIEW || livestatus == LiveStatusEnum.NOT_START;
+    }
+
     public String getCover() {
         String coverUrl = getCoverUrl();
         return StringUtil.isNullOrEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;

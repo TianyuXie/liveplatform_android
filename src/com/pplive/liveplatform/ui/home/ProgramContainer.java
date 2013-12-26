@@ -5,7 +5,9 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +23,9 @@ import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 
 public class ProgramContainer extends RelativeLayout {
-    static final String TAG = "_ProgramsContainer";
+    static final String TAG = "_ProgramContainer";
+
+    private static final int TIMER_DELAY = 10000;
 
     private List<Program> mPrograms;
     private HomeProgramAdapter mAdapter;
@@ -29,6 +33,8 @@ public class ProgramContainer extends RelativeLayout {
     private RadioGroup mRadioGroup;
 
     private boolean mItemClickable;
+
+    private boolean mTimerOn;
 
     public ProgramContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -45,6 +51,22 @@ public class ProgramContainer extends RelativeLayout {
         mGridView.setAdapter(mAdapter);
         mGridView.setHeader(mRadioGroup);
         mGridView.setOnItemClickListener(onItemClickListener);
+    }
+
+    public void startTimer() {
+        if (!mTimerOn) {
+            Log.d(TAG, "start timer");
+            handler.postDelayed(runnable, TIMER_DELAY);
+            mTimerOn = true;
+        }
+    }
+
+    public void stopTimer() {
+        if (mTimerOn) {
+            Log.d(TAG, "stop timer");
+            handler.removeCallbacks(runnable);
+            mTimerOn = false;
+        }
     }
 
     public ProgramContainer(Context context) {
@@ -68,7 +90,7 @@ public class ProgramContainer extends RelativeLayout {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             if (mGridView.canClick() && mItemClickable) {
                 Program program = mPrograms.get(position);
-                if (program != null){
+                if (program != null) {
                     Intent intent = new Intent();
                     intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
                     intent.setClass(getContext(), LivePlayerActivity.class);
@@ -93,9 +115,19 @@ public class ProgramContainer extends RelativeLayout {
     public void setOnStatusChangeListener(RadioGroup.OnCheckedChangeListener l) {
         mRadioGroup.setOnCheckedChangeListener(l);
     }
-    
-    public void setPullable(boolean enabled){
+
+    public void setPullable(boolean enabled) {
         mGridView.setPullable(enabled);
     }
+
+    private Handler handler = new Handler();
+
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            Log.d(TAG, "Timer update");
+            mAdapter.notifyDataSetChanged();
+            handler.postDelayed(this, TIMER_DELAY);
+        }
+    };
 
 }

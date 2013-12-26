@@ -24,6 +24,7 @@ import com.pplive.liveplatform.ui.LoginActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.widget.attr.IHidable;
+import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
 public class SideBar extends LinearLayout implements SlidableContainer.OnSlideListener, IHidable {

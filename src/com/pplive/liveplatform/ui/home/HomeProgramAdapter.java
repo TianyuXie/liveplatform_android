@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui.home;
 
+import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -12,8 +13,9 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.ui.widget.AsyncImageView;
+import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.TimeUtil;
 
 public class HomeProgramAdapter extends BaseAdapter {
     private static final DisplayImageOptions DEFAULT_PREVIEW_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
@@ -59,7 +61,6 @@ public class HomeProgramAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.layout_program_item, null);
             holder = new ViewHolder();
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
-            holder.statusTextView = (TextView) convertView.findViewById(R.id.text_program_status);
             holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
             holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_owner);
@@ -77,14 +78,18 @@ public class HomeProgramAdapter extends BaseAdapter {
         lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwnerNickname());
         holder.titleTextView.setText(data.getTitle());
+        if (data.isComing()) {
+            holder.timedownTextView.setVisibility(View.VISIBLE);
+            holder.timedownTextView.setText(TimeUtil.stringForLongTime(data.getStartTime() - (new Date()).getTime()));
+        } else {
+            holder.timedownTextView.setVisibility(View.GONE);
+        }
         holder.viewcountTextView.setText(String.valueOf(data.getVV()));
         holder.previewImageView.setImageAsync(data.getCover(), DEFAULT_PREVIEW_DISPLAY_OPTIONS);
     }
 
     static class ViewHolder {
         AsyncImageView previewImageView;
-
-        TextView statusTextView;
 
         TextView timedownTextView;
 

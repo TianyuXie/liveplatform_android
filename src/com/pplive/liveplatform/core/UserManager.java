@@ -71,6 +71,14 @@ public class UserManager {
         return isLogin() && mThirdPartySource > 0;
     }
 
+    public boolean isSinaLogin() {
+        return isThirdPartyLogin() && mThirdPartySource == LoginResult.FROM_SINA;
+    }
+
+    public boolean isTencentLogin() {
+        return isThirdPartyLogin() && mThirdPartySource == LoginResult.FROM_TENCENT;
+    }
+
     public boolean isThirdPartyLoginCurrent() {
         return isLogin() && mThirdPartyLogin && mThirdPartySource > 0;
     }
@@ -89,19 +97,13 @@ public class UserManager {
 
     public void logout() {
         if (isLogin()) {
-            if (isThirdPartyLoginCurrent()) {
-                switch (mThirdPartySource) {
-                case LoginResult.FROM_SINA:
-                    Log.d(TAG, "Sina logout");
-                    WeiboPassport.getInstance().logout(mContext);
-                    break;
-                case LoginResult.FROM_TENCENT:
-                    Log.d(TAG, "Tencent logout");
-                    TencentPassport.getInstance().logout(mContext);
-                    break;
-                default:
-                    break;
-                }
+            if (isSinaLogin()) {
+                Log.d(TAG, "Sina logout");
+                WeiboPassport.getInstance().logout(mContext);
+                mThirdPartyLogin = false;
+            } else if (isTencentLogin()) {
+                Log.d(TAG, "Tencent logout");
+                TencentPassport.getInstance().logout(mContext);
                 mThirdPartyLogin = false;
             }
             SettingsProvider.getInstance(mContext).clearUser();
@@ -136,6 +138,10 @@ public class UserManager {
             mThirdPartySource = thirdParty;
             SettingsProvider.getInstance(mContext).setThirdparty(thirdParty);
         }
+    }
+
+    public int getThirdPartySource() {
+        return mThirdPartySource;
     }
 
     public String getNickname() {

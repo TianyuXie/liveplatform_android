@@ -129,21 +129,21 @@ public class WeiboPassport {
                 updateLoginResult(values);
                 updateUserInfo(values.getString("uid"));
             } else {
-                mLoginListener.LoginFailed("WeiboAuthListener error:" + values.getString("code"));
+                mLoginListener.loginFailed("WeiboAuthListener error:" + values.getString("code"));
             }
         }
 
         @Override
         public void onCancel() {
             if (mLoginListener != null) {
-                mLoginListener.LoginFailed("WeiboAuthListener: onCancel");
+                mLoginListener.loginFailed("WeiboAuthListener: onCancel");
             }
         }
 
         @Override
         public void onWeiboException(WeiboException e) {
             if (mLoginListener != null) {
-                mLoginListener.LoginFailed("WeiboAuthListener: WeiboException");
+                mLoginListener.loginFailed("WeiboAuthListener: WeiboException");
             }
         }
     }
@@ -196,20 +196,20 @@ public class WeiboPassport {
                         mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
                     } else {
                         if (mLoginListener != null) {
-                            mLoginListener.LoginFailed("RequestListener: PassportService failed");
+                            mLoginListener.loginFailed("RequestListener: PassportService failed");
                         }
                     }
                 } catch (JSONException e) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("RequestListener: JSONException");
+                        mLoginListener.loginFailed("RequestListener: JSONException");
                     }
                 } catch (Exception e) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("RequestListener: Exception");
+                        mLoginListener.loginFailed("RequestListener: Exception");
                     }
                 }
                 if (mLoginListener != null) {
-                    mLoginListener.LoginSuccess(mLoginResult);
+                    mLoginListener.loginSuccess(mLoginResult);
                 }
             }
 
@@ -221,14 +221,14 @@ public class WeiboPassport {
             @Override
             public void onIOException(IOException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.LoginFailed("RequestListener: IOException");
+                    mLoginListener.loginFailed("RequestListener: IOException");
                 }
             }
 
             @Override
             public void onError(WeiboException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.LoginFailed("RequestListener: WeiboException");
+                    mLoginListener.loginFailed("RequestListener: WeiboException");
                 }
             }
         });

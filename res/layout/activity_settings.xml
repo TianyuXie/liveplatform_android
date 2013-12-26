@@ -10,12 +10,12 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="50dp" >
+        android:layout_height="@dimen/titlebar_height" >
 
         <Button
             android:id="@+id/btn_settings_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="@dimen/titlebar_back_btn_size"
+            android:layout_height="@dimen/titlebar_back_btn_size"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/titlebar_back_btn_bg" />
@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:text="@string/settings_title"
             android:textColor="@color/white"
-            android:textSize="22sp" />
+            android:textSize="@dimen/titlebar_text_size" />
     </RelativeLayout>
 
     <ScrollView
@@ -60,11 +60,11 @@
                 </TableRow>
             </TableLayout>
 
-            <TableLayout
-                android:id="@+id/layout_settings_user"
-                style="@style/settings_tablelayout" >
+            <TableLayout style="@style/settings_tablelayout" >
 
-                <TableRow style="@style/settings_tablerow" >
+                <TableRow
+                    android:id="@+id/layout_settings_user"
+                    style="@style/settings_tablerow" >
 
                     <TextView
                         style="@style/settings_text"
@@ -72,6 +72,21 @@
 
                     <TextView
                         android:id="@+id/text_settings_user"
+                        android:layout_marginRight="12dp"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/layout_settings_thirdparty"
+                    style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_thirdparty" />
+
+                    <TextView
+                        android:id="@+id/text_settings_thirdparty"
                         android:layout_marginRight="12dp"
                         android:textColor="@color/white"
                         android:textSize="16sp" />

@@ -2,7 +2,7 @@
 <resources>
 
     <!-- string -->
-    <string name="home_title">PP直播</string>
+    <string name="home_title">i&#160;播</string>
     <string name="home_loading">正在加载</string>
     <string name="home_loaded_count">已加载%d条</string>
     <string name="home_all_loaded">已全部加载</string>
@@ -11,7 +11,6 @@
     <string name="home_retry">刷新</string>
     <string name="program_live">Live</string>
     <string name="default_program_viewcount">0</string>
-    <string name="program_going">即将开播</string>
     <string name="home_catalog_original">原创</string>
     <string name="home_catalog_tv">电视</string>
     <string name="home_catalog_sport">体育</string>

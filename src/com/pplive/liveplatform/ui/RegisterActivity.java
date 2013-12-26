@@ -26,8 +26,8 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.CheckCodeTask;
 import com.pplive.liveplatform.core.task.user.RegisterTask;
-import com.pplive.liveplatform.ui.widget.AsyncImageView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
 public class RegisterActivity extends Activity {
     final static String TAG = "_RegisterActivity";

@@ -1,6 +1,8 @@
 package com.pplive.liveplatform.ui.widget.intercept;
 
 
+import com.pplive.liveplatform.ui.widget.attr.Interceptable;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
