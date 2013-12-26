@@ -6,8 +6,8 @@
     <ToggleButton
         android:id="@+id/btn_titlebar_menu"
         style="@style/togglebutton_notext"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/titlebar_height"
+        android:layout_height="@dimen/titlebar_height"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:background="@drawable/titlebar_menu_btn_bg" />
@@ -20,12 +20,12 @@
         android:layout_centerVertical="true"
         android:text="@string/home_title"
         android:textColor="@color/white"
-        android:textSize="22sp" />
+        android:textSize="@dimen/titlebar_text_size" />
 
     <Button
         android:id="@+id/btn_titlebar_search"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/titlebar_height"
+        android:layout_height="@dimen/titlebar_height"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:background="@drawable/titlebar_search_btn_bg" />

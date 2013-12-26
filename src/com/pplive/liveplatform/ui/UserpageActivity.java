@@ -33,8 +33,8 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
-import com.pplive.liveplatform.ui.widget.CircularImageView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";

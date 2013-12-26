@@ -13,7 +13,7 @@
         android:id="@+id/text_searchbar_item"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="23sp"
+        android:textSize="22sp"
         android:textColor="@drawable/searchbar_list_text_color"
         android:textStyle="bold" />
 

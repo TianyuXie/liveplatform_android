@@ -4,15 +4,18 @@
     <!-- For settings -->
     <string name="settings_nickname">昵称</string>
     <string name="settings_pptv_user">PPTV帐号</string>
+    <string name="settings_thirdparty">第三方登录</string>
+    <string name="settings_login_qq">腾讯QQ</string>
+    <string name="settings_login_weibo">新浪微博</string>
     <string name="settings_password">修改密码</string>
     <string name="settings_change_nickname">修改昵称</string>
     <string name="settings_hint_nickname">昵称</string>
     <string name="settings_prelive">预播提醒</string>
     <string name="settings_content">内容提醒</string>
-    <string name="settings_about">关于Bobo</string>
+    <string name="settings_about">关于爱播</string>
     <string name="settings_logout">注&#160;&#160;&#160;销</string>
     <string name="settings_title">设置</string>
-    <string name="test_settings_version">Version 1.0 最新版本</string>
+    <string name="test_settings_version">Version 1.0.0 最新版本</string>
 
     <color name="settings_table_bg">#FF0E0E0E</color>
     <color name="settings_text">#FF919191</color>
@@ -40,7 +43,7 @@
     <style name="settings_tablerow">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:background">@color/settings_table_bg</item>
-        <item name="android:layout_marginBottom">3dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
         <item name="android:paddingBottom">15dp</item>
         <item name="android:paddingTop">15dp</item>
     </style>

@@ -35,7 +35,7 @@ import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
-import com.pplive.liveplatform.ui.widget.CircularImageView;
+import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.thirdparty.BreakpadUtil;

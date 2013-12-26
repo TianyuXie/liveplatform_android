@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.ui.widget.AsyncImageView;
+import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeProgramAdapter extends BaseAdapter {

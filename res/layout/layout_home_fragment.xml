@@ -7,7 +7,7 @@
     <com.pplive.liveplatform.ui.widget.TitleBar
         android:id="@+id/titlebar_home"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/titlebar_height"
         android:layout_alignParentTop="true"
         android:background="@color/black" />
 

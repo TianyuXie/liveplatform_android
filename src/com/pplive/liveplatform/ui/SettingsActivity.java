@@ -22,15 +22,19 @@ public class SettingsActivity extends Activity {
 
     private AppPrefs mUserPrefs;
 
-    private TextView mNicknameTextView;
+    private TextView mNicknameText;
 
-    private TextView mUserTextView;
+    private TextView mPPTVUserText;
+
+    private TextView mThirdpartyText;
 
     private ToggleButton mContentButton;
 
     private ToggleButton mPreliveButton;
 
-    private View mUserView;
+    private View mPPTVUserView;
+
+    private View mThirdpartyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +45,13 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
         findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
 
-        mNicknameTextView = (TextView) findViewById(R.id.text_settings_nickname);
-        mUserTextView = (TextView) findViewById(R.id.text_settings_user);
+        mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
+        mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
+        mThirdpartyText = (TextView) findViewById(R.id.text_settings_thirdparty);
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
-        mUserView = findViewById(R.id.layout_settings_user);
+        mPPTVUserView = findViewById(R.id.layout_settings_user);
+        mThirdpartyView = findViewById(R.id.layout_settings_thirdparty);
     }
 
     @Override
@@ -54,12 +60,19 @@ public class SettingsActivity extends Activity {
         mUserPrefs = SettingsProvider.getInstance(this).getAppPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
-        mUserTextView.setText(UserManager.getInstance(this).getUsernamePlain());
-        mNicknameTextView.setText(UserManager.getInstance(this).getNickname());
+        mPPTVUserText.setText(UserManager.getInstance(this).getUsernamePlain());
+        mNicknameText.setText(UserManager.getInstance(this).getNickname());
         if (UserManager.getInstance(this).isThirdPartyLogin()) {
-            mUserView.setVisibility(View.GONE);
+            mPPTVUserView.setVisibility(View.GONE);
+            mThirdpartyView.setVisibility(View.VISIBLE);
+            if (UserManager.getInstance(this).isSinaLogin()) {
+                mThirdpartyText.setText(R.string.settings_login_weibo);
+            } else if (UserManager.getInstance(this).isTencentLogin()) {
+                mThirdpartyText.setText(R.string.settings_login_qq);
+            }
         } else {
-            mUserView.setVisibility(View.VISIBLE);
+            mPPTVUserView.setVisibility(View.VISIBLE);
+            mThirdpartyView.setVisibility(View.GONE);
         }
     }
 
