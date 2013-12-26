@@ -18,7 +18,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
@@ -44,10 +43,6 @@ public class UserpageActivity extends Activity {
     public static final String EXTRA_ICON = "UserpageActivity_icon";
 
     public static final String EXTRA_NICKNAME = "UserpageActivity_nickname";
-
-    private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-            .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .cacheInMemory(true).build();
 
     private List<Program> mPrograms;
     private CircularImageView mUserIcon;
@@ -109,7 +104,7 @@ public class UserpageActivity extends Activity {
         String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
         mUserIcon.setRounded(false);
         if (!TextUtils.isEmpty(iconUrl)) {
-            mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+            mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
         } else {
             mUserIcon.setImageResource(R.drawable.user_icon_default);
         }

@@ -15,7 +15,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
@@ -29,10 +28,6 @@ import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 
 public class SideBar extends LinearLayout implements SlidableContainer.OnSlideListener, IHidable {
     static final String TAG = "_SideBar";
-
-    private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-            .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .cacheInMemory(true).build();
 
     private View mRoot;
 
@@ -98,7 +93,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             Log.d(TAG, iconUrl);
             mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
                 mUserIcon.setImageResource(R.drawable.user_icon_default);
             }

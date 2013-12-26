@@ -1,5 +1,10 @@
 package com.pplive.liveplatform.util;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -104,6 +109,24 @@ public class ImageUtil {
 
     public static Drawable getCircleDrawable(Resources res, int id) {
         return new BitmapDrawable(res, getCircleBitmap(res, id));
+    }
+
+    public static Bitmap loadImageFromUrl(String url) throws IOException {
+        InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
+        BitmapFactory.Options bpo = new BitmapFactory.Options();
+        return BitmapFactory.decodeStream(inputStream, null, bpo);
+    }
+
+    public static void bitmap2File(Bitmap bitmap, String filename) {
+        try {
+            File f = new File(filename);
+            FileOutputStream fos = new FileOutputStream(f);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     static class UnsupportedException extends RuntimeException {

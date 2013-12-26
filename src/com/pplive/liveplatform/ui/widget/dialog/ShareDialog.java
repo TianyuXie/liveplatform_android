@@ -1,5 +1,8 @@
 package com.pplive.liveplatform.ui.widget.dialog;
 
+import java.io.File;
+import java.io.IOException;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
@@ -7,7 +10,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.WeiboPassport;
+import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.SysUtil;
 
@@ -75,6 +82,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         return bundle;
     }
 
+    @Deprecated
     private Bundle getShareSinaData() {
         Bundle bundle = new Bundle();
         bundle.putString(WeiboPassport.PARAM_TARGET_URL, mTargetUrl);
@@ -84,6 +92,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         return bundle;
     }
 
+    @Deprecated
     public void sinaShare() {
         if (mActivity != null) {
             WeiboPassport.getInstance().initShare(mActivity);
@@ -108,18 +117,34 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     public void wechatSNSShareDirect() {
-        try {
-            //TODO add image
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-            intent.setComponent(comp);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
-            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            dismiss();
-        } catch (ActivityNotFoundException e) {
+        if (SysUtil.checkPackage("com.tencent.mm", getContext())) {
+            final Handler handler = new Handler() {
+                public void handleMessage(Message msg) {
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+                    intent.setComponent(comp);
+                    intent.setType("image/*");
+                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File((String) msg.obj)));
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getContext().startActivity(intent);
+                };
+            };
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    final String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext().getApplicationContext()), StringUtil.newGuid());
+                    try {
+                        ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    Message message = new Message();
+                    message.obj = tmpfile;
+                    handler.sendMessage(message);
+                }
+            }).start();
+        } else {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
         }
     }

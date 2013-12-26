@@ -21,10 +21,6 @@ public class LiveListItemView extends RelativeLayout {
 
     private static final String TAG = LiveListItemView.class.getSimpleName();
 
-    private static final DisplayImageOptions DEFAULT_PRELIVE_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-            .showImageOnFail(R.drawable.live_record_default_prelive_image).showImageForEmptyUri(R.drawable.live_record_default_prelive_image)
-            .showStubImage(R.drawable.live_record_default_prelive_image).cacheInMemory(true).build();
-
     private AsyncImageView mImagePrelive;
     private ImageButton mBtnPreliveDelete;
     private ImageButton mBtnDelete;
@@ -78,7 +74,7 @@ public class LiveListItemView extends RelativeLayout {
         mProgram = program;
 
         if (null != program) {
-            mImagePrelive.setImageAsync(program.getCover(), DEFAULT_PRELIVE_DISPLAY_OPTIONS);
+            mImagePrelive.setImageAsync(program.getCover(), R.drawable.live_record_default_prelive_image);
             mTextLiveTitle.setText(program.getTitle());
         }
     }
