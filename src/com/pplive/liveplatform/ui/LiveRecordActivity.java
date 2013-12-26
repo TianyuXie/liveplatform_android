@@ -237,7 +237,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopCountDown();
 
         stopRecording();
-
+        
         stopPreview();
 
         EventBus.getDefault().unregister(this);
@@ -771,9 +771,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
                 }
 
-                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
-                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
-                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                if (LiveStatusEnum.LIVING == program.getLiveStatus()) {
+                    
+                } else {
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                }
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
@@ -854,6 +858,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mLivingProgram = program;
                         onClickBtnLiveRecord();
                     }
                 }).show();
