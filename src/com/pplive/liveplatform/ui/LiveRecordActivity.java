@@ -237,7 +237,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopCountDown();
 
         stopRecording();
-
+        
         stopPreview();
 
         EventBus.getDefault().unregister(this);
@@ -264,7 +264,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && mAttached && !mOpened) {
-            Log.d(TAG, "open");
+            Log.d(TAG, "Open Door");
+            
             mOpened = true;
             mStatusButton.startLoading();
             mInnerHandler.sendEmptyMessageDelayed(WHAT_OPEN_DOOR, 2000);
@@ -484,7 +485,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void initCamera() {
-        if (null != mCamera) {
+        Log.d(TAG, "initCamera");
+        
+        if (null != mCamera && !mConfigured) {
             try {
                 mCamera.setPreviewDisplay(mSurfaceHolder);
 
@@ -517,6 +520,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void startPreview() {
+        Log.d(TAG, "startPreview");
+        
         if (mConfigured && !mPreviewing && null != mCamera) {
             mCamera.startPreview();
             mPreviewing = true;
@@ -524,12 +529,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void stopPreview() {
+        Log.d(TAG, "stopPreview");
+        
         if (null != mCamera) {
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
 
             mPreviewing = false;
+            mConfigured = false;
         }
     }
 
@@ -763,9 +771,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
                 }
 
-                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
-                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
-                LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                if (LiveStatusEnum.LIVING == program.getLiveStatus()) {
+                    
+                } else {
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                }
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
@@ -846,6 +858,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        mLivingProgram = program;
                         onClickBtnLiveRecord();
                     }
                 }).show();
