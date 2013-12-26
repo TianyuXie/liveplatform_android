@@ -132,7 +132,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    final String tmpfile = String.format("%s/%s.png", "/mnt/sdcard", StringUtil.newGuid());
+                    final String tmpfile = String.format("%s/%s.png", SysUtil.getSharePath(getContext().getApplicationContext()), StringUtil.newGuid());
                     try {
                         ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
                     } catch (IOException e) {
