@@ -236,7 +236,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         stopCountDown();
 
-        stopRecording();
+        stopRecording(false);
         
         stopPreview();
 
@@ -608,13 +608,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void stopRecording() {
+    private void stopRecording(boolean stopLive) {
         if (mRecording) {
             mRecording = false;
 
             mMediaRecorder.stop();
 
-            stopLiving(mLivingProgram.getId());
+            if (stopLive) {
+                stopLiving(mLivingProgram.getId());
+            }
 
             mLivingProgram = null;
             mLivingUrl = null;
@@ -641,7 +643,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void performOnClickStopRecording() {
         mTextLivingTitle.setVisibility(View.GONE);
-        stopRecording();
+        stopRecording(true);
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
         mFooterBarFragment.reset();
@@ -853,6 +855,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                         String coToken = UserManager.getInstance(getApplicationContext()).getToken();
 
                         LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
+                        
+                        performOnClickStopRecording();
                     }
                 }, new DialogInterface.OnClickListener() {
 
