@@ -24,7 +24,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
@@ -42,10 +41,6 @@ import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
-
-    private static final DisplayImageOptions DEFAULT_ICON_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().resetViewBeforeLoading(true)
-            .showImageOnFail(R.drawable.user_icon_default).showImageForEmptyUri(R.drawable.user_icon_default).showStubImage(R.drawable.user_icon_default)
-            .cacheInMemory(true).build();
 
     private static final int HIDE = 301;
 
@@ -128,7 +123,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void initUserIcon(String url) {
         if (!TextUtils.isEmpty(url)) {
             mIconUrl = url;
-            mUserIcon.setImageAsync(url, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+            mUserIcon.setImageAsync(url, R.drawable.user_icon_default, imageLoadingListener);
         }
     }
 
@@ -475,7 +470,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onRotateMiddle() {
             mFinishText.setVisibility(View.GONE);
             if (!TextUtils.isEmpty(mIconUrl)) {
-                mUserIcon.setImageAsync(mIconUrl, DEFAULT_ICON_DISPLAY_OPTIONS, imageLoadingListener);
+                mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
                 mUserIcon.setImageResource(R.drawable.user_icon_default);
             }

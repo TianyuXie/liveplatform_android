@@ -1,13 +1,18 @@
 package com.pplive.liveplatform;
 
+import java.io.File;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
+import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.util.FileUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
@@ -28,14 +33,12 @@ public class LiveApplication extends Application {
         initAppInfo(getApplicationContext());
         initPaths(getApplicationContext());
         NetworkManager.init(getApplicationContext());
-
-        Log.d(TAG, "version code: " + getVersionCode() + "; name: " + getVersionName());
-
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(getApplicationContext()).writeDebugLogs().build();
-        ImageLoader.getInstance().init(config);
+        initImageLoader(getApplicationContext());
 
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
+
+        Log.d(TAG, "version code: " + getVersionCode() + "; name: " + getVersionName());
     }
 
     private static void initAppInfo(Context context) {
@@ -50,13 +53,20 @@ public class LiveApplication extends Application {
         }
     }
 
+    private static void initImageLoader(Context context) {
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory().discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
+                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 500)).build();
+        ImageLoader.getInstance().init(config);
+    }
+
     private void initPaths(Context context) {
         FileUtil.checkPath(SysUtil.getAppPath(context));
         FileUtil.checkPath(SysUtil.getCachePath(context));
         FileUtil.checkPath(SysUtil.getFilesPath(context));
         FileUtil.checkPath(SysUtil.getPrivateCachePath(context));
         FileUtil.checkPath(SysUtil.getPrivateFilesPath(context));
-        FileUtil.checkPath(SysUtil.getSharePath(context));
+        FileUtil.checkPath(SysUtil.getShareCachePath(context));
     }
 
     public static int getVersionCode() {

@@ -43,8 +43,12 @@ public class SysUtil {
         }
     }
 
-    public static String getSharePath(Context context) {
+    public static String getShareCachePath(Context context) {
         return getCachePath(context) + "/share";
+    }
+    
+    public static String getImageCachePath(Context context) {
+        return getCachePath(context) + "/image";
     }
 
     public static boolean hasExternalStorage() {
