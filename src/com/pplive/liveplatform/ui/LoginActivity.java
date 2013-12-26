@@ -5,6 +5,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -41,6 +43,8 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     public static final String EXTRA_USERNAME = "username";
 
     public static final String EXTRA_PASSWORD = "password";
+
+    private static final int MSG_THIRDPARTY_ERROR = 2301;
 
     private EditText mUsrEditText;
 
@@ -220,7 +224,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     };
 
     @Override
-    public void LoginSuccess(LoginResult res) {
+    public void loginSuccess(LoginResult res) {
         Log.d(TAG, res.getUsername() + " | " + res.getToken());
         Log.d(TAG, res.getThirdPartyNickName() + " | " + res.getThirdPartyFaceUrl());
         mUserManager.login(res.getUsername(), "", res.getToken());
@@ -243,10 +247,23 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     }
 
     @Override
-    public void LoginFailed(String message) {
+    public void loginFailed(String message) {
         mRefreshDialog.dismiss();
         Log.w(TAG, "Login failed: " + message);
-        Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+        mHandler.sendEmptyMessage(MSG_THIRDPARTY_ERROR);
     }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_THIRDPARTY_ERROR:
+                Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+            }
+        }
+    };
 
 }

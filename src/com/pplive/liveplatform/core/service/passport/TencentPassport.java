@@ -23,7 +23,7 @@ import com.tencent.tauth.UiError;
 
 public class TencentPassport {
 
-    private final static String mAppid = "100570681";
+    private final static String mAppid = "100585339";
 
     private static TencentPassport sInstance;
 
@@ -58,7 +58,7 @@ public class TencentPassport {
                         mLoginResult.setThirdPartyToken(values.getString("access_token"));
                     } catch (JSONException e) {
                         if (mLoginListener != null) {
-                            mLoginListener.LoginFailed("IUiListener: JSONException");
+                            mLoginListener.loginFailed("IUiListener: JSONException");
                         }
                     }
                     updateUserInfo();
@@ -67,21 +67,21 @@ public class TencentPassport {
                 @Override
                 public void onError(UiError e) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IUiListener: UiError");
+                        mLoginListener.loginFailed("IUiListener: UiError");
                     }
                 }
 
                 @Override
                 public void onCancel() {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IUiListener: onCancel");
+                        mLoginListener.loginFailed("IUiListener: onCancel");
                     }
                 }
             };
             mTencent.login(activity, "all", listener);
         } else {
             if (mLoginListener != null) {
-                mLoginListener.LoginFailed("mTencent == null or invalid");
+                mLoginListener.loginFailed("mTencent == null or invalid");
             }
         }
     }
@@ -97,56 +97,56 @@ public class TencentPassport {
                 @Override
                 public void onUnknowException(Exception e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: UnknowException");
+                        mLoginListener.loginFailed("IRequestListener: UnknowException");
                     }
                 }
 
                 @Override
                 public void onSocketTimeoutException(SocketTimeoutException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: SocketTimeoutException");
+                        mLoginListener.loginFailed("IRequestListener: SocketTimeoutException");
                     }
                 }
 
                 @Override
                 public void onNetworkUnavailableException(NetworkUnavailableException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: NetworkUnavailableException");
+                        mLoginListener.loginFailed("IRequestListener: NetworkUnavailableException");
                     }
                 }
 
                 @Override
                 public void onMalformedURLException(MalformedURLException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: MalformedURLException");
+                        mLoginListener.loginFailed("IRequestListener: MalformedURLException");
                     }
                 }
 
                 @Override
                 public void onJSONException(JSONException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: JSONException");
+                        mLoginListener.loginFailed("IRequestListener: JSONException");
                     }
                 }
 
                 @Override
                 public void onIOException(IOException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: IOException");
+                        mLoginListener.loginFailed("IRequestListener: IOException");
                     }
                 }
 
                 @Override
                 public void onHttpStatusException(HttpStatusException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: HttpStatusException");
+                        mLoginListener.loginFailed("IRequestListener: HttpStatusException");
                     }
                 }
 
                 @Override
                 public void onConnectTimeoutException(ConnectTimeoutException e, Object state) {
                     if (mLoginListener != null) {
-                        mLoginListener.LoginFailed("IRequestListener: ConnectTimeoutException");
+                        mLoginListener.loginFailed("IRequestListener: ConnectTimeoutException");
                     }
                 }
 
@@ -163,27 +163,27 @@ public class TencentPassport {
                             mLoginResult.setThirdPartySource(LoginResult.FROM_TENCENT);
                         } else {
                             if (mLoginListener != null) {
-                                mLoginListener.LoginFailed("IRequestListener: PassportService failed");
+                                mLoginListener.loginFailed("IRequestListener: PassportService failed");
                             }
                         }
                     } catch (JSONException e) {
                         if (mLoginListener != null) {
-                            mLoginListener.LoginFailed("IRequestListener: JSONException");
+                            mLoginListener.loginFailed("IRequestListener: JSONException");
                         }
                     } catch (Exception e) {
                         if (mLoginListener != null) {
-                            mLoginListener.LoginFailed("IRequestListener: Exception");
+                            mLoginListener.loginFailed("IRequestListener: Exception");
                         }
                     }
                     if (mLoginListener != null) {
-                        mLoginListener.LoginSuccess(mLoginResult);
+                        mLoginListener.loginSuccess(mLoginResult);
                     }
                 }
             };
             mTencent.requestAsync(Constants.GRAPH_SIMPLE_USER_INFO, null, Constants.HTTP_GET, requestListener, null);
         } else {
             if (mLoginListener != null) {
-                mLoginListener.LoginFailed("mTencent == null or invalid");
+                mLoginListener.loginFailed("mTencent == null or invalid");
             }
         }
     }

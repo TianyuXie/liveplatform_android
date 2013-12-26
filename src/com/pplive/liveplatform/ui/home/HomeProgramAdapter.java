@@ -59,7 +59,7 @@ public class HomeProgramAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.layout_program_item, null);
             holder = new ViewHolder();
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
-            holder.statusTextView = (TextView) convertView.findViewById(R.id.text_program_status);
+//            holder.statusTextView = (TextView) convertView.findViewById(R.id.text_program_status);
             holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
             holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_owner);
@@ -84,7 +84,7 @@ public class HomeProgramAdapter extends BaseAdapter {
     static class ViewHolder {
         AsyncImageView previewImageView;
 
-        TextView statusTextView;
+//        TextView statusTextView;
 
         TextView timedownTextView;
 
