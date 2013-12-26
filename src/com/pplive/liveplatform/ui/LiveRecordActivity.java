@@ -56,6 +56,7 @@ import com.pplive.liveplatform.ui.record.event.EventReset;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
+import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
@@ -75,7 +76,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
     private static final int WHAT_OPEN_DOOR = 9010;
-    
+
     private static final int WHAT_LIVE_FAILED = 9100;
 
     private static final int CHAT_SHORT_DELAY = 5000;
@@ -106,6 +107,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private ToggleButton mBtnFlashLight;
 
     private FooterBarFragment mFooterBarFragment;
+
+    private ShareDialog mShareDialog;
 
     private TextView mTextLive;
     private TextView mTextRecordDuration;
@@ -200,6 +203,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mChatBox = (ChatBox) findViewById(R.id.layout_record_chatbox);
         mChatBox.setNewMessageListener(newMessageListener);
         mChatContainer = findViewById(R.id.layout_record_chat);
+
+        mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
+        mShareDialog.setActivity(this);
     }
 
     @Override
@@ -209,7 +215,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         EventBus.getDefault().register(this);
 
         mCamera = CameraManager.getInstance().open(mCurrentCameraId);
-
+        mFooterBarFragment.setOnShareBtnClickListener(onShareClickListener);
         startPreview();
 
     }
@@ -384,7 +390,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mChatContainer.setVisibility(View.VISIBLE);
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
-            
+
             // TODO: Debug Code
             mTextLivingTitle.append("\n");
             mTextLivingTitle.append(mLivingUrl);
@@ -448,10 +454,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         moveButton();
         mAnimDoor.open();
     }
-    
+
     private void onLiveFailed() {
         DialogManager.alertLivingfailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
-            
+
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 performOnClickStopRecording();
@@ -573,7 +579,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 @Override
                 public void onError() {
                     Log.d(TAG, "onError");
-                    
+
                     if (mRecording) {
                         mInnerHandler.sendEmptyMessage(WHAT_LIVE_FAILED);
                     }
@@ -597,7 +603,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void stopRecording() {
         if (mRecording) {
             mRecording = false;
-            
+
             mMediaRecorder.stop();
 
             stopLiving(mLivingProgram.getId());
@@ -892,6 +898,35 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 startChating();
             }
             mFirstPopped = true;
+        }
+    };
+
+    private View.OnClickListener onShareClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            mShareDialog.show();
+            Bundle data = new Bundle();
+            if (mLivingProgram != null) {
+                String title = StringUtil.safeString(mLivingProgram.getTitle());
+                String shareUrl = mLivingProgram.getShareLinkUrl();
+                String imageUrl = mLivingProgram.getCover();
+                String summary = String.format(getString(R.string.share_summary_format), getString(R.string.app_name), title);
+                data.putString(ShareDialog.PARAM_TITLE, title);
+                data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
+                data.putString(ShareDialog.PARAM_SUMMARY, summary);
+                data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? getString(R.string.default_share_image_url) : imageUrl);
+            } else {
+                String title = String.format(getString(R.string.share_user_title), getString(R.string.app_name));
+                String shareUrl = getString(R.string.default_share_target_url);
+                String imageUrl = getString(R.string.default_share_image_url);
+                String summary = String.format(getString(R.string.share_user_format), getString(R.string.app_name));
+                data.putString(ShareDialog.PARAM_TITLE, title);
+                data.putString(ShareDialog.PARAM_TARGET_URL, shareUrl);
+                data.putString(ShareDialog.PARAM_SUMMARY, summary);
+                data.putString(ShareDialog.PARAM_IMAGE_URL, imageUrl);
+            }
+            mShareDialog.setData(data);
         }
     };
 }

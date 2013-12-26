@@ -242,7 +242,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         createLiveTask.execute();
     }
-
+    
     private void onClickBtnLiveEditComplete(View v) {
         setMode(Mode.VIEW_PRELIVES);
     }
@@ -353,6 +353,10 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         ViewUtil.setVisibility(mBtnAddPrelive, flags & Mode.FLAG_BTN_ADD_PRELIVE);
         ViewUtil.setVisibility(mDateTimePicker, flags & Mode.FLAG_DATETIME_PICKER);
         ViewUtil.setVisibility(mLiveListView, flags & Mode.FLAG_LIVE_LISTVIEW);
+    }
+    
+    public void setOnShareBtnClickListener(View.OnClickListener l){
+        mBtnLiveShare.setOnClickListener(l);
     }
 
 }

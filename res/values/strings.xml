@@ -15,7 +15,7 @@
     <string name="program_status_notstart">即将播出</string>
     <string name="program_status_living">正在直播</string>
     <string name="program_status_stopped">直播录像</string>
-    <string name="default_share_target_url">http://www.pptv.com</string>
+    <string name="default_share_target_url">http://i.pptv.com</string>
     <string name="default_share_image_url">http://static9.pplive.cn/pptv/header/images/logo-white.png</string>
 
     <!-- For Test -->
