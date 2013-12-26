@@ -384,6 +384,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mChatContainer.setVisibility(View.VISIBLE);
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
+            
+            // TODO: Debug Code
+            mTextLivingTitle.append("\n");
+            mTextLivingTitle.append(mLivingUrl);
 
             Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
             mInnerHandler.sendMessage(msg);
