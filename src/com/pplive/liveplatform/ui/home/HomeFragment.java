@@ -251,6 +251,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     break;
                 case REFRESH:
                     mContainer.refreshData(fallList.getList());
+                    if (event.getContext().get(SearchTask.KEY_LIVE_STATUS) == SearchService.LiveStatusKeyword.COMING) {
+                        mContainer.startTimer();
+                    } else {
+                        mContainer.stopTimer();
+                    }
                     if (mCallbackListener != null) {
                         if (fallList.count() != 0) {
                             mCallbackListener.doLoadResult(String.format(Locale.US, getString(R.string.home_loaded_count), fallList.count()));
@@ -270,6 +275,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                             mCallbackListener.doLoadResult(getString(R.string.home_all_loaded));
                         }
                     }
+                    break;
                 default:
                     break;
                 }

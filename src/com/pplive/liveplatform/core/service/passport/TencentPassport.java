@@ -23,6 +23,8 @@ import com.tencent.tauth.UiError;
 
 public class TencentPassport {
 
+    //    private final static String mAppid = "100570681";
+
     private final static String mAppid = "100585339";
 
     private static TencentPassport sInstance;
