@@ -10,7 +10,7 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class UserProgramTask extends Task {
+public class ProgramTask extends Task {
     static final String TAG = "_ProgramTask";
 
     public final static String KEY_RESULT = "program_result";

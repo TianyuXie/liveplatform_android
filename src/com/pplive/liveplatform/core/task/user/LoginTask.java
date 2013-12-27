@@ -61,8 +61,8 @@ public class LoginTask extends Task {
             } catch (InterruptedException e1) {
             }
         }
+        Log.d(TAG, "wake up");
 
-        Log.d(TAG, "leave sleep");
         //Start PassportService
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");

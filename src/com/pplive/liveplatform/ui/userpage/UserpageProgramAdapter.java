@@ -50,6 +50,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.layout_userpage_item, null);
             holder = new ViewHolder();
+            holder.statusImageView = (ImageView) convertView.findViewById(R.id.image_userpage_time_circle);
             holder.previewImageView = (ImageView) convertView.findViewById(R.id.image_userpage_program_preview);
             holder.statusTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_status);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_title);
@@ -71,6 +72,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
             holder.timeTextView.setText("");
             holder.viewcountTextView.setText(String.valueOf(data.getVV()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_watch, 0, 0, 0);
+            holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_full);
             break;
         case NOT_START:
         case PREVIEW:
@@ -78,11 +80,13 @@ public class UserpageProgramAdapter extends BaseAdapter {
             holder.timeTextView.setText(data.getStartTimeLong());
             holder.viewcountTextView.setText("");
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_half);
             break;
         case STOPPED:
             holder.timeTextView.setText(data.getStartTimeShort());
             holder.viewcountTextView.setText(String.valueOf(data.getVV()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
+            holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_none);
             break;
         default:
             break;
@@ -91,6 +95,8 @@ public class UserpageProgramAdapter extends BaseAdapter {
 
     static class ViewHolder {
         ImageView previewImageView;
+
+        ImageView statusImageView;
 
         TextView statusTextView;
 
