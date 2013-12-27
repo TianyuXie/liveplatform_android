@@ -6,4 +6,6 @@ public interface ThirdpartyLoginListener {
     void loginSuccess(LoginResult res);
 
     void loginFailed(String message);
+    
+    void loginCancel();
 };

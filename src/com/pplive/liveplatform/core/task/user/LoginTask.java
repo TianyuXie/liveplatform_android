@@ -3,6 +3,8 @@ package com.pplive.liveplatform.core.task.user;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
@@ -71,11 +73,11 @@ public class LoginTask extends Task {
         String token = null;
         try {
             token = PassportService.getInstance().login(usr, pwd).getToken();
-        } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "PassportService error");
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
         }
         if (TextUtils.isEmpty(token)) {
-            return new TaskResult(TaskStatus.Failed, "Invalid token");
+            return new TaskResult(TaskStatus.Failed, StringUtil.getRes(R.string.register_token_fail));
         }
         Log.d(TAG, "PassportService OK");
 

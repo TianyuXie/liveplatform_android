@@ -10,13 +10,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
+import com.pplive.liveplatform.util.StringUtil;
+import com.pplive.liveplatform.util.URLEncoderUtil;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
-import com.sina.weibo.sdk.api.share.IWeiboDownloadListener;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
 import com.sina.weibo.sdk.api.share.SendMessageToWeiboRequest;
 import com.sina.weibo.sdk.api.share.WeiboShareSDK;
@@ -31,7 +34,8 @@ import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
 import com.sina.weibo.sdk.utils.Utility;
 
 public class WeiboPassport {
-    
+    static final String TAG = "_WeiboPassport";
+
     private static final String CONSUMER_KEY = "3353159992";
     private static final String CONSUMER_SECRET = "";
 
@@ -71,24 +75,8 @@ public class WeiboPassport {
         mLoginListener = lst;
     }
 
-    public void login(Activity activity) {
-        mActivity = activity;
-        WeiboAuth weiboAuth = new WeiboAuth(activity, APP_KEY, REDIRECT_URL, SCOPE);
-        mLoginResult = new LoginResult();
-        mSsoHandler = new SsoHandler(activity, weiboAuth);
-        mSsoHandler.authorize(new AuthListener());
-    }
-
     public void initShare(Activity activity) {
         mWeiboShareAPI = WeiboShareSDK.createWeiboAPI(activity, APP_KEY);
-        if (!mWeiboShareAPI.isWeiboAppInstalled()) {
-            mWeiboShareAPI.registerWeiboDownloadListener(new IWeiboDownloadListener() {
-                @Override
-                public void onCancel() {
-                    //TODO
-                }
-            });
-        }
     }
 
     public void shareToWeibo(Context context, Bundle data) {
@@ -120,57 +108,18 @@ public class WeiboPassport {
         return mediaObject;
     }
 
-    class AuthListener implements WeiboAuthListener {
-        @Override
-        public void onComplete(Bundle values) {
-            mAccessToken = Oauth2AccessToken.parseAccessToken(values);
-            if (mAccessToken.isSessionValid()) {
-                AccessTokenKeeper.writeAccessToken(mActivity, mAccessToken);
-                updateLoginResult(values);
-                updateUserInfo(values.getString("uid"));
-            } else {
-                mLoginListener.loginFailed("WeiboAuthListener error:" + values.getString("code"));
-            }
-        }
-
-        @Override
-        public void onCancel() {
-            if (mLoginListener != null) {
-                mLoginListener.loginFailed("WeiboAuthListener: onCancel");
-            }
-        }
-
-        @Override
-        public void onWeiboException(WeiboException e) {
-            if (mLoginListener != null) {
-                mLoginListener.loginFailed("WeiboAuthListener: WeiboException");
-            }
-        }
-    }
-
-    public void updateLoginResult(Bundle values) {
-        // TODO Auto-generated method stub
+    public void login(Activity activity) {
+        mActivity = activity;
+        WeiboAuth weiboAuth = new WeiboAuth(activity, APP_KEY, REDIRECT_URL, SCOPE);
+        mLoginResult = new LoginResult();
+        mSsoHandler = new SsoHandler(activity, weiboAuth);
+        mSsoHandler.authorize(mWeiboAuthListener);
     }
 
     public void logout(Context context) {
-        new LogoutAPI(AccessTokenKeeper.readAccessToken(context)).logout(new RequestListener() {
+        new LogoutAPI(AccessTokenKeeper.readAccessToken(context)).logout(new BasicRequestListener() {
             @Override
             public void onComplete(String response) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onComplete4binary(ByteArrayOutputStream responseOS) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onIOException(IOException e) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onError(WeiboException e) {
                 // TODO Auto-generated method stub
             }
         });
@@ -178,59 +127,95 @@ public class WeiboPassport {
 
     private void updateUserInfo(String uid) {
         UsersAPI userapi = new UsersAPI(mAccessToken);
-        userapi.show(Long.valueOf(uid), new RequestListener() {
-
-            @Override
-            public void onComplete(String response) {
-                try {
-                    JSONObject res = new JSONObject(response);
-                    mLoginResult.setThirdPartyNickName(res.getString("name"));
-                    mLoginResult.setThirdPartyID(res.getString("id"));
-                    mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
-                    mLoginResult.setThirdPartyToken(mAccessToken.toString());
-                    LoginResult tempresult = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(),
-                            mLoginResult.getThirdPartyFaceUrl(), mLoginResult.getThirdPartyNickName(), "sina");
-                    if (tempresult != null) {
-                        mLoginResult.setToken(tempresult.getToken());
-                        mLoginResult.setUsername(tempresult.getUsername());
-                        mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
-                    } else {
-                        if (mLoginListener != null) {
-                            mLoginListener.loginFailed("RequestListener: PassportService failed");
-                        }
-                    }
-                } catch (JSONException e) {
-                    if (mLoginListener != null) {
-                        mLoginListener.loginFailed("RequestListener: JSONException");
-                    }
-                } catch (Exception e) {
-                    if (mLoginListener != null) {
-                        mLoginListener.loginFailed("RequestListener: Exception");
-                    }
-                }
-                if (mLoginListener != null) {
-                    mLoginListener.loginSuccess(mLoginResult);
-                }
-            }
-
-            @Override
-            public void onComplete4binary(ByteArrayOutputStream responseOS) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onIOException(IOException e) {
-                if (mLoginListener != null) {
-                    mLoginListener.loginFailed("RequestListener: IOException");
-                }
-            }
-
-            @Override
-            public void onError(WeiboException e) {
-                if (mLoginListener != null) {
-                    mLoginListener.loginFailed("RequestListener: WeiboException");
-                }
-            }
-        });
+        userapi.show(Long.valueOf(uid), mLoginRequestListener);
     }
+
+    abstract class BasicRequestListener implements RequestListener {
+
+        @Override
+        public void onComplete4binary(ByteArrayOutputStream responseOS) {
+        }
+
+        @Override
+        public void onIOException(IOException e) {
+            Log.e(TAG, "RequestListener IOException: " + e.getMessage());
+            if (mLoginListener != null) {
+                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_io));
+            }
+        }
+
+        @Override
+        public void onError(WeiboException e) {
+            Log.e(TAG, "RequestListener WeiboException: " + e.getMessage());
+            if (mLoginListener != null) {
+                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_internal));
+            }
+        }
+    };
+
+    private BasicRequestListener mLoginRequestListener = new BasicRequestListener() {
+        @Override
+        public void onComplete(String response) {
+            try {
+                JSONObject res = new JSONObject(response);
+                mLoginResult.setThirdPartyNickName(res.getString("name"));
+                mLoginResult.setThirdPartyID(res.getString("id"));
+                mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
+                mLoginResult.setThirdPartyToken(mAccessToken.toString());
+                LoginResult tempresult = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
+                        mLoginResult.getThirdPartyNickName(), "sina");
+                if (tempresult != null) {
+                    mLoginResult.setToken(tempresult.getToken());
+                    mLoginResult.setUsername(tempresult.getUsername());
+                    mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
+                } else {
+                    if (mLoginListener != null) {
+                        mLoginListener.loginFailed(StringUtil.getRes(R.string.error_pptv_data));
+                    }
+                }
+            } catch (JSONException e) {
+                if (mLoginListener != null) {
+                    mLoginListener.loginFailed(StringUtil.getRes(R.string.error_pptv_format));
+                }
+            } catch (LiveHttpException e) {
+                if (mLoginListener != null) {
+                    mLoginListener.loginFailed(URLEncoderUtil.decode(e.getMessage()));
+                }
+            }
+            if (mLoginListener != null) {
+                mLoginListener.loginSuccess(mLoginResult);
+            }
+        }
+    };
+
+    private WeiboAuthListener mWeiboAuthListener = new WeiboAuthListener() {
+
+        @Override
+        public void onComplete(Bundle values) {
+            mAccessToken = Oauth2AccessToken.parseAccessToken(values);
+            if (mAccessToken.isSessionValid()) {
+                AccessTokenKeeper.writeAccessToken(mActivity, mAccessToken);
+                updateUserInfo(values.getString("uid"));
+            } else {
+                if (mLoginListener != null) {
+                    mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_auth));
+                }
+            }
+        }
+
+        @Override
+        public void onCancel() {
+            if (mLoginListener != null) {
+                mLoginListener.loginCancel();
+            }
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+            Log.e(TAG, "WeiboAuthListener WeiboException: " + e.getMessage());
+            if (mLoginListener != null) {
+                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_auth));
+            }
+        }
+    };
 }

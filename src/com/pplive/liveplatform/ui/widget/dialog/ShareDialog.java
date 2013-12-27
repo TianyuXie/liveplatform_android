@@ -82,7 +82,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         return bundle;
     }
 
-    @Deprecated
     private Bundle getShareSinaData() {
         Bundle bundle = new Bundle();
         bundle.putString(WeiboPassport.PARAM_TARGET_URL, mTargetUrl);
@@ -92,7 +91,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         return bundle;
     }
 
-    @Deprecated
     public void sinaShare() {
         if (mActivity != null) {
             WeiboPassport.getInstance().initShare(mActivity);
