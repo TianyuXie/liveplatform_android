@@ -30,7 +30,7 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.user.ProgramTask;
+import com.pplive.liveplatform.core.task.user.UserProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
@@ -108,10 +108,10 @@ public class UserpageActivity extends Activity {
         } else {
             mUserIcon.setImageResource(R.drawable.user_icon_default);
         }
-        ProgramTask task = new ProgramTask();
+        UserProgramTask task = new UserProgramTask();
         task.addTaskListener(onTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
+        taskContext.set(UserProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
         task.execute(taskContext);
     }
 
@@ -185,7 +185,7 @@ public class UserpageActivity extends Activity {
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
             mPrograms.clear();
-            mPrograms.addAll((List<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
+            mPrograms.addAll((List<Program>) event.getContext().get(UserProgramTask.KEY_RESULT));
             Collections.sort(mPrograms, comparator);
             mAdapter.notifyDataSetChanged();
             if (mPrograms.isEmpty()) {
