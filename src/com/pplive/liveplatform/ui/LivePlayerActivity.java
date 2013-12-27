@@ -547,14 +547,16 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            // TODO rtmp or live2
             if (!CollectionUtils.isEmpty(watchs)) {
+                // print all links
                 for (Watch watch : watchs) {
                     List<String> watchList = watch.getWatchStringList();
-                    if (!CollectionUtils.isEmpty(watchList)) {
-                        Log.d(TAG, watchList.get(0));
+                    for (String link : watchList) {
+                        Log.d(TAG, "linkurl:" + link);
                     }
                 }
+                
+                // TODO rtmp or live2
                 for (Watch watch : watchs) {
                     if ("rtmp".equals(watch.getProtocol())) {
                         List<String> watchList = watch.getWatchStringList();
@@ -571,7 +573,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     }
                 }
             }
-
             if (!TextUtils.isEmpty(mUrl)) {
                 mLivePlayerFragment.setupPlayer(mUrl);
             } else {
