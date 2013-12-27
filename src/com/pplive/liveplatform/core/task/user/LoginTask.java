@@ -12,6 +12,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
+import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class LoginTask extends Task {
@@ -77,7 +78,7 @@ public class LoginTask extends Task {
             return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
         }
         if (TextUtils.isEmpty(token)) {
-            return new TaskResult(TaskStatus.Failed, StringUtil.getRes(R.string.register_token_fail));
+            return new TaskResult(TaskStatus.Failed, StringManager.getRes(R.string.register_token_fail));
         }
         Log.d(TAG, "PassportService OK");
 

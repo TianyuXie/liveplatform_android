@@ -16,7 +16,7 @@ import android.util.Log;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
-import com.pplive.liveplatform.util.StringUtil;
+import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.URLEncoderUtil;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
@@ -61,7 +61,7 @@ public class TencentPassport {
             mTencent.login(activity, "all", loginUiListener);
         } else {
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_init));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_init));
             }
         }
     }
@@ -77,7 +77,7 @@ public class TencentPassport {
             mTencent.requestAsync(Constants.GRAPH_SIMPLE_USER_INFO, null, Constants.HTTP_GET, requestListener, null);
         } else {
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_init));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_init));
             }
         }
     }
@@ -96,7 +96,7 @@ public class TencentPassport {
                 mLoginResult.setThirdPartyToken(values.getString("access_token"));
             } catch (JSONException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_data));
+                    mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_data));
                 }
             }
             updateUserInfo();
@@ -105,7 +105,7 @@ public class TencentPassport {
         @Override
         public void onError(UiError e) {
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_ui));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_ui));
             }
         }
 
@@ -155,7 +155,7 @@ public class TencentPassport {
         @Override
         public void onUnknowException(Exception e, Object state) {
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_unknown));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_unknown));
             }
         }
 
@@ -163,7 +163,7 @@ public class TencentPassport {
         public void onSocketTimeoutException(SocketTimeoutException e, Object state) {
             if (mLoginListener != null) {
                 Log.e(TAG, "IRequestListener: SocketTimeoutException");
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_timeout));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_timeout));
             }
         }
 
@@ -171,7 +171,7 @@ public class TencentPassport {
         public void onNetworkUnavailableException(NetworkUnavailableException e, Object state) {
             if (mLoginListener != null) {
                 Log.e(TAG, "IRequestListener: NetworkUnavailableException");
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_network));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_network));
             }
         }
 
@@ -179,14 +179,14 @@ public class TencentPassport {
         public void onMalformedURLException(MalformedURLException e, Object state) {
             if (mLoginListener != null) {
                 Log.e(TAG, "IRequestListener: MalformedURLException");
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_network));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_network));
             }
         }
 
         @Override
         public void onJSONException(JSONException e, Object state) {
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_data));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_data));
             }
         }
 
@@ -194,7 +194,7 @@ public class TencentPassport {
         public void onIOException(IOException e, Object state) {
             if (mLoginListener != null) {
                 Log.e(TAG, "IRequestListener: IOException");
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_network));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_network));
             }
         }
 
@@ -202,14 +202,14 @@ public class TencentPassport {
         public void onHttpStatusException(HttpStatusException e, Object state) {
             if (mLoginListener != null) {
                 Log.e(TAG, "IRequestListener: HttpStatusException");
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_network));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_network));
             }
         }
 
         @Override
         public void onConnectTimeoutException(ConnectTimeoutException e, Object state) {
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_qq_timeout));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_qq_timeout));
             }
         }
 
@@ -226,12 +226,12 @@ public class TencentPassport {
                     mLoginResult.setThirdPartySource(LoginResult.FROM_TENCENT);
                 } else {
                     if (mLoginListener != null) {
-                        mLoginListener.loginFailed(StringUtil.getRes(R.string.error_pptv_data));
+                        mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_data));
                     }
                 }
             } catch (JSONException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.loginFailed(StringUtil.getRes(R.string.error_pptv_format));
+                    mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_format));
                 }
             } catch (LiveHttpException e) {
                 if (mLoginListener != null) {
