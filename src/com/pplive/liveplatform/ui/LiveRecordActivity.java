@@ -179,8 +179,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         setContentView(R.layout.activity_live_record);
 
         mPreview = (SurfaceView) findViewById(R.id.preview_view);
-        mSurfaceHolder = mPreview.getHolder();
-        mSurfaceHolder.addCallback(this);
+        SurfaceHolder holder = mPreview.getHolder();
+        holder.addCallback(this);
 
         mChatButton = (ImageButton) findViewById(R.id.btn_record_chat);
         mBtnLiveRecord = (ImageButton) findViewById(R.id.btn_live_record);
@@ -210,6 +210,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     protected void onStart() {
+        Log.d(TAG, "onStart");
+        
         super.onStart();
 
         EventBus.getDefault().register(this);
@@ -222,6 +224,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     protected void onResume() {
+        Log.d(TAG, "onResume");
+        
         super.onResume();
 
         if (null == mGetUserLivingTask) {
@@ -229,9 +233,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetUserLivingTask.execute();
         }
     }
+    
 
+    
     @Override
     protected void onStop() {
+        Log.d(TAG, "onStop");
+        
         super.onStop();
 
         stopCountDown();
@@ -468,26 +476,32 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-
+        Log.d(TAG, "surfaceCreated");
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        Log.d(TAG, "surfaceChanged");
+        
         mSurfaceHolder = holder;
 
-        initCamera();
         startPreview();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        Log.d(TAG, "surfaceDestroyed");
+        
+        mSurfaceHolder = null;
     }
 
     private void initCamera() {
-        Log.d(TAG, "initCamera");
+        Log.d(TAG, "initCamera 1");
         
-        if (null != mCamera && !mConfigured) {
+        Log.d(TAG, "mSurfaceHolder != null: " + (mSurfaceHolder != null) );
+        
+        if (null != mCamera && null != mSurfaceHolder && !mConfigured) {
+            Log.d(TAG, "initCamera 2");
             try {
                 mCamera.setPreviewDisplay(mSurfaceHolder);
 
@@ -520,9 +534,19 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void startPreview() {
-        Log.d(TAG, "startPreview");
+        Log.d(TAG, "startPreview 1");
+        
+        Log.d(TAG, "mConfigured: " + mConfigured);
+        Log.d(TAG, "mPreviewing: " + mPreviewing);
+        Log.d(TAG, "mCamera is null: " + (null == mCamera));
+        
+        if (!mConfigured) {
+            initCamera();
+        }
         
         if (mConfigured && !mPreviewing && null != mCamera) {
+            Log.d(TAG, "startPreview 2");
+
             mCamera.startPreview();
             mPreviewing = true;
         }
@@ -538,7 +562,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mPreviewing = false;
             mConfigured = false;
-        }
+         }
     }
 
     private void startChating() {
