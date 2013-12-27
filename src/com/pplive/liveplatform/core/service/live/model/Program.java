@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.util.StringUtil;
+import com.pplive.liveplatform.util.TimeUtil;
 
 public class Program implements Serializable {
 
@@ -126,6 +127,18 @@ public class Program implements Serializable {
 
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
+    }
+
+    public boolean isDeleted() {
+        return livestatus == LiveStatusEnum.DELETED || livestatus == LiveStatusEnum.SYS_DELETED;
+    }
+
+    public boolean isPrelive() {
+        return livestatus == LiveStatusEnum.INIT || livestatus == LiveStatusEnum.NOT_START || livestatus == LiveStatusEnum.PREVIEW;
+    }
+
+    public boolean isExpiredPrelive() {
+        return isPrelive() && new Date().getTime() > starttime + TimeUtil.MS_OF_HOUR;
     }
 
     static class Record implements Serializable {

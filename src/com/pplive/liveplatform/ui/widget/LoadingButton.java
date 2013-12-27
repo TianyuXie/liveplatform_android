@@ -150,6 +150,7 @@ public class LoadingButton extends RelativeLayout implements IHidable {
     }
 
     public void startLoading(CharSequence text) {
+        show();
         if (mAnimation != null) {
             mLoading = true;
             setClickable(false);

@@ -9,6 +9,7 @@
     <string name="toast_timeout">超时</string>
     <string name="toast_cancel">取消</string>
     <string name="toast_sucess">成功</string>
+    <string name="toast_login_timeout">登录超时</string>
 
     <!-- For share -->
     <string name="program_status_deleted">已删除</string>

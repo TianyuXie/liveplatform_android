@@ -352,12 +352,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     public void showBars(int timeout) {
-        if (mShowBar) {
-            return;
+        if (!mShowBar) {
+            mShowBar = true;
+            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW);
+            setVisibilityByFlags();
         }
-        mShowBar = true;
-        setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW);
-        setVisibilityByFlags();
         mHandler.removeMessages(HIDE);
         if (timeout != 0) {
             mHandler.sendEmptyMessageDelayed(HIDE, timeout);
@@ -440,21 +439,34 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    public void onStartPlay() {
+    public void onStartPlay(boolean rotate) {
         mUserIcon.setRounded(false);
         mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mLoadingImage.setVisibility(View.GONE);
-        rotateButton();
+        //        if (rotate) {
+        rotateIcon();
+        //        } else {
+        //            if (!TextUtils.isEmpty(mIconUrl)) {
+        //                mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
+        //            } else {
+        //                mUserIcon.setImageResource(R.drawable.user_icon_default);
+        //            }
+        //            showBars(SHOW_DELAY);
+        //        }
     }
 
-    public void rotateButton() {
-        // Find the center of the container
+    public void initIcon() {
+        mIconWrapper.clearAnimation();
+        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mFinishText.setVisibility(View.VISIBLE);
+        showBars(0);
+    }
+
+    public void rotateIcon() {
         final float centerX = mIconWrapper.getWidth() / 2.0f;
         final float centerY = mIconWrapper.getHeight() / 2.0f;
 
-        // Create a new 3D rotation with the supplied parameter
-        // The animation listener is used to trigger the next animation
         final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
         rotation.setStartOffset(1500);
         rotation.setDuration(350);
@@ -490,8 +502,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onAnimationEnd(Animation animation) {
             mLoading = false;
-            mHandler.removeMessages(HIDE);
-            mHandler.sendEmptyMessageDelayed(HIDE, SHOW_DELAY);
+            showBars(SHOW_DELAY);
             mModeBtn.setEnabled(true);
         }
     };

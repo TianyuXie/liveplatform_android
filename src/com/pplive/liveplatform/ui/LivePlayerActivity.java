@@ -122,6 +122,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mLoadDelayed;
 
+    private boolean mFirstTime;
+
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -148,10 +150,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.setActivity(this);
 
         /* init values */
+        mFirstTime = true;
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
-        mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
 
         /* init views */
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
@@ -175,9 +177,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent");
+        setIntent(intent);
+        mUrl = null;
+        mFirstTime = false;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
@@ -538,6 +550,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             // TODO rtmp or live2
             if (!CollectionUtils.isEmpty(watchs)) {
                 for (Watch watch : watchs) {
+                    List<String> watchList = watch.getWatchStringList();
+                    if (!CollectionUtils.isEmpty(watchList)) {
+                        Log.d(TAG, watchList.get(0));
+                    }
+                }
+                for (Watch watch : watchs) {
                     if ("rtmp".equals(watch.getProtocol())) {
                         List<String> watchList = watch.getWatchStringList();
                         if (!CollectionUtils.isEmpty(watchList)) {
@@ -603,8 +621,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
+        mFirstLoadFinish = false;
+        mLoadDelayed = false;
         mFirstLoading = true;
         mSecondLoading = true;
+        mSecondLoadFinish = false;
+        mLivePlayerFragment.initIcon();
+        mCommentWrapper.setVisibility(View.GONE);
+        mChatBox.setVisibility(View.GONE);
+        mWriteBtn.setVisibility(View.GONE);
         mLoadingView.setVisibility(View.VISIBLE);
         mLoadingButton.startLoading(R.string.player_loading);
     }
@@ -643,7 +668,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 keepAlive();
                 break;
             }
-
         }
     };
 
@@ -656,7 +680,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void checkSecondLoading() {
         if (mSecondLoadFinish && mLoadDelayed && !isFinishing() && mSecondLoading) {
             hideSecondLoading();
-            mLivePlayerFragment.onStartPlay();
+            mLivePlayerFragment.onStartPlay(mFirstTime);
         }
     }
 

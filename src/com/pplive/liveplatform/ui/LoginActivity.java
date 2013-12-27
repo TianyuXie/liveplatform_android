@@ -200,33 +200,30 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, event.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "LoginTask onTimeout");
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.toast_login_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
         }
     };
 
     @Override
     public void loginSuccess(LoginResult res) {
-        Log.d(TAG, res.getUsername() + " | " + res.getToken());
-        Log.d(TAG, res.getThirdPartyNickName() + " | " + res.getThirdPartyFaceUrl());
+        Log.d(TAG, res.getUsername() + " | " + res.getToken() + " | " + res.getThirdPartyNickName() + " | " + res.getThirdPartyFaceUrl());
         mUserManager.login(res.getUsername(), "", res.getToken());
         mUserManager.setUserinfo(res.getThirdPartyNickName(), res.getThirdPartyFaceUrl());
         mUserManager.setThirdParty(res.getThirdPartySource());
@@ -247,10 +244,12 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     }
 
     @Override
-    public void loginFailed(String message) {
+    public void loginFailed(String info) {
         mRefreshDialog.dismiss();
-        Log.w(TAG, "Login failed: " + message);
-        mHandler.sendEmptyMessage(MSG_THIRDPARTY_ERROR);
+        Message msg = new Message();
+        msg.what = MSG_THIRDPARTY_ERROR;
+        msg.obj = info;
+        mHandler.sendMessage(msg);
     }
 
     private Handler mHandler = new Handler() {
@@ -258,12 +257,17 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MSG_THIRDPARTY_ERROR:
-                Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, msg.obj.toString(), Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;
             }
         }
     };
+
+    @Override
+    public void loginCancel() {
+        mRefreshDialog.dismiss();
+    }
 
 }
