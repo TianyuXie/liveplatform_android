@@ -9,6 +9,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -180,20 +181,21 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     private Handler mShareHandler = new Handler() {
         public void handleMessage(Message msg) {
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            ComponentName comp = null;
-            switch (msg.what) {
-            case MSG_SHARE_WECHATSNS:
-                comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-                break;
-            case MSG_SHARE_SINA:
-                comp = new ComponentName("com.sina.weibo", "com.sina.weibo.EditActivity");
-                break;
-            default:
-                return;
-            }
             try {
-                intent.setComponent(comp);
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                Context context = null;
+                switch (msg.what) {
+                case MSG_SHARE_WECHATSNS:
+                    context = getContext().createPackageContext("com.tencent.mm", Context.CONTEXT_IGNORE_SECURITY);
+                    intent.setClassName(context, "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+                    break;
+                case MSG_SHARE_SINA:
+                    context = getContext().createPackageContext("com.sina.weibo", Context.CONTEXT_IGNORE_SECURITY);
+                    intent.setClassName(context, "com.sina.weibo.EditActivity");
+                    break;
+                default:
+                    return;
+                }
                 intent.setType("image/*");
                 intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
                 intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
@@ -201,9 +203,12 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 getContext().startActivity(intent);
             } catch (ActivityNotFoundException e) {
-                e.printStackTrace();
+                Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+            } catch (NameNotFoundException e) {
+                Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+            } finally {
+                dismiss();
             }
-            dismiss();
         };
     };
 
@@ -211,7 +216,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext().getApplicationContext()), StringUtil.newGuid());
+                String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
                 try {
                     ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
                 } catch (IOException e) {

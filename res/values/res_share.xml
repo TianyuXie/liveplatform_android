@@ -6,6 +6,7 @@
     <string name="share_user_title">%1$s分享</string>
     <string name="share_user_format">我正在使用%1$s, 快来关注我的主页吧!</string>
     <string name="share_wechat_not_install">未安装微信客户端</string>
+    <string name="share_general_not_install">分享客户端异常</string>
     <string name="share_weibo_not_install">未安装新浪微博客户端</string>
     <string name="share_qq_not_install">未安装腾讯QQ客户端</string>
 
