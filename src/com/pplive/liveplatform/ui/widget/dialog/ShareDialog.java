@@ -15,20 +15,24 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.passport.TencentPassport;
-import com.pplive.liveplatform.core.service.passport.WeiboPassport;
+import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.thirdparty.ThirdpartyShareListener;
+import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.SysUtil;
 
-public class ShareDialog extends Dialog implements View.OnClickListener {
+public class ShareDialog extends Dialog implements View.OnClickListener, ThirdpartyShareListener {
     static final String TAG = "_ShareDialog";
+
+    private static final int MSG_THIRDPARTY_ERROR = 2401;
 
     private Activity mActivity;
 
@@ -108,8 +112,8 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         if (SysUtil.checkPackage("com.tencent.mobileqq", getContext())) {
             if (mActivity != null) {
                 TencentPassport.getInstance().init(mActivity);
+                TencentPassport.getInstance().setShareListener(this);
                 TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
-                dismiss();
             } else {
                 Log.e(TAG, "mActivity == null");
             }
@@ -220,7 +224,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
                 try {
                     ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
                 } catch (IOException e) {
-                    return;
+                    ImageUtil.bitmap2File(ImageUtil.getBitmapFromRes(getContext(), R.drawable.ic_launcher), tmpfile);
                 }
                 Message message = new Message();
                 message.what = target;
@@ -228,5 +232,37 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
                 mShareHandler.sendMessage(message);
             }
         }).start();
+    }
+
+    @Override
+    public void shareSuccess() {
+        dismiss();
+    }
+
+    @Override
+    public void shareFailed(String message) {
+        Message msg = new Message();
+        msg.what = MSG_THIRDPARTY_ERROR;
+        msg.obj = TextUtils.isEmpty(message) ? getContext().getString(R.string.share_failed) : message;
+        mErrorHandler.sendMessage(msg);
+        dismiss();
+    }
+
+    private Handler mErrorHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_THIRDPARTY_ERROR:
+                Toast.makeText(getContext(), msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+            }
+        }
+    };
+
+    @Override
+    public void shareCanceled() {
+        dismiss();
     }
 }

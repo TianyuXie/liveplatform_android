@@ -200,7 +200,7 @@ public class RegisterActivity extends Activity {
             mRefreshDialog.dismiss();
             String message = event.getMessage();
             if (TextUtils.isEmpty(message)) {
-                message = getString(R.string.register_fail);
+                message = getString(R.string.register_failed);
             }
             Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
             refreshCheckCode();

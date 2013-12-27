@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.service.passport;
+package com.pplive.liveplatform.core.service.passport.thirdparty;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.URLEncoderUtil;
@@ -206,7 +207,7 @@ public class WeiboPassport {
         @Override
         public void onCancel() {
             if (mLoginListener != null) {
-                mLoginListener.loginCancel();
+                mLoginListener.loginCanceled();
             }
         }
 

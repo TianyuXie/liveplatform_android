@@ -21,10 +21,10 @@ import android.widget.Toast;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.User;
-import com.pplive.liveplatform.core.service.passport.TencentPassport;
-import com.pplive.liveplatform.core.service.passport.ThirdpartyLoginListener;
-import com.pplive.liveplatform.core.service.passport.WeiboPassport;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
+import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.thirdparty.ThirdpartyLoginListener;
+import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -248,11 +248,11 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         mRefreshDialog.dismiss();
         Message msg = new Message();
         msg.what = MSG_THIRDPARTY_ERROR;
-        msg.obj = info;
-        mHandler.sendMessage(msg);
+        msg.obj = TextUtils.isEmpty(info) ? getString(R.string.login_failed) : info;
+        mErrorHandler.sendMessage(msg);
     }
 
-    private Handler mHandler = new Handler() {
+    private Handler mErrorHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -266,7 +266,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     };
 
     @Override
-    public void loginCancel() {
+    public void loginCanceled() {
         mRefreshDialog.dismiss();
     }
 
