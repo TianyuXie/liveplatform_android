@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.service.passport;
+package com.pplive.liveplatform.core.service.passport.thirdparty;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -15,6 +15,7 @@ import android.util.Log;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.URLEncoderUtil;
@@ -41,6 +42,8 @@ public class TencentPassport {
 
     private ThirdpartyLoginListener mLoginListener;
 
+    private ThirdpartyShareListener mShareListener;
+
     public static synchronized TencentPassport getInstance() {
         if (sInstance == null) {
             sInstance = new TencentPassport();
@@ -53,6 +56,10 @@ public class TencentPassport {
 
     public void setLoginListener(ThirdpartyLoginListener lst) {
         mLoginListener = lst;
+    }
+
+    public void setShareListener(ThirdpartyShareListener lst) {
+        mShareListener = lst;
     }
 
     public void login(Activity activity) {
@@ -112,42 +119,42 @@ public class TencentPassport {
         @Override
         public void onCancel() {
             if (mLoginListener != null) {
-                mLoginListener.loginCancel();
+                mLoginListener.loginCanceled();
             }
         }
     };
 
     public void doShareToQQ(final Activity activity, final Bundle params) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                if (mTencent != null) {
-                    mTencent.shareToQQ(activity, params, shareUiListener);
-                } else {
-                    //TODO
-                }
+        if (mTencent != null) {
+            mTencent.shareToQQ(activity, params, shareUiListener);
+        } else {
+            if (mShareListener != null) {
+                mShareListener.shareFailed(StringManager.getRes(R.string.error_qq_init));
             }
-        }).start();
+        }
     }
 
     private IUiListener shareUiListener = new IUiListener() {
 
         @Override
         public void onError(UiError arg0) {
-            // TODO Auto-generated method stub
-
+            if (mShareListener != null) {
+                mShareListener.shareFailed(StringManager.getRes(R.string.error_qq_ui));
+            }
         }
 
         @Override
         public void onComplete(JSONObject arg0) {
-            // TODO Auto-generated method stub
-
+            if (mShareListener != null) {
+                mShareListener.shareSuccess();
+            }
         }
 
         @Override
         public void onCancel() {
-            // TODO Auto-generated method stub
-
+            if (mShareListener != null) {
+                mShareListener.shareCanceled();
+            }
         }
     };
 

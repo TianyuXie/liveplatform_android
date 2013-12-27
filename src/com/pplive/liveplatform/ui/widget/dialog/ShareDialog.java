@@ -9,30 +9,34 @@ import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.passport.TencentPassport;
-import com.pplive.liveplatform.core.service.passport.WeiboPassport;
+import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
+import com.pplive.liveplatform.core.service.passport.thirdparty.ThirdpartyShareListener;
+import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.SysUtil;
 
-public class ShareDialog extends Dialog implements View.OnClickListener {
+public class ShareDialog extends Dialog implements View.OnClickListener, ThirdpartyShareListener {
     static final String TAG = "_ShareDialog";
 
-    private String mDialogTitle;
+    private static final int MSG_THIRDPARTY_ERROR = 2401;
 
     private Activity mActivity;
 
+    private String mDialogTitle;
     private String mTargetUrl;
     private String mTitle;
     private String mImageUrl;
@@ -43,6 +47,9 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     public static final String PARAM_SUMMARY = "summary";
     public static final String PARAM_IMAGE_URL = "imageUrl";
     public static final String PARAM_BITMAP = "bitmap";
+
+    private static final int MSG_SHARE_WECHATSNS = 7601;
+    private static final int MSG_SHARE_SINA = 7602;
 
     public ShareDialog(Context context, int theme) {
         this(context, theme, "");
@@ -95,6 +102,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         if (mActivity != null) {
             WeiboPassport.getInstance().initShare(mActivity);
             WeiboPassport.getInstance().shareToWeibo(mActivity, getShareSinaData());
+            dismiss();
         } else {
             Log.e(TAG, "mActivity == null");
         }
@@ -104,8 +112,8 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         if (SysUtil.checkPackage("com.tencent.mobileqq", getContext())) {
             if (mActivity != null) {
                 TencentPassport.getInstance().init(mActivity);
+                TencentPassport.getInstance().setShareListener(this);
                 TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
-                dismiss();
             } else {
                 Log.e(TAG, "mActivity == null");
             }
@@ -116,32 +124,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     public void wechatSNSShareDirect() {
         if (SysUtil.checkPackage("com.tencent.mm", getContext())) {
-            final Handler handler = new Handler() {
-                public void handleMessage(Message msg) {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-                    intent.setComponent(comp);
-                    intent.setType("image/*");
-                    intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File((String) msg.obj)));
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    getContext().startActivity(intent);
-                };
-            };
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext().getApplicationContext()), StringUtil.newGuid());
-                    try {
-                        ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    Message message = new Message();
-                    message.obj = tmpfile;
-                    handler.sendMessage(message);
-                }
-            }).start();
+            shareImage(MSG_SHARE_WECHATSNS);
         } else {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
         }
@@ -149,12 +132,10 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     public void wechatShareDirect() {
         try {
-            //TODO add image
             Intent intent = new Intent(Intent.ACTION_SEND);
             ComponentName comp = new ComponentName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");
             intent.setComponent(comp);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.setType("text/plain");
             intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
@@ -165,36 +146,10 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     public void sinaShareDirect() {
-        try {
-            //TODO add image
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            ComponentName comp = new ComponentName("com.sina.weibo", "com.sina.weibo.EditActivity");
-            intent.setComponent(comp);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
-            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            dismiss();
-        } catch (ActivityNotFoundException e) {
+        if (SysUtil.checkPackage("com.sina.weibo", getContext())) {
+            shareImage(MSG_SHARE_SINA);
+        } else {
             Toast.makeText(getContext(), R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void qqShareDirect() {
-        try {
-            //TODO add image
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            ComponentName comp = new ComponentName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");
-            intent.setComponent(comp);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
-            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            dismiss();
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(getContext(), R.string.share_qq_not_install, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -226,5 +181,88 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         default:
             break;
         }
+    }
+
+    private Handler mShareHandler = new Handler() {
+        public void handleMessage(Message msg) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                Context context = null;
+                switch (msg.what) {
+                case MSG_SHARE_WECHATSNS:
+                    context = getContext().createPackageContext("com.tencent.mm", Context.CONTEXT_IGNORE_SECURITY);
+                    intent.setClassName(context, "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+                    break;
+                case MSG_SHARE_SINA:
+                    context = getContext().createPackageContext("com.sina.weibo", Context.CONTEXT_IGNORE_SECURITY);
+                    intent.setClassName(context, "com.sina.weibo.EditActivity");
+                    break;
+                default:
+                    return;
+                }
+                intent.setType("image/*");
+                intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+                intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File((String) msg.obj)));
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(intent);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+            } catch (NameNotFoundException e) {
+                Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+            } finally {
+                dismiss();
+            }
+        };
+    };
+
+    private void shareImage(final int target) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
+                try {
+                    ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
+                } catch (IOException e) {
+                    ImageUtil.bitmap2File(ImageUtil.getBitmapFromRes(getContext(), R.drawable.ic_launcher), tmpfile);
+                }
+                Message message = new Message();
+                message.what = target;
+                message.obj = tmpfile;
+                mShareHandler.sendMessage(message);
+            }
+        }).start();
+    }
+
+    @Override
+    public void shareSuccess() {
+        dismiss();
+    }
+
+    @Override
+    public void shareFailed(String message) {
+        Message msg = new Message();
+        msg.what = MSG_THIRDPARTY_ERROR;
+        msg.obj = TextUtils.isEmpty(message) ? getContext().getString(R.string.share_failed) : message;
+        mErrorHandler.sendMessage(msg);
+        dismiss();
+    }
+
+    private Handler mErrorHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_THIRDPARTY_ERROR:
+                Toast.makeText(getContext(), msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                break;
+            }
+        }
+    };
+
+    @Override
+    public void shareCanceled() {
+        dismiss();
     }
 }
