@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
-import com.pplive.liveplatform.util.StringUtil;
+import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.URLEncoderUtil;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
@@ -140,7 +140,7 @@ public class WeiboPassport {
         public void onIOException(IOException e) {
             Log.e(TAG, "RequestListener IOException: " + e.getMessage());
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_io));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_weibo_io));
             }
         }
 
@@ -148,7 +148,7 @@ public class WeiboPassport {
         public void onError(WeiboException e) {
             Log.e(TAG, "RequestListener WeiboException: " + e.getMessage());
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_internal));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_weibo_internal));
             }
         }
     };
@@ -170,12 +170,12 @@ public class WeiboPassport {
                     mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
                 } else {
                     if (mLoginListener != null) {
-                        mLoginListener.loginFailed(StringUtil.getRes(R.string.error_pptv_data));
+                        mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_data));
                     }
                 }
             } catch (JSONException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.loginFailed(StringUtil.getRes(R.string.error_pptv_format));
+                    mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_format));
                 }
             } catch (LiveHttpException e) {
                 if (mLoginListener != null) {
@@ -198,7 +198,7 @@ public class WeiboPassport {
                 updateUserInfo(values.getString("uid"));
             } else {
                 if (mLoginListener != null) {
-                    mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_auth));
+                    mLoginListener.loginFailed(StringManager.getRes(R.string.error_weibo_auth));
                 }
             }
         }
@@ -214,7 +214,7 @@ public class WeiboPassport {
         public void onWeiboException(WeiboException e) {
             Log.e(TAG, "WeiboAuthListener WeiboException: " + e.getMessage());
             if (mLoginListener != null) {
-                mLoginListener.loginFailed(StringUtil.getRes(R.string.error_weibo_auth));
+                mLoginListener.loginFailed(StringManager.getRes(R.string.error_weibo_auth));
             }
         }
     };
