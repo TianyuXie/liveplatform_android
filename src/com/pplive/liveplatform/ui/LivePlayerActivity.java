@@ -122,8 +122,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mLoadDelayed;
 
-    private boolean mFirstTime;
-
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -150,7 +148,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.setActivity(this);
 
         /* init values */
-        mFirstTime = true;
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
@@ -182,7 +179,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onNewIntent");
         setIntent(intent);
         mUrl = null;
-        mFirstTime = false;
     }
 
     @Override
@@ -555,7 +551,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                         Log.d(TAG, "linkurl:" + link);
                     }
                 }
-                
+
                 // TODO rtmp or live2
                 for (Watch watch : watchs) {
                     if ("rtmp".equals(watch.getProtocol())) {
@@ -573,10 +569,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     }
                 }
             }
-            if (!TextUtils.isEmpty(mUrl)) {
-                mLivePlayerFragment.setupPlayer(mUrl);
-            } else {
-                Log.w(TAG, "mUrl is empty");
+            if (!mProgram.isPrelive()) {
+                if (!TextUtils.isEmpty(mUrl)) {
+                    mLivePlayerFragment.setupPlayer(mUrl);
+                } else {
+                    Log.w(TAG, "mUrl is empty");
+                }
             }
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
@@ -655,7 +653,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case MSG_LOADING_DELAY:
                 mLoadDelayed = true;
                 checkFirstLoading();
-                checkSecondLoading();
+                checkSecondLoading(false);
                 break;
             case MSG_MEDIA_FINISH:
                 mFirstLoadFinish = true;
@@ -663,7 +661,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 break;
             case MSG_START_PLAY:
                 mSecondLoadFinish = true;
-                checkSecondLoading();
+                checkSecondLoading(false);
                 break;
             case MSG_KEEP_ALIVE:
                 keepAlive();
@@ -675,13 +673,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void checkFirstLoading() {
         if (mFirstLoadFinish && mLoadDelayed && !isFinishing() && mFirstLoading) {
             hideFirstLoading();
+            if (mProgram.isPrelive()) {
+                mSecondLoadFinish = true;
+                checkSecondLoading(true);
+            }
         }
     }
 
-    private void checkSecondLoading() {
+    private void checkSecondLoading(boolean isPrelive) {
         if (mSecondLoadFinish && mLoadDelayed && !isFinishing() && mSecondLoading) {
             hideSecondLoading();
-            mLivePlayerFragment.onStartPlay(mFirstTime);
+            if (isPrelive) {
+                mLivePlayerFragment.onStartPrelive();
+            } else {
+                mLivePlayerFragment.onStartPlay();
+            }
         }
     }
 

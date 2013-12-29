@@ -20,6 +20,15 @@
         android:scaleType="fitStart"
         android:src="@drawable/player_loading_bg" />
 
+    <TextView
+        android:id="@+id/text_player_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
     <RelativeLayout
         android:id="@+id/layout_player_titlebar"
         android:layout_width="fill_parent"
@@ -49,11 +58,11 @@
             style="@style/togglebutton_notext"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:enabled="false"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:background="@drawable/player_btn_land_port" />
+            android:background="@drawable/player_btn_land_port"
+            android:enabled="false" />
     </RelativeLayout>
 
     <RelativeLayout
