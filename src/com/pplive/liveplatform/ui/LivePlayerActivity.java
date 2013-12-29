@@ -189,7 +189,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
-        mLivePlayerFragment.initUserIcon(mProgram.getOwnerIcon());
+//        mLivePlayerFragment.initUserIcon(mProgram.getOwnerIcon());
         mLivePlayerFragment.showPPTVIcon(mProgram.isOriginal());
         long pid = mProgram.getId();
         if (mUrl == null) {
@@ -570,12 +570,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     }
                 }
             }
-            if (!mProgram.isPrelive()) {
-                if (!TextUtils.isEmpty(mUrl)) {
-                    mLivePlayerFragment.setupPlayer(mUrl);
-                } else {
-                    Log.w(TAG, "mUrl is empty");
-                }
+            if (!TextUtils.isEmpty(mUrl)) {
+                mLivePlayerFragment.setupPlayer(mUrl);
+            } else {
+                Log.w(TAG, "mUrl is empty");
             }
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
@@ -677,6 +675,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (mProgram.isPrelive()) {
                 mSecondLoadFinish = true;
                 checkSecondLoading(true);
+            } else {
+                mLivePlayerFragment.stopTimer();
             }
         }
     }
@@ -689,6 +689,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 mLivePlayerFragment.startTimer(mProgram.getStartTime());
             } else {
                 mLivePlayerFragment.onStartPlay();
+                mLivePlayerFragment.stopTimer();
             }
         }
     }
