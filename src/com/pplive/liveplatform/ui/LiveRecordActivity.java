@@ -97,6 +97,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextRecordDuration;
     private TextView mTextLiveComing;
     private TextView mTextLivingTitle;
+    
+    private ImageButton mBtnLivingShare;
 
     private boolean mCountDown = false;
 
@@ -185,6 +187,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
         mTextLiveComing = (TextView) findViewById(R.id.text_live_coming);
         mTextLivingTitle = (TextView) findViewById(R.id.text_living_title);
+        mBtnLivingShare = (ImageButton) findViewById(R.id.btn_living_share);
+        mBtnLivingShare.setOnClickListener(mOnShareClickListener);
 
         mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
         mAnimDoor.setOpenDoorListener(openDoorListener);
@@ -208,7 +212,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         EventBus.getDefault().register(this);
 
-        mFooterBarFragment.setOnShareBtnClickListener(onShareClickListener);
+        mFooterBarFragment.setOnShareBtnClickListener(mOnShareClickListener);
 
         startPreview();
     }
@@ -385,10 +389,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (null != mLivingProgram) {
             mTextLive.setVisibility(View.VISIBLE);
             mTextRecordDuration.setVisibility(View.VISIBLE);
+            
             mChatContainer.setVisibility(View.VISIBLE);
+            
+            mBtnLivingShare.setVisibility(View.VISIBLE);
+            
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
-
+            
             // TODO: Debug Code
             mTextLivingTitle.append("\n");
             mTextLivingTitle.append("pid: " + mLivingProgram.getId());
@@ -559,6 +567,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void performOnClickStopRecording() {
         mTextLivingTitle.setVisibility(View.GONE);
+        mBtnLivingShare.setVisibility(View.GONE);
+        
         stopRecording(true);
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
@@ -568,6 +578,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
+        
         switch (v.getId()) {
         case R.id.btn_camera_change:
             onClickBtnCameraChange();
@@ -583,14 +594,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             break;
         default:
             break;
-        }
-    }
-
-    private void onClickBtnChat() {
-        if (!mChating) {
-            startChating();
-        } else {
-            stopChating();
         }
     }
 
@@ -625,8 +628,19 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onClickBtnFlashLight() {
         boolean isFlashOn = mBtnFlashLight.isChecked();
 
+        mMediaRecorderView.setFlashMode(isFlashOn);
+        
+        mBtnFlashLight.setChecked(mMediaRecorderView.isFlashOn());
     }
-
+    
+    private void onClickBtnChat() {
+        if (!mChating) {
+            startChating();
+        } else {
+            stopChating();
+        }
+    }
+    
     class GetPushUrlTask extends AsyncTask<Program, Void, String> {
 
         private String mLiveTitle;
@@ -816,7 +830,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     };
 
-    private View.OnClickListener onShareClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnShareClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
