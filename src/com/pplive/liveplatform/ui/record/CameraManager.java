@@ -99,7 +99,7 @@ public class CameraManager {
         return Constants.LARGER_THAN_OR_EQUAL_GINGERBREAD ? Camera.getNumberOfCameras() : DEFAULT_NUMBER_OF_CAMERAS;
     }
 
-    public Camera.Size getMiniSize(Parameters params) {
+    public Camera.Size getMinSize(Parameters params) {
         List<Camera.Size> sizes = params.getSupportedPreviewSizes();
 
         Camera.Size ms = sizes.get(0);
