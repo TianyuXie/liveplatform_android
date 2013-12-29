@@ -115,7 +115,7 @@ public class PPboxSink {
         mAudioStream = new PPboxStream(mCaptureId, 1, mAudioRecord);
     }
 
-    public void resetCamera(Camera camera) {
+    public void changeCamera(Camera camera) {
         mCamera = camera;
 
         if (null != mVideoStream) {
@@ -129,7 +129,7 @@ public class PPboxSink {
     public void start() {
         mVideoStream.start();
 
-        resetCamera(mCamera);
+        changeCamera(mCamera);
 
         mAudioStream.start();
         mAudioThread = new Thread() {
