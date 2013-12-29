@@ -37,13 +37,14 @@ import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
+import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
 
-    private static final int TIMER_DELAY = 1000;
+    private static final int TIMER_DELAY = 10000;
 
     private static final int HIDE = 301;
 
@@ -62,6 +63,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private View mBottomBarView;
 
     private View mIconWrapper;
+
+    private View mPPTVIcon;
 
     private TextView mTitleTextView;
 
@@ -91,12 +94,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private int mViewFlags;
 
-    private boolean mTimerOn;
+    private long mStartTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        mStartTime = -1;
         mShowBar = true;
         mLoading = true;
         mFlagMask = 0xffffffff;
@@ -119,6 +123,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mFinishText = layout.findViewById(R.id.text_loading_finish);
         mIconWrapper = layout.findViewById(R.id.wrapper_player_user_icon);
+        mPPTVIcon = layout.findViewById(R.id.image_player_pptv_icon);
         mUserIcon = (CircularImageView) layout.findViewById(R.id.btn_player_user_icon);
         mUserIcon.setOnClickListener(onUserBtnClickListener);
         layout.setOnTouchListener(this);
@@ -192,6 +197,14 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             }
         }
     };
+
+    public void showPPTVIcon(boolean show) {
+        if (show) {
+            mPPTVIcon.setVisibility(View.VISIBLE);
+        } else {
+            mPPTVIcon.setVisibility(View.GONE);
+        }
+    }
 
     public void setTitle(String title) {
         mTitleTextView.setText(title);
@@ -356,7 +369,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     private void hideBars() {
-        if (!mShowBar || mLoading) {
+        if (!mShowBar || mLoading || mStartTime > 0) {
             return;
         }
         mShowBar = false;
@@ -524,22 +537,22 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private Runnable runnable = new Runnable() {
         public void run() {
             Log.d(TAG, "Timer update");
+            mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForLongTime(mStartTime - System.currentTimeMillis()));
+            handler.postDelayed(this, TIMER_DELAY);
         }
     };
 
-    public void startTimer() {
-        if (!mTimerOn) {
-            Log.d(TAG, "start timer");
-            handler.postDelayed(runnable, TIMER_DELAY);
-            mTimerOn = true;
-        }
+    public void startTimer(long startTime) {
+        Log.d(TAG, "start timer");
+        mStartTime = startTime;
+        mCountTextView.setVisibility(View.VISIBLE);
+        handler.post(runnable);
     }
 
     public void stopTimer() {
-        if (mTimerOn) {
-            Log.d(TAG, "stop timer");
-            handler.removeCallbacks(runnable);
-            mTimerOn = false;
-        }
+        Log.d(TAG, "stop timer");
+        mStartTime = -1;
+        mCountTextView.setVisibility(View.GONE);
+        handler.removeCallbacks(runnable);
     }
 }

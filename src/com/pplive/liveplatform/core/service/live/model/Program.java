@@ -159,7 +159,11 @@ public class Program implements Serializable {
     }
 
     public boolean isExpiredPrelive() {
-        return isPrelive() && new Date().getTime() > starttime + TimeUtil.MS_OF_HOUR;
+        return isPrelive() && System.currentTimeMillis() > starttime + TimeUtil.MS_OF_HOUR;
+    }
+
+    public boolean isOriginal() {
+        return subject_id == SUBJECT_ID_ORIGIN;
     }
 
     class Record implements Serializable {

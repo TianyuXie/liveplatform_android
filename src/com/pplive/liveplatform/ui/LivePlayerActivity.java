@@ -190,6 +190,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
         mLivePlayerFragment.initUserIcon(mProgram.getOwnerIcon());
+        mLivePlayerFragment.showPPTVIcon(mProgram.isOriginal());
         long pid = mProgram.getId();
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getUsernamePlain();
@@ -685,6 +686,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             hideSecondLoading();
             if (isPrelive) {
                 mLivePlayerFragment.onStartPrelive();
+                mLivePlayerFragment.startTimer(mProgram.getStartTime());
             } else {
                 mLivePlayerFragment.onStartPlay();
             }
