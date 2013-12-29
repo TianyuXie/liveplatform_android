@@ -249,10 +249,12 @@ public class UserpageActivity extends Activity {
             } else if (lhs.getLiveStatus().ordinal() > rhs.getLiveStatus().ordinal()) {
                 return 1;
             } else {
-                if (lhs.getStartTime() >= rhs.getStartTime()) {
+                if (lhs.getStartTime() > rhs.getStartTime()) {
                     return -1;
-                } else {
+                } else if (lhs.getStartTime() < rhs.getStartTime()) {
                     return 1;
+                } else {
+                    return 0;
                 }
             }
         }
