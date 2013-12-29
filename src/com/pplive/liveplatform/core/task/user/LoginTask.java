@@ -3,6 +3,8 @@ package com.pplive.liveplatform.core.task.user;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
@@ -10,6 +12,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
+import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class LoginTask extends Task {
@@ -59,8 +62,8 @@ public class LoginTask extends Task {
             } catch (InterruptedException e1) {
             }
         }
+        Log.d(TAG, "wake up");
 
-        Log.d(TAG, "leave sleep");
         //Start PassportService
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
@@ -71,11 +74,11 @@ public class LoginTask extends Task {
         String token = null;
         try {
             token = PassportService.getInstance().login(usr, pwd).getToken();
-        } catch (Exception e) {
-            return new TaskResult(TaskStatus.Failed, "PassportService error");
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
         }
         if (TextUtils.isEmpty(token)) {
-            return new TaskResult(TaskStatus.Failed, "Invalid token");
+            return new TaskResult(TaskStatus.Failed, StringManager.getRes(R.string.register_token_fail));
         }
         Log.d(TAG, "PassportService OK");
 

@@ -82,10 +82,11 @@
     </LinearLayout>
 
     <ImageView
+        android:id="@+id/image_userpage_time_circle"
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_marginTop="18dp"
-        android:background="@drawable/userpage_time_circle"
+        android:background="@drawable/userpage_time_circle_full"
         android:contentDescription="@null" />
 
 </RelativeLayout>

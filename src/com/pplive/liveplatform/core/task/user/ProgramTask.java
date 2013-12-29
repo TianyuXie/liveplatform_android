@@ -3,7 +3,6 @@ package com.pplive.liveplatform.core.task.user;
 import java.util.List;
 
 import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -61,7 +60,7 @@ public class ProgramTask extends Task {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
         for (Program program : data) {
-            if (program.getLiveStatus() == LiveStatusEnum.DELETED || program.getLiveStatus() == LiveStatusEnum.SYS_DELETED) {
+            if (program.isDeleted() || program.isExpiredPrelive()) {
                 data.remove(program);
             }
         }

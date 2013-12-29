@@ -3,6 +3,9 @@ package com.pplive.liveplatform.util;
 import java.util.Locale;
 
 public class TimeUtil {
+    public static final int MS_OF_SECOND = 1000;
+    public static final int MS_OF_MIN = 60 * MS_OF_SECOND;
+    public static final int MS_OF_HOUR = 60 * MS_OF_MIN;
     public static final int SECONDS_OF_DAY = 24 * 3600;
     public static final int SECONDS_OF_HOUR = 3600;
 

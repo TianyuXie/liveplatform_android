@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -124,9 +125,14 @@ public class ImageUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
+            bitmap.recycle();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static Bitmap getBitmapFromRes(Context context, int resid) {
+        return ((BitmapDrawable) context.getApplicationContext().getResources().getDrawable(resid)).getBitmap();
     }
 
     static class UnsupportedException extends RuntimeException {

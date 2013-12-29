@@ -2,7 +2,7 @@
 <resources>
 
     <!-- string -->
-    <string name="home_title">i&#160;播</string>
+    <string name="home_title">爱播</string>
     <string name="home_loading">正在加载</string>
     <string name="home_loaded_count">已加载%d条</string>
     <string name="home_all_loaded">已全部加载</string>

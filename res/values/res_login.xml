@@ -4,17 +4,32 @@
     <string name="login_title">登录</string>
     <string name="login_nav">使用PPTV帐号登录</string>
     <string name="login_username">用户名</string>
+    <string name="login_failed">登录失败</string>
     <string name="login_password">密码</string>
     <string name="login_no_pptv">还没有PPTV帐号?</string>
+    <string name="register_failed">注册失败</string>
     <string name="register_nav">注册PPTV帐号</string>
     <string name="register_username">用户名</string>
     <string name="register_checkcode">验证码</string>
     <string name="register_email">邮箱</string>
     <string name="register_title">注册</string>
-    <string name="register_fail">注册失败</string>
+    <string name="register_token_fail">认证失败</string>
 
     <color name="login_input_text_bg">#FF919191</color>
     <color name="login_input_bg">#FF191919</color>
     <color name="login_no_pptv_bg">#FF19A0FF</color>
+
+    <string name="error_weibo_auth">新浪微博授权错误</string>
+    <string name="error_weibo_io">新浪微博网络错误</string>
+    <string name="error_weibo_internal">新浪微博内部错误</string>
+    <string name="error_qq_init">手机QQ初始化错误</string>
+    <string name="error_qq_data">手机QQ数据错误</string>
+    <string name="error_qq_network">手机QQ网络错误</string>
+    <string name="error_qq_timeout">手机QQ网络超时</string>
+    <string name="error_qq_unknown">手机QQ未知错误</string>
+    <string name="error_qq_ui">无法打开手机QQ</string>
+    <string name="error_pptv_data">数据错误</string>
+    <string name="error_pptv_format">数据格式错误</string>
+    <string name="error_pptv_passport">登录失败</string>
 
 </resources>

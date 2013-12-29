@@ -16,6 +16,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.util.FileUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
+import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.SysUtil;
 
 public class LiveApplication extends Application {
@@ -30,6 +31,7 @@ public class LiveApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        StringManager.initContext(getApplicationContext());
         initAppInfo(getApplicationContext());
         initPaths(getApplicationContext());
         NetworkManager.init(getApplicationContext());

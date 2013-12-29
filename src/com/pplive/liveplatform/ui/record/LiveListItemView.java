@@ -8,7 +8,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
@@ -74,7 +73,7 @@ public class LiveListItemView extends RelativeLayout {
         mProgram = program;
 
         if (null != program) {
-            mImagePrelive.setImageAsync(program.getCover(), R.drawable.live_record_default_prelive_image);
+            mImagePrelive.setImageAsync(program.getRecommendCover(), R.drawable.live_record_default_prelive_image);
             mTextLiveTitle.setText(program.getTitle());
         }
     }

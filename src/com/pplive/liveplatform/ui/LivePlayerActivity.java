@@ -122,6 +122,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mLoadDelayed;
 
+    private boolean mFirstTime;
+
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -148,10 +150,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.setActivity(this);
 
         /* init values */
+        mFirstTime = true;
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
-        mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
 
         /* init views */
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
@@ -175,9 +177,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d(TAG, "onNewIntent");
+        setIntent(intent);
+        mUrl = null;
+        mFirstTime = false;
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
@@ -442,7 +454,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.show();
         String title = StringUtil.safeString(mProgram.getTitle());
         String shareUrl = mProgram.getShareLinkUrl();
-        String imageUrl = mProgram.getCover();
+        String imageUrl = mProgram.getRecommendCover();
         Bundle data = new Bundle();
         data.putString(ShareDialog.PARAM_TITLE, title);
         data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
@@ -535,8 +547,16 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
             List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            // TODO rtmp or live2
             if (!CollectionUtils.isEmpty(watchs)) {
+                // print all links
+                for (Watch watch : watchs) {
+                    List<String> watchList = watch.getWatchStringList();
+                    for (String link : watchList) {
+                        Log.d(TAG, "linkurl:" + link);
+                    }
+                }
+                
+                // TODO rtmp or live2
                 for (Watch watch : watchs) {
                     if ("rtmp".equals(watch.getProtocol())) {
                         List<String> watchList = watch.getWatchStringList();
@@ -553,7 +573,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     }
                 }
             }
-
             if (!TextUtils.isEmpty(mUrl)) {
                 mLivePlayerFragment.setupPlayer(mUrl);
             } else {
@@ -603,8 +622,15 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
+        mFirstLoadFinish = false;
+        mLoadDelayed = false;
         mFirstLoading = true;
         mSecondLoading = true;
+        mSecondLoadFinish = false;
+        mLivePlayerFragment.initIcon();
+        mCommentWrapper.setVisibility(View.GONE);
+        mChatBox.setVisibility(View.GONE);
+        mWriteBtn.setVisibility(View.GONE);
         mLoadingView.setVisibility(View.VISIBLE);
         mLoadingButton.startLoading(R.string.player_loading);
     }
@@ -643,7 +669,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 keepAlive();
                 break;
             }
-
         }
     };
 
@@ -656,7 +681,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void checkSecondLoading() {
         if (mSecondLoadFinish && mLoadDelayed && !isFinishing() && mSecondLoading) {
             hideSecondLoading();
-            mLivePlayerFragment.onStartPlay();
+            mLivePlayerFragment.onStartPlay(mFirstTime);
         }
     }
 

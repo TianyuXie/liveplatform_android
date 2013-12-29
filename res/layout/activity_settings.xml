@@ -42,10 +42,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TableLayout style="@style/settings_tablelayout" >
+            <TableLayout
+                android:id="@+id/layout_settings_nickname"
+                style="@style/settings_tablelayout" >
 
                 <TableRow
-                    android:id="@+id/layout_settings_nickname"
+                    android:id="@+id/row_settings_nickname"
                     style="@style/settings_tablerow" >
 
                     <TextView
@@ -60,10 +62,12 @@
                 </TableRow>
             </TableLayout>
 
-            <TableLayout style="@style/settings_tablelayout" >
+            <TableLayout
+                android:id="@+id/layout_settings_user"
+                style="@style/settings_tablelayout" >
 
                 <TableRow
-                    android:id="@+id/layout_settings_user"
+                    android:id="@+id/row_settings_user"
                     style="@style/settings_tablerow" >
 
                     <TextView
@@ -139,6 +143,17 @@
                 android:padding="15dp"
                 android:text="@string/settings_logout"
                 android:textSize="17sp" >
+            </Button>
+
+            <Button
+                android:id="@+id/btn_settings_login"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/settings_btn_login_bg"
+                android:padding="15dp"
+                android:text="@string/settings_login"
+                android:textSize="17sp"
+                android:visibility="gone" >
             </Button>
 
             <TextView
