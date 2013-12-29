@@ -1,6 +1,8 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 
 public class SettingsActivity extends Activity {
     static final String TAG = "_SettingsActivity";
@@ -94,9 +97,15 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onLogoutBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            UserManager.getInstance(SettingsActivity.this).logout();
-            setResult(LOGOUT);
-            finish();
+            Dialog dialog = DialogManager.logoutAlertDialog(SettingsActivity.this, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    UserManager.getInstance(SettingsActivity.this).logout();
+                    setResult(LOGOUT);
+                    finish();
+                }
+            });
+            dialog.show();
         }
     };
 

@@ -22,6 +22,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -262,6 +263,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onCompletion() {
             Log.d(TAG, "MeetVideoView: onCompletion");
             stopPlayback();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+            }
             if (mOnCompletionListener != null) {
                 mOnCompletionListener.onCompletion();
             }
@@ -274,6 +278,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public boolean onError(int what, int extra) {
             Log.d(TAG, "MeetVideoView: onError");
             stopPlayback();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
+            }
             if (mOnErrorListener != null) {
                 return mOnErrorListener.onError(what, extra);
             }

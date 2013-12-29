@@ -53,6 +53,16 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private final static int FALL_COUNT = 16;
 
+    private final static int CATALOG_ORIGIN = 1;
+
+    private final static int CATALOG_TV = 2;
+
+    private final static int CATALOG_GAME = 3;
+
+    private final static int CATALOG_SPORT = 4;
+
+    private final static int CATALOG_FINANCE = 5;
+
     private TitleBar mTitleBar;
 
     private ProgramContainer mContainer;
@@ -145,8 +155,24 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     public void switchSubject(int id) {
         mSubjectId = id;
-        startRefreshTask();
         updateCatalogText();
+        switch (id) {
+        case CATALOG_ORIGIN:
+        case CATALOG_SPORT:
+            mContainer.setStatusVisibility(View.VISIBLE);
+            startRefreshTask();
+            break;
+        case CATALOG_FINANCE:
+        case CATALOG_GAME:
+        case CATALOG_TV:
+            mContainer.setStatusVisibility(View.INVISIBLE);
+            if (mContainer.getCheckedRadioButtonId() == R.id.btn_status_living) {
+                startRefreshTask();
+            } else {
+                mContainer.checkStatus(R.id.btn_status_living);
+            }
+            break;
+        }
     }
 
     private void switchLiveStatus(SearchService.LiveStatusKeyword id) {
@@ -156,22 +182,20 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private void updateCatalogText() {
         switch (mSubjectId) {
-        case 1:
+        case CATALOG_ORIGIN:
             mCatalogTextView.setText(R.string.home_catalog_original);
             break;
-        case 2:
+        case CATALOG_TV:
             mCatalogTextView.setText(R.string.home_catalog_tv);
             break;
-        case 3:
+        case CATALOG_GAME:
             mCatalogTextView.setText(R.string.home_catalog_game);
             break;
-        case 4:
+        case CATALOG_SPORT:
             mCatalogTextView.setText(R.string.home_catalog_sport);
             break;
-        case 5:
+        case CATALOG_FINANCE:
             mCatalogTextView.setText(R.string.home_catalog_finance);
-            break;
-        default:
             break;
         }
     }
@@ -406,15 +430,19 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
+            Log.d(TAG, "onCheckedChanged");
             switch (checkedId) {
             case R.id.btn_status_living:
                 switchLiveStatus(SearchService.LiveStatusKeyword.LIVING);
+                Log.d(TAG, "btn_status_living");
                 break;
             case R.id.btn_status_tolive:
                 switchLiveStatus(SearchService.LiveStatusKeyword.COMING);
+                Log.d(TAG, "btn_status_tolive");
                 break;
             case R.id.btn_status_replay:
                 switchLiveStatus(SearchService.LiveStatusKeyword.VOD);
+                Log.d(TAG, "btn_status_replay");
                 break;
             default:
                 break;
