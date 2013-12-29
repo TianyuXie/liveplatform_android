@@ -1,6 +1,9 @@
 package com.pplive.liveplatform.core.task.player;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import android.util.Log;
 
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.model.Watch;
@@ -52,15 +55,24 @@ public class GetMediaTask extends Task {
         long pid = (Long) context.get(KEY_PID);
         String username = (String) context.get(KEY_USERNAME);
         String token = (String) context.get(KEY_TOKEN);
-        List<Watch> data = null;
+        List<Watch> data = new ArrayList<Watch>();
+        //        List<Watch> data = null;
         try {
-            data = MediaService.getInstance().getPlayWatchListV1(token, pid, username);
+            Watch watch = MediaService.getInstance().getPlayWatchListV2(token, pid, username).getRecommendedWatch();
+            if (watch == null) {
+                Log.d(TAG, "watch == null");
+            }
+
+            data.add(watch);
+
+            //            data = MediaService.getInstance().getPlayWatchListV1(token, pid, username);
+
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "MediaService error");
         }
-        if (data == null) {
-            return new TaskResult(TaskStatus.Failed, "No data");
-        }
+        //        if (data == null) {
+        //            return new TaskResult(TaskStatus.Failed, "No data");
+        //        }
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
