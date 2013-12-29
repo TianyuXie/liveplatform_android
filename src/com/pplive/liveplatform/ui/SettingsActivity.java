@@ -46,14 +46,15 @@ public class SettingsActivity extends Activity {
         setContentView(R.layout.activity_settings);
         findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
         findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
-        findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
+        findViewById(R.id.btn_settings_login).setOnClickListener(onLoginBtnClickListener);
+        findViewById(R.id.row_settings_nickname).setOnClickListener(onNicknameClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
         mThirdpartyText = (TextView) findViewById(R.id.text_settings_thirdparty);
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
-        mPPTVUserView = findViewById(R.id.layout_settings_user);
+        mPPTVUserView = findViewById(R.id.row_settings_user);
         mThirdpartyView = findViewById(R.id.layout_settings_thirdparty);
     }
 
@@ -65,17 +66,32 @@ public class SettingsActivity extends Activity {
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mPPTVUserText.setText(UserManager.getInstance(this).getUsernamePlain());
         mNicknameText.setText(UserManager.getInstance(this).getNickname());
-        if (UserManager.getInstance(this).isThirdPartyLogin()) {
-            mPPTVUserView.setVisibility(View.GONE);
-            mThirdpartyView.setVisibility(View.VISIBLE);
-            if (UserManager.getInstance(this).isSinaLogin()) {
-                mThirdpartyText.setText(R.string.settings_login_weibo);
-            } else if (UserManager.getInstance(this).isTencentLogin()) {
-                mThirdpartyText.setText(R.string.settings_login_qq);
+        View nickView = findViewById(R.id.layout_settings_nickname);
+        View userView = findViewById(R.id.layout_settings_user);
+        View logoutBtn = findViewById(R.id.btn_settings_logout);
+        View loginBtn = findViewById(R.id.btn_settings_login);
+        if (UserManager.getInstance(this).isLogin()) {
+            nickView.setVisibility(View.VISIBLE);
+            userView.setVisibility(View.VISIBLE);
+            logoutBtn.setVisibility(View.VISIBLE);
+            loginBtn.setVisibility(View.GONE);
+            if (UserManager.getInstance(this).isThirdPartyLogin()) {
+                mPPTVUserView.setVisibility(View.GONE);
+                mThirdpartyView.setVisibility(View.VISIBLE);
+                if (UserManager.getInstance(this).isSinaLogin()) {
+                    mThirdpartyText.setText(R.string.settings_login_weibo);
+                } else if (UserManager.getInstance(this).isTencentLogin()) {
+                    mThirdpartyText.setText(R.string.settings_login_qq);
+                }
+            } else {
+                mPPTVUserView.setVisibility(View.VISIBLE);
+                mThirdpartyView.setVisibility(View.GONE);
             }
         } else {
-            mPPTVUserView.setVisibility(View.VISIBLE);
-            mThirdpartyView.setVisibility(View.GONE);
+            logoutBtn.setVisibility(View.GONE);
+            loginBtn.setVisibility(View.VISIBLE);
+            nickView.setVisibility(View.GONE);
+            userView.setVisibility(View.GONE);
         }
     }
 
@@ -106,6 +122,16 @@ public class SettingsActivity extends Activity {
                 }
             });
             dialog.show();
+        }
+    };
+
+    private View.OnClickListener onLoginBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+            intent.putExtra(LoginActivity.EXTRA_TAGET, UserpageActivity.class.getName());
+            startActivity(intent);
+            finish();
         }
     };
 
