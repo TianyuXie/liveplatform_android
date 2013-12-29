@@ -9,9 +9,10 @@ public class WatchList {
     java.util.List<Watch> medias;
     
     public Watch getRecommendedWatch() {
-        if (null != recommend && !StringUtil.isNullOrEmpty(recommend.procotol)) {
+        
+        if (null != recommend && !StringUtil.isNullOrEmpty(recommend.protocol)) {
             for (Watch watch : medias) {
-                if (recommend.procotol.equals(watch.getProtocol()) && null != watch.getChannel(recommend.ft)) {
+                if (recommend.protocol.equals(watch.getProtocol()) && null != watch.getChannel(recommend.ft)) {
                     return watch;
                 }
             }
@@ -22,7 +23,7 @@ public class WatchList {
 
     class Recommend {
         
-        String procotol;
+        String protocol;
         
         int ft;
     }
