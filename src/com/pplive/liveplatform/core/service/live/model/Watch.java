@@ -79,6 +79,6 @@ public class Watch {
     }
 
     public String getRtmpPlayURL(String protocol, String addr, String path, String name) {
-        return String.format(Locale.US, "%s://%s/%s/%s");
+        return String.format(Locale.US, "%s://%s%s/%s", protocol, addr, path, name);
     }
 }
