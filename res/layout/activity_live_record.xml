@@ -3,8 +3,8 @@
     xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-    
-    <com.pplive.liveplatform.ui.record.MediaRecorderView 
+
+    <com.pplive.liveplatform.ui.record.MediaRecorderView
         android:id="@+id/media_recorder_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -90,13 +90,26 @@
             android:onClick="onClick" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/text_living_title"
+    <ImageButton
+        android:id="@+id/btn_living_share"
+        style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:layout_margin="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:contentDescription="@null"
+        android:src="@drawable/live_record_btn_live_share"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/text_living_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/btn_living_share"
+        android:layout_marginRight="20dp"
+        android:layout_toRightOf="@+id/btn_living_share"
         android:background="@drawable/live_record_fillet_bg"
         android:paddingBottom="10dp"
         android:paddingLeft="20dp"

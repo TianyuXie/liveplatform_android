@@ -53,7 +53,7 @@ public class PPBoxUtil {
         return url;
     }
     
-    public static URL getPPLive2M3U8PlayURL(String playLink) {
+    public static URL getLive2M3U8PlayURL(String playLink) {
         return getPPLive2M3U8PlayURL(playLink, PPBOX_HTTP_PORT);
     }
     

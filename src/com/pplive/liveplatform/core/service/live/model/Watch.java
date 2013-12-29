@@ -34,14 +34,14 @@ public class Watch {
     public Channel[] getChannels() {
         return channels;
     }
-    
+
     public Channel getChannel(final int ft) {
         for (Channel channel : getChannels()) {
             if (ft == channel.getFt()) {
                 return channel;
             }
         }
-        
+
         return null;
     }
 
@@ -56,13 +56,9 @@ public class Watch {
             String url = null;
             for (String addr : channel.getAddrs()) {
                 if ("live2".equals(protocol)) {
-                    String playLink = String.format(Locale.US,
-                            "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=-1&sdkmode=1&livepath=%s", pid,
-                            channel.getFt(), channel.getName(), addr, now / 1000, delay, interval, channel.getPath());
-                    url = PPBoxUtil.getPPLive2M3U8PlayURL(playLink).toString();
+                    url = getLive2M3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, delay, interval, channel.getPath());
                 } else if ("rtmp".equals(protocol)) {
-                    String playLink = String.format(Locale.US, "%s://%s%s/%s", protocol, addr, channel.getPath(), channel.getName());
-                    url = PPBoxUtil.getRtmpM3U8PlayURL(playLink).toString();
+                    url = getRtmpPlayURL(protocol, addr, channel.getPath(), channel.getName());
                 }
             }
 
@@ -73,5 +69,16 @@ public class Watch {
         }
 
         return list;
+    }
+
+    public String getLive2M3U8PlayURL(long pid, int ft, String name, String addr, long now, long delay, long interval, String path) {
+        String playLink = String.format(Locale.US,
+                "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=-1&sdkmode=1&livepath=%s", pid, ft, name, addr, now, delay,
+                interval, path);
+        return PPBoxUtil.getLive2M3U8PlayURL(playLink).toString();
+    }
+
+    public String getRtmpPlayURL(String protocol, String addr, String path, String name) {
+        return String.format(Locale.US, "%s://%s%s/%s", protocol, addr, path, name);
     }
 }
