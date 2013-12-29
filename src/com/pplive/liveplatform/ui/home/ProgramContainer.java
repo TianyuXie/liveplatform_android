@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
@@ -100,6 +101,14 @@ public class ProgramContainer extends RelativeLayout {
         }
     };
 
+    public void checkStatus(int id) {
+        ((RadioButton) mRadioGroup.findViewById(id)).setChecked(true);
+    }
+
+    public int getCheckedRadioButtonId() {
+        return mRadioGroup.getCheckedRadioButtonId();
+    }
+
     public void setItemClickable(boolean clickable) {
         this.mItemClickable = clickable;
     }
@@ -129,5 +138,10 @@ public class ProgramContainer extends RelativeLayout {
             handler.postDelayed(this, TIMER_DELAY);
         }
     };
+
+    public void setStatusVisibility(int visibility) {
+        findViewById(R.id.btn_status_tolive).setVisibility(visibility);
+        findViewById(R.id.btn_status_replay).setVisibility(visibility);
+    }
 
 }

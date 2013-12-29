@@ -37,8 +37,8 @@ import com.sina.weibo.sdk.utils.Utility;
 public class WeiboPassport {
     static final String TAG = "_WeiboPassport";
 
-    private static final String CONSUMER_KEY = "3353159992";
-    private static final String CONSUMER_SECRET = "";
+//    private static final String CONSUMER_KEY = "3353159992";
+//    private static final String CONSUMER_SECRET = "";
 
     public static final String APP_KEY = "3353159992";
 

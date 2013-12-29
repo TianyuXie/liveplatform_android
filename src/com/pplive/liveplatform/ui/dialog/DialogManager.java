@@ -9,6 +9,17 @@ import android.content.DialogInterface;
 import com.pplive.liveplatform.R;
 
 public class DialogManager {
+    public static Dialog logoutAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
+        builder.setCancelable(true);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.settings_logout_title);
+        builder.setMessage(R.string.settings_logout_text);
+        builder.setPositiveButton(R.string.btn_confirm, startListener);
+        builder.setNegativeButton(R.string.btn_cancel, null);
+        return builder.create();
+    }
+
     public static Dialog alertMobileDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
@@ -40,8 +51,9 @@ public class DialogManager {
         });
         return builder.create();
     }
-    
-    public static Dialog alertHasLivingProgram(final Context context, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener) {
+
+    public static Dialog alertHasLivingProgram(final Context context, DialogInterface.OnClickListener positiveListener,
+            DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
@@ -49,19 +61,17 @@ public class DialogManager {
         builder.setMessage("你要继续直播吗?");
         builder.setPositiveButton("不要", positiveListener);
         builder.setNegativeButton("继续直播", negativeListener);
-        
+
         return builder.create();
     }
-    
+
     public static Dialog alertLivingfailed(final Context context, DialogInterface.OnClickListener positiveListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle(R.string.mobile_alert_title);
         builder.setMessage("推送失败");
-        
         builder.setPositiveButton("知道了", positiveListener);
-        
         return builder.create();
     }
 }

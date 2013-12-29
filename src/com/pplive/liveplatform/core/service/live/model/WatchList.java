@@ -9,7 +9,6 @@ public class WatchList {
     java.util.List<Watch> medias;
     
     public Watch getRecommendedWatch() {
-        
         if (null != recommend && !StringUtil.isNullOrEmpty(recommend.protocol)) {
             for (Watch watch : medias) {
                 if (recommend.protocol.equals(watch.getProtocol()) && null != watch.getChannel(recommend.ft)) {

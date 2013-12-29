@@ -22,6 +22,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -42,6 +43,8 @@ import com.pplive.thirdparty.BreakpadUtil;
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
 
+    private static final int TIMER_DELAY = 1000;
+
     private static final int HIDE = 301;
 
     private static final int SHOW_DELAY = 6000;
@@ -61,6 +64,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private View mIconWrapper;
 
     private TextView mTitleTextView;
+
+    private TextView mCountTextView;
 
     private View mFinishText;
 
@@ -86,6 +91,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private int mViewFlags;
 
+    private boolean mTimerOn;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +111,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mVideoView = (MeetVideoView) layout.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) layout.findViewById(R.id.btn_player_mode);
         mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
+        mCountTextView = (TextView) layout.findViewById(R.id.text_player_countdown);
         mLoadingImage = layout.findViewById(R.id.image_player_loading);
         Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
         Button backBtn = (Button) layout.findViewById(R.id.btn_player_back);
@@ -262,6 +270,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onCompletion() {
             Log.d(TAG, "MeetVideoView: onCompletion");
             stopPlayback();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+            }
             if (mOnCompletionListener != null) {
                 mOnCompletionListener.onCompletion();
             }
@@ -274,6 +285,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public boolean onError(int what, int extra) {
             Log.d(TAG, "MeetVideoView: onError");
             stopPlayback();
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
+            }
             if (mOnErrorListener != null) {
                 return mOnErrorListener.onError(what, extra);
             }
@@ -439,21 +453,19 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    public void onStartPlay(boolean rotate) {
+    public void onStartPlay() {
         mUserIcon.setRounded(false);
         mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mLoadingImage.setVisibility(View.GONE);
-        //        if (rotate) {
         rotateIcon();
-        //        } else {
-        //            if (!TextUtils.isEmpty(mIconUrl)) {
-        //                mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
-        //            } else {
-        //                mUserIcon.setImageResource(R.drawable.user_icon_default);
-        //            }
-        //            showBars(SHOW_DELAY);
-        //        }
+    }
+
+    public void onStartPrelive() {
+        mUserIcon.setRounded(false);
+        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mIconWrapper.setVisibility(View.VISIBLE);
+        rotateIcon();
     }
 
     public void initIcon() {
@@ -506,4 +518,28 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             mModeBtn.setEnabled(true);
         }
     };
+
+    private Handler handler = new Handler();
+
+    private Runnable runnable = new Runnable() {
+        public void run() {
+            Log.d(TAG, "Timer update");
+        }
+    };
+
+    public void startTimer() {
+        if (!mTimerOn) {
+            Log.d(TAG, "start timer");
+            handler.postDelayed(runnable, TIMER_DELAY);
+            mTimerOn = true;
+        }
+    }
+
+    public void stopTimer() {
+        if (mTimerOn) {
+            Log.d(TAG, "stop timer");
+            handler.removeCallbacks(runnable);
+            mTimerOn = false;
+        }
+    }
 }
