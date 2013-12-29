@@ -42,6 +42,8 @@ public class Program implements Serializable {
     String playencode;
 
     Token tk;
+    
+    Recommend recommend;
 
     public Program(String owner, String title, long starttime) {
         this(owner, LiveModeEnum.CAMERA, title, starttime);
@@ -104,6 +106,18 @@ public class Program implements Serializable {
         String coverUrl = getCoverUrl();
         return StringUtil.isNullOrEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
     }
+    
+    public String getRecommendCover() {
+        if (null != recommend) {
+            if ("conver_url".equals(recommend.page_pic)) {
+                return getCoverUrl();
+            } else if ("screenshot_url".equals(recommend.page_pic)) {
+                return getScreenshotUrl();
+            }
+        }
+        
+        return getCover();
+    }
 
     public String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
@@ -112,7 +126,7 @@ public class Program implements Serializable {
     public String getScreenshotUrl() {
         return StringUtil.isNullOrEmpty(screenshot_url) ? "" : screenshot_url;
     }
-
+    
     public int getVV() {
         return null == record ? 0 : record.vv;
     }
@@ -141,20 +155,27 @@ public class Program implements Serializable {
         return isPrelive() && new Date().getTime() > starttime + TimeUtil.MS_OF_HOUR;
     }
 
-    static class Record implements Serializable {
+    class Record implements Serializable {
 
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 4171543027567617738L;
 
         int vv;
 
         int online;
     }
 
-    static class Token implements Serializable {
+    class Token implements Serializable {
 
-        private static final long serialVersionUID = 1L;
-
+        private static final long serialVersionUID = -111694858998271543L;
+        
         String livetk;
+    }
+    
+    class Recommend implements Serializable {
+
+        private static final long serialVersionUID = 235755470139323543L;
+        
+        String page_pic;
     }
 
 }
