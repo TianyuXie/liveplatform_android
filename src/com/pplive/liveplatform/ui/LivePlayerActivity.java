@@ -454,7 +454,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.show();
         String title = StringUtil.safeString(mProgram.getTitle());
         String shareUrl = mProgram.getShareLinkUrl();
-        String imageUrl = mProgram.getCover();
+        String imageUrl = mProgram.getRecommendCover();
         Bundle data = new Bundle();
         data.putString(ShareDialog.PARAM_TITLE, title);
         data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
