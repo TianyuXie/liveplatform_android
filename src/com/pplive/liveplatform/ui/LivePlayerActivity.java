@@ -36,6 +36,7 @@ import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Watch;
+import com.pplive.liveplatform.core.service.live.model.WatchList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -544,15 +545,26 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
-            List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
+            WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
+            //            Watch.Protocol protocol = watchList.getRecommendProtocol();
+            //            if (protocol == Protocol.RTMP) {
+            //                mUrl = watchList.getRtmpPlayURL();
+            //            } else if (protocol == Protocol.LIVE2) {
+            //                if (mProgram.isLiving()) {
+            //                    mUrl = watchList.getLive2LiveM3U8PlayURL();
+            //                } else if (mProgram.isVOD()) {
+            //                    mUrl = watchList.getLive2VODM3U8PlayURL();
+            //                }
+            //            }
+            //
+            List<Watch> watchs = watchList.getMedias();
             if (!CollectionUtils.isEmpty(watchs)) {
                 // print all links
                 for (Watch watch : watchs) {
-                    List<String> watchList = watch.getWatchStringList();
-                    for (String link : watchList) {
+                    List<String> links = watch.getWatchStringList();
+                    for (String link : links) {
                         Log.d(TAG, "linkurl:" + link);
                     }
                 }
@@ -560,17 +572,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 // TODO rtmp or live2
                 for (Watch watch : watchs) {
                     if (Watch.Protocol.RTMP == watch.getProtocol()) {
-                        List<String> watchList = watch.getWatchStringList();
-                        if (!CollectionUtils.isEmpty(watchList)) {
-                            mUrl = watchList.get(0);
+                        List<String> links = watch.getWatchStringList();
+                        if (!CollectionUtils.isEmpty(links)) {
+                            mUrl = links.get(0);
                             break;
                         }
                     }
                 }
                 if (TextUtils.isEmpty(mUrl)) {
-                    List<String> watchList = watchs.get(0).getWatchStringList();
-                    if (!CollectionUtils.isEmpty(watchList)) {
-                        mUrl = watchList.get(0);
+                    List<String> links = watchs.get(0).getWatchStringList();
+                    if (!CollectionUtils.isEmpty(links)) {
+                        mUrl = links.get(0);
                     }
                 }
             }

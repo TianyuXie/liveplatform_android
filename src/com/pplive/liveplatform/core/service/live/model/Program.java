@@ -122,7 +122,6 @@ public class Program implements Serializable {
                 return getShotPre();
             }
         }
-
         return getCoverPre();
     }
 
@@ -148,6 +147,14 @@ public class Program implements Serializable {
 
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
+    }
+    
+    public boolean isLiving(){
+        return livestatus == LiveStatusEnum.LIVING;
+    }
+    
+    public boolean isVOD(){
+        return livestatus == LiveStatusEnum.STOPPED;
     }
 
     public boolean isDeleted() {
