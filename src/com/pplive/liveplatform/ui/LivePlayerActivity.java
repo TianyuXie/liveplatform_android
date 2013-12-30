@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -479,23 +480,24 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
+            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
+            Toast.makeText(mContext, R.string.player_comment_success, Toast.LENGTH_SHORT).show();
             mChatBox.refresh(0);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
-            //TODO
+            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            Log.d(TAG, "onPutFeedTaskListener onTaskCancel");
         }
 
         @Override

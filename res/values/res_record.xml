@@ -3,6 +3,9 @@
 
     <!-- String -->
     <string name="live"><b>Live</b></string>
+    <string name="prelive_title">预播提醒</string>
+    <string name="prelive_default_message">您有一个预播即将开始</string>
+    
     <string name="default_live_title_fmt"><![CDATA[\"%s\" 的直播]]></string>
     
     <string name="alert_title_living_terminated">续播提醒</string>
