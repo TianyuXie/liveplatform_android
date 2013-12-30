@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.task.player;
 
+import android.util.Log;
+
 import com.pplive.liveplatform.core.service.comment.PbarService;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -70,6 +72,7 @@ public class PutFeedTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
+        Log.d(TAG, "feedId:" + feedId);
         context.set(KEY_FID, feedId);
         result.setContext(context);
         return result;

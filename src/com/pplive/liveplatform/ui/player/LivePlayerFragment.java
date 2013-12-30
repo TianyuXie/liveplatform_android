@@ -44,7 +44,7 @@ import com.pplive.thirdparty.BreakpadUtil;
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
 
-    private static final int TIMER_DELAY = 10000;
+    private static final int TIMER_DELAY = 1000;
 
     private static final int HIDE = 301;
 
@@ -542,8 +542,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private Runnable runnable = new Runnable() {
         public void run() {
             Log.d(TAG, "Timer update");
-            mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForLongTime(mStartTime - System.currentTimeMillis()));
-            handler.postDelayed(this, TIMER_DELAY);
+            if (mStartTime - System.currentTimeMillis() > 15 * TimeUtil.MS_OF_MIN) {
+                mCountTextView.setText("节目尚未开始");
+                handler.postDelayed(this, 20 * TIMER_DELAY);
+            } else {
+                mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForTime(mStartTime - System.currentTimeMillis()));
+                handler.postDelayed(this, TIMER_DELAY);
+            }
         }
     };
 
