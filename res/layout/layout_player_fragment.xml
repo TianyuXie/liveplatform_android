@@ -12,6 +12,16 @@
         android:layout_centerInParent="true" />
 
     <ImageView
+        android:id="@+id/image_player_pptv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/player_pptv_icon"
+        android:contentDescription="@null" />
+
+    <ImageView
         android:id="@+id/image_player_loading"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -25,8 +35,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.2"
+        android:paddingBottom="20dp"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="32sp"
         android:visibility="gone" />
 
     <RelativeLayout
@@ -112,7 +125,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/player_finish"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>
