@@ -61,6 +61,10 @@ public class Program implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
+    
+    public void setLiveStatus(LiveStatusEnum status) {
+        this.livestatus = status;
+    }
 
     public long getId() {
         return pid;

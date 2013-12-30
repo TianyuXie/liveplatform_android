@@ -105,7 +105,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mLoading = true;
         mFlagMask = 0xffffffff;
         mViewFlags = 0xffffffff;
-        BreakpadUtil.registerBreakpad(getActivity().getCacheDir());
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.pplive.liveplatform.ui.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 
@@ -60,18 +61,20 @@ public class DialogManager {
         builder.setTitle(R.string.mobile_alert_title);
         builder.setMessage(R.string.alert_message_living_terminated);
         builder.setPositiveButton(R.string.alert_positive_living_terminated, positiveListener);
-        builder.setNegativeButton(R.string.alert_negative_living_termainated, negativeListener);
+        builder.setNegativeButton(R.string.alert_negative, negativeListener);
 
         return builder.create();
     }
 
-    public static Dialog alertLivingFailed(final Context context, DialogInterface.OnClickListener positiveListener) {
+    public static Dialog alertPrelive(final Context context, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_title);
-        builder.setMessage("推送失败");
-        builder.setPositiveButton("知道了", positiveListener);
+        builder.setTitle(R.string.alert_title_prelive);
+        builder.setMessage(R.string.alert_message_prelive);
+        builder.setPositiveButton(R.string.alert_positive_prelive, positiveListener);
+        builder.setNegativeButton(R.string.alert_negative, negativeListener);
+
         return builder.create();
     }
 }

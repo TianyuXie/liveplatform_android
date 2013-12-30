@@ -41,6 +41,8 @@ public class DateTimePicker extends LinearLayout {
 
         mCalendar = Calendar.getInstance();
         
+        mCalendar.add(Calendar.MINUTE, 20);
+        
         init();
     }
     

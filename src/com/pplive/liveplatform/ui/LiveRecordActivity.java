@@ -224,6 +224,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         Log.d(TAG, "onResume");
 
         super.onResume();
+        
+        if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
+            startCountDown();
+        }
 
         if (null == mGetUserLivingTask) {
             mGetUserLivingTask = new GetUserLivingTask();
@@ -280,6 +284,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onConfigurationChanged(newConfig);
 
         Log.d(TAG, "onConfigurationChanged");
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (!mFooterBarFragment.isHidden()) {
+            mFooterBarFragment.onBackPressed();
+        }
     }
 
     public void onEvent(EventProgramSelected event) {
@@ -466,10 +477,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onLiveFailed() {
-        DialogManager.alertLivingFailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+        DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                onClickBtnLiveRecord();
+            }
+        }, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+                String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+
+                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, mLivingProgram.getId(), LiveStatusEnum.STOPPED, username);
+
                 performOnClickStopRecording();
             }
         }).show();
@@ -672,7 +694,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     program = ProgramService.getInstance().createProgram(usertoken, program);
                     mLivingProgram = program;
                 } catch (LiveHttpException e) {
-                    // TODO Auto-generated catch block
+                    Log.w(TAG, e.toString());
                 }
             } else {
                 Log.d(TAG, "has program");
@@ -695,8 +717,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 } else {
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+                    program.setLiveStatus(LiveStatusEnum.INIT);
+                    
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+                    program.setLiveStatus(LiveStatusEnum.PREVIEW);
+                    
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                    program.setLiveStatus(LiveStatusEnum.LIVING);
+                    
+                    Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
                 }
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
