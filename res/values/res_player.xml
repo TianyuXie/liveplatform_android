@@ -3,7 +3,10 @@
 
     <string name="player_loading">载入中&#8230;</string>
     <string name="player_finish">载入完成</string>
+    <string name="player_prelive">敬请期待</string>
     <string name="player_no_comment">快来奋力吐槽吧!</string>
+    <string name="player_comment_success">评论成功</string>
+    <string name="player_comment_fail">评论失败</string>
     <string name="toast_player_error">Oops! 我们正在奋力的加载哦～～～</string>
     <string name="toast_player_complete">直播结束, 感谢您的收看, 下次再见</string>
     

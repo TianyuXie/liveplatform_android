@@ -5,6 +5,10 @@ public class WatchList {
     Recommend recommend;
 
     java.util.List<Watch> medias;
+    
+    public java.util.List<Watch> getMedias(){
+        return medias;
+    }
 
     public Watch getRecommendedWatch() {
         if (null != recommend && null != recommend.protocol) {

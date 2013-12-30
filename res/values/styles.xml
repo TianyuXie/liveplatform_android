@@ -11,6 +11,10 @@
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
 
+    <style name="no_title_dialog" parent="android:Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
     <style name="loading_dialog" parent="android:Theme.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>

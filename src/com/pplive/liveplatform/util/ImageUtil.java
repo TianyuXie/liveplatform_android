@@ -125,7 +125,7 @@ public class ImageUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-            bitmap.recycle();
+//            bitmap.recycle();
         } catch (IOException e) {
             e.printStackTrace();
         }

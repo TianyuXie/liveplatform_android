@@ -122,7 +122,6 @@ public class Program implements Serializable {
                 return getShotPre();
             }
         }
-
         return getCoverPre();
     }
 
@@ -149,6 +148,14 @@ public class Program implements Serializable {
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
+    
+    public boolean isLiving(){
+        return livestatus == LiveStatusEnum.LIVING;
+    }
+    
+    public boolean isVOD(){
+        return livestatus == LiveStatusEnum.STOPPED;
+    }
 
     public boolean isDeleted() {
         return livestatus == LiveStatusEnum.DELETED || livestatus == LiveStatusEnum.SYS_DELETED;
@@ -159,7 +166,11 @@ public class Program implements Serializable {
     }
 
     public boolean isExpiredPrelive() {
-        return isPrelive() && new Date().getTime() > starttime + TimeUtil.MS_OF_HOUR;
+        return isPrelive() && System.currentTimeMillis() > starttime + TimeUtil.MS_OF_HOUR;
+    }
+
+    public boolean isOriginal() {
+        return subject_id == SUBJECT_ID_ORIGIN;
     }
 
     class Record implements Serializable {
