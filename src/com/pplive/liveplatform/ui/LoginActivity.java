@@ -46,6 +46,8 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     private static final int MSG_THIRDPARTY_ERROR = 2301;
 
+    private static final int DELAY_LOGIN = 3000;
+
     private EditText mUsrEditText;
 
     private EditText mPwdEditText;
@@ -86,7 +88,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             String username = data.getStringExtra(EXTRA_USERNAME);
             String password = data.getStringExtra(EXTRA_PASSWORD);
             mRefreshDialog.show();
-            startLogin(username, password, 3000);
+            startLogin(username, password, DELAY_LOGIN);
         } else if (WeiboPassport.getInstance().mSsoHandler != null) {
             WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
@@ -174,9 +176,9 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-            String usrPlain = (String) event.getContext().get(LoginTask.KEY_USERNAME);
-            String pwdPlain = (String) event.getContext().get(LoginTask.KEY_PASSWORD);
-            String token = (String) event.getContext().get(LoginTask.KEY_TOKEN);
+            String usrPlain = event.getContext().getString(LoginTask.KEY_USERNAME);
+            String pwdPlain = event.getContext().getString(LoginTask.KEY_PASSWORD);
+            String token = event.getContext().getString(LoginTask.KEY_TOKEN);
             mUserManager.login(usrPlain, pwdPlain, token);
             User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
             mUserManager.setUserinfo(userinfo);
@@ -200,7 +202,11 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, event.getMessage(), Toast.LENGTH_SHORT).show();
+            String message = event.getMessage();
+            if (TextUtils.isEmpty(message)) {
+                message = getString(R.string.login_failed);
+            }
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         }
 
         @Override

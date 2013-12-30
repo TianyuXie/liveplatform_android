@@ -267,12 +267,9 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     }
 
     private void rotateButton() {
-        // Find the center of the container
         final float centerX = mStatusButton.getWidth() / 2.0f;
         final float centerY = mStatusButton.getHeight() / 2.0f;
 
-        // Create a new 3D rotation with the supplied parameter
-        // The animation listener is used to trigger the next animation
         final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
         rotation.setDuration(350);
         rotation.setFillAfter(true);

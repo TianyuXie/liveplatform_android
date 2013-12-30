@@ -125,19 +125,19 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         return layout;
     }
-    
+
     @Override
     public void onStart() {
         super.onStart();
-        
+
         EventBus.getDefault().register(this);
         EventBus.getDefault().register(mLiveListView);
     }
-    
+
     @Override
     public void onStop() {
         super.onStop();
-        
+
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().unregister(mLiveListView);
     }
@@ -197,7 +197,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     private void onClickBtnLiveBack(View v) {
         reset();
-        
+
         EventBus.getDefault().post(new EventReset());
     }
 
@@ -217,35 +217,35 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             protected Program doInBackground(Void... params) {
                 if (getActivity() != null) {
                     Log.d(TAG, "title: " + (null == title ? "null" : title) + "; starttime: " + starttime);
-                    
+
                     try {
                         String username = UserManager.getInstance(getActivity()).getUsernamePlain();
                         String token = UserManager.getInstance(getActivity()).getToken();
                         Program program = new Program(username, title, starttime);
-                        
+
                         program = ProgramService.getInstance().createProgram(token, program);
-                        
+
                         return program;
                     } catch (LiveHttpException e) {
-                        
+                        Log.d(TAG, "LiveHttpException");
                     }
                 }
-                
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Program program) {
-                EventBus.getDefault().post(new EventProgramAdded(program));
-                
-                //TODO Add alarm (event bus?)
-                AlarmCenter.getInstance(mAttachedActivity).addPreliveAlarm(program);
+                    EventBus.getDefault().post(new EventProgramAdded(program));
+
+                    //TODO Add alarm (event bus?)
+                    AlarmCenter.getInstance(mAttachedActivity).addPreliveAlarm(program);
             }
         };
 
         createLiveTask.execute();
     }
-    
+
     private void onClickBtnLiveEditComplete(View v) {
         setMode(Mode.VIEW_PRELIVES);
     }
@@ -331,7 +331,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     public void reset() {
         setMode(Mode.INITIAL);
-        
+
         init();
     }
 
@@ -357,8 +357,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         ViewUtil.setVisibility(mDateTimePicker, flags & Mode.FLAG_DATETIME_PICKER);
         ViewUtil.setVisibility(mLiveListView, flags & Mode.FLAG_LIVE_LISTVIEW);
     }
-    
-    public void setOnShareBtnClickListener(View.OnClickListener l){
+
+    public void setOnShareBtnClickListener(View.OnClickListener l) {
         mBtnLiveShare.setOnClickListener(l);
     }
 
