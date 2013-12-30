@@ -97,7 +97,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextRecordDuration;
     private TextView mTextLiveComing;
     private TextView mTextLivingTitle;
-    
+
     private ImageButton mBtnLivingShare;
 
     private boolean mCountDown = false;
@@ -152,7 +152,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private Program mLivingProgram;
     private String mLivingUrl;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -389,14 +389,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (null != mLivingProgram) {
             mTextLive.setVisibility(View.VISIBLE);
             mTextRecordDuration.setVisibility(View.VISIBLE);
-            
+
             mChatContainer.setVisibility(View.VISIBLE);
-            
+
             mBtnLivingShare.setVisibility(View.VISIBLE);
-            
+
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
-            
+
             // TODO: Debug Code
             mTextLivingTitle.append("\n");
             mTextLivingTitle.append("pid: " + mLivingProgram.getId());
@@ -464,7 +464,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onLiveFailed() {
-        DialogManager.alertLivingfailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+        DialogManager.alertLivingFailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -568,7 +568,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void performOnClickStopRecording() {
         mTextLivingTitle.setVisibility(View.GONE);
         mBtnLivingShare.setVisibility(View.GONE);
-        
+
         stopRecording(true);
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
@@ -578,7 +578,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
-        
+
         switch (v.getId()) {
         case R.id.btn_camera_change:
             onClickBtnCameraChange();
@@ -629,10 +629,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         boolean isFlashOn = mBtnFlashLight.isChecked();
 
         mMediaRecorderView.setFlashMode(isFlashOn);
-        
+
         mBtnFlashLight.setChecked(mMediaRecorderView.isFlashOn());
     }
-    
+
     private void onClickBtnChat() {
         if (!mChating) {
             startChating();
@@ -640,7 +640,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             stopChating();
         }
     }
-    
+
     class GetPushUrlTask extends AsyncTask<Program, Void, String> {
 
         private String mLiveTitle;
@@ -759,7 +759,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             if (!mMediaRecorderView.isRecording()) {
-                DialogManager.alertHasLivingProgram(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+                
+                // TODO: 
+                DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mLivingProgram = program;
+                        onClickBtnLiveRecord();
+                    }
+                }, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -769,13 +778,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                         LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
 
                         performOnClickStopRecording();
-                    }
-                }, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mLivingProgram = program;
-                        onClickBtnLiveRecord();
                     }
                 }).show();
             }

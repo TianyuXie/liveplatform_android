@@ -557,7 +557,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
                 // TODO rtmp or live2
                 for (Watch watch : watchs) {
-                    if ("rtmp".equals(watch.getProtocol())) {
+                    if (Watch.Protocol.RTMP == watch.getProtocol()) {
                         List<String> watchList = watch.getWatchStringList();
                         if (!CollectionUtils.isEmpty(watchList)) {
                             mUrl = watchList.get(0);

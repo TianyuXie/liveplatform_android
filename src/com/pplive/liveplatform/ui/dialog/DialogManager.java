@@ -52,20 +52,20 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog alertHasLivingProgram(final Context context, DialogInterface.OnClickListener positiveListener,
+    public static Dialog alertLivingTerminated(final Context context, DialogInterface.OnClickListener positiveListener,
             DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle(R.string.mobile_alert_title);
-        builder.setMessage("你要继续直播吗?");
-        builder.setPositiveButton("不要", positiveListener);
-        builder.setNegativeButton("继续直播", negativeListener);
+        builder.setMessage(R.string.alert_message_living_terminated);
+        builder.setPositiveButton(R.string.alert_positive_living_terminated, positiveListener);
+        builder.setNegativeButton(R.string.alert_negative_living_termainated, negativeListener);
 
         return builder.create();
     }
 
-    public static Dialog alertLivingfailed(final Context context, DialogInterface.OnClickListener positiveListener) {
+    public static Dialog alertLivingFailed(final Context context, DialogInterface.OnClickListener positiveListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
