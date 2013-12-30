@@ -279,6 +279,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         Log.d(TAG, "onConfigurationChanged");
     }
+    
+    @Override
+    public void onBackPressed() {
+        if (!mFooterBarFragment.isHidden()) {
+            mFooterBarFragment.onBackPressed();
+        }
+    }
 
     public void onEvent(EventProgramSelected event) {
         final Program program = event.getObject();
@@ -464,10 +471,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onLiveFailed() {
-        DialogManager.alertLivingFailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+        DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                onClickBtnLiveRecord();
+            }
+        }, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+                String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+
+                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, mLivingProgram.getId(), LiveStatusEnum.STOPPED, username);
+
                 performOnClickStopRecording();
             }
         }).show();

@@ -56,7 +56,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/image_prelive"
         android:layout_alignTop="@+id/image_prelive"
-        android:layout_margin="10dp"
+        android:padding="10dp"
         android:contentDescription="@null"
         android:src="@drawable/live_record_btn_prelive_delete" />
 
