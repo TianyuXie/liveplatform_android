@@ -69,7 +69,7 @@ public class Watch {
             for (String addr : channel.getAddrs()) {
                 if (Protocol.LIVE2 == protocol) {
                     //                    url = getLive2LiveM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, starttime / 1000, 0, interval, channel.getPath());
-                    url = getLive2LiveM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, 0, interval, channel.getPath());
+                    url = getLive2VODM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, 0, interval, channel.getPath(), starttime / 1000, endtime / 1000);
                 } else if (Protocol.RTMP == protocol) {
                     url = getRtmpPlayURL(addr, channel.getPath(), channel.getName());
                 }

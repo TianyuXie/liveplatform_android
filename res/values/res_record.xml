@@ -6,7 +6,7 @@
     <string name="default_live_title_fmt"><![CDATA[\"%s\" 的直播]]></string>
     
     <string name="alert_title_living_terminated">续播提醒</string>
-    <string name="alert_message_living_terminated">哎呀，不小心中断啦，你要继续直播吗？</string>
+    <string name="alert_message_living_terminated">哎呀，不小心中断啦，\n你要继续直播吗？</string>
     <string name="alert_positive_living_terminated">继续直播</string>
     <string name="alert_negative_living_termainated">不要</string>
 

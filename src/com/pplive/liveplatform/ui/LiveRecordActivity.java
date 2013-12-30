@@ -670,7 +670,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     program = ProgramService.getInstance().createProgram(usertoken, program);
                     mLivingProgram = program;
                 } catch (LiveHttpException e) {
-                    // TODO Auto-generated catch block
+                    Log.w(TAG, e.toString());
                 }
             } else {
                 Log.d(TAG, "has program");
