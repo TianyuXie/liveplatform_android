@@ -70,7 +70,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private TextView mCountTextView;
 
-    private View mFinishText;
+    private TextView mFinishText;
 
     private View mLoadingImage;
 
@@ -121,7 +121,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         Button backBtn = (Button) layout.findViewById(R.id.btn_player_back);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
-        mFinishText = layout.findViewById(R.id.text_loading_finish);
+        mFinishText = (TextView) layout.findViewById(R.id.text_loading_finish);
         mIconWrapper = layout.findViewById(R.id.wrapper_player_user_icon);
         mPPTVIcon = layout.findViewById(R.id.image_player_pptv_icon);
         mUserIcon = (CircularImageView) layout.findViewById(R.id.btn_player_user_icon);
@@ -133,10 +133,12 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         return layout;
     }
 
-    public void initUserIcon(String url) {
+    public void setUserIcon(String url) {
+        mIconWrapper.setVisibility(View.INVISIBLE);
         if (!TextUtils.isEmpty(url)) {
             mIconUrl = url;
-            mUserIcon.setImageAsync(url, R.drawable.user_icon_default, imageLoadingListener);
+            //preload the image
+            mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
         }
     }
 
@@ -471,6 +473,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mLoadingImage.setVisibility(View.GONE);
+        mFinishText.setText(R.string.player_finish);
         rotateIcon();
     }
 
@@ -478,13 +481,15 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mUserIcon.setRounded(false);
         mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
+        mFinishText.setText(R.string.player_prelive);
         rotateIcon();
     }
 
     public void initIcon() {
         mIconWrapper.clearAnimation();
+        mIconWrapper.setVisibility(View.INVISIBLE);
+        mUserIcon.setRounded(false);
         mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
-        mFinishText.setVisibility(View.VISIBLE);
         showBars(0);
     }
 
@@ -505,7 +510,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private RotateListener rotateButtonListener = new RotateListener() {
         @Override
         public void onRotateMiddle() {
-            mFinishText.setVisibility(View.GONE);
+            mFinishText.setText("");
             if (!TextUtils.isEmpty(mIconUrl)) {
                 mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
