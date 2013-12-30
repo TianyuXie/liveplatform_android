@@ -1,9 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.util.List;
-
-import org.springframework.util.CollectionUtils;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -548,44 +544,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
-            //            Watch.Protocol protocol = watchList.getRecommendProtocol();
-            //            if (protocol == Protocol.RTMP) {
-            //                mUrl = watchList.getRtmpPlayURL();
-            //            } else if (protocol == Protocol.LIVE2) {
-            //                if (mProgram.isLiving()) {
-            //                    mUrl = watchList.getLive2LiveM3U8PlayURL();
-            //                } else if (mProgram.isVOD()) {
-            //                    mUrl = watchList.getLive2VODM3U8PlayURL();
-            //                }
-            //            }
-            //
-            List<Watch> watchs = watchList.getMedias();
-            if (!CollectionUtils.isEmpty(watchs)) {
-                // print all links
-                for (Watch watch : watchs) {
-                    List<String> links = watch.getWatchStringList();
-                    for (String link : links) {
-                        Log.d(TAG, "linkurl:" + link);
-                    }
-                }
-
-                // TODO rtmp or live2
-                for (Watch watch : watchs) {
-                    if (Watch.Protocol.RTMP == watch.getProtocol()) {
-                        List<String> links = watch.getWatchStringList();
-                        if (!CollectionUtils.isEmpty(links)) {
-                            mUrl = links.get(0);
-                            break;
-                        }
-                    }
-                }
-                if (TextUtils.isEmpty(mUrl)) {
-                    List<String> links = watchs.get(0).getWatchStringList();
-                    if (!CollectionUtils.isEmpty(links)) {
-                        mUrl = links.get(0);
-                    }
+            Watch.Protocol protocol = watchList.getRecommendProtocol();
+            if (protocol == Watch.Protocol.RTMP) {
+                mUrl = watchList.getRtmpPlayURL();
+            } else if (protocol == Watch.Protocol.LIVE2) {
+                if (mProgram.isLiving()) {
+                    mUrl = watchList.getLive2LiveM3U8PlayURL();
+                } else if (mProgram.isVOD()) {
+                    mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
+
             if (!TextUtils.isEmpty(mUrl)) {
                 mLivePlayerFragment.setupPlayer(mUrl);
             } else {

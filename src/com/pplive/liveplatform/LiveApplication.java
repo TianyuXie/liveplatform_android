@@ -31,12 +31,13 @@ public class LiveApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        StringManager.initContext(getApplicationContext());
         initAppInfo(getApplicationContext());
         initPaths(getApplicationContext());
-        NetworkManager.init(getApplicationContext());
         initImageLoader(getApplicationContext());
 
+        NetworkManager.init(getApplicationContext());
+        StringManager.initContext(getApplicationContext());
+        
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
 
@@ -62,7 +63,7 @@ public class LiveApplication extends Application {
         ImageLoader.getInstance().init(config);
     }
 
-    private void initPaths(Context context) {
+    private static void initPaths(Context context) {
         FileUtil.checkPath(SysUtil.getAppPath(context));
         FileUtil.checkPath(SysUtil.getCachePath(context));
         FileUtil.checkPath(SysUtil.getFilesPath(context));

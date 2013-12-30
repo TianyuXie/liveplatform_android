@@ -69,7 +69,7 @@ public class Watch {
             for (String addr : channel.getAddrs()) {
                 if (Protocol.LIVE2 == protocol) {
                     //                    url = getLive2LiveM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, starttime / 1000, 0, interval, channel.getPath());
-                    url = getLive2VODM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, 0, interval, channel.getPath(), starttime / 1000, endtime / 1000);
+                    url = getLive2LiveM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, delay, interval, channel.getPath());
                 } else if (Protocol.RTMP == protocol) {
                     url = getRtmpPlayURL(addr, channel.getPath(), channel.getName());
                 }
@@ -88,7 +88,7 @@ public class Watch {
 
         for (Channel channel : channels) {
             if (ft == channel.getFt() && channel.addr.length > 0) {
-                return getLive2LiveM3U8PlayURL(pid, ft, channel.getName(), channel.addr[0], now / 1000, interval, delay, channel.getPath());
+                return getLive2LiveM3U8PlayURL(pid, ft, channel.getName(), channel.addr[0], now / 1000, delay, interval, channel.getPath());
             }
         }
 
@@ -105,7 +105,7 @@ public class Watch {
     public String getLive2VODM3U8PlayURL(int ft) {
         for (Channel channel : channels) {
             if (ft == channel.getFt() && channel.addr.length > 0) {
-                return getLive2VODM3U8PlayURL(pid, ft, channel.getName(), channel.addr[0], now / 1000, interval, 0, channel.getPath(), starttime / 1000,
+                return getLive2VODM3U8PlayURL(pid, ft, channel.getName(), channel.addr[0], now / 1000, 0, interval, channel.getPath(), starttime / 1000,
                         endtime / 1000);
             }
         }

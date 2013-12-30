@@ -224,6 +224,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         Log.d(TAG, "onResume");
 
         super.onResume();
+        
+        if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
+            startCountDown();
+        }
 
         if (null == mGetUserLivingTask) {
             mGetUserLivingTask = new GetUserLivingTask();
@@ -713,8 +717,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 } else {
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+                    program.setLiveStatus(LiveStatusEnum.INIT);
+                    
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+                    program.setLiveStatus(LiveStatusEnum.PREVIEW);
+                    
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                    program.setLiveStatus(LiveStatusEnum.LIVING);
+                    
+                    Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
                 }
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
