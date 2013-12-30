@@ -1,6 +1,5 @@
 package com.pplive.liveplatform.ui.home;
 
-import java.util.Date;
 import java.util.List;
 
 import android.content.Context;
@@ -76,12 +75,12 @@ public class HomeProgramAdapter extends BaseAdapter {
         holder.titleTextView.setText(data.getTitle());
         if (data.isComing()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
-            holder.timedownTextView.setText(TimeUtil.stringForLongTime(data.getStartTime() - (new Date()).getTime()));
+            holder.timedownTextView.setText(TimeUtil.stringForLongTime(data.getStartTime() - System.currentTimeMillis()));
         } else {
             holder.timedownTextView.setVisibility(View.GONE);
         }
         holder.viewcountTextView.setText(String.valueOf(data.getVV()));
-        holder.previewImageView.setImageAsync(data.getCover(), R.drawable.program_default_image);
+        holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
     }
 
     static class ViewHolder {

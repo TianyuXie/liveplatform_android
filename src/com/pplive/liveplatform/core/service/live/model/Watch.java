@@ -5,13 +5,23 @@ import java.util.Locale;
 
 import android.text.TextUtils;
 
+import com.google.gson.annotations.SerializedName;
 import com.pplive.liveplatform.util.PPBoxUtil;
 
 public class Watch {
 
+    public enum Protocol {
+        
+        @SerializedName("live2")
+        LIVE2, 
+        
+        @SerializedName("rtmp")
+        RTMP;
+    }
+
     long pid;
 
-    String protocol;
+    Protocol protocol;
 
     long delay;
 
@@ -21,13 +31,15 @@ public class Watch {
 
     long starttime;
 
+    long endtime;
+
     long now;
 
     public long getProgramId() {
         return pid;
     }
 
-    public String getProtocol() {
+    public Protocol getProtocol() {
         return protocol;
     }
 
@@ -55,10 +67,11 @@ public class Watch {
         for (Channel channel : channels) {
             String url = null;
             for (String addr : channel.getAddrs()) {
-                if ("live2".equals(protocol)) {
-                    url = getLive2M3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, delay, interval, channel.getPath());
-                } else if ("rtmp".equals(protocol)) {
-                    url = getRtmpPlayURL(protocol, addr, channel.getPath(), channel.getName());
+                if (Protocol.LIVE2 == protocol) {
+                    //                    url = getLive2LiveM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, starttime / 1000, 0, interval, channel.getPath());
+                    url = getLive2LiveM3U8PlayURL(pid, channel.getFt(), channel.getName(), addr, now / 1000, delay, interval, channel.getPath());
+                } else if (Protocol.RTMP == protocol) {
+                    url = getRtmpPlayURL(addr, channel.getPath(), channel.getName());
                 }
             }
 
@@ -71,14 +84,53 @@ public class Watch {
         return list;
     }
 
-    public String getLive2M3U8PlayURL(long pid, int ft, String name, String addr, long now, long delay, long interval, String path) {
+    public String getLive2LiveM3U8PlayURL(int ft) {
+
+        for (Channel channel : channels) {
+            if (ft == channel.getFt() && channel.addr.length > 0) {
+                return getLive2LiveM3U8PlayURL(pid, ft, channel.getName(), channel.addr[0], now / 1000, delay, interval, channel.getPath());
+            }
+        }
+
+        return null;
+    }
+
+    public String getLive2LiveM3U8PlayURL(long pid, int ft, String name, String addr, long now, long delay, long interval, String path) {
         String playLink = String.format(Locale.US,
-                "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=-1&sdkmode=1&livepath=%s", pid, ft, name, addr, now, delay,
+                "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=0&sdkmode=0&livepath=%s", pid, ft, name, addr, now, delay,
                 interval, path);
         return PPBoxUtil.getLive2M3U8PlayURL(playLink).toString();
     }
 
-    public String getRtmpPlayURL(String protocol, String addr, String path, String name) {
-        return String.format(Locale.US, "%s://%s/%s/%s");
+    public String getLive2VODM3U8PlayURL(int ft) {
+        for (Channel channel : channels) {
+            if (ft == channel.getFt() && channel.addr.length > 0) {
+                return getLive2VODM3U8PlayURL(pid, ft, channel.getName(), channel.addr[0], now / 1000, 0, interval, channel.getPath(), starttime / 1000,
+                        endtime / 1000);
+            }
+        }
+
+        return null;
+    }
+
+    public String getLive2VODM3U8PlayURL(long pid, int ft, String name, String addr, long now, long delay, long interval, String path, long begin, long end) {
+        String playLink = String.format(Locale.US,
+                "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=0&sdkmode=0&livepath=%s&begin_time=%d&end_time=%d", pid,
+                ft, name, addr, now, delay, interval, path, begin, end);
+        return PPBoxUtil.getLive2M3U8PlayURL(playLink).toString();
+    }
+
+    public String getRtmpPlayURL(int ft) {
+        for (Channel channel : channels) {
+            if (ft == channel.getFt() && channel.addr.length > 0) {
+                return getRtmpPlayURL(channel.addr[0], channel.getPath(), channel.getName());
+            }
+        }
+
+        return null;
+    }
+
+    public String getRtmpPlayURL(String addr, String path, String name) {
+        return String.format(Locale.US, "rtmp://%s%s/%s", addr, path, name);
     }
 }

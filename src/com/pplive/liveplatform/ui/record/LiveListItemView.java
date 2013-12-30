@@ -73,7 +73,7 @@ public class LiveListItemView extends RelativeLayout {
         mProgram = program;
 
         if (null != program) {
-            mImagePrelive.setImageAsync(program.getCover(), R.drawable.live_record_default_prelive_image);
+            mImagePrelive.setImageAsync(program.getRecommendCover(), R.drawable.live_record_default_prelive_image);
             mTextLiveTitle.setText(program.getTitle());
         }
     }

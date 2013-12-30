@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import android.text.TextUtils;
+
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
@@ -42,7 +44,7 @@ public class Program implements Serializable {
     String playencode;
 
     Token tk;
-    
+
     Recommend recommend;
 
     public Program(String owner, String title, long starttime) {
@@ -58,6 +60,10 @@ public class Program implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+    
+    public void setLiveStatus(LiveStatusEnum status) {
+        this.livestatus = status;
     }
 
     public long getId() {
@@ -102,31 +108,35 @@ public class Program implements Serializable {
         return livestatus == LiveStatusEnum.INIT || livestatus == LiveStatusEnum.PREVIEW || livestatus == LiveStatusEnum.NOT_START;
     }
 
-    public String getCover() {
+    private String getCoverPre() {
         String coverUrl = getCoverUrl();
-        return StringUtil.isNullOrEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
-    }
-    
-    public String getRecommendCover() {
-        if (null != recommend) {
-            if ("conver_url".equals(recommend.page_pic)) {
-                return getCoverUrl();
-            } else if ("screenshot_url".equals(recommend.page_pic)) {
-                return getScreenshotUrl();
-            }
-        }
-        
-        return getCover();
+        return TextUtils.isEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
     }
 
-    public String getCoverUrl() {
+    private String getShotPre() {
+        String shotUrl = getScreenshotUrl();
+        return TextUtils.isEmpty(shotUrl) ? getCoverUrl() : shotUrl;
+    }
+
+    public String getRecommendCover() {
+        if (null != recommend) {
+            if ("cover_url".equals(recommend.page_pic)) {
+                return getCoverPre();
+            } else if ("screenshot_url".equals(recommend.page_pic)) {
+                return getShotPre();
+            }
+        }
+        return getCoverPre();
+    }
+
+    private String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
     }
 
     public String getScreenshotUrl() {
         return StringUtil.isNullOrEmpty(screenshot_url) ? "" : screenshot_url;
     }
-    
+
     public int getVV() {
         return null == record ? 0 : record.vv;
     }
@@ -142,6 +152,14 @@ public class Program implements Serializable {
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
+    
+    public boolean isLiving(){
+        return livestatus == LiveStatusEnum.LIVING;
+    }
+    
+    public boolean isVOD(){
+        return livestatus == LiveStatusEnum.STOPPED;
+    }
 
     public boolean isDeleted() {
         return livestatus == LiveStatusEnum.DELETED || livestatus == LiveStatusEnum.SYS_DELETED;
@@ -152,7 +170,11 @@ public class Program implements Serializable {
     }
 
     public boolean isExpiredPrelive() {
-        return isPrelive() && new Date().getTime() > starttime + TimeUtil.MS_OF_HOUR;
+        return isPrelive() && System.currentTimeMillis() > starttime + TimeUtil.MS_OF_HOUR;
+    }
+
+    public boolean isOriginal() {
+        return subject_id == SUBJECT_ID_ORIGIN;
     }
 
     class Record implements Serializable {
@@ -167,14 +189,14 @@ public class Program implements Serializable {
     class Token implements Serializable {
 
         private static final long serialVersionUID = -111694858998271543L;
-        
+
         String livetk;
     }
-    
+
     class Recommend implements Serializable {
 
         private static final long serialVersionUID = 235755470139323543L;
-        
+
         String page_pic;
     }
 

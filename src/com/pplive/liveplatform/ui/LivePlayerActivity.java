@@ -1,9 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.util.List;
-
-import org.springframework.util.CollectionUtils;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -29,12 +25,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Watch;
+import com.pplive.liveplatform.core.service.live.model.WatchList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -88,7 +86,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mCommentWrapper;
 
-    private View mLoadingView;
+    private View mLoadingImage;
 
     private ChatBox mChatBox;
 
@@ -112,6 +110,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mWriting;
 
+    private boolean mRotatable;
+
     private boolean mFirstLoading;
 
     private boolean mSecondLoading;
@@ -121,8 +121,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private boolean mSecondLoadFinish;
 
     private boolean mLoadDelayed;
-
-    private boolean mFirstTime;
 
     private int mHalfScreenHeight;
 
@@ -150,7 +148,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.setActivity(this);
 
         /* init values */
-        mFirstTime = true;
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
@@ -164,7 +161,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentWrapper = findViewById(R.id.wrapper_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
-        mLoadingView = findViewById(R.id.layout_player_loading);
+        mLoadingImage = findViewById(R.id.layout_player_loading);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mLoadingButton = (LoadingButton) findViewById(R.id.btn_player_loading);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
@@ -182,7 +179,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onNewIntent");
         setIntent(intent);
         mUrl = null;
-        mFirstTime = false;
     }
 
     @Override
@@ -193,7 +189,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setLayout(mIsFull);
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
-        mLivePlayerFragment.initUserIcon(mProgram.getOwnerIcon());
+        mLivePlayerFragment.setUserIcon(mProgram.getOwnerIcon());
+        mLivePlayerFragment.showPPTVIcon(mProgram.isOriginal());
         long pid = mProgram.getId();
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getUsernamePlain();
@@ -308,7 +305,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation && !mFirstLoading && !mSecondLoading) {
+        if (mCurrentOrient != requestedOrientation && mRotatable) {
             Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
@@ -454,7 +451,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.show();
         String title = StringUtil.safeString(mProgram.getTitle());
         String shareUrl = mProgram.getShareLinkUrl();
-        String imageUrl = mProgram.getCover();
+        String imageUrl = mProgram.getRecommendCover();
         Bundle data = new Bundle();
         data.putString(ShareDialog.PARAM_TITLE, title);
         data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
@@ -480,23 +477,24 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
+            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
+            Toast.makeText(mContext, R.string.player_comment_success, Toast.LENGTH_SHORT).show();
             mChatBox.refresh(0);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
-            //TODO
+            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            Log.d(TAG, "onPutFeedTaskListener onTaskCancel");
         }
 
         @Override
@@ -543,36 +541,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
-            List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            if (!CollectionUtils.isEmpty(watchs)) {
-                // print all links
-                for (Watch watch : watchs) {
-                    List<String> watchList = watch.getWatchStringList();
-                    for (String link : watchList) {
-                        Log.d(TAG, "linkurl:" + link);
-                    }
-                }
-                
-                // TODO rtmp or live2
-                for (Watch watch : watchs) {
-                    if ("rtmp".equals(watch.getProtocol())) {
-                        List<String> watchList = watch.getWatchStringList();
-                        if (!CollectionUtils.isEmpty(watchList)) {
-                            mUrl = watchList.get(0);
-                            break;
-                        }
-                    }
-                }
-                if (TextUtils.isEmpty(mUrl)) {
-                    List<String> watchList = watchs.get(0).getWatchStringList();
-                    if (!CollectionUtils.isEmpty(watchList)) {
-                        mUrl = watchList.get(0);
-                    }
+            WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
+            Watch.Protocol protocol = watchList.getRecommendProtocol();
+            if (protocol == Watch.Protocol.RTMP) {
+                mUrl = watchList.getRtmpPlayURL();
+            } else if (protocol == Watch.Protocol.LIVE2) {
+                if (mProgram.isLiving()) {
+                    mUrl = watchList.getLive2LiveM3U8PlayURL();
+                } else if (mProgram.isVOD()) {
+                    mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
+
             if (!TextUtils.isEmpty(mUrl)) {
                 mLivePlayerFragment.setupPlayer(mUrl);
             } else {
@@ -622,22 +604,23 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
+        mRotatable = false;
         mFirstLoadFinish = false;
+        mSecondLoadFinish = false;
         mLoadDelayed = false;
         mFirstLoading = true;
         mSecondLoading = true;
-        mSecondLoadFinish = false;
         mLivePlayerFragment.initIcon();
+        mLoadingImage.setVisibility(View.VISIBLE);
+        mLoadingButton.startLoading(R.string.player_loading);
         mCommentWrapper.setVisibility(View.GONE);
         mChatBox.setVisibility(View.GONE);
         mWriteBtn.setVisibility(View.GONE);
-        mLoadingView.setVisibility(View.VISIBLE);
-        mLoadingButton.startLoading(R.string.player_loading);
     }
 
     public void hideFirstLoading() {
         mFirstLoading = false;
-        mLoadingView.setVisibility(View.GONE);
+        mLoadingImage.setVisibility(View.GONE);
         mChatBox.setVisibility(View.VISIBLE);
         mCommentWrapper.setVisibility(View.VISIBLE);
         mWriteBtn.setVisibility(View.VISIBLE);
@@ -655,7 +638,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case MSG_LOADING_DELAY:
                 mLoadDelayed = true;
                 checkFirstLoading();
-                checkSecondLoading();
+                checkSecondLoading(false);
                 break;
             case MSG_MEDIA_FINISH:
                 mFirstLoadFinish = true;
@@ -663,7 +646,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 break;
             case MSG_START_PLAY:
                 mSecondLoadFinish = true;
-                checkSecondLoading();
+                checkSecondLoading(false);
                 break;
             case MSG_KEEP_ALIVE:
                 keepAlive();
@@ -675,13 +658,26 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void checkFirstLoading() {
         if (mFirstLoadFinish && mLoadDelayed && !isFinishing() && mFirstLoading) {
             hideFirstLoading();
+            if (mProgram.isPrelive()) {
+                mSecondLoadFinish = true;
+                checkSecondLoading(true);
+            } else {
+                mLivePlayerFragment.stopTimer();
+            }
         }
     }
 
-    private void checkSecondLoading() {
+    private void checkSecondLoading(boolean isPrelive) {
         if (mSecondLoadFinish && mLoadDelayed && !isFinishing() && mSecondLoading) {
             hideSecondLoading();
-            mLivePlayerFragment.onStartPlay(mFirstTime);
+            if (isPrelive) {
+                mLivePlayerFragment.onStartPrelive();
+                mLivePlayerFragment.startTimer(mProgram.getStartTime());
+            } else {
+                mLivePlayerFragment.onStartPlay();
+                mLivePlayerFragment.stopTimer();
+                mRotatable = true;
+            }
         }
     }
 

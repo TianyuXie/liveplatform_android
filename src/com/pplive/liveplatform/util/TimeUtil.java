@@ -10,6 +10,9 @@ public class TimeUtil {
     public static final int SECONDS_OF_HOUR = 3600;
 
     public static String stringForTime(long timeMs) {
+        if (timeMs <= 0) {
+            return "00:00:00";
+        }
         long totalSeconds = timeMs / 1000;
 
         long seconds = totalSeconds % 60;
@@ -21,7 +24,7 @@ public class TimeUtil {
 
     public static String stringForLongTime(long timeMs) {
         if (timeMs <= 0) {
-            return "00:00";
+            return "0时0分";
         }
         long totalSeconds = timeMs / 1000;
         long minutes = (totalSeconds / 60) % 60;

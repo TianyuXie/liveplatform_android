@@ -59,6 +59,8 @@ import de.greenrobot.event.EventBus;
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, Handler.Callback {
 
     static final String TAG = "_LiveRecordActivity";
+    
+    public static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
@@ -97,7 +99,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private TextView mTextRecordDuration;
     private TextView mTextLiveComing;
     private TextView mTextLivingTitle;
-    
+
     private ImageButton mBtnLivingShare;
 
     private boolean mCountDown = false;
@@ -152,7 +154,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private Program mLivingProgram;
     private String mLivingUrl;
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -222,6 +224,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         Log.d(TAG, "onResume");
 
         super.onResume();
+        
+        if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
+            startCountDown();
+        }
 
         if (null == mGetUserLivingTask) {
             mGetUserLivingTask = new GetUserLivingTask();
@@ -278,6 +284,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onConfigurationChanged(newConfig);
 
         Log.d(TAG, "onConfigurationChanged");
+    }
+    
+    @Override
+    public void onBackPressed() {
+        if (!mFooterBarFragment.isHidden()) {
+            mFooterBarFragment.onBackPressed();
+        }
     }
 
     public void onEvent(EventProgramSelected event) {
@@ -389,14 +402,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         if (null != mLivingProgram) {
             mTextLive.setVisibility(View.VISIBLE);
             mTextRecordDuration.setVisibility(View.VISIBLE);
-            
+
             mChatContainer.setVisibility(View.VISIBLE);
-            
+
             mBtnLivingShare.setVisibility(View.VISIBLE);
-            
+
             mTextLivingTitle.setVisibility(View.VISIBLE);
             mTextLivingTitle.setText(mLivingProgram.getTitle());
-            
+
             // TODO: Debug Code
             mTextLivingTitle.append("\n");
             mTextLivingTitle.append("pid: " + mLivingProgram.getId());
@@ -464,10 +477,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onLiveFailed() {
-        DialogManager.alertLivingfailed(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+        DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                onClickBtnLiveRecord();
+            }
+        }, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+                String coToken = UserManager.getInstance(getApplicationContext()).getToken();
+
+                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, mLivingProgram.getId(), LiveStatusEnum.STOPPED, username);
+
                 performOnClickStopRecording();
             }
         }).show();
@@ -568,7 +592,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void performOnClickStopRecording() {
         mTextLivingTitle.setVisibility(View.GONE);
         mBtnLivingShare.setVisibility(View.GONE);
-        
+
         stopRecording(true);
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
@@ -578,7 +602,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onClick(View v) {
         Log.d(TAG, "onClick");
-        
+
         switch (v.getId()) {
         case R.id.btn_camera_change:
             onClickBtnCameraChange();
@@ -629,10 +653,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         boolean isFlashOn = mBtnFlashLight.isChecked();
 
         mMediaRecorderView.setFlashMode(isFlashOn);
-        
+
         mBtnFlashLight.setChecked(mMediaRecorderView.isFlashOn());
     }
-    
+
     private void onClickBtnChat() {
         if (!mChating) {
             startChating();
@@ -640,7 +664,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             stopChating();
         }
     }
-    
+
     class GetPushUrlTask extends AsyncTask<Program, Void, String> {
 
         private String mLiveTitle;
@@ -670,7 +694,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     program = ProgramService.getInstance().createProgram(usertoken, program);
                     mLivingProgram = program;
                 } catch (LiveHttpException e) {
-                    // TODO Auto-generated catch block
+                    Log.w(TAG, e.toString());
                 }
             } else {
                 Log.d(TAG, "has program");
@@ -693,8 +717,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 } else {
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
+                    program.setLiveStatus(LiveStatusEnum.INIT);
+                    
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
+                    program.setLiveStatus(LiveStatusEnum.PREVIEW);
+                    
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
+                    program.setLiveStatus(LiveStatusEnum.LIVING);
+                    
+                    Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
                 }
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
@@ -759,7 +790,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             if (!mMediaRecorderView.isRecording()) {
-                DialogManager.alertHasLivingProgram(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+                
+                // TODO: 
+                DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mLivingProgram = program;
+                        onClickBtnLiveRecord();
+                    }
+                }, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -769,13 +809,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                         LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
 
                         performOnClickStopRecording();
-                    }
-                }, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mLivingProgram = program;
-                        onClickBtnLiveRecord();
                     }
                 }).show();
             }
@@ -839,7 +872,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (mLivingProgram != null) {
                 String title = StringUtil.safeString(mLivingProgram.getTitle());
                 String shareUrl = mLivingProgram.getShareLinkUrl();
-                String imageUrl = mLivingProgram.getCover();
+                String imageUrl = mLivingProgram.getRecommendCover();
                 String summary = String.format(getString(R.string.share_summary_format), getString(R.string.app_name), title);
                 data.putString(ShareDialog.PARAM_TITLE, title);
                 data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);

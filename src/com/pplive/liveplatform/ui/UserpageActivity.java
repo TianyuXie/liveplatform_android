@@ -138,8 +138,14 @@ public class UserpageActivity extends Activity {
                 case NOT_START:
                 case PREVIEW:
                 case INIT:
-                    intent.setClass(UserpageActivity.this, LiveRecordActivity.class);
-                    startActivity(intent);
+                    if (UserManager.getInstance(UserpageActivity.this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+                        intent.setClass(UserpageActivity.this, LiveRecordActivity.class);
+                        startActivity(intent);
+                    } else {
+                        intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                        intent.setClass(UserpageActivity.this, LivePlayerActivity.class);
+                        startActivity(intent);
+                    }
                     break;
                 default:
                     break;
@@ -249,7 +255,13 @@ public class UserpageActivity extends Activity {
             } else if (lhs.getLiveStatus().ordinal() > rhs.getLiveStatus().ordinal()) {
                 return 1;
             } else {
-                return 0;
+                if (lhs.getStartTime() > rhs.getStartTime()) {
+                    return -1;
+                } else if (lhs.getStartTime() < rhs.getStartTime()) {
+                    return 1;
+                } else {
+                    return 0;
+                }
             }
         }
     };

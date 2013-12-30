@@ -3,7 +3,17 @@
 
     <!-- String -->
     <string name="live"><b>Live</b></string>
+    <string name="prelive_title">预播提醒</string>
+    <string name="prelive_default_message">您有一个预播即将开始</string>
+    
     <string name="default_live_title_fmt"><![CDATA[\"%s\" 的直播]]></string>
+    <string name="alert_negative">不要</string>
+    <string name="alert_title_living_terminated">续播提醒</string>
+    <string name="alert_message_living_terminated">哎呀，不小心中断啦，\n你要继续直播吗？</string>
+    <string name="alert_positive_living_terminated">继续直播</string>
+    <string name="alert_title_prelive">预播提醒</string>
+    <string name="alert_message_prelive">你要进入该预播节目吗？</string>
+    <string name="alert_positive_prelive">进入预播</string>
 
     <!-- Color -->
     <color name="bottom_bar_bg">#40000000</color>

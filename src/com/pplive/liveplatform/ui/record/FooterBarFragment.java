@@ -19,6 +19,7 @@ import android.widget.ImageButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -147,7 +148,17 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         init();
     }
-
+    
+    public void onBackPressed() {
+        
+        if (Mode.INITIAL == mStatus) {
+            onClickBtnLiveHome();
+        } else {
+            onClickBtnLiveBack();
+        }
+        
+    }
+    
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
         mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d", year, month, day, hour, minute));
@@ -159,52 +170,52 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         switch (v.getId()) {
         case R.id.btn_live_prelive:
-            onClickBtnLivePrelive(v);
+            onClickBtnLivePrelive();
             break;
         case R.id.btn_live_home:
-            onClickBtnLiveHome(v);
+            onClickBtnLiveHome();
             break;
         case R.id.btn_live_back:
-            onClickBtnLiveBack(v);
+            onClickBtnLiveBack();
             break;
         case R.id.btn_add_prelive:
-            onClickBtnAddPrelive(v);
+            onClickBtnAddPrelive();
             break;
         case R.id.btn_live_add_complete:
-            onClickBtnLiveAddComplete(v);
+            onClickBtnLiveAddComplete();
             break;
         case R.id.btn_live_edit_complete:
-            onClickBtnLiveEditComplete(v);
+            onClickBtnLiveEditComplete();
             break;
         default:
             break;
         }
     }
 
-    private void onClickBtnLivePrelive(View v) {
+    private void onClickBtnLivePrelive() {
         setMode(Mode.VIEW_PRELIVES);
 
         mEditLiveSchedule.requestFocus();
     }
 
-    private void onClickBtnLiveHome(View v) {
+    private void onClickBtnLiveHome() {
 
         if (null != mAttachedActivity) {
             mAttachedActivity.finish();
         }
     }
 
-    private void onClickBtnLiveBack(View v) {
+    private void onClickBtnLiveBack() {
         reset();
         
         EventBus.getDefault().post(new EventReset());
     }
 
-    private void onClickBtnAddPrelive(View v) {
+    private void onClickBtnAddPrelive() {
         setMode(Mode.ADD_PRELIVE);
     }
 
-    private void onClickBtnLiveAddComplete(View v) {
+    private void onClickBtnLiveAddComplete() {
         setMode(Mode.VIEW_PRELIVES);
 
         final String title = mEditLiveTitle.getText().toString();
@@ -235,15 +246,17 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
             @Override
             protected void onPostExecute(Program program) {
-
                 EventBus.getDefault().post(new EventProgramAdded(program));
+                
+                //TODO Add alarm (event bus?)
+                AlarmCenter.getInstance(mAttachedActivity).addPreliveAlarm(program);
             }
         };
 
         createLiveTask.execute();
     }
     
-    private void onClickBtnLiveEditComplete(View v) {
+    private void onClickBtnLiveEditComplete() {
         setMode(Mode.VIEW_PRELIVES);
     }
 

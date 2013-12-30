@@ -12,6 +12,16 @@
         android:layout_centerInParent="true" />
 
     <ImageView
+        android:id="@+id/image_player_pptv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/player_pptv_icon"
+        android:contentDescription="@null" />
+
+    <ImageView
         android:id="@+id/image_player_loading"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -19,6 +29,18 @@
         android:contentDescription="@null"
         android:scaleType="fitStart"
         android:src="@drawable/player_loading_bg" />
+
+    <TextView
+        android:id="@+id/text_player_countdown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.2"
+        android:paddingBottom="20dp"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:id="@+id/layout_player_titlebar"
@@ -49,11 +71,11 @@
             style="@style/togglebutton_notext"
             android:layout_width="45dp"
             android:layout_height="45dp"
-            android:enabled="false"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:background="@drawable/player_btn_land_port" />
+            android:background="@drawable/player_btn_land_port"
+            android:enabled="false" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -103,7 +125,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/player_finish"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>
