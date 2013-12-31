@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.core.service.passport;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
@@ -16,8 +17,8 @@ public class WeChatShare {
     private static final String APP_ID = "wxdfe496aba1420ebe";
     private static final String APP_KEY= "c0a5d059ec2d2891c343855eb106ac14";
     
-    private static final int SHARE_SNS = 1;
-    private static final int SHARE_WECHAT = 0;
+    public static final int SHARE_SNS = 1;
+    public static final int SHARE_WECHAT = 0;
     
     private IWXAPI api;
     

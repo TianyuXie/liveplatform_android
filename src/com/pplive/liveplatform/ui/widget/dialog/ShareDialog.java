@@ -10,6 +10,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.service.passport.WeChatShare;
 import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.thirdparty.ThirdpartyShareListener;
 import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
@@ -50,6 +52,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
 
     private static final int MSG_SHARE_WECHATSNS = 7601;
     private static final int MSG_SHARE_SINA = 7602;
+    private static final int MSG_SHARE_WECHAT = 7603;
 
     public ShareDialog(Context context, int theme) {
         this(context, theme, "");
@@ -130,6 +133,14 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
         }
     }
 
+    public void wechatShare() {
+        if (SysUtil.checkPackage("com.tencent.mm", getContext())) {
+            shareImage2(MSG_SHARE_WECHAT);
+        } else {
+            Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
     public void wechatShareDirect() {
         try {
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -173,7 +184,8 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             sinaShareDirect();
             break;
         case R.id.btn_share_dialog_wechat:
-            wechatShareDirect();
+            //            wechatShareDirect();
+            wechatShare();
             break;
         case R.id.btn_share_dialog_wechatSNS:
             wechatSNSShareDirect();
@@ -182,6 +194,16 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             break;
         }
     }
+
+    private Handler mShareHandler2 = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_SHARE_WECHAT:
+                WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, (Bitmap) msg.obj, WeChatShare.SHARE_WECHAT);
+                break;
+            }
+        };
+    };
 
     private Handler mShareHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -230,6 +252,24 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
                 message.what = target;
                 message.obj = tmpfile;
                 mShareHandler.sendMessage(message);
+            }
+        }).start();
+    }
+
+    private void shareImage2(final int target) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Bitmap cover = null;
+                try {
+                    cover = ImageUtil.loadImageFromUrl(mImageUrl);
+                } catch (IOException e) {
+                    return;
+                }
+                Message message = new Message();
+                message.what = target;
+                message.obj = cover;
+                mShareHandler2.sendMessage(message);
             }
         }).start();
     }
