@@ -39,7 +39,6 @@ import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
-import com.pplive.thirdparty.BreakpadUtil;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
@@ -57,6 +56,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private static final int FLAG_USER_VIEW = 0x4;
 
     private MeetVideoView mVideoView;
+
+    private LivePlayerController mController;
 
     private View mTitleBarView;
 

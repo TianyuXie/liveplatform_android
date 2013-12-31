@@ -545,8 +545,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
             Watch.Protocol protocol = watchList.getRecommendProtocol();
             if (protocol == Watch.Protocol.RTMP) {
+                Log.d(TAG, "rtmp");
                 mUrl = watchList.getRtmpPlayURL();
             } else if (protocol == Watch.Protocol.LIVE2) {
+                Log.d(TAG, "live2");
                 if (mProgram.isLiving()) {
                     mUrl = watchList.getLive2LiveM3U8PlayURL();
                 } else if (mProgram.isVOD()) {

@@ -56,7 +56,7 @@ public class WatchList {
         Watch watch = getRecommendedWatch();
 
         if (null != watch) {
-            return watch.getLive2VODM3U8PlayURL(recommend.ft);
+            return watch.getRtmpPlayURL(recommend.ft);
         }
 
         return null;
