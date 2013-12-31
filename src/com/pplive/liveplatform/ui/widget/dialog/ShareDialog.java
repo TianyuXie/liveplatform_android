@@ -1,7 +1,6 @@
 package com.pplive.liveplatform.ui.widget.dialog;
 
 import java.io.File;
-import java.io.IOException;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -11,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -97,7 +95,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
         bundle.putString(WeiboPassport.PARAM_TARGET_URL, mTargetUrl);
         bundle.putString(WeiboPassport.PARAM_TITLE, mTitle);
         bundle.putString(WeiboPassport.PARAM_SUMMARY, mSummary);
-        bundle.putParcelable(WeiboPassport.PARAM_BITMAP, ((BitmapDrawable) (getContext().getResources().getDrawable(R.drawable.ic_launcher))).getBitmap());
+        bundle.putParcelable(WeiboPassport.PARAM_BITMAP, ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png"));
         return bundle;
     }
 
@@ -133,14 +131,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
         }
     }
 
-    public void wechatShare() {
-        if (SysUtil.checkPackage("com.tencent.mm", getContext())) {
-            shareImage2(MSG_SHARE_WECHAT);
-        } else {
-            Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
-        }
-    }
-
     public void wechatShareDirect() {
         try {
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -152,6 +142,14 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             getContext().startActivity(intent);
             dismiss();
         } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void wechatShare(int target) {
+        if (SysUtil.checkPackage("com.tencent.mm", getContext())) {
+            shareImage2(target);
+        } else {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
         }
     }
@@ -185,10 +183,11 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             break;
         case R.id.btn_share_dialog_wechat:
             //            wechatShareDirect();
-            wechatShare();
+            wechatShare(MSG_SHARE_WECHAT);
             break;
         case R.id.btn_share_dialog_wechatSNS:
-            wechatSNSShareDirect();
+            //            wechatSNSShareDirect();
+            wechatShare(MSG_SHARE_WECHATSNS);
             break;
         default:
             break;
@@ -200,6 +199,11 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             switch (msg.what) {
             case MSG_SHARE_WECHAT:
                 WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, (Bitmap) msg.obj, WeChatShare.SHARE_WECHAT);
+                dismiss();
+                break;
+            case MSG_SHARE_WECHATSNS:
+                WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, (Bitmap) msg.obj, WeChatShare.SHARE_SNS);
+                dismiss();
                 break;
             }
         };
@@ -243,11 +247,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             @Override
             public void run() {
                 String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
-                try {
-                    ImageUtil.bitmap2File(ImageUtil.loadImageFromUrl(mImageUrl), tmpfile);
-                } catch (IOException e) {
-                    ImageUtil.bitmap2File(ImageUtil.getBitmapFromRes(getContext(), R.drawable.ic_launcher), tmpfile);
-                }
+                ImageUtil.bitmap2File(ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png"), tmpfile);
                 Message message = new Message();
                 message.what = target;
                 message.obj = tmpfile;
@@ -260,12 +260,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Bitmap cover = null;
-                try {
-                    cover = ImageUtil.loadImageFromUrl(mImageUrl);
-                } catch (IOException e) {
-                    return;
-                }
+                Bitmap cover = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
                 Message message = new Message();
                 message.what = target;
                 message.obj = cover;

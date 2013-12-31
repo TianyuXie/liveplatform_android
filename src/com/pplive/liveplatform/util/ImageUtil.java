@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -125,7 +126,7 @@ public class ImageUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-//            bitmap.recycle();
+            //            bitmap.recycle();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -133,6 +134,19 @@ public class ImageUtil {
 
     public static Bitmap getBitmapFromRes(Context context, int resid) {
         return ((BitmapDrawable) context.getApplicationContext().getResources().getDrawable(resid)).getBitmap();
+    }
+
+    public static Bitmap getBitmapFromAssets(Context context, String fileName) {
+        Bitmap image = null;
+        AssetManager am = context.getAssets();
+        try {
+            InputStream is = am.open(fileName);
+            image = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 
     static class UnsupportedException extends RuntimeException {
