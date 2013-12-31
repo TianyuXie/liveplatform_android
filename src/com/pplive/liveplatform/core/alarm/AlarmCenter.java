@@ -37,7 +37,7 @@ public class AlarmCenter {
             intent.putExtra(EXTRA_PROGRAM, program);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(mAppContext, PRELIVE_REQUEST, intent, 0);
             mAlarmManager.set(AlarmManager.RTC_WAKEUP, program.getStartTime(), pendingIntent);
-//            mAlarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10000, pendingIntent);
+            //            mAlarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10000, pendingIntent);
         }
     }
 }

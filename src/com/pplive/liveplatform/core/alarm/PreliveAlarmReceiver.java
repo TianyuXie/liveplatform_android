@@ -16,6 +16,7 @@ public class PreliveAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
         if (SettingsProvider.getInstance(context).getAppPrefs().isPreliveNotify()) {
+            Log.d(TAG, "isPreliveNotify");
             Intent newIntent = new Intent(context, AlarmActivity.class);
             newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             newIntent.putExtra(AlarmActivity.EXTRA_TITLE, context.getString(R.string.prelive_title));

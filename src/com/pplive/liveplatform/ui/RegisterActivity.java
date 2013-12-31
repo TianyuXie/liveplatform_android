@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -134,7 +133,6 @@ public class RegisterActivity extends Activity {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
             if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                Log.d(TAG, "onFinalEnterListener");
                 mConfirmButton.performClick();
                 return true;
             }

@@ -1,11 +1,13 @@
 package com.pplive.liveplatform.ui;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -38,21 +40,26 @@ import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";
 
-    public static final String EXTRA_USER = "UserpageActivity_username";
+    public static final String EXTRA_USER = "username";
 
-    public static final String EXTRA_ICON = "UserpageActivity_icon";
+    public static final String EXTRA_ICON = "icon";
 
-    public static final String EXTRA_NICKNAME = "UserpageActivity_nickname";
+    public static final String EXTRA_NICKNAME = "nickname";
 
+    private Context mContext;
     private List<Program> mPrograms;
+    private String mUsername;
+
+    private TextView mNodataText;
+    private Button mNodataButton;
     private CircularImageView mUserIcon;
-    private TextView mNicknameText;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_userpage);
 
@@ -60,56 +67,57 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
-        Button recordButton = (Button) findViewById(R.id.btn_userpage_record);
-        recordButton.setOnClickListener(onRecordBtnClickListener);
+        mNodataButton = (Button) findViewById(R.id.btn_userpage_record);
+        mNodataButton.setOnClickListener(onNodataBtnClickListener);
         Button settingsButton = (Button) findViewById(R.id.btn_userpage_settings);
         settingsButton.setOnClickListener(onSettingsBtnClickListener);
 
         ListView listView = (ListView) findViewById(R.id.list_userpage_program);
         listView.setAdapter(mAdapter);
         listView.setOnItemClickListener(onItemClickListener);
-        mUserIcon = (CircularImageView) findViewById(R.id.btn_userpage_user_icon);
-        mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
+        mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
+        mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         mRefreshDialog = new RefreshDialog(this);
 
         //init views
-        TextView nodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         TextView title = (TextView) findViewById(R.id.text_userpage_title);
         View cameraIcon = findViewById(R.id.image_userpage_camera);
         if (UserManager.getInstance(this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
             title.setText(R.string.userpage_my_title);
             settingsButton.setVisibility(View.VISIBLE);
             cameraIcon.setVisibility(View.VISIBLE);
-            nodataText.setText(R.string.userpage_user_nodata);
-            recordButton.setEnabled(true);
         } else {
             title.setText(R.string.userpage_others_title);
             settingsButton.setVisibility(View.GONE);
             cameraIcon.setVisibility(View.GONE);
-            recordButton.setEnabled(false);
-            nodataText.setText(R.string.userpage_others_nodata);
         }
+        mUsername = getIntent().getStringExtra(EXTRA_USER);
+        initUserinfo();
+        refreshData();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
-        refreshData();
     }
 
-    private void refreshData() {
-        mRefreshDialog.show();
-        mNicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
-        String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
+    private void initUserinfo() {
+        TextView nicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
+        nicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
         mUserIcon.setRounded(false);
+        String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
         if (!TextUtils.isEmpty(iconUrl)) {
             mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
         } else {
             mUserIcon.setImageResource(R.drawable.user_icon_default);
         }
+    }
+
+    private void refreshData() {
+        mRefreshDialog.show();
         ProgramTask task = new ProgramTask();
-        task.addTaskListener(onTaskListener);
+        task.addTaskListener(onProgramTaskListener);
         TaskContext taskContext = new TaskContext();
         taskContext.set(ProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
         task.execute(taskContext);
@@ -132,22 +140,20 @@ public class UserpageActivity extends Activity {
                 case LIVING:
                 case STOPPED:
                     intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
-                    intent.setClass(UserpageActivity.this, LivePlayerActivity.class);
+                    intent.setClass(mContext, LivePlayerActivity.class);
                     startActivity(intent);
                     break;
                 case NOT_START:
                 case PREVIEW:
                 case INIT:
-                    if (UserManager.getInstance(UserpageActivity.this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
-                        intent.setClass(UserpageActivity.this, LiveRecordActivity.class);
+                    if (UserManager.getInstance(mContext).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+                        intent.setClass(mContext, LiveRecordActivity.class);
                         startActivity(intent);
                     } else {
                         intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
-                        intent.setClass(UserpageActivity.this, LivePlayerActivity.class);
+                        intent.setClass(mContext, LivePlayerActivity.class);
                         startActivity(intent);
                     }
-                    break;
-                default:
                     break;
                 }
             }
@@ -164,16 +170,23 @@ public class UserpageActivity extends Activity {
     private View.OnClickListener onSettingsBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(UserpageActivity.this, SettingsActivity.class);
+            Intent intent = new Intent(mContext, SettingsActivity.class);
             startActivityForResult(intent, SettingsActivity.FROM_USERPAGE);
         }
     };
 
-    private View.OnClickListener onRecordBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener onNodataBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(UserpageActivity.this, LiveRecordActivity.class);
+            Intent intent = new Intent(mContext, LiveRecordActivity.class);
             startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener onErrorBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            refreshData();
         }
     };
 
@@ -184,17 +197,25 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onProgramTaskListener = new Task.OnTaskListener() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
             mPrograms.clear();
-            mPrograms.addAll((List<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
+            mPrograms.addAll((Collection<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
             Collections.sort(mPrograms, comparator);
             mAdapter.notifyDataSetChanged();
             if (mPrograms.isEmpty()) {
+                if (UserManager.getInstance(mContext).isLogin(mUsername)) {
+                    mNodataText.setText(R.string.userpage_user_nodata);
+                    mNodataButton.setEnabled(true);
+                } else {
+                    mNodataText.setText(R.string.userpage_others_nodata);
+                    mNodataButton.setEnabled(false);
+                }
+                mNodataButton.setOnClickListener(onNodataBtnClickListener);
                 findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
             } else {
                 findViewById(R.id.layout_userpage_nodata).setVisibility(View.GONE);
@@ -204,6 +225,12 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
+            mPrograms.clear();
+            mAdapter.notifyDataSetChanged();
+            mNodataText.setText(R.string.userpage_user_error);
+            mNodataButton.setEnabled(true);
+            mNodataButton.setOnClickListener(onErrorBtnClickListener);
+            findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -212,7 +239,7 @@ public class UserpageActivity extends Activity {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            mRefreshDialog.dismiss();
+            onTaskFailed(sender, null);
         }
 
         @Override

@@ -110,7 +110,6 @@
         </activity>
         <activity
             android:name=".ui.AlarmActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/no_title_dialog" >
         </activity>
 

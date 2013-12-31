@@ -513,7 +513,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
             long delay = liveStatus.getDelayInSeconds();
-            Log.d(TAG, "Delay: " + delay);
             keepAliveDelay(delay * 1000);
         }
 
@@ -707,7 +706,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void keepAlive() {
         long pid = mProgram.getId();
         if (pid > 0) {
-            Log.d(TAG, "keepAlive:" + pid);
             LiveStatusTask task = new LiveStatusTask();
             task.addTaskListener(onLiveStatusTaskListener);
             TaskContext taskContext = new TaskContext();
