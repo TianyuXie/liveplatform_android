@@ -13,26 +13,31 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Handler.Callback;
 import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.passport.WeChatShare;
 import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.thirdparty.ThirdpartyShareListener;
+import com.pplive.liveplatform.core.service.passport.thirdparty.WeChatShare;
 import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
+import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.TaskCancelEvent;
+import com.pplive.liveplatform.core.task.TaskContext;
+import com.pplive.liveplatform.core.task.TaskFailedEvent;
+import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.core.task.other.ImageTask;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.SysUtil;
 
-public class ShareDialog extends Dialog implements View.OnClickListener, ThirdpartyShareListener {
+public class ShareDialog extends Dialog implements View.OnClickListener {
     static final String TAG = "_ShareDialog";
-
-    private static final int MSG_THIRDPARTY_ERROR = 2401;
 
     private Activity mActivity;
 
@@ -48,9 +53,10 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
     public static final String PARAM_IMAGE_URL = "imageUrl";
     public static final String PARAM_BITMAP = "bitmap";
 
-    private static final int MSG_SHARE_WECHATSNS = 7601;
-    private static final int MSG_SHARE_SINA = 7602;
+    private static final int MSG_SHARE_SINA_DIRECT = 7602;
     private static final int MSG_SHARE_WECHAT = 7603;
+    private static final int MSG_SHARE_WECHATSNS = 7604;
+    private static final int MSG_SHARE_WECHATSNS_DIRECT = 7605;
 
     public ShareDialog(Context context, int theme) {
         this(context, theme, "");
@@ -104,8 +110,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             WeiboPassport.getInstance().initShare(mActivity);
             WeiboPassport.getInstance().shareToWeibo(mActivity, getShareSinaData());
             dismiss();
-        } else {
-            Log.e(TAG, "mActivity == null");
         }
     }
 
@@ -113,10 +117,8 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
         if (SysUtil.checkPackage("com.tencent.mobileqq", getContext())) {
             if (mActivity != null) {
                 TencentPassport.getInstance().init(mActivity);
-                TencentPassport.getInstance().setShareListener(this);
+                TencentPassport.getInstance().setShareListener(qqShareListener);
                 TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
-            } else {
-                Log.e(TAG, "mActivity == null");
             }
         } else {
             Toast.makeText(getContext(), R.string.share_qq_not_install, Toast.LENGTH_SHORT).show();
@@ -148,7 +150,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
 
     public void wechatShare(int target) {
         if (SysUtil.checkPackage("com.tencent.mm", getContext())) {
-            shareImage2(target);
+            shareImage(target);
         } else {
             Toast.makeText(getContext(), R.string.share_wechat_not_install, Toast.LENGTH_SHORT).show();
         }
@@ -156,10 +158,63 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
 
     public void sinaShareDirect() {
         if (SysUtil.checkPackage("com.sina.weibo", getContext())) {
-            shareImage(MSG_SHARE_SINA);
+            shareImage(MSG_SHARE_SINA_DIRECT);
         } else {
             Toast.makeText(getContext(), R.string.share_weibo_not_install, Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void sinaShareDirect(Bitmap bitmap) {
+        try {
+            String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
+            ImageUtil.bitmap2File(bitmap, tmpfile);
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            Context context = getContext().createPackageContext("com.sina.weibo", Context.CONTEXT_IGNORE_SECURITY);
+            intent.setClassName(context, "com.sina.weibo.EditActivity");
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(tmpfile)));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+        } catch (NameNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+        } finally {
+            dismiss();
+        }
+    }
+
+    private void wechatSNSShareDirect(Bitmap bitmap) {
+        try {
+            String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            Context context = getContext().createPackageContext("com.tencent.mm", Context.CONTEXT_IGNORE_SECURITY);
+            intent.setClassName(context, "com.tencent.mm.ui.tools.ShareToTimeLineUI");
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
+            intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(tmpfile)));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+        } catch (NameNotFoundException e) {
+            Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
+        } finally {
+            dismiss();
+        }
+    }
+
+    private void wechatShare(Bitmap bitmap) {
+        WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, bitmap, WeChatShare.SHARE_WECHAT);
+        dismiss();
+    }
+
+    private void wechatSNSShare(Bitmap bitmap) {
+        WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, bitmap, WeChatShare.SHARE_SNS);
+        dismiss();
     }
 
     public void setData(Bundle data) {
@@ -182,11 +237,9 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
             sinaShareDirect();
             break;
         case R.id.btn_share_dialog_wechat:
-            //            wechatShareDirect();
             wechatShare(MSG_SHARE_WECHAT);
             break;
         case R.id.btn_share_dialog_wechatSNS:
-            //            wechatSNSShareDirect();
             wechatShare(MSG_SHARE_WECHATSNS);
             break;
         default:
@@ -194,110 +247,88 @@ public class ShareDialog extends Dialog implements View.OnClickListener, Thirdpa
         }
     }
 
-    private Handler mShareHandler2 = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_SHARE_WECHAT:
-                WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, (Bitmap) msg.obj, WeChatShare.SHARE_WECHAT);
-                dismiss();
-                break;
-            case MSG_SHARE_WECHATSNS:
-                WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, (Bitmap) msg.obj, WeChatShare.SHARE_SNS);
-                dismiss();
-                break;
-            }
-        };
-    };
-
-    private Handler mShareHandler = new Handler() {
-        public void handleMessage(Message msg) {
-            try {
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                Context context = null;
-                switch (msg.what) {
-                case MSG_SHARE_WECHATSNS:
-                    context = getContext().createPackageContext("com.tencent.mm", Context.CONTEXT_IGNORE_SECURITY);
-                    intent.setClassName(context, "com.tencent.mm.ui.tools.ShareToTimeLineUI");
-                    break;
-                case MSG_SHARE_SINA:
-                    context = getContext().createPackageContext("com.sina.weibo", Context.CONTEXT_IGNORE_SECURITY);
-                    intent.setClassName(context, "com.sina.weibo.EditActivity");
-                    break;
-                default:
-                    return;
-                }
-                intent.setType("image/*");
-                intent.putExtra(Intent.EXTRA_SUBJECT, mTitle);
-                intent.putExtra(Intent.EXTRA_TEXT, String.format("%s: %s", mSummary, mTargetUrl));
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File((String) msg.obj)));
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                getContext().startActivity(intent);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
-            } catch (NameNotFoundException e) {
-                Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
-            } finally {
-                dismiss();
-            }
-        };
-    };
-
     private void shareImage(final int target) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
-                ImageUtil.bitmap2File(ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png"), tmpfile);
-                Message message = new Message();
-                message.what = target;
-                message.obj = tmpfile;
-                mShareHandler.sendMessage(message);
-            }
-        }).start();
+        ImageTask task = new ImageTask();
+        TaskContext taskContext = new TaskContext();
+        taskContext.set(ImageTask.KEY_URL, mImageUrl);
+        taskContext.set(ImageTask.KEY_TARGET, target);
+        task.setReturnContext(taskContext);
+        task.execute(taskContext);
+        task.addTaskListener(taskListener);
     }
 
-    private void shareImage2(final int target) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Bitmap cover = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
-                Message message = new Message();
-                message.what = target;
-                message.obj = cover;
-                mShareHandler2.sendMessage(message);
-            }
-        }).start();
+    private void shareImage(int target, Bitmap bitmap) {
+        switch (target) {
+        case MSG_SHARE_SINA_DIRECT:
+            sinaShareDirect(bitmap);
+            break;
+        case MSG_SHARE_WECHATSNS_DIRECT:
+            wechatSNSShareDirect(bitmap);
+            break;
+        case MSG_SHARE_WECHAT:
+            wechatShare(bitmap);
+            break;
+        case MSG_SHARE_WECHATSNS:
+            wechatSNSShare(bitmap);
+            break;
+        }
     }
 
-    @Override
-    public void shareSuccess() {
-        dismiss();
-    }
+    private Task.OnTaskListener taskListener = new Task.OnTaskListener() {
 
-    @Override
-    public void shareFailed(String message) {
-        Message msg = new Message();
-        msg.what = MSG_THIRDPARTY_ERROR;
-        msg.obj = TextUtils.isEmpty(message) ? getContext().getString(R.string.share_failed) : message;
-        mErrorHandler.sendMessage(msg);
-        dismiss();
-    }
-
-    private Handler mErrorHandler = new Handler() {
         @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_THIRDPARTY_ERROR:
-                Toast.makeText(getContext(), msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
-            }
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            int target = (Integer) event.getContext().get(ImageTask.KEY_TARGET);
+            Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
+            shareImage(target, bitmap);
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            int target = (Integer) event.getContext().get(ImageTask.KEY_TARGET);
+            Bitmap bitmap = (Bitmap) event.getContext().get(ImageTask.KEY_RESULT);
+            shareImage(target, bitmap);
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            int target = (Integer) event.getContext().get(ImageTask.KEY_TARGET);
+            Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
+            shareImage(target, bitmap);
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            dismiss();
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
         }
     };
 
-    @Override
-    public void shareCanceled() {
-        dismiss();
-    }
+    private ThirdpartyShareListener qqShareListener = new ThirdpartyShareListener() {
+
+        @Override
+        public void shareSuccess() {
+            dismiss();
+        }
+
+        @Override
+        public void shareFailed(final String message) {
+            new Handler(new Callback() {
+                @Override
+                public boolean handleMessage(Message msg) {
+                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+            }).sendEmptyMessage(0);
+            dismiss();
+        }
+
+        @Override
+        public void shareCanceled() {
+            dismiss();
+        }
+    };
 }

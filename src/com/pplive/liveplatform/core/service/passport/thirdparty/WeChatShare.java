@@ -1,8 +1,7 @@
-package com.pplive.liveplatform.core.service.passport;
+package com.pplive.liveplatform.core.service.passport.thirdparty;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.util.Log;
 
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
@@ -51,9 +50,7 @@ public class WeChatShare {
         req.transaction = String.valueOf(System.currentTimeMillis());
         req.message = msg;
         req.scene = sns > 0 ? SendMessageToWX.Req.WXSceneTimeline : SendMessageToWX.Req.WXSceneSession;
-        boolean result = api.sendReq(req);
-        Log.d("share", result + "");
-        return result;
+        return api.sendReq(req);
     }
 
 }

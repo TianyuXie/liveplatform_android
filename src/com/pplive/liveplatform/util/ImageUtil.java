@@ -115,8 +115,31 @@ public class ImageUtil {
 
     public static Bitmap loadImageFromUrl(String url) throws IOException {
         InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
-        BitmapFactory.Options bpo = new BitmapFactory.Options();
-        return BitmapFactory.decodeStream(inputStream, null, bpo);
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = true;//只读边,不读内容  
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
+        newOpts.inJustDecodeBounds = false;
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+        float hh = 30f;
+        float ww = 40f;
+        int be = 1;
+        if (w > h && w > ww) {
+            be = (int) (newOpts.outWidth / ww);
+        } else if (w < h && h > hh) {
+            be = (int) (newOpts.outHeight / hh);
+        }
+        if (be <= 0)
+            be = 1;
+        newOpts.inSampleSize = be;//设置采样率  
+
+        newOpts.inPreferredConfig = Config.ARGB_8888;//该模式是默认的,可不设  
+        newOpts.inPurgeable = true;// 同时设置才会有效  
+        newOpts.inInputShareable = true;//当系统内存不够时候图片自动被回收  
+
+        inputStream = (InputStream) new java.net.URL(url).getContent();
+        bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
+        return bitmap;
     }
 
     public static void bitmap2File(Bitmap bitmap, String filename) {
@@ -126,7 +149,7 @@ public class ImageUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-            //            bitmap.recycle();
+            bitmap.recycle();
         } catch (IOException e) {
             e.printStackTrace();
         }
