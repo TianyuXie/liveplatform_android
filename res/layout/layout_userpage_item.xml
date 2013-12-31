@@ -30,14 +30,13 @@
                 android:textColor="@color/userpage_program_title_bg"
                 android:textSize="15sp" />
 
-            <ImageView
+            <com.pplive.liveplatform.ui.widget.image.AsyncImageView
                 android:id="@+id/image_userpage_program_preview"
                 android:layout_width="100dp"
                 android:layout_height="75dp"
                 android:layout_below="@id/text_userpage_program_status"
                 android:layout_marginRight="10dp"
                 android:adjustViewBounds="true"
-                android:background="@drawable/program_default_image"
                 android:contentDescription="@string/blank" />
 
             <TextView
@@ -45,39 +44,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/image_userpage_program_preview"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/image_userpage_program_preview"
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="16sp" />
 
-            <RelativeLayout
-                android:layout_width="fill_parent"
+            <TextView
+                android:id="@+id/text_userpage_program_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@id/text_userpage_program_status"
+                android:textColor="@color/userpage_program_title_bg"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/text_userpage_program_vv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/image_userpage_program_preview"
-                android:layout_toRightOf="@id/image_userpage_program_preview" >
-
-                <TextView
-                    android:id="@+id/text_userpage_program_vv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_centerVertical="true"
-                    android:drawablePadding="3dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/userpage_default_vv"
-                    android:textColor="@color/userpage_program_title_bg"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/text_userpage_program_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true"
-                    android:textColor="@color/userpage_program_title_bg"
-                    android:textSize="16sp" />
-            </RelativeLayout>
+                android:layout_toRightOf="@id/image_userpage_program_preview"
+                android:drawablePadding="3dp"
+                android:gravity="center_vertical"
+                android:text="@string/userpage_default_vv"
+                android:textColor="@color/userpage_program_title_bg"
+                android:textSize="16sp" />
         </RelativeLayout>
     </LinearLayout>
 

@@ -1,5 +1,9 @@
 package com.pplive.liveplatform.core.service.comment.model;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import com.google.gson.annotations.SerializedName;
 
 public class Feed {
@@ -45,6 +49,11 @@ public class Feed {
 
     public String getUserName() {
         return userName;
+    }
+
+    public String getTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy.MM.dd", Locale.US);
+        return format.format(new Date(createtime));
     }
 
 }

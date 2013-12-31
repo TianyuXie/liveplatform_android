@@ -11,13 +11,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -32,8 +36,10 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
+import com.pplive.liveplatform.ui.widget.RefreshListView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 
@@ -46,15 +52,30 @@ public class UserpageActivity extends Activity {
 
     public static final String EXTRA_NICKNAME = "nickname";
 
+    private final static int PULL = 1002;
+
+    private final static int REFRESH = 1003;
+
+    private final static int MSG_PULL_DELAY = 2000;
+
+    private final static int MSG_PULL_FINISH = 2001;
+
+    private final static int MSG_PULL_TIMEOUT = 2002;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
 
+    private RefreshListView mListView;
     private TextView mNodataText;
     private Button mNodataButton;
     private CircularImageView mUserIcon;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
+
+    private boolean mRefreshFinish;
+
+    private boolean mRefreshDelayed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,9 +93,13 @@ public class UserpageActivity extends Activity {
         Button settingsButton = (Button) findViewById(R.id.btn_userpage_settings);
         settingsButton.setOnClickListener(onSettingsBtnClickListener);
 
-        ListView listView = (ListView) findViewById(R.id.list_userpage_program);
-        listView.setAdapter(mAdapter);
-        listView.setOnItemClickListener(onItemClickListener);
+        mListView = (RefreshListView) findViewById(R.id.list_userpage_program);
+        LinearLayout pullHeader = (LinearLayout) findViewById(R.id.layout_userpage_pull_header);
+        pullHeader.addView(mListView.getPullView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
+        mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(onItemClickListener);
+        mListView.setOnUpdateListener(onUpdateListener);
+
         mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
         mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         mRefreshDialog = new RefreshDialog(this);
@@ -93,7 +118,7 @@ public class UserpageActivity extends Activity {
         }
         mUsername = getIntent().getStringExtra(EXTRA_USER);
         initUserinfo();
-        refreshData();
+        refreshData(false);
     }
 
     @Override
@@ -114,12 +139,17 @@ public class UserpageActivity extends Activity {
         }
     }
 
-    private void refreshData() {
-        mRefreshDialog.show();
+    private void refreshData(boolean isPull) {
         ProgramTask task = new ProgramTask();
         task.addTaskListener(onProgramTaskListener);
         TaskContext taskContext = new TaskContext();
         taskContext.set(ProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
+        if (isPull) {
+            taskContext.set(ProgramTask.KEY_TYPE, PULL);
+        } else {
+            mRefreshDialog.show();
+            taskContext.set(ProgramTask.KEY_TYPE, REFRESH);
+        }
         task.execute(taskContext);
     }
 
@@ -134,7 +164,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Program program = mPrograms.get(position);
-            if (program != null) {
+            if (program != null && mListView.canClick()) {
                 Intent intent = new Intent();
                 switch (program.getLiveStatus()) {
                 case LIVING:
@@ -186,7 +216,7 @@ public class UserpageActivity extends Activity {
     private View.OnClickListener onErrorBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            refreshData();
+            refreshData(false);
         }
     };
 
@@ -203,6 +233,10 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
+            int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
+            if (type == PULL) {
+                mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
+            }
             mPrograms.clear();
             mPrograms.addAll((Collection<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
             Collections.sort(mPrograms, comparator);
@@ -225,6 +259,10 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
+            int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
+            if (type == PULL) {
+                mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
+            }
             mPrograms.clear();
             mAdapter.notifyDataSetChanged();
             mNodataText.setText(R.string.userpage_user_error);
@@ -292,4 +330,45 @@ public class UserpageActivity extends Activity {
             }
         }
     };
+
+    private RefreshListView.OnUpdateListener onUpdateListener = new RefreshListView.OnUpdateListener() {
+        @Override
+        public void onRefresh() {
+            mRefreshFinish = false;
+            mRefreshDelayed = false;
+            refreshData(true);
+            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
+            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 10000);
+        }
+
+        @Override
+        public void onAppend() {
+        }
+
+        @Override
+        public void onScrollDown(boolean isDown) {
+        }
+    };
+
+    private Handler mPullHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_PULL_DELAY:
+                mRefreshDelayed = true;
+                break;
+            case MSG_PULL_FINISH:
+                mRefreshFinish = true;
+                break;
+            case MSG_PULL_TIMEOUT:
+                mListView.onRefreshComplete();
+                return;
+            }
+            if (mRefreshDelayed && mRefreshFinish) {
+                mPullHandler.removeMessages(MSG_PULL_TIMEOUT);
+                mListView.onRefreshComplete();
+            }
+        }
+    };
+
 }
