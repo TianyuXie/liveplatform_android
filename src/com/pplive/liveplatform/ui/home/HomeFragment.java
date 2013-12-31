@@ -409,7 +409,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             mRefreshDelayed = false;
             startPullTask();
             mHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
-            mHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 8000);
+            mHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 10000);
         }
 
         @Override

@@ -73,14 +73,25 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" >
 
-        <ListView
-            android:id="@+id/list_userpage_program"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="15dp"
-            android:divider="@null"
-            android:listSelector="@android:color/transparent" >
-        </ListView>
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/layout_userpage_pull_header"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <com.pplive.liveplatform.ui.widget.RefreshListView
+                android:id="@+id/list_userpage_program"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:divider="@null"
+                android:listSelector="@android:color/transparent" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/layout_userpage_nodata"

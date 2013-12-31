@@ -14,6 +14,7 @@ public class ProgramTask extends Task {
     static final String TAG = "_ProgramTask";
 
     public final static String KEY_RESULT = "program_result";
+    public final static String KEY_TYPE = "search_task_type";
 
     private final String ID = StringUtil.newGuid();
     public final static String TYPE = "Program";
