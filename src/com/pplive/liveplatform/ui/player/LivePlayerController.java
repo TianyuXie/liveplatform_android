@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.pplive.media.player.MediaController;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -28,7 +29,7 @@ public class LivePlayerController extends MediaController {
 
     private ImageButton mPlayPauseButton;
 
-    private static final int sDefaultTimeout = 3000;
+    private static final int sDefaultTimeout = 30000;
 
     private static final int FADE_OUT = 1;
 
@@ -160,6 +161,9 @@ public class LivePlayerController extends MediaController {
         }
         int position = mPlayer.getCurrentPosition();
         int duration = mPlayer.getDuration();
+        Log.d("Controller", "duration:" + duration);
+        Log.d("Controller", "position:" + position);
+
         if (mPlayerProgressBar != null) {
             if (duration > 0) {
                 // use long to avoid overflow
@@ -184,7 +188,7 @@ public class LivePlayerController extends MediaController {
      */
     private void disableUnsupportedButtons() {
         try {
-            if (mPlayPauseButton != null && !mPlayer.canPause()) {
+            if (mPlayPauseButton != null && mPlayer != null && !mPlayer.canPause()) {
                 mPlayPauseButton.setEnabled(false);
             }
         } catch (IncompatibleClassChangeError ex) {
@@ -253,7 +257,7 @@ public class LivePlayerController extends MediaController {
     private void updatePausePlay() {
         if (mRoot == null || mPlayPauseButton == null)
             return;
-        if (mPlayer.isPlaying()) {
+        if (mPlayer != null && mPlayer.isPlaying()) {
             mPlayPauseButton.setImageResource(R.drawable.tmp_player_pause);
         } else {
             mPlayPauseButton.setImageResource(R.drawable.tmp_player_play);
@@ -309,6 +313,8 @@ public class LivePlayerController extends MediaController {
 
             long duration = mPlayer.getDuration();
             long newposition = (duration * progress) / 1000L;
+            Log.d("Controller", "duration:" + duration);
+            Log.d("Controller", "newposition:" + newposition);
             mPlayer.seekTo((int) newposition);
             if (mCurrentTime != null)
                 mCurrentTime.setText(TimeUtil.stringForTime((int) newposition));

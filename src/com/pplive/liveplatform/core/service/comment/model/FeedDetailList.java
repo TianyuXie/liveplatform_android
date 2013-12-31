@@ -69,14 +69,12 @@ public class FeedDetailList {
         contentColor -= 0xff000000;
         String username = feed.getUserName();
         String content = feed.getContent();
-        //        String time = feed.getTime();
-        String time = "";
         String nickname = mapUser.get(username).getNickname();
         if (TextUtils.isEmpty(nickname)) {
             nickname = username;
         }
-        return String.format("<b><font color='#%06x'>%s:&nbsp;&nbsp;<small>%s</small></font><br><font color='#%06x'>&nbsp;&nbsp;&nbsp;%s</font></b><br>",
-                userColor, nickname, time, contentColor, content);
+        return String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor,
+                content);
     }
 
 }

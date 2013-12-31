@@ -11,6 +11,16 @@
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
+    <!--
+    <include
+        android:id="@+id/live_player_controller"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/layout_player_controller" >
+    </include>
+    -->
+
     <ImageView
         android:id="@+id/image_player_pptv_icon"
         android:layout_width="wrap_content"

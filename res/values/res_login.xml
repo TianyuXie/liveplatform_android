@@ -9,7 +9,8 @@
     <string name="login_no_pptv">还没有PPTV帐号?</string>
     <string name="register_failed">注册失败</string>
     <string name="register_nav">注册PPTV帐号</string>
-    <string name="register_username">用户名</string>
+    <string name="register_username">用户名&#160;-&#160;由数字,字母,下划线组成</string>
+    <string name="register_password">密码&#160;-&#160;至少6位不能为空</string>
     <string name="register_checkcode">验证码</string>
     <string name="register_email">邮箱</string>
     <string name="register_title">注册</string>
