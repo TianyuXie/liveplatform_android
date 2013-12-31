@@ -36,7 +36,6 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.widget.RefreshListView;
@@ -233,6 +232,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
+            mListView.setLastUpdateTime(System.currentTimeMillis());
             int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
             if (type == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
@@ -259,7 +259,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
-            int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
+            int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
             if (type == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             }

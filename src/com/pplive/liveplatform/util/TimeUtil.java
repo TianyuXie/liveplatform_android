@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.util;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 public class TimeUtil {
@@ -36,4 +38,10 @@ public class TimeUtil {
             return String.format(Locale.US, "%d时%d分", hours, minutes);
         }
     }
+    
+    public static String stamp2String(long time) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy/MM/dd", Locale.US);
+        return format.format(new Date(time));
+    }
+
 }
