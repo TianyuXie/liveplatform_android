@@ -57,7 +57,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private MeetVideoView mVideoView;
 
-    private LivePlayerController mController;
+//    private LivePlayerController mController;
 
     private View mTitleBarView;
 
@@ -117,7 +117,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
         mCountTextView = (TextView) layout.findViewById(R.id.text_player_countdown);
         mLoadingImage = layout.findViewById(R.id.image_player_loading);
-        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
+//        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
         Button backBtn = (Button) layout.findViewById(R.id.btn_player_back);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
@@ -185,7 +185,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);
         mVideoView.setOnErrorListener(mErrorListener);
-        mController.setMediaPlayer(mVideoView);
+//        mController.setMediaPlayer(mVideoView);
     }
 
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
@@ -278,7 +278,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mCallbackListener.onStartPlay();
             }
             mVideoView.start();
-            mController.show();
+//            mController.show();
         }
     };
 
@@ -417,7 +417,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             } else {
                 showBars(SHOW_DELAY);
             }
-            mController.switchVisibility();
+//            mController.switchVisibility();
             return true;
         }
 

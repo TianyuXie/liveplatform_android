@@ -73,7 +73,7 @@ public class FeedDetailList {
         if (TextUtils.isEmpty(nickname)) {
             nickname = username;
         }
-        return String.format("<b><font color='#%06x'>%s: </font><font color='#%06x'>&nbsp;&nbsp;&nbsp;%s</font></b><br>", userColor, nickname, contentColor,
+        return String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor,
                 content);
     }
 
