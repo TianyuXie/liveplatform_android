@@ -61,7 +61,7 @@ public class Program implements Serializable {
     public void setTitle(String title) {
         this.title = title;
     }
-    
+
     public void setLiveStatus(LiveStatusEnum status) {
         this.livestatus = status;
     }
@@ -137,12 +137,20 @@ public class Program implements Serializable {
         return StringUtil.isNullOrEmpty(screenshot_url) ? "" : screenshot_url;
     }
 
-    public int getVV() {
+    private int getVV() {
         return null == record ? 0 : record.vv;
     }
 
-    public int getOnline() {
+    private int getOnline() {
         return null == record ? 0 : record.online;
+    }
+
+    public int getViews() {
+        if (isLiving()) {
+            return getOnline();
+        } else {
+            return getVV();
+        }
     }
 
     public String getShareLinkUrl() {
@@ -152,12 +160,12 @@ public class Program implements Serializable {
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
-    
-    public boolean isLiving(){
+
+    public boolean isLiving() {
         return livestatus == LiveStatusEnum.LIVING;
     }
-    
-    public boolean isVOD(){
+
+    public boolean isVOD() {
         return livestatus == LiveStatusEnum.STOPPED;
     }
 

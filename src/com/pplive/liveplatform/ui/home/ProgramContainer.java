@@ -144,4 +144,8 @@ public class ProgramContainer extends RelativeLayout {
         findViewById(R.id.btn_status_replay).setVisibility(visibility);
     }
 
+    public void setUpdateTime(long time) {
+        mGridView.setLastUpdateTime(time);
+    }
+
 }

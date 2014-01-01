@@ -113,10 +113,30 @@ public class ImageUtil {
         return new BitmapDrawable(res, getCircleBitmap(res, id));
     }
 
-    public static Bitmap loadImageFromUrl(String url) throws IOException {
+    public static Bitmap loadImageFromUrl(String url, float width, float height) throws IOException {
         InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
-        BitmapFactory.Options bpo = new BitmapFactory.Options();
-        return BitmapFactory.decodeStream(inputStream, null, bpo);
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
+        newOpts.inJustDecodeBounds = false;
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+        int be = 1;
+        if (w >= h && w > width) {
+            be = (int) (w / width);
+        } else if (w < h && h > height) {
+            be = (int) (h / height);
+        }
+        if (be <= 0) {
+            be = 1;
+        }
+        newOpts.inSampleSize = be;
+        newOpts.inPreferredConfig = Config.ARGB_8888;
+        newOpts.inPurgeable = true;
+        newOpts.inInputShareable = true;
+        inputStream = (InputStream) new java.net.URL(url).getContent();
+        bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
+        return bitmap;
     }
 
     public static void bitmap2File(Bitmap bitmap, String filename) {
@@ -126,7 +146,7 @@ public class ImageUtil {
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-            //            bitmap.recycle();
+            bitmap.recycle();
         } catch (IOException e) {
             e.printStackTrace();
         }

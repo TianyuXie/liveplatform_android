@@ -5,14 +5,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.pplive.media.player.MediaController;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.TimeUtil;
@@ -23,13 +21,15 @@ public class LivePlayerController extends MediaController {
 
     private boolean mDragging;
 
-    private ProgressBar mPlayerProgressBar;
+    private boolean mShowAlways;
+
+    private SeekBar mPlayerProgressBar;
 
     private TextView mEndTime, mCurrentTime;
 
-    private ImageButton mPlayPauseButton;
+    private ToggleButton mPlayPauseButton;
 
-    private static final int sDefaultTimeout = 30000;
+    private static final int sDefaultTimeout = 6000;
 
     private static final int FADE_OUT = 1;
 
@@ -50,21 +50,14 @@ public class LivePlayerController extends MediaController {
     }
 
     private void initControllerView(View v) {
-        // TODO
-        mPlayPauseButton = (ImageButton) v.findViewById(R.id.play_pause_button);
-        if (mPlayPauseButton != null) {
-            mPlayPauseButton.requestFocus();
-            mPlayPauseButton.setOnClickListener(mPauseListener);
-        }
-
-        mPlayerProgressBar = (ProgressBar) v.findViewById(R.id.player_seekbar);
-        if (mPlayerProgressBar != null) {
-            if (mPlayerProgressBar instanceof SeekBar) {
-                SeekBar seeker = (SeekBar) mPlayerProgressBar;
-                seeker.setOnSeekBarChangeListener(mSeekListener);
-            }
-            mPlayerProgressBar.setMax(1000);
-        }
+        mPlayPauseButton = (ToggleButton) v.findViewById(R.id.play_pause_button);
+        mPlayPauseButton.requestFocus();
+        mPlayPauseButton.setOnClickListener(mPauseListener);
+        mPlayerProgressBar = (SeekBar) v.findViewById(R.id.player_seekbar);
+        mPlayerProgressBar.setOnSeekBarChangeListener(mSeekListener);
+        mPlayerProgressBar.setMax(1000);
+        mEndTime = (TextView) v.findViewById(R.id.text_player_duration);
+        mCurrentTime = (TextView) v.findViewById(R.id.text_player_current_time);
     }
 
     @Override
@@ -104,9 +97,7 @@ public class LivePlayerController extends MediaController {
     public void show(int timeout) {
         if (!mShowing) {
             setProgress();
-            if (mPlayPauseButton != null) {
-                mPlayPauseButton.requestFocus();
-            }
+            mPlayPauseButton.requestFocus();
             disableUnsupportedButtons();
             mRoot.setVisibility(VISIBLE);
             mShowing = true;
@@ -129,11 +120,15 @@ public class LivePlayerController extends MediaController {
      * Remove the controller from the screen.
      */
     public void hide() {
-        if (mShowing) {
+        if (mShowing && !mShowAlways) {
             mRoot.setVisibility(View.GONE);
             mHandler.removeMessages(SHOW_PROGRESS);
             mShowing = false;
         }
+    }
+
+    public void setAlwaysShow(boolean status) {
+        mShowAlways = status;
     }
 
     private Handler mHandler = new Handler() {
@@ -146,7 +141,7 @@ public class LivePlayerController extends MediaController {
                 break;
             case SHOW_PROGRESS:
                 pos = setProgress();
-                if (!mDragging && mShowing && mPlayer.isPlaying()) {
+                if (!mDragging && mShowing && mPlayer != null && mPlayer.isPlaying()) {
                     msg = obtainMessage(SHOW_PROGRESS);
                     sendMessageDelayed(msg, 1000 - (pos % 1000));
                 }
@@ -161,23 +156,19 @@ public class LivePlayerController extends MediaController {
         }
         int position = mPlayer.getCurrentPosition();
         int duration = mPlayer.getDuration();
-        Log.d("Controller", "duration:" + duration);
-        Log.d("Controller", "position:" + position);
 
-        if (mPlayerProgressBar != null) {
-            if (duration > 0) {
-                // use long to avoid overflow
-                long pos = 1000L * position / duration;
-                mPlayerProgressBar.setProgress((int) pos);
-            }
-            int percent = mPlayer.getBufferPercentage();
-            mPlayerProgressBar.setSecondaryProgress(percent * 10);
+        if (duration > 0) {
+            // use long to avoid overflow
+            long pos = 1000L * position / duration;
+            mPlayerProgressBar.setProgress((int) pos);
         }
+        int percent = mPlayer.getBufferPercentage();
+        mPlayerProgressBar.setSecondaryProgress(percent * 10);
 
         if (mEndTime != null)
-            mEndTime.setText(TimeUtil.stringForTime(duration));
+            mEndTime.setText(TimeUtil.stringForTimeMin(duration));
         if (mCurrentTime != null)
-            mCurrentTime.setText(TimeUtil.stringForTime(position));
+            mCurrentTime.setText(TimeUtil.stringForTimeMin(position));
 
         return position;
     }
@@ -188,7 +179,7 @@ public class LivePlayerController extends MediaController {
      */
     private void disableUnsupportedButtons() {
         try {
-            if (mPlayPauseButton != null && mPlayer != null && !mPlayer.canPause()) {
+            if (mPlayer != null && !mPlayer.canPause()) {
                 mPlayPauseButton.setEnabled(false);
             }
         } catch (IncompatibleClassChangeError ex) {
@@ -202,12 +193,8 @@ public class LivePlayerController extends MediaController {
 
     @Override
     public void setEnabled(boolean enabled) {
-        if (mPlayPauseButton != null) {
-            mPlayPauseButton.setEnabled(enabled);
-        }
-        if (mPlayerProgressBar != null) {
-            mPlayerProgressBar.setEnabled(enabled);
-        }
+        mPlayPauseButton.setEnabled(enabled);
+        mPlayerProgressBar.setEnabled(enabled);
         disableUnsupportedButtons();
         super.setEnabled(enabled);
     }
@@ -255,12 +242,10 @@ public class LivePlayerController extends MediaController {
     }
 
     private void updatePausePlay() {
-        if (mRoot == null || mPlayPauseButton == null)
-            return;
         if (mPlayer != null && mPlayer.isPlaying()) {
-            mPlayPauseButton.setImageResource(R.drawable.tmp_player_pause);
+            mPlayPauseButton.setChecked(false);
         } else {
-            mPlayPauseButton.setImageResource(R.drawable.tmp_player_play);
+            mPlayPauseButton.setChecked(true);
         }
     }
 
@@ -312,12 +297,10 @@ public class LivePlayerController extends MediaController {
             }
 
             long duration = mPlayer.getDuration();
-            long newposition = (duration * progress) / 1000L;
-            Log.d("Controller", "duration:" + duration);
-            Log.d("Controller", "newposition:" + newposition);
+            long newposition = duration * progress / 1000L;
             mPlayer.seekTo((int) newposition);
             if (mCurrentTime != null)
-                mCurrentTime.setText(TimeUtil.stringForTime((int) newposition));
+                mCurrentTime.setText(TimeUtil.stringForTimeMin((int) newposition));
         }
 
         public void onStopTrackingTouch(SeekBar bar) {

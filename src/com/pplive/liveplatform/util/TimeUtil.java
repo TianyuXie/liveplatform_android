@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.util;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -11,7 +12,17 @@ public class TimeUtil {
     public static final int SECONDS_OF_DAY = 24 * 3600;
     public static final int SECONDS_OF_HOUR = 3600;
 
-    public static String stringForTime(long timeMs) {
+    public static String stringForTimeMin(long timeMs) {
+        if (timeMs <= 0) {
+            return "00:00";
+        }
+        long totalSeconds = timeMs / 1000;
+        long seconds = totalSeconds % 60;
+        long minutes = totalSeconds / 60;
+        return String.format(Locale.US, "%02d:%02d", minutes, seconds);
+    }
+
+    public static String stringForTimeHour(long timeMs) {
         if (timeMs <= 0) {
             return "00:00:00";
         }
@@ -24,7 +35,7 @@ public class TimeUtil {
         return String.format(Locale.US, "%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    public static String stringForLongTime(long timeMs) {
+    public static String stringForCountdown(long timeMs) {
         if (timeMs <= 0) {
             return "0时0分";
         }
@@ -37,6 +48,11 @@ public class TimeUtil {
         } else {
             return String.format(Locale.US, "%d时%d分", hours, minutes);
         }
+    }
+
+    public static String stamp2String(long time) {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy/MM/dd", Locale.US);
+        return format.format(new Date(time));
     }
     
     public static boolean isSameDay(long milli1, long milli2) {
@@ -63,4 +79,5 @@ public class TimeUtil {
                 cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
                 cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
+
 }
