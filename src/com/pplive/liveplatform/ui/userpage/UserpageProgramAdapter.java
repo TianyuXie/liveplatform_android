@@ -72,7 +72,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
         switch (data.getLiveStatus()) {
         case LIVING:
             holder.timeTextView.setText(data.getStartTimeLong());
-            holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+            holder.viewcountTextView.setText(String.valueOf(data.getViews()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_watch, 0, 0, 0);
             holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_full);
             break;
@@ -86,7 +86,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
             break;
         case STOPPED:
             holder.timeTextView.setText(data.getStartTimeLong());
-            holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+            holder.viewcountTextView.setText(String.valueOf(data.getViews()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
             holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_none);
             break;

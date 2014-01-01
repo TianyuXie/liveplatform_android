@@ -186,7 +186,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
-        mLivePlayerFragment.setLayout(mIsFull);
+        mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
         mLivePlayerFragment.setUserIcon(mProgram.getOwnerIcon());
@@ -280,7 +280,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         if (!init) {
-            mLivePlayerFragment.setLayout(mIsFull);
+            mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         }
     }
 
@@ -555,12 +555,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
-
-            if (!TextUtils.isEmpty(mUrl)) {
-                mLivePlayerFragment.setupPlayer(mUrl);
-            } else {
-                Log.w(TAG, "mUrl is empty");
-            }
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
@@ -625,6 +619,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mChatBox.setVisibility(View.VISIBLE);
         mCommentWrapper.setVisibility(View.VISIBLE);
         mWriteBtn.setVisibility(View.VISIBLE);
+
+        if (!TextUtils.isEmpty(mUrl)) {
+            mLivePlayerFragment.setupPlayer(mUrl);
+        } else {
+            Log.w(TAG, "mUrl is empty");
+        }
     }
 
     public void hideSecondLoading() {
@@ -717,6 +717,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void keepAliveDelay(long delay) {
+        Log.d(TAG, "keepAliveDelay:" + System.currentTimeMillis());
         mHandler.removeMessages(MSG_KEEP_ALIVE);
         mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
     }

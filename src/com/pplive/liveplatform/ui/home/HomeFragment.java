@@ -265,6 +265,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             if (getActivity() != null) {
                 mBusy = false;
+                mContainer.setUpdateTime(System.currentTimeMillis());
                 FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
                 mNextToken = fallList.nextToken();
                 int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
