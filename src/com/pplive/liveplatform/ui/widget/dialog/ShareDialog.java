@@ -276,6 +276,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     private void shareImage(final int target) {
         mRefreshDialog.show();
         ImageTask task = new ImageTask();
+        task.setTimeout(10000);
         TaskContext taskContext = new TaskContext();
         taskContext.set(ImageTask.KEY_URL, mImageUrl);
         taskContext.set(ImageTask.KEY_TARGET, target);

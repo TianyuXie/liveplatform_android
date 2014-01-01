@@ -79,7 +79,7 @@ public class HomeProgramAdapter extends BaseAdapter {
         } else {
             holder.timedownTextView.setVisibility(View.GONE);
         }
-        holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+        holder.viewcountTextView.setText(String.valueOf(data.getViews()));
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
     }
 
