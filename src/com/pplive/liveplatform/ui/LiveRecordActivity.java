@@ -432,7 +432,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onRecordUpdate(int duration) {
 
         if (mMediaRecorderView.isRecording()) {
-            mTextRecordDuration.setText(TimeUtil.stringForTime(duration * 1000));
+            mTextRecordDuration.setText(TimeUtil.stringForTimeHour(duration * 1000));
 
             Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE, duration + 1 /* arg1 */, 0 /* arg2 */);
             mInnerHandler.sendMessageDelayed(msg, 1000 /* milliseconds */);
@@ -448,14 +448,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             String coming = null;
             if (start - now >= 0) {
-                coming = TimeUtil.stringForTime(start - now);
+                coming = TimeUtil.stringForTimeHour(start - now);
 
                 if (mCountDown) {
                     mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
                 }
 
             } else {
-                coming = TimeUtil.stringForTime(0);
+                coming = TimeUtil.stringForTimeHour(0);
             }
 
             mTextLiveComing.setText(coming);

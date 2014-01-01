@@ -75,7 +75,7 @@ public class HomeProgramAdapter extends BaseAdapter {
         holder.titleTextView.setText(data.getTitle());
         if (data.isComing()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
-            holder.timedownTextView.setText(TimeUtil.stringForLongTime(data.getStartTime() - System.currentTimeMillis()));
+            holder.timedownTextView.setText(TimeUtil.stringForCountdown(data.getStartTime() - System.currentTimeMillis()));
         } else {
             holder.timedownTextView.setVisibility(View.GONE);
         }

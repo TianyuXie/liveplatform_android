@@ -20,7 +20,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -55,9 +54,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private static final int FLAG_USER_VIEW = 0x4;
 
+    private static final int FLAG_TIME_BAR = 0x8;
+
     private MeetVideoView mVideoView;
 
-//    private LivePlayerController mController;
+    private LivePlayerController mController;
 
     private View mTitleBarView;
 
@@ -73,7 +74,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private TextView mFinishText;
 
+    private View mControllerWrapper;
+
     private View mLoadingImage;
+
+    private View mBufferView;
 
     private CircularImageView mUserIcon;
 
@@ -117,9 +122,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
         mCountTextView = (TextView) layout.findViewById(R.id.text_player_countdown);
         mLoadingImage = layout.findViewById(R.id.image_player_loading);
-//        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
-        Button shareBtn = (Button) layout.findViewById(R.id.btn_player_share);
-        Button backBtn = (Button) layout.findViewById(R.id.btn_player_back);
+        mControllerWrapper = layout.findViewById(R.id.wrapper_player_controller);
+        mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
+        mController.setAlwaysShow(true);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mFinishText = (TextView) layout.findViewById(R.id.text_loading_finish);
@@ -127,10 +132,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mPPTVIcon = layout.findViewById(R.id.image_player_pptv_icon);
         mUserIcon = (CircularImageView) layout.findViewById(R.id.btn_player_user_icon);
         mUserIcon.setOnClickListener(onUserBtnClickListener);
+        mBufferView = layout.findViewById(R.id.layout_player_buffering);
         layout.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
-        shareBtn.setOnClickListener(this);
-        backBtn.setOnClickListener(this);
+        layout.findViewById(R.id.btn_player_share).setOnClickListener(this);
+        layout.findViewById(R.id.btn_player_back).setOnClickListener(this);
         return layout;
     }
 
@@ -184,8 +190,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mVideoView.setVideoURI(uri);
         mVideoView.setOnPreparedListener(mPreparedListener);
         mVideoView.setOnCompletionListener(mCompletionListener);
+        mVideoView.setOnInfoListener(mInfoListener);
         mVideoView.setOnErrorListener(mErrorListener);
-//        mController.setMediaPlayer(mVideoView);
+        mController.setMediaPlayer(mVideoView);
     }
 
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
@@ -278,8 +285,24 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mCallbackListener.onStartPlay();
             }
             mVideoView.start();
-//            mController.show();
+            mController.show();
         }
+    };
+
+    private MeetVideoView.OnInfoListener mInfoListener = new MeetVideoView.OnInfoListener() {
+
+        @Override
+        public boolean onInfo(int what, int extra) {
+            if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
+                mBufferView.setVisibility(View.VISIBLE);
+                return true;
+            } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
+                mBufferView.setVisibility(View.GONE);
+                return true;
+            }
+            return false;
+        }
+
     };
 
     private MeetVideoView.OnCompletionListener mCompletionListener = new MeetVideoView.OnCompletionListener() {
@@ -359,7 +382,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void setLayout(boolean isFull) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
-            mFlagMask = FLAG_TITLE_BAR;
+            mFlagMask = FLAG_TITLE_BAR | FLAG_TIME_BAR;
         } else {
             mFlagMask = FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW;
         }
@@ -371,6 +394,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         ViewUtil.setVisibility(mTitleBarView, flags & FLAG_TITLE_BAR);
         ViewUtil.setVisibility(mBottomBarView, flags & FLAG_BOTTOM_BAR);
         ViewUtil.setVisibility(mUserIcon, flags & FLAG_USER_VIEW);
+        ViewUtil.setVisibility(mControllerWrapper, flags & FLAG_TIME_BAR);
     }
 
     private void hideBars() {
@@ -378,7 +402,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             return;
         }
         mShowBar = false;
-        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW);
+        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR);
         setVisibilityByFlags();
         mHandler.removeMessages(HIDE);
     }
@@ -386,7 +410,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void showBars(int timeout) {
         if (!mShowBar) {
             mShowBar = true;
-            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW);
+            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR);
             setVisibilityByFlags();
         }
         mHandler.removeMessages(HIDE);
@@ -417,7 +441,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             } else {
                 showBars(SHOW_DELAY);
             }
-//            mController.switchVisibility();
             return true;
         }
 
@@ -550,7 +573,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mCountTextView.setText("节目尚未开始");
                 handler.postDelayed(this, 20 * TIMER_DELAY);
             } else {
-                mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForTime(mStartTime - System.currentTimeMillis()));
+                mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForTimeHour(mStartTime - System.currentTimeMillis()));
                 handler.postDelayed(this, TIMER_DELAY);
             }
         }
