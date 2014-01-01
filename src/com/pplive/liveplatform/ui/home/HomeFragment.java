@@ -15,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.SearchService;
@@ -62,7 +61,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private final static int CATALOG_SPORT = 4;
 
     private final static int CATALOG_FINANCE = 5;
-
+    
     private TitleBar mTitleBar;
 
     private ProgramContainer mContainer;
@@ -263,6 +262,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "SearchTask onTaskFinished");
             if (getActivity() != null) {
                 mBusy = false;
                 mContainer.setUpdateTime(System.currentTimeMillis());
@@ -315,7 +315,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
-                Toast.makeText(getActivity(), R.string.toast_failed, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -331,7 +330,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
-                Toast.makeText(getActivity(), R.string.toast_timeout, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -343,7 +341,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
-                Toast.makeText(getActivity(), R.string.toast_cancel, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getActivity(), R.string.toast_cancel, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -409,7 +407,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             mRefreshFinish = false;
             mRefreshDelayed = false;
             startPullTask();
-            mHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
+            mHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 1500);
             mHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 10000);
         }
 

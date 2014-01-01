@@ -70,7 +70,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_KEEP_ALIVE = 2003;
 
-    private final static int LOADING_DELAY_TIME = 3 * 1000;
+    private final static int LOADING_DELAY_TIME = 1 * 1000;
 
     private final static int KEEP_ALIVE_DELAY_TIME = 30 * 1000;
 

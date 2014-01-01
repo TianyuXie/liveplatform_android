@@ -44,7 +44,7 @@
     <com.pplive.liveplatform.ui.widget.RefreshGridView
         android:id="@+id/grid_home_results"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:layoutAnimation="@anim/home_gridview_flyin"
         android:numColumns="2" />
 
