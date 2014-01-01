@@ -113,30 +113,27 @@ public class ImageUtil {
         return new BitmapDrawable(res, getCircleBitmap(res, id));
     }
 
-    public static Bitmap loadImageFromUrl(String url) throws IOException {
+    public static Bitmap loadImageFromUrl(String url, float width, float height) throws IOException {
         InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
         BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;//只读边,不读内容  
+        newOpts.inJustDecodeBounds = true;
         Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
         newOpts.inJustDecodeBounds = false;
         int w = newOpts.outWidth;
         int h = newOpts.outHeight;
-        float hh = 30f;
-        float ww = 40f;
         int be = 1;
-        if (w > h && w > ww) {
-            be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {
-            be = (int) (newOpts.outHeight / hh);
+        if (w >= h && w > width) {
+            be = (int) (w / width);
+        } else if (w < h && h > height) {
+            be = (int) (h / height);
         }
-        if (be <= 0)
+        if (be <= 0) {
             be = 1;
-        newOpts.inSampleSize = be;//设置采样率  
-
-        newOpts.inPreferredConfig = Config.ARGB_8888;//该模式是默认的,可不设  
-        newOpts.inPurgeable = true;// 同时设置才会有效  
-        newOpts.inInputShareable = true;//当系统内存不够时候图片自动被回收  
-
+        }
+        newOpts.inSampleSize = be;
+        newOpts.inPreferredConfig = Config.ARGB_8888;
+        newOpts.inPurgeable = true;
+        newOpts.inInputShareable = true;
         inputStream = (InputStream) new java.net.URL(url).getContent();
         bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
         return bitmap;

@@ -58,7 +58,7 @@ public class ImageTask extends Task {
         Bitmap bitmap = null;
         TaskResult result = new TaskResult(TaskStatus.Finished);
         try {
-            bitmap = ImageUtil.loadImageFromUrl(url);
+            bitmap = ImageUtil.loadImageFromUrl(url, 120.0f, 90.0f);
         } catch (IOException e) {
             e.printStackTrace();
             result.setStatus(TaskStatus.Failed);

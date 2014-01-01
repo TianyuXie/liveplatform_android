@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +48,8 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     private String mImageUrl;
     private String mSummary;
 
+    private Dialog mRefreshDialog;
+
     public static final String PARAM_TARGET_URL = "targetUrl";
     public static final String PARAM_TITLE = "title";
     public static final String PARAM_SUMMARY = "summary";
@@ -69,6 +72,19 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         mTitle = "";
         mImageUrl = "";
         mSummary = "";
+        mRefreshDialog = new RefreshDialog(context);
+    }
+
+    @Override
+    protected void onStart() {
+        Log.d(TAG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
     }
 
     public void setActivity(Activity activity) {
@@ -116,6 +132,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     public void qqShare() {
         if (SysUtil.checkPackage("com.tencent.mobileqq", getContext())) {
             if (mActivity != null) {
+                mRefreshDialog.show();
                 TencentPassport.getInstance().init(mActivity);
                 TencentPassport.getInstance().setShareListener(qqShareListener);
                 TencentPassport.getInstance().doShareToQQ(mActivity, getShareQQData());
@@ -177,6 +194,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(tmpfile)));
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
+            mRefreshDialog.dismiss();
         } catch (ActivityNotFoundException e) {
             Toast.makeText(getContext(), R.string.share_general_not_install, Toast.LENGTH_SHORT).show();
         } catch (NameNotFoundException e) {
@@ -208,13 +226,21 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     private void wechatShare(Bitmap bitmap) {
-        WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, bitmap, WeChatShare.SHARE_WECHAT);
+        boolean result = WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, bitmap, WeChatShare.SHARE_WECHAT);
+        if (!result) {
+            Toast.makeText(getContext(), R.string.share_failed, Toast.LENGTH_SHORT).show();
+        }
         dismiss();
+        mRefreshDialog.dismiss();
     }
 
     private void wechatSNSShare(Bitmap bitmap) {
-        WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, bitmap, WeChatShare.SHARE_SNS);
+        boolean result = WeChatShare.getInstance().sendToWeChat(mActivity, mSummary, mTargetUrl, mTitle, bitmap, WeChatShare.SHARE_SNS);
+        if (!result) {
+            Toast.makeText(getContext(), R.string.share_failed, Toast.LENGTH_SHORT).show();
+        }
         dismiss();
+        mRefreshDialog.dismiss();
     }
 
     public void setData(Bundle data) {
@@ -248,6 +274,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     private void shareImage(final int target) {
+        mRefreshDialog.show();
         ImageTask task = new ImageTask();
         TaskContext taskContext = new TaskContext();
         taskContext.set(ImageTask.KEY_URL, mImageUrl);
@@ -300,6 +327,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             dismiss();
+            mRefreshDialog.dismiss();
         }
 
         @Override
@@ -312,6 +340,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         @Override
         public void shareSuccess() {
             dismiss();
+            mRefreshDialog.dismiss();
         }
 
         @Override
@@ -324,11 +353,13 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
                 }
             }).sendEmptyMessage(0);
             dismiss();
+            mRefreshDialog.dismiss();
         }
 
         @Override
         public void shareCanceled() {
             dismiss();
+            mRefreshDialog.dismiss();
         }
     };
 }
