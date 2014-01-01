@@ -78,7 +78,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private View mLoadingImage;
 
-    private View mBufferView;
+    //    private View mBufferView;
 
     private CircularImageView mUserIcon;
 
@@ -132,7 +132,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mPPTVIcon = layout.findViewById(R.id.image_player_pptv_icon);
         mUserIcon = (CircularImageView) layout.findViewById(R.id.btn_player_user_icon);
         mUserIcon.setOnClickListener(onUserBtnClickListener);
-        mBufferView = layout.findViewById(R.id.layout_player_buffering);
+        //        mBufferView = layout.findViewById(R.id.layout_player_buffering);
         layout.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
         layout.findViewById(R.id.btn_player_share).setOnClickListener(this);
@@ -294,10 +294,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public boolean onInfo(int what, int extra) {
             if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
-                mBufferView.setVisibility(View.VISIBLE);
+                //                mBufferView.setVisibility(View.VISIBLE);
                 return true;
             } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
-                mBufferView.setVisibility(View.GONE);
+                //                mBufferView.setVisibility(View.GONE);
                 return true;
             }
             return false;
@@ -379,14 +379,18 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         return false;
     }
 
-    public void setLayout(boolean isFull) {
+    public void setLayout(boolean isFull, boolean isVod) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
-            mFlagMask = FLAG_TITLE_BAR | FLAG_TIME_BAR;
+            mFlagMask = FLAG_TITLE_BAR;
+            if (isVod) {
+                mFlagMask |= FLAG_TIME_BAR;
+            }
         } else {
             mFlagMask = FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW;
         }
         setVisibilityByFlags();
+        showBars(SHOW_DELAY);
     }
 
     private void setVisibilityByFlags() {

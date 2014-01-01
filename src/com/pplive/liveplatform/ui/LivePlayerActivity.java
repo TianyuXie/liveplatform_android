@@ -186,7 +186,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
-        mLivePlayerFragment.setLayout(mIsFull);
+        mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
         mLivePlayerFragment.setUserIcon(mProgram.getOwnerIcon());
@@ -280,7 +280,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         if (!init) {
-            mLivePlayerFragment.setLayout(mIsFull);
+            mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         }
     }
 
@@ -717,6 +717,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void keepAliveDelay(long delay) {
+        Log.d(TAG, "keepAliveDelay:" + System.currentTimeMillis());
         mHandler.removeMessages(MSG_KEEP_ALIVE);
         mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
     }
