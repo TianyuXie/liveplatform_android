@@ -57,6 +57,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private LiveListView mLiveListView;
 
     private Mode mStatus = Mode.INITIAL;
+    
+    private Program mSelectedProgram;
 
     @Override
     public void onAttach(Activity activity) {
@@ -149,17 +151,17 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         init();
     }
-    
+
     public void onBackPressed() {
-        
+
         if (Mode.INITIAL == mStatus) {
             onClickBtnLiveHome();
         } else {
             onClickBtnLiveBack();
         }
-        
+
     }
-    
+
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
         mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d", year, month, day, hour, minute));
@@ -317,10 +319,9 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         setMode(Mode.EDIT_PRELIVE);
 
-        if (null != program) {
-            mEditLiveTitle.setText(program.getTitle());
-        }
-
+        mSelectedProgram = program;
+        
+        init();
     }
 
     public String getLiveTitle() {
@@ -338,15 +339,25 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private void init() {
 
         if (null != mEditLiveTitle) {
-            String username = UserManager.getInstance(getActivity()).getNickname();
-            String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
-
-            mEditLiveTitle.setText(live_title);
+            
+            String liveTitle = null;
+            if (null != mSelectedProgram) {
+                liveTitle = mSelectedProgram.getTitle();
+            } else {
+                String username = UserManager.getInstance(getActivity()).getNickname();
+                liveTitle = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
+            }
+            
+            mEditLiveTitle.setText(liveTitle);
         }
     }
 
     public void reset() {
+        Log.d(TAG, "reset");
+
         setMode(Mode.INITIAL);
+        
+        mSelectedProgram = null;
 
         init();
     }

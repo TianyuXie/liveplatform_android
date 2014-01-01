@@ -59,7 +59,7 @@ import de.greenrobot.event.EventBus;
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, Handler.Callback {
 
     static final String TAG = "_LiveRecordActivity";
-    
+
     public static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
@@ -154,7 +154,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private Program mLivingProgram;
     private String mLivingUrl;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -224,7 +224,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         Log.d(TAG, "onResume");
 
         super.onResume();
-        
+
         if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
             startCountDown();
         }
@@ -285,7 +285,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         Log.d(TAG, "onConfigurationChanged");
     }
-    
+
     @Override
     public void onBackPressed() {
         if (!mFooterBarFragment.isHidden()) {
@@ -323,12 +323,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         switch (event.getNetworkState()) {
         case MOBILE:
         case THIRD_GENERATION:
-            DialogManager.alertMobileDialog(this, new OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    //TODO continue playing
-                }
-            }).show();
+            DialogManager.alertMobileDialog(this, null).show();
             break;
 
         default:
@@ -563,21 +558,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mMediaRecorderView.stopRecording();
 
             if (stopLive) {
-                stopLiving(mLivingProgram.getId());
+                stopLiving(mLivingProgram);
             }
 
-            mLivingProgram = null;
             mLivingUrl = null;
+            mLivingProgram = null;
             mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
     }
 
-    private void stopLiving(long pid) {
+    private void stopLiving(Program program) {
         String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
         String coToken = UserManager.getInstance(getApplicationContext()).getToken();
 
-        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, pid, LiveStatusEnum.STOPPED, username);
+        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
+        program.setLiveStatus(LiveStatusEnum.STOPPED);
     }
 
     private void performOnClickStartRecording() {
@@ -718,13 +714,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 } else {
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
                     program.setLiveStatus(LiveStatusEnum.INIT);
-                    
+
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
                     program.setLiveStatus(LiveStatusEnum.PREVIEW);
-                    
+
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
                     program.setLiveStatus(LiveStatusEnum.LIVING);
-                    
+
                     Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
                 }
 
@@ -790,7 +786,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             if (!mMediaRecorderView.isRecording()) {
-                
+
                 // TODO: 
                 DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
 
