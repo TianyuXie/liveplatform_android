@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.util;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -52,6 +53,31 @@ public class TimeUtil {
     public static String stamp2String(long time) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy/MM/dd", Locale.US);
         return format.format(new Date(time));
+    }
+    
+    public static boolean isSameDay(long milli1, long milli2) {
+        
+        return isSameDay(new Date(milli1), new Date(milli2));
+    }
+    
+    public static boolean isSameDay(Date date1, Date date2) {
+        
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        
+        Calendar cal2 = Calendar.getInstance();
+        cal2.setTime(date2);
+        
+        return isSameDay(cal1, cal2);
+    }
+    
+    public static boolean isSameDay(Calendar cal1, Calendar cal2) {
+        
+        
+        return cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) &&
+                cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
     }
 
 }
