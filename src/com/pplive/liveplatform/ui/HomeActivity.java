@@ -152,7 +152,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     }
 
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
-
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             Log.d(TAG, "onScroll");
@@ -292,26 +291,19 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
             doSlideBack();
             switch (checkedId) {
             case R.id.btn_sidebar_original:
-                Log.d(TAG, "btn_sidebar_original");
                 mHomeFragment.switchSubject(1);
                 break;
             case R.id.btn_sidebar_tv:
-                Log.d(TAG, "btn_sidebar_tv");
                 mHomeFragment.switchSubject(2);
                 break;
             case R.id.btn_sidebar_game:
-                Log.d(TAG, "btn_sidebar_game");
                 mHomeFragment.switchSubject(3);
                 break;
             case R.id.btn_sidebar_sport:
-                Log.d(TAG, "btn_sidebar_sport");
                 mHomeFragment.switchSubject(4);
                 break;
             case R.id.btn_sidebar_finance:
-                Log.d(TAG, "btn_sidebar_finance");
                 mHomeFragment.switchSubject(5);
-                break;
-            default:
                 break;
             }
         }

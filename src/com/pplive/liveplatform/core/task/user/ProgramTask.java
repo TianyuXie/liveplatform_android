@@ -2,6 +2,9 @@ package com.pplive.liveplatform.core.task.user;
 
 import java.util.List;
 
+import android.text.TextUtils;
+
+import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -51,10 +54,15 @@ public class ProgramTask extends Task {
         }
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
+        String token = context.getString(KEY_TOKEN);
         List<Program> data = null;
         try {
-            data = ProgramService.getInstance().getProgramsByUser(username);
-        } catch (Exception e) {
+            if (TextUtils.isEmpty(token)) {
+                data = ProgramService.getInstance().getProgramsByUser(username);
+            } else {
+                data = ProgramService.getInstance().getProgramsByOwner(token, username);
+            }
+        } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.Failed, "ProgramService error");
         }
         if (data == null) {

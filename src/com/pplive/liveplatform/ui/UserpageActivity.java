@@ -61,6 +61,10 @@ public class UserpageActivity extends Activity {
 
     private final static int MSG_PULL_TIMEOUT = 2002;
 
+    private final static int PULL_DELAY_TIME = 2000;
+
+    private final static int PULL_TIMEOUT_TIME = 10000;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
@@ -106,7 +110,8 @@ public class UserpageActivity extends Activity {
         //init views
         TextView title = (TextView) findViewById(R.id.text_userpage_title);
         View cameraIcon = findViewById(R.id.image_userpage_camera);
-        if (UserManager.getInstance(this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+        mUsername = getIntent().getStringExtra(EXTRA_USER);
+        if (isLogin(mUsername)) {
             title.setText(R.string.userpage_my_title);
             settingsButton.setVisibility(View.VISIBLE);
             cameraIcon.setVisibility(View.VISIBLE);
@@ -115,15 +120,8 @@ public class UserpageActivity extends Activity {
             settingsButton.setVisibility(View.GONE);
             cameraIcon.setVisibility(View.GONE);
         }
-        mUsername = getIntent().getStringExtra(EXTRA_USER);
         initUserinfo();
         refreshData(false);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
     }
 
     private void initUserinfo() {
@@ -142,7 +140,10 @@ public class UserpageActivity extends Activity {
         ProgramTask task = new ProgramTask();
         task.addTaskListener(onProgramTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
+        taskContext.set(ProgramTask.KEY_USERNAME, mUsername);
+        if (isLogin(mUsername)) {
+            taskContext.set(ProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+        }
         if (isPull) {
             taskContext.set(ProgramTask.KEY_TYPE, PULL);
         } else {
@@ -175,7 +176,7 @@ public class UserpageActivity extends Activity {
                 case NOT_START:
                 case PREVIEW:
                 case INIT:
-                    if (UserManager.getInstance(mContext).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+                    if (isLogin(mUsername)) {
                         intent.setClass(mContext, LiveRecordActivity.class);
                         startActivity(intent);
                     } else {
@@ -235,8 +236,7 @@ public class UserpageActivity extends Activity {
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
             mListView.setLastUpdateTime(System.currentTimeMillis());
-            int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
-            if (type == PULL) {
+            if ((Integer) event.getContext().get(ProgramTask.KEY_TYPE) == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             }
             mPrograms.clear();
@@ -244,7 +244,7 @@ public class UserpageActivity extends Activity {
             Collections.sort(mPrograms, comparator);
             mAdapter.notifyDataSetChanged();
             if (mPrograms.isEmpty()) {
-                if (UserManager.getInstance(mContext).isLogin(mUsername)) {
+                if (isLogin(mUsername)) {
                     mNodataText.setText(R.string.userpage_user_nodata);
                     mNodataButton.setEnabled(true);
                 } else {
@@ -261,8 +261,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
-            int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
-            if (type == PULL) {
+            if ((Integer) event.getContext().get(ProgramTask.KEY_TYPE) == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             }
             mPrograms.clear();
@@ -322,12 +321,22 @@ public class UserpageActivity extends Activity {
             } else if (lhs.getLiveStatus().ordinal() > rhs.getLiveStatus().ordinal()) {
                 return 1;
             } else {
-                if (lhs.getStartTime() > rhs.getStartTime()) {
-                    return -1;
-                } else if (lhs.getStartTime() < rhs.getStartTime()) {
-                    return 1;
+                if (lhs.isPrelive()) {
+                    if (lhs.getStartTime() > rhs.getStartTime()) {
+                        return 1;
+                    } else if (lhs.getStartTime() < rhs.getStartTime()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
                 } else {
-                    return 0;
+                    if (lhs.getStartTime() > rhs.getStartTime()) {
+                        return -1;
+                    } else if (lhs.getStartTime() < rhs.getStartTime()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 }
             }
         }
@@ -339,8 +348,8 @@ public class UserpageActivity extends Activity {
             mRefreshFinish = false;
             mRefreshDelayed = false;
             refreshData(true);
-            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
-            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 10000);
+            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, PULL_DELAY_TIME);
+            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, PULL_TIMEOUT_TIME);
         }
 
         @Override
@@ -372,5 +381,9 @@ public class UserpageActivity extends Activity {
             }
         }
     };
+
+    private boolean isLogin(String username) {
+        return UserManager.getInstance(this).isLogin(username);
+    }
 
 }
