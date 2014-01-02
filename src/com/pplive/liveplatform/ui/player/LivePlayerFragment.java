@@ -21,7 +21,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -89,10 +88,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private boolean mLoading;
 
     private String mIconUrl;
-
-    private OnCompletionListener mOnCompletionListener;
-
-    private OnErrorListener mOnErrorListener;
 
     private Callback mCallbackListener;
 
@@ -311,11 +306,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onCompletion() {
             Log.d(TAG, "MeetVideoView: onCompletion");
             stopPlayback();
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), R.string.toast_player_complete, Toast.LENGTH_LONG).show();
-            }
-            if (mOnCompletionListener != null) {
-                mOnCompletionListener.onCompletion();
+            if (mCallbackListener != null) {
+                mCallbackListener.onCompletion();
             }
         }
     };
@@ -326,23 +318,12 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public boolean onError(int what, int extra) {
             Log.d(TAG, "MeetVideoView: onError");
             stopPlayback();
-            if (getActivity() != null) {
-                Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
+            if (mCallbackListener != null) {
+                return mCallbackListener.onError(what, extra);
             }
-            if (mOnErrorListener != null) {
-                return mOnErrorListener.onError(what, extra);
-            }
-            return false;
+            return true;
         }
     };
-
-    public interface OnCompletionListener {
-        void onCompletion();
-    }
-
-    public interface OnErrorListener {
-        boolean onError(int what, int extra);
-    }
 
     @Override
     public void onClick(View v) {
@@ -466,6 +447,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onBackClick();
 
         public void onShareClick();
+
+        public boolean onError(int what, int extra);
+
+        public void onCompletion();
 
     }
 

@@ -83,13 +83,13 @@ public class HomeProgramAdapter extends BaseAdapter {
             holder.timedownTextView.setVisibility(View.GONE);
         }
         holder.viewcountTextView.setText(String.valueOf(data.getViews()));
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cacheInMemory(true).showStubImage(R.drawable.program_default_image)
-                .imageScaleType(ImageScaleType.IN_SAMPLE_INT).showImageForEmptyUri(R.drawable.program_default_image)
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cacheInMemory(true).imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+                .showStubImage(R.drawable.program_default_image).showImageForEmptyUri(R.drawable.program_default_image)
                 .showImageOnFail(R.drawable.program_default_image).bitmapConfig(Bitmap.Config.RGB_565);
         if (data.getRecommendCover().startsWith("http://live2image0.pplive.cn/")) {
-            builder.cacheInMemory(true).cacheOnDisc(false);
+            builder.cacheOnDisc(false);
         } else {
-            builder.cacheInMemory(true).cacheOnDisc(true);
+            builder.cacheOnDisc(true);
         }
         holder.previewImageView.setImageAsync(data.getRecommendCover(), builder.build());
     }

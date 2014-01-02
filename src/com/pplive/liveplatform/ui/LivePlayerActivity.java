@@ -212,7 +212,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
         if (pid > 0) {
             mChatBox.start(pid);
-            keepAliveDelay(0);
+            if (mProgram.isLiving()) {
+                keepAliveDelay(0);
+            }
         }
     }
 
@@ -513,6 +515,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
             long delay = liveStatus.getDelayInSeconds();
+            switch (liveStatus.getStatus()) {
+            case STOPPED:
+            case DELETED:
+            case SYS_DELETED:
+                Toast.makeText(mContext, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+                break;
+            case LIVING:
+                //TODO
+                break;
+            default:
+                break;
+            }
+
             keepAliveDelay(delay * 1000);
         }
 
@@ -722,4 +737,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
     }
 
+    @Override
+    public boolean onError(int what, int extra) {
+        keepAliveDelay(0);
+        return true;
+    }
+
+    @Override
+    public void onCompletion() {
+        Toast.makeText(this, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+    }
 }

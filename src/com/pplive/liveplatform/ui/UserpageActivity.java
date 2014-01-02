@@ -106,7 +106,8 @@ public class UserpageActivity extends Activity {
         //init views
         TextView title = (TextView) findViewById(R.id.text_userpage_title);
         View cameraIcon = findViewById(R.id.image_userpage_camera);
-        if (UserManager.getInstance(this).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+        mUsername = getIntent().getStringExtra(EXTRA_USER);
+        if (isLogin(mUsername)) {
             title.setText(R.string.userpage_my_title);
             settingsButton.setVisibility(View.VISIBLE);
             cameraIcon.setVisibility(View.VISIBLE);
@@ -115,7 +116,6 @@ public class UserpageActivity extends Activity {
             settingsButton.setVisibility(View.GONE);
             cameraIcon.setVisibility(View.GONE);
         }
-        mUsername = getIntent().getStringExtra(EXTRA_USER);
         initUserinfo();
         refreshData(false);
     }
@@ -142,7 +142,10 @@ public class UserpageActivity extends Activity {
         ProgramTask task = new ProgramTask();
         task.addTaskListener(onProgramTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USERNAME, getIntent().getStringExtra(EXTRA_USER));
+        taskContext.set(ProgramTask.KEY_USERNAME, mUsername);
+        if (isLogin(mUsername)) {
+            taskContext.set(ProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+        }
         if (isPull) {
             taskContext.set(ProgramTask.KEY_TYPE, PULL);
         } else {
@@ -175,7 +178,7 @@ public class UserpageActivity extends Activity {
                 case NOT_START:
                 case PREVIEW:
                 case INIT:
-                    if (UserManager.getInstance(mContext).isLogin(getIntent().getStringExtra(EXTRA_USER))) {
+                    if (isLogin(mUsername)) {
                         intent.setClass(mContext, LiveRecordActivity.class);
                         startActivity(intent);
                     } else {
@@ -242,7 +245,7 @@ public class UserpageActivity extends Activity {
             Collections.sort(mPrograms, comparator);
             mAdapter.notifyDataSetChanged();
             if (mPrograms.isEmpty()) {
-                if (UserManager.getInstance(mContext).isLogin(mUsername)) {
+                if (isLogin(mUsername)) {
                     mNodataText.setText(R.string.userpage_user_nodata);
                     mNodataButton.setEnabled(true);
                 } else {
@@ -380,5 +383,9 @@ public class UserpageActivity extends Activity {
             }
         }
     };
+
+    private boolean isLogin(String username) {
+        return UserManager.getInstance(this).isLogin(username);
+    }
 
 }
