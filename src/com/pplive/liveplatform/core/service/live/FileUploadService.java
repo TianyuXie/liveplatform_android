@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.service.live;
 
+import java.io.File;
+
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -37,10 +39,10 @@ public class FileUploadService extends RestService {
         
         String token = TokenService.getInstance().getPicUploadToken(coToken, username);
         
-        return uploadFileByPicUploadToken(token, path);
+        return uploadFileByPicUploadToken(token, new File(path));
     }
 
-    private String uploadFileByPicUploadToken(String token, String path) throws LiveHttpException {
+    private String uploadFileByPicUploadToken(String token, File file) throws LiveHttpException {
         Log.d(TAG, "token: " + token);
         
         RestTemplate template = new RestTemplate();
@@ -51,14 +53,14 @@ public class FileUploadService extends RestService {
         MultiValueMap<String, Object> forms = new LinkedMultiValueMap<String, Object>();
         
         forms.add("key", "34234");
-        forms.add("upload", new FileSystemResource(path));
+        forms.add("upload", new FileSystemResource(file));
         forms.add("tk", token);
         
         MessageResp resp = null;
         try {
             resp = template.postForObject(TEMPLATE_UPLOAD_FILE, forms, MessageResp.class, token);
             
-            if (0 != resp.getError()) {
+            if (0 == resp.getError()) {
                 return resp.getData();
             }
         } catch (Exception e ) {
