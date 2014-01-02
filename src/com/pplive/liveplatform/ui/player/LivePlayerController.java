@@ -165,10 +165,8 @@ public class LivePlayerController extends MediaController {
         int percent = mPlayer.getBufferPercentage();
         mPlayerProgressBar.setSecondaryProgress(percent * 10);
 
-        if (mEndTime != null)
-            mEndTime.setText(TimeUtil.stringForTimeMin(duration));
-        if (mCurrentTime != null)
-            mCurrentTime.setText(TimeUtil.stringForTimeMin(position));
+        mEndTime.setText(TimeUtil.stringForTimeMin(duration));
+        mCurrentTime.setText(TimeUtil.stringForTimeMin(position));
 
         return position;
     }
@@ -207,20 +205,18 @@ public class LivePlayerController extends MediaController {
             if (uniqueDown) {
                 doPauseResume();
                 show();
-                if (mPlayPauseButton != null) {
-                    mPlayPauseButton.requestFocus();
-                }
+                mPlayPauseButton.requestFocus();
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
-            if (uniqueDown && !mPlayer.isPlaying()) {
+            if (uniqueDown && mPlayer != null && !mPlayer.isPlaying()) {
                 mPlayer.start();
                 updatePausePlay();
                 show();
             }
             return true;
         } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP || keyCode == KeyEvent.KEYCODE_MEDIA_PAUSE) {
-            if (uniqueDown && mPlayer.isPlaying()) {
+            if (uniqueDown && mPlayer != null && mPlayer.isPlaying()) {
                 mPlayer.pause();
                 updatePausePlay();
                 show();
@@ -295,12 +291,12 @@ public class LivePlayerController extends MediaController {
                 // the progress bar's position.
                 return;
             }
-
-            long duration = mPlayer.getDuration();
-            long newposition = duration * progress / 1000L;
-            mPlayer.seekTo((int) newposition);
-            if (mCurrentTime != null)
+            if (mPlayer != null) {
+                long duration = mPlayer.getDuration();
+                long newposition = duration * progress / 1000L;
+                mPlayer.seekTo((int) newposition);
                 mCurrentTime.setText(TimeUtil.stringForTimeMin((int) newposition));
+            }
         }
 
         public void onStopTrackingTouch(SeekBar bar) {

@@ -48,10 +48,8 @@ public class LiveApplication extends Application {
     private static void initAppInfo(Context context) {
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-
             sAppVersionCode = packageInfo.versionCode;
             sAppVersionName = packageInfo.versionName;
-
         } catch (NameNotFoundException e) {
             Log.w(TAG, "warnings: " + e.toString());
         }

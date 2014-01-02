@@ -207,7 +207,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 mediaTask.execute(taskContext);
             }
         } else {
-            Log.d(TAG, "onStart mUrl:" + mUrl);
             mLivePlayerFragment.setupPlayer(mUrl);
         }
         if (pid > 0) {
@@ -523,12 +522,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 break;
             case LIVING:
                 //TODO
+                keepAliveDelay(delay * 1000);
                 break;
             default:
                 break;
             }
-
-            keepAliveDelay(delay * 1000);
         }
 
         @Override
@@ -560,10 +558,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
             Watch.Protocol protocol = watchList.getRecommendProtocol();
             if (protocol == Watch.Protocol.RTMP) {
-                Log.d(TAG, "rtmp");
                 mUrl = watchList.getRtmpPlayURL();
             } else if (protocol == Watch.Protocol.LIVE2) {
-                Log.d(TAG, "live2");
                 if (mProgram.isLiving()) {
                     mUrl = watchList.getLive2LiveM3U8PlayURL();
                 } else if (mProgram.isVOD()) {
@@ -634,11 +630,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mChatBox.setVisibility(View.VISIBLE);
         mCommentWrapper.setVisibility(View.VISIBLE);
         mWriteBtn.setVisibility(View.VISIBLE);
-
         if (!TextUtils.isEmpty(mUrl)) {
             mLivePlayerFragment.setupPlayer(mUrl);
-        } else {
-            Log.w(TAG, "mUrl is empty");
         }
     }
 
@@ -697,11 +690,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     }
 
-    @Override
-    public void onStartPlay() {
-        mHandler.sendEmptyMessage(MSG_START_PLAY);
-    }
-
     public void onEvent(EventNetworkChanged event) {
         Log.d(TAG, "state: " + event.getNetworkState());
         switch (event.getNetworkState()) {
@@ -713,9 +701,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mLivePlayerFragment.setupPlayerDirect(mUrl);
                 }
             }).show();
-            break;
-
-        default:
             break;
         }
     }
@@ -732,7 +717,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void keepAliveDelay(long delay) {
-        Log.d(TAG, "keepAliveDelay:" + System.currentTimeMillis());
         mHandler.removeMessages(MSG_KEEP_ALIVE);
         mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
     }
@@ -746,5 +730,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onCompletion() {
         Toast.makeText(this, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onStartPlay() {
+        mHandler.sendEmptyMessage(MSG_START_PLAY);
     }
 }

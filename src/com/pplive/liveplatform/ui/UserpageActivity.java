@@ -61,6 +61,10 @@ public class UserpageActivity extends Activity {
 
     private final static int MSG_PULL_TIMEOUT = 2002;
 
+    private final static int PULL_DELAY_TIME = 2000;
+
+    private final static int PULL_TIMEOUT_TIME = 10000;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
@@ -118,12 +122,6 @@ public class UserpageActivity extends Activity {
         }
         initUserinfo();
         refreshData(false);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart");
     }
 
     private void initUserinfo() {
@@ -236,8 +234,7 @@ public class UserpageActivity extends Activity {
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
             mListView.setLastUpdateTime(System.currentTimeMillis());
-            int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
-            if (type == PULL) {
+            if ((Integer) event.getContext().get(ProgramTask.KEY_TYPE) == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             }
             mPrograms.clear();
@@ -262,8 +259,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
-            int type = (Integer) event.getContext().get(ProgramTask.KEY_TYPE);
-            if (type == PULL) {
+            if ((Integer) event.getContext().get(ProgramTask.KEY_TYPE) == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             }
             mPrograms.clear();
@@ -350,8 +346,8 @@ public class UserpageActivity extends Activity {
             mRefreshFinish = false;
             mRefreshDelayed = false;
             refreshData(true);
-            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, 2000);
-            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, 10000);
+            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_DELAY, PULL_DELAY_TIME);
+            mPullHandler.sendEmptyMessageDelayed(MSG_PULL_TIMEOUT, PULL_TIMEOUT_TIME);
         }
 
         @Override

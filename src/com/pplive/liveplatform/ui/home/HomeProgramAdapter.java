@@ -3,15 +3,12 @@ package com.pplive.liveplatform.ui.home;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
@@ -76,22 +73,14 @@ public class HomeProgramAdapter extends BaseAdapter {
         lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwnerNickname());
         holder.titleTextView.setText(data.getTitle());
+        holder.viewcountTextView.setText(String.valueOf(data.getViews()));
+        holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
         if (data.isPrelive()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setText(TimeUtil.stringForCountdown(data.getStartTime() - System.currentTimeMillis()));
         } else {
             holder.timedownTextView.setVisibility(View.GONE);
         }
-        holder.viewcountTextView.setText(String.valueOf(data.getViews()));
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cacheInMemory(true).imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-                .showStubImage(R.drawable.program_default_image).showImageForEmptyUri(R.drawable.program_default_image)
-                .showImageOnFail(R.drawable.program_default_image).bitmapConfig(Bitmap.Config.RGB_565);
-        if (data.getRecommendCover().startsWith("http://live2image0.pplive.cn/")) {
-            builder.cacheOnDisc(false);
-        } else {
-            builder.cacheOnDisc(true);
-        }
-        holder.previewImageView.setImageAsync(data.getRecommendCover(), builder.build());
     }
 
     static class ViewHolder {
