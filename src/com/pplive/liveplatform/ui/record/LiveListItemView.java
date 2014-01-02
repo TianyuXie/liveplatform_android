@@ -1,10 +1,8 @@
 package com.pplive.liveplatform.ui.record;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.util.AttributeSet;
