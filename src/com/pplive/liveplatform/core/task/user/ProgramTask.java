@@ -53,7 +53,7 @@ public class ProgramTask extends Task {
         String username = context.getString(KEY_USERNAME);
         List<Program> data = null;
         try {
-            data = ProgramService.getInstance().getProgramsByOwner(username);
+            data = ProgramService.getInstance().getProgramsByOwner("", username);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "ProgramService error");
         }
