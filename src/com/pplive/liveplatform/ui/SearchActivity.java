@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.SearchService;
+import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -99,7 +100,7 @@ public class SearchActivity extends Activity {
             startTask(keyword, REFRESH);
         }
     }
-    
+
     public void startAppendTask() {
         startTask(mKeyword, APPEND);
     }
@@ -137,17 +138,24 @@ public class SearchActivity extends Activity {
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mResultText.setVisibility(View.VISIBLE);
-            mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>", mKeyword)));
+            mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>",
+                    mKeyword)));
             FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
             mNextToken = fallList.nextToken();
+            LiveStatusKeyword status = (LiveStatusKeyword) event.getContext().get(SearchTask.KEY_LIVE_STATUS);
             int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
             switch (type) {
             case REFRESH:
-                mContainer.refreshData(fallList.getList());
-                if (fallList.count() != 0) {
-                    mRetryLayout.setVisibility(View.GONE);
+                if (status == mLiveStatus) {
+                    mContainer.refreshData(fallList.getList());
+                    if (fallList.count() != 0) {
+                        mRetryLayout.setVisibility(View.GONE);
+                    } else {
+                        mRetryLayout.setVisibility(View.VISIBLE);
+                    }
                 } else {
-                    mRetryLayout.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "retry");
+                    startSearchTask(mKeyword);
                 }
                 break;
             case APPEND:
@@ -199,7 +207,7 @@ public class SearchActivity extends Activity {
             }
         }
     };
-    
+
     private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
         @Override
         public void onRefresh() {
@@ -215,6 +223,5 @@ public class SearchActivity extends Activity {
         public void onScrollDown(boolean isDown) {
         }
     };
-
 
 }

@@ -3,7 +3,6 @@ package com.pplive.liveplatform.ui;
 import java.util.List;
 
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
