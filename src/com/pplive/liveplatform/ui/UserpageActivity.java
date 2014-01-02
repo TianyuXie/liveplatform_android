@@ -320,12 +320,22 @@ public class UserpageActivity extends Activity {
             } else if (lhs.getLiveStatus().ordinal() > rhs.getLiveStatus().ordinal()) {
                 return 1;
             } else {
-                if (lhs.getStartTime() > rhs.getStartTime()) {
-                    return -1;
-                } else if (lhs.getStartTime() < rhs.getStartTime()) {
-                    return 1;
+                if (lhs.isPrelive()) {
+                    if (lhs.getStartTime() > rhs.getStartTime()) {
+                        return 1;
+                    } else if (lhs.getStartTime() < rhs.getStartTime()) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
                 } else {
-                    return 0;
+                    if (lhs.getStartTime() > rhs.getStartTime()) {
+                        return -1;
+                    } else if (lhs.getStartTime() < rhs.getStartTime()) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
                 }
             }
         }

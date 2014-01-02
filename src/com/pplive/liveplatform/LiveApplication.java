@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -37,7 +38,7 @@ public class LiveApplication extends Application {
 
         NetworkManager.init(getApplicationContext());
         StringManager.initContext(getApplicationContext());
-        
+
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
 
@@ -57,9 +58,10 @@ public class LiveApplication extends Application {
     }
 
     private static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2)
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(3)
                 .denyCacheImageMultipleSizesInMemory().discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
-                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 500)).build();
+                .memoryCacheExtraOptions(160, 120).discCacheExtraOptions(160, 120, CompressFormat.JPEG, 75, null)
+                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 150)).build();
         ImageLoader.getInstance().init(config);
     }
 

@@ -104,10 +104,6 @@ public class Program implements Serializable {
         return livestatus;
     }
 
-    public boolean isComing() {
-        return livestatus == LiveStatusEnum.INIT || livestatus == LiveStatusEnum.PREVIEW || livestatus == LiveStatusEnum.NOT_START;
-    }
-
     private String getCoverPre() {
         String coverUrl = getCoverUrl();
         return TextUtils.isEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
@@ -126,8 +122,12 @@ public class Program implements Serializable {
                 return getShotPre();
             }
         }
-        return getCoverPre();
+        return getShotPre();
     }
+
+    //    public String getRecommendCover() {
+    //        return getShotPre();
+    //    }
 
     private String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;

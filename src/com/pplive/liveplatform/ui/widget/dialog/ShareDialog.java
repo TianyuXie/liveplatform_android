@@ -268,8 +268,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         case R.id.btn_share_dialog_wechatSNS:
             wechatShare(MSG_SHARE_WECHATSNS);
             break;
-        default:
-            break;
         }
     }
 
