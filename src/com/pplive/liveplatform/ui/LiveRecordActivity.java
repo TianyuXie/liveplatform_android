@@ -762,9 +762,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         @Override
         protected Program doInBackground(Void... arg0) {
             String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
+            String token = UserManager.getInstance(getApplicationContext()).getToken();
 
             try {
-                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.LIVING);
+                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.LIVING);
 
                 if (null != programs && programs.size() > 0) {
                     return programs.get(0);
