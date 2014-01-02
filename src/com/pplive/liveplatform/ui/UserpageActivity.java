@@ -185,6 +185,8 @@ public class UserpageActivity extends Activity {
                         startActivity(intent);
                     }
                     break;
+                default:
+                    break;
                 }
             }
         }
