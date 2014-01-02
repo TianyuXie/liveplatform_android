@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.record;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.app.Service;
@@ -194,11 +196,22 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 return null;
             }
 
-            protected void onPostExecute(java.util.List<Program> result) {
+            protected void onPostExecute(List<Program> programs) {
                 Log.d(TAG, "onPostExecute");
 
-                if (null != result) {
-                    mPreLiveList = result;
+                if (null != programs) {
+                    
+                    Collections.sort(programs, new Comparator<Program> () {
+                        
+                        @Override
+                        public int compare(Program program1, Program program2) {
+                            
+                            return (int)(program1.getStartTime() - program2.getStartTime());
+                        }
+                    });
+                    
+                    
+                    mPreLiveList = programs;
                     notifyDataSetChanged();
                 }
 
