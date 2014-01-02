@@ -15,7 +15,7 @@ public class WeChatShare {
     public static WeChatShare sInstance = new WeChatShare();
 
     private static final String APP_ID = "wxdfe496aba1420ebe";
-    private static final String APP_KEY = "c0a5d059ec2d2891c343855eb106ac14";
+//    private static final String APP_KEY = "c0a5d059ec2d2891c343855eb106ac14";
 
     public static final int SHARE_SNS = 1;
     public static final int SHARE_WECHAT = 0;
