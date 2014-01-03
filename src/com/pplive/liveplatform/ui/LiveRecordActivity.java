@@ -42,7 +42,6 @@ import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.record.FooterBarFragment;
 import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.record.MediaRecorderView;
-import com.pplive.liveplatform.ui.record.Mode;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.record.event.EventReset;
@@ -237,7 +236,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mLivingProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
 
         if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
-            mFooterBarFragment.setMode(Mode.EDIT_PRELIVE);
+            mFooterBarFragment.setPreLiveProgram(mLivingProgram);
             startCountDown();
         }
 

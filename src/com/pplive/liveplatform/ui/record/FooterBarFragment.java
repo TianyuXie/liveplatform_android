@@ -57,7 +57,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private LiveListView mLiveListView;
 
     private Mode mStatus = Mode.INITIAL;
-    
+
     private Program mSelectedProgram;
 
     @Override
@@ -315,13 +315,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     public void onEvent(EventProgramSelected event) {
         final Program program = event.getObject();
-        Log.d(TAG, program.toString());
 
-        setMode(Mode.EDIT_PRELIVE);
-
-        mSelectedProgram = program;
-        
-        init();
+        setPreLiveProgram(program);
     }
 
     public String getLiveTitle() {
@@ -339,7 +334,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private void init() {
 
         if (null != mEditLiveTitle) {
-            
+
             String liveTitle = null;
             if (null != mSelectedProgram) {
                 liveTitle = mSelectedProgram.getTitle();
@@ -347,7 +342,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                 String username = UserManager.getInstance(getActivity()).getNickname();
                 liveTitle = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
             }
-            
+
             mEditLiveTitle.setText(liveTitle);
         }
     }
@@ -356,8 +351,16 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         Log.d(TAG, "reset");
 
         setMode(Mode.INITIAL);
-        
+
         mSelectedProgram = null;
+
+        init();
+    }
+
+    public void setPreLiveProgram(Program program) {
+        setMode(Mode.EDIT_PRELIVE);
+
+        mSelectedProgram = program;
 
         init();
     }

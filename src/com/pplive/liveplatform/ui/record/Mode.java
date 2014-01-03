@@ -1,6 +1,6 @@
 package com.pplive.liveplatform.ui.record;
 
-public enum Mode {
+enum Mode {
     INITIAL {
         @Override
         public int flags() {
