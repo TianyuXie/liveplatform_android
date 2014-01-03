@@ -2,7 +2,6 @@ package com.pplive.liveplatform.core.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 
 public class SettingsProvider {
     private static final String PREFS_NAME = "com.pplive.liveplatform_preferences";
@@ -91,14 +90,5 @@ public class SettingsProvider {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putInt(KEY_THIRDPARTY, thirdparty);
         editor.commit();
-    }
-    
-    public Editor getPreferencesEditor(){
-        SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        return editor;
-    }
-    
-    public SharedPreferences getPreferences(){
-        return this.sharedPreferences;
     }
 }
