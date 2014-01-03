@@ -8,7 +8,9 @@
     <string name="userpage_user_nodata">您还没有创建过节目\n点击上图开始直播</string>
     <string name="userpage_user_error">更新失败, 请点击上图刷新</string>
     <string name="userpage_default_vv">0</string>
-
+    
+    <string name="toast_userpage_nopic">找不到系统图库</string>
+    
     <color name="userpage_bg">#FF151515</color>
     <color name="userpage_program_title_bg">#FF919191</color>
 

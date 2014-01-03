@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -42,7 +43,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
-import com.pplive.liveplatform.core.task.user.UpdateIconTask;
+import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.widget.RefreshListView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
@@ -234,8 +235,12 @@ public class UserpageActivity extends Activity {
         @Override
         public void onClick(View v) {
             if (UserManager.getInstance(mContext).isLogin(mUsername)) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, REQUEST_PICKPIC);
+                try {
+                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(intent, REQUEST_PICKPIC);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
+                }
             }
         }
     };
@@ -267,12 +272,12 @@ public class UserpageActivity extends Activity {
                 Cursor cursor = getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
                 String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                UpdateIconTask task = new UpdateIconTask();
+                UploadIconTask task = new UploadIconTask();
                 task.addTaskListener(onIconTaskListener);
                 TaskContext taskContext = new TaskContext();
-                taskContext.set(UpdateIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
-                taskContext.set(UpdateIconTask.KEY_ICON, imagePath);
-                taskContext.set(UpdateIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+                taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
+                taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
+                taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
                 task.execute(taskContext);
             } catch (IllegalArgumentException e) {
                 Log.e(TAG, "Column does not exist");
@@ -285,7 +290,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
-            UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UpdateIconTask.KEY_USERINFO));
+            UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mContext).getIcon();
             mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
