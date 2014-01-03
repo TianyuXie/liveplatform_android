@@ -25,7 +25,7 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.user.UpdateUserTask;
+import com.pplive.liveplatform.core.task.user.UpdateNickTask;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
 public class NicknameActivity extends Activity {
@@ -38,6 +38,8 @@ public class NicknameActivity extends Activity {
     private Dialog mRefreshDialog;
 
     private Context mContext;
+
+    public static final int RESULT_NICK_CHANGED = 5802;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,12 +67,12 @@ public class NicknameActivity extends Activity {
         @Override
         public void onClick(View v) {
             mRefreshDialog.show();
-            UpdateUserTask task = new UpdateUserTask();
+            UpdateNickTask task = new UpdateNickTask();
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(UpdateUserTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
-            taskContext.set(UpdateUserTask.KEY_NICKNAME, mNickEditText.getText().toString());
-            taskContext.set(UpdateUserTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+            taskContext.set(UpdateNickTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
+            taskContext.set(UpdateNickTask.KEY_NICKNAME, mNickEditText.getText().toString());
+            taskContext.set(UpdateNickTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
             task.execute(taskContext);
         }
     };
@@ -91,8 +93,8 @@ public class NicknameActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
-            UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UpdateUserTask.KEY_USERINFO));
+            UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UpdateNickTask.KEY_USERINFO));
+            setResult(RESULT_NICK_CHANGED);
             finish();
         }
 
@@ -118,7 +120,6 @@ public class NicknameActivity extends Activity {
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
         }
     };
 

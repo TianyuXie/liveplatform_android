@@ -175,7 +175,6 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
             String usrPlain = event.getContext().getString(LoginTask.KEY_USERNAME);
             String pwdPlain = event.getContext().getString(LoginTask.KEY_PASSWORD);
             String token = event.getContext().getString(LoginTask.KEY_TOKEN);

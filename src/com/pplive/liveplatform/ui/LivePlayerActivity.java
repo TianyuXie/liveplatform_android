@@ -578,7 +578,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "MediaTask onTaskCancel");
-            finish();
         }
 
         @Override
