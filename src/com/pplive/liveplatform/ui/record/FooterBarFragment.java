@@ -362,7 +362,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         init();
     }
 
-    private void setMode(Mode mode) {
+    public void setMode(Mode mode) {
         mStatus = mode;
 
         setVisibilityByFlags();
