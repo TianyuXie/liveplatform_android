@@ -3,13 +3,33 @@
 
     <string name="player_loading">载入中&#8230;</string>
     <string name="player_finish">载入完成</string>
+    <string name="player_prelive">敬请期待</string>
     <string name="player_no_comment">快来奋力吐槽吧!</string>
-    <string name="toast_player_error">Oops! 我们正在奋力的加载哦～～～</string>
+    <string name="player_comment_success">评论成功</string>
+    <string name="player_comment_fail">评论失败</string>
+    <string name="player_default_time">00:00</string>
+    <string name="toast_player_loading">Oops! 我们正在奋力的加载哦</string>
+    <string name="toast_player_error">哎呀！节目傲娇啦, 去看看别的吧</string>
     <string name="toast_player_complete">直播结束, 感谢您的收看, 下次再见</string>
-    
+
+    <color name="player_seekbar_black">#99000000</color>
     <color name="player_bottom_bar">#7F000000</color>
     <color name="player_chatbox_bg">#B3111111</color>
     <color name="player_loading_bg">#FF1A1A1A</color>
     <color name="player_chat_nickname">#FFFFFFFF</color>
     <color name="player_chat_content">#FF919191</color>
+    <color name="player_seek_normal">#9c9c9c</color>
+
+    <style name="player_progressBarStyleHorizontal">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/player_seekbar_horizontal</item>
+        <item name="android:indeterminate">false</item>
+        <item name="android:minHeight">4dip</item>
+        <item name="android:maxHeight">4dip</item>
+        <item name="android:thumbOffset">0dip</item>
+        <item name="android:thumb">@drawable/player_seekbar_thumb</item>
+        <item name="android:paddingLeft">1dip</item>
+        <item name="android:paddingRight">1dip</item>
+    </style>
+
 </resources>

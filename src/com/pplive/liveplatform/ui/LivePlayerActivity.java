@@ -1,9 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.util.List;
-
-import org.springframework.util.CollectionUtils;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -29,12 +25,14 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Watch;
+import com.pplive.liveplatform.core.service.live.model.WatchList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -72,7 +70,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_KEEP_ALIVE = 2003;
 
-    private final static int LOADING_DELAY_TIME = 3 * 1000;
+    private final static int LOADING_DELAY_TIME = 1 * 1000;
 
     private final static int KEEP_ALIVE_DELAY_TIME = 30 * 1000;
 
@@ -88,7 +86,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mCommentWrapper;
 
-    private View mLoadingView;
+    private View mLoadingImage;
 
     private ChatBox mChatBox;
 
@@ -111,6 +109,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private boolean mIsFull;
 
     private boolean mWriting;
+
+    private boolean mRotatable;
 
     private boolean mFirstLoading;
 
@@ -161,7 +161,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentWrapper = findViewById(R.id.wrapper_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
-        mLoadingView = findViewById(R.id.layout_player_loading);
+        mLoadingImage = findViewById(R.id.layout_player_loading);
         mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mLoadingButton = (LoadingButton) findViewById(R.id.btn_player_loading);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
@@ -186,10 +186,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
-        mLivePlayerFragment.setLayout(mIsFull);
+        mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setTitle(mProgram.getTitle());
-        mLivePlayerFragment.initUserIcon(mProgram.getOwnerIcon());
+        mLivePlayerFragment.setUserIcon(mProgram.getOwnerIcon());
+        mLivePlayerFragment.showPPTVIcon(mProgram.isOriginal());
         long pid = mProgram.getId();
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getUsernamePlain();
@@ -206,12 +207,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 mediaTask.execute(taskContext);
             }
         } else {
-            Log.d(TAG, "onStart mUrl:" + mUrl);
             mLivePlayerFragment.setupPlayer(mUrl);
         }
         if (pid > 0) {
             mChatBox.start(pid);
-            keepAliveDelay(0);
+            if (mProgram.isLiving()) {
+                keepAliveDelay(0);
+            }
         }
     }
 
@@ -279,7 +281,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         if (!init) {
-            mLivePlayerFragment.setLayout(mIsFull);
+            mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         }
     }
 
@@ -304,7 +306,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation && !mFirstLoading && !mSecondLoading) {
+        if (mCurrentOrient != requestedOrientation && mRotatable) {
             Log.d(TAG, "setRequestedOrientation");
             mCurrentOrient = requestedOrientation;
             pauseWriting();
@@ -476,23 +478,24 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
+            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
+            Toast.makeText(mContext, R.string.player_comment_success, Toast.LENGTH_SHORT).show();
             mChatBox.refresh(0);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
-            //TODO
+            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            Log.d(TAG, "onPutFeedTaskListener onTaskCancel");
         }
 
         @Override
@@ -511,8 +514,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
             long delay = liveStatus.getDelayInSeconds();
-            Log.d(TAG, "Delay: " + delay);
-            keepAliveDelay(delay * 1000);
+            switch (liveStatus.getStatus()) {
+            case STOPPED:
+            case DELETED:
+            case SYS_DELETED:
+                Toast.makeText(mContext, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+                break;
+            case LIVING:
+                //TODO
+                keepAliveDelay(delay * 1000);
+                break;
+            default:
+                break;
+            }
         }
 
         @Override
@@ -539,41 +553,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
-            List<Watch> watchs = (List<Watch>) event.getContext().get(GetMediaTask.KEY_RESULT);
-            if (!CollectionUtils.isEmpty(watchs)) {
-                // print all links
-                for (Watch watch : watchs) {
-                    List<String> watchList = watch.getWatchStringList();
-                    for (String link : watchList) {
-                        Log.d(TAG, "linkurl:" + link);
-                    }
-                }
-
-                // TODO rtmp or live2
-                for (Watch watch : watchs) {
-                    if ("rtmp".equals(watch.getProtocol())) {
-                        List<String> watchList = watch.getWatchStringList();
-                        if (!CollectionUtils.isEmpty(watchList)) {
-                            mUrl = watchList.get(0);
-                            break;
-                        }
-                    }
-                }
-                if (TextUtils.isEmpty(mUrl)) {
-                    List<String> watchList = watchs.get(0).getWatchStringList();
-                    if (!CollectionUtils.isEmpty(watchList)) {
-                        mUrl = watchList.get(0);
-                    }
-                }
-            }
-            if (!mProgram.isPrelive()) {
-                if (!TextUtils.isEmpty(mUrl)) {
-                    mLivePlayerFragment.setupPlayer(mUrl);
-                } else {
-                    Log.w(TAG, "mUrl is empty");
+            WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
+            Watch.Protocol protocol = watchList.getRecommendProtocol();
+            if (protocol == Watch.Protocol.RTMP) {
+                mUrl = watchList.getRtmpPlayURL();
+            } else if (protocol == Watch.Protocol.LIVE2) {
+                if (mProgram.isLiving()) {
+                    mUrl = watchList.getLive2LiveM3U8PlayURL();
+                } else if (mProgram.isVOD()) {
+                    mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
@@ -620,25 +610,29 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     });
 
     public void showLoading() {
+        mRotatable = false;
         mFirstLoadFinish = false;
+        mSecondLoadFinish = false;
         mLoadDelayed = false;
         mFirstLoading = true;
         mSecondLoading = true;
-        mSecondLoadFinish = false;
         mLivePlayerFragment.initIcon();
+        mLoadingImage.setVisibility(View.VISIBLE);
+        mLoadingButton.startLoading(R.string.player_loading);
         mCommentWrapper.setVisibility(View.GONE);
         mChatBox.setVisibility(View.GONE);
         mWriteBtn.setVisibility(View.GONE);
-        mLoadingView.setVisibility(View.VISIBLE);
-        mLoadingButton.startLoading(R.string.player_loading);
     }
 
     public void hideFirstLoading() {
         mFirstLoading = false;
-        mLoadingView.setVisibility(View.GONE);
+        mLoadingImage.setVisibility(View.GONE);
         mChatBox.setVisibility(View.VISIBLE);
         mCommentWrapper.setVisibility(View.VISIBLE);
         mWriteBtn.setVisibility(View.VISIBLE);
+        if (!TextUtils.isEmpty(mUrl)) {
+            mLivePlayerFragment.setupPlayer(mUrl);
+        }
     }
 
     public void hideSecondLoading() {
@@ -676,6 +670,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             if (mProgram.isPrelive()) {
                 mSecondLoadFinish = true;
                 checkSecondLoading(true);
+            } else {
+                mLivePlayerFragment.stopTimer();
             }
         }
     }
@@ -685,15 +681,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             hideSecondLoading();
             if (isPrelive) {
                 mLivePlayerFragment.onStartPrelive();
+                mLivePlayerFragment.startTimer(mProgram.getStartTime());
             } else {
                 mLivePlayerFragment.onStartPlay();
+                mLivePlayerFragment.stopTimer();
+                mRotatable = true;
             }
         }
-    }
-
-    @Override
-    public void onStartPlay() {
-        mHandler.sendEmptyMessage(MSG_START_PLAY);
     }
 
     public void onEvent(EventNetworkChanged event) {
@@ -708,16 +702,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 }
             }).show();
             break;
-
-        default:
-            break;
         }
     }
 
     private void keepAlive() {
         long pid = mProgram.getId();
         if (pid > 0) {
-            Log.d(TAG, "keepAlive:" + pid);
             LiveStatusTask task = new LiveStatusTask();
             task.addTaskListener(onLiveStatusTaskListener);
             TaskContext taskContext = new TaskContext();
@@ -731,4 +721,19 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
     }
 
+    @Override
+    public boolean onError(int what, int extra) {
+        keepAliveDelay(0);
+        return true;
+    }
+
+    @Override
+    public void onCompletion() {
+        Toast.makeText(this, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onStartPlay() {
+        mHandler.sendEmptyMessage(MSG_START_PLAY);
+    }
 }

@@ -3,11 +3,7 @@ package com.pplive.liveplatform.update;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- * 升级信息
- * 
- * @author sugarzhang
- */
+
 public class UpdateInfo implements Serializable
 {
     /**

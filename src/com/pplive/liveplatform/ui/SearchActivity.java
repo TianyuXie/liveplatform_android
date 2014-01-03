@@ -12,7 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.SearchService;
+import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
+import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -42,7 +43,7 @@ public class SearchActivity extends Activity {
 
     private String mKeyword;
 
-    private SearchService.LiveStatusKeyword mLiveStatus;
+    private LiveStatusKeyword mLiveStatus;
 
     private ProgramContainer mContainer;
 
@@ -66,7 +67,7 @@ public class SearchActivity extends Activity {
         mRetryLayout = findViewById(R.id.layout_search_nodata);
         mResultText = (TextView) findViewById(R.id.text_search_result);
 
-        mLiveStatus = SearchService.LiveStatusKeyword.LIVING;
+        mLiveStatus = LiveStatusKeyword.LIVING;
     }
 
     @Override
@@ -84,8 +85,7 @@ public class SearchActivity extends Activity {
                 break;
             case R.id.btn_searchbar_search:
                 mSearchBar.hideRecordList();
-                String keyword = mSearchBar.getText().toString();
-                startSearchTask(keyword);
+                startSearchTask(mSearchBar.getText().toString());
                 break;
             }
         }
@@ -99,7 +99,7 @@ public class SearchActivity extends Activity {
             startTask(keyword, REFRESH);
         }
     }
-    
+
     public void startAppendTask() {
         startTask(mKeyword, APPEND);
     }
@@ -115,19 +115,19 @@ public class SearchActivity extends Activity {
         taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
         switch (mLiveStatus) {
         case COMING:
-            taskContext.set(SearchTask.KEY_SORT, SearchService.SortKeyword.START_TIME);
+            taskContext.set(SearchTask.KEY_SORT, SortKeyword.START_TIME);
             break;
         case VOD:
         case LIVING:
         default:
-            taskContext.set(SearchTask.KEY_SORT, SearchService.SortKeyword.VV);
+            taskContext.set(SearchTask.KEY_SORT, SortKeyword.VV);
             break;
         }
         taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
         task.execute(taskContext);
     }
 
-    private void switchLiveStatus(SearchService.LiveStatusKeyword id) {
+    private void switchLiveStatus(LiveStatusKeyword id) {
         mLiveStatus = id;
         startSearchTask(mKeyword);
     }
@@ -137,17 +137,24 @@ public class SearchActivity extends Activity {
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mResultText.setVisibility(View.VISIBLE);
-            mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>", mKeyword)));
+            mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>",
+                    mKeyword)));
             FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
             mNextToken = fallList.nextToken();
+            LiveStatusKeyword status = (LiveStatusKeyword) event.getContext().get(SearchTask.KEY_LIVE_STATUS);
             int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
             switch (type) {
             case REFRESH:
-                mContainer.refreshData(fallList.getList());
-                if (fallList.count() != 0) {
-                    mRetryLayout.setVisibility(View.GONE);
+                if (status == mLiveStatus) {
+                    mContainer.refreshData(fallList.getList());
+                    if (fallList.count() != 0) {
+                        mRetryLayout.setVisibility(View.GONE);
+                    } else {
+                        mRetryLayout.setVisibility(View.VISIBLE);
+                    }
                 } else {
-                    mRetryLayout.setVisibility(View.VISIBLE);
+                    Log.d(TAG, "retry");
+                    startSearchTask(mKeyword);
                 }
                 break;
             case APPEND:
@@ -186,20 +193,20 @@ public class SearchActivity extends Activity {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
             switch (checkedId) {
             case R.id.btn_status_living:
-                switchLiveStatus(SearchService.LiveStatusKeyword.LIVING);
+                switchLiveStatus(LiveStatusKeyword.LIVING);
                 break;
             case R.id.btn_status_tolive:
-                switchLiveStatus(SearchService.LiveStatusKeyword.COMING);
+                switchLiveStatus(LiveStatusKeyword.COMING);
                 break;
             case R.id.btn_status_replay:
-                switchLiveStatus(SearchService.LiveStatusKeyword.VOD);
+                switchLiveStatus(LiveStatusKeyword.VOD);
                 break;
             default:
                 break;
             }
         }
     };
-    
+
     private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
         @Override
         public void onRefresh() {
@@ -215,6 +222,5 @@ public class SearchActivity extends Activity {
         public void onScrollDown(boolean isDown) {
         }
     };
-
 
 }

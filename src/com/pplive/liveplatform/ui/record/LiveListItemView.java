@@ -1,5 +1,9 @@
 package com.pplive.liveplatform.ui.record;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -12,6 +16,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
+import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
 import de.greenrobot.event.EventBus;
@@ -24,6 +29,7 @@ public class LiveListItemView extends RelativeLayout {
     private ImageButton mBtnPreliveDelete;
     private ImageButton mBtnDelete;
     private TextView mTextLiveTitle;
+    private TextView mTextPreliveTime;
     private View mViewBtnDeleteMasking;
 
     private Program mProgram;
@@ -44,6 +50,7 @@ public class LiveListItemView extends RelativeLayout {
         mBtnPreliveDelete = (ImageButton) findViewById(R.id.btn_prelive_delete);
         mBtnDelete = (ImageButton) findViewById(R.id.btn_delete);
         mTextLiveTitle = (TextView) findViewById(R.id.text_live_title);
+        mTextPreliveTime = (TextView) findViewById(R.id.text_prelive_time);
 
         mViewBtnDeleteMasking = findViewById(R.id.view_btn_delete_masking);
         
@@ -75,6 +82,18 @@ public class LiveListItemView extends RelativeLayout {
         if (null != program) {
             mImagePrelive.setImageAsync(program.getRecommendCover(), R.drawable.live_record_default_prelive_image);
             mTextLiveTitle.setText(program.getTitle());
+            
+            Date date = new Date(program.getStartTime());
+            SimpleDateFormat sdf;
+            if (TimeUtil.isSameDay(System.currentTimeMillis(), program.getStartTime())) {
+                sdf = new SimpleDateFormat("HH:mm", Locale.US);
+            } else {
+                sdf = new SimpleDateFormat("yyyy MM-dd", Locale.US);
+            }
+            
+            Log.d(TAG, sdf.format(date));
+            
+            mTextPreliveTime.setText(sdf.format(date));
         }
     }
 

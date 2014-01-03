@@ -28,6 +28,9 @@ public class ProgramService extends RestService {
     private static final String TEMPLATE_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
 
+    private static final String TEMPLATE_CDN_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
+
     private static final String TEMPLATE_CREATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
     private static final String TEMPLATE_UPDATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/info")
@@ -46,23 +49,42 @@ public class ProgramService extends RestService {
 
     private ProgramService() {
     }
-
-    public List<Program> getProgramsByOwner(String owner) throws LiveHttpException {
-        return getProgramsByOwner(owner, "");
+    
+    public List<Program> getProgramsByUser(String owner) throws LiveHttpException {
+        return getProgramsByUser(owner, null);
+    }
+    
+    public List<Program> getProgramsByUser(String owner, LiveStatusEnum livestatus) throws LiveHttpException {
+        return getPrograms("", owner, livestatus, false /* isOwner */);
+    }
+    
+    public List<Program> getProgramsByOwner(String coToken, String owner) throws LiveHttpException {
+        return getProgramsByOwner(coToken, owner, null);
     }
 
-    public List<Program> getProgramsByOwner(String owner, LiveStatusEnum livestatus) throws LiveHttpException {
-
-        return getProgramsByOwner(owner, livestatus.toString());
+    public List<Program> getProgramsByOwner(String coToken, String owner, LiveStatusEnum livestatus) throws LiveHttpException {
+        return getPrograms(coToken, owner, livestatus, true /* isOwner */);
+    }
+    
+    private List<Program> getPrograms(String coToken, String owner, LiveStatusEnum livestatus, boolean isOwner) throws LiveHttpException {
+        return getPrograms(coToken, owner, null != livestatus ? livestatus.toString() : "", isOwner);
     }
 
-    private List<Program> getProgramsByOwner(String owner, String liveStatus) throws LiveHttpException {
+    private List<Program> getPrograms(String coToken, String owner, String liveStatus, boolean isOwner) throws LiveHttpException {
         Log.d(TAG, "owner: " + owner + "; livestatus: " + liveStatus);
 
+        if (isOwner) {
+            UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
+            mRequestHeaders.setAuthorization(coTokenAuthentication);
+        }
+        
+        HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+        
         ProgramListResp resp = null;
         try {
 
-            resp = mRestTemplate.getForObject(TEMPLATE_GET_PROGRAMS, ProgramListResp.class, owner, liveStatus);
+            HttpEntity<ProgramListResp> rep = mRestTemplate.exchange(isOwner ? TEMPLATE_GET_PROGRAMS : TEMPLATE_CDN_GET_PROGRAMS, HttpMethod.GET, req, ProgramListResp.class, owner, liveStatus);
+            resp = rep.getBody();
 
             if (0 == resp.getError()) {
                 return resp.getList();
@@ -158,18 +180,18 @@ public class ProgramService extends RestService {
 
     public LiveStatus getLiveStatus(long pid) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid);
-        
+
         LiveStatusResp resp = null;
         try {
             resp = mRestTemplate.getForObject(TEMPLATE_GET_LIVESTATUS, LiveStatusResp.class, pid);
-            
+
             if (0 == resp.getError()) {
                 return resp.getData();
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());
         }
-        
+
         if (null != resp) {
             throw new LiveHttpException(resp.getError());
         } else {

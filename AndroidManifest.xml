@@ -10,6 +10,7 @@
     </uses-sdk>
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
@@ -86,7 +87,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="tencent100570681" />
+                <data android:scheme="tencent100585339" />
             </intent-filter>
         </activity>
         <activity
@@ -107,12 +108,35 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".ui.AlarmActivity"
+            android:theme="@style/no_title_dialog" >
+        </activity>
+        <activity
+            android:name=".update.UpdateProgressActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
 
         <!-- Receivers -->
         <receiver android:name="com.pplive.liveplatform.net.NetworkManager" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.pplive.liveplatform.core.alarm.PreliveAlarmReceiver"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.pplive.liveplatform.START_PRELIVE" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.pplive.liveplatform.core.alarm.BootReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>

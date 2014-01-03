@@ -12,15 +12,16 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
 public class UserpageProgramAdapter extends BaseAdapter {
     private List<Program> mPrograms;
     private LayoutInflater mInflater;
-    private Context context;
+    private Context mContext;
 
     public UserpageProgramAdapter(Context context, List<Program> programs) {
         super();
-        this.context = context;
+        this.mContext = context;
         this.mPrograms = programs;
         this.mInflater = LayoutInflater.from(context);
     }
@@ -51,7 +52,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.layout_userpage_item, null);
             holder = new ViewHolder();
             holder.statusImageView = (ImageView) convertView.findViewById(R.id.image_userpage_time_circle);
-            holder.previewImageView = (ImageView) convertView.findViewById(R.id.image_userpage_program_preview);
+            holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_userpage_program_preview);
             holder.statusTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_status);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_title);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_vv);
@@ -65,26 +66,25 @@ public class UserpageProgramAdapter extends BaseAdapter {
     }
 
     private void updateView(ViewHolder holder, Program data) {
-        holder.statusTextView.setText(data.getLiveStatus().toFriendlyString(context));
+        holder.statusTextView.setText(data.getLiveStatus().toFriendlyString(mContext));
         holder.titleTextView.setText(data.getTitle());
+        holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.timeTextView.setText(data.getStartTimeLong());
         switch (data.getLiveStatus()) {
         case LIVING:
-            holder.timeTextView.setText("");
-            holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+            holder.viewcountTextView.setText(String.valueOf(data.getViews()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_watch, 0, 0, 0);
             holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_full);
             break;
         case NOT_START:
         case PREVIEW:
         case INIT:
-            holder.timeTextView.setText(data.getStartTimeLong());
             holder.viewcountTextView.setText("");
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_half);
             break;
         case STOPPED:
-            holder.timeTextView.setText(data.getStartTimeShort());
-            holder.viewcountTextView.setText(String.valueOf(data.getVV()));
+            holder.viewcountTextView.setText(String.valueOf(data.getViews()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
             holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_none);
             break;
@@ -94,7 +94,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        ImageView previewImageView;
+        AsyncImageView previewImageView;
 
         ImageView statusImageView;
 

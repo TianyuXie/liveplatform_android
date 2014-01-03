@@ -16,9 +16,11 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -55,6 +57,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private LiveListView mLiveListView;
 
     private Mode mStatus = Mode.INITIAL;
+    
+    private Program mSelectedProgram;
 
     @Override
     public void onAttach(Activity activity) {
@@ -124,19 +128,19 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         return layout;
     }
-    
+
     @Override
     public void onStart() {
         super.onStart();
-        
+
         EventBus.getDefault().register(this);
         EventBus.getDefault().register(mLiveListView);
     }
-    
+
     @Override
     public void onStop() {
         super.onStop();
-        
+
         EventBus.getDefault().unregister(this);
         EventBus.getDefault().unregister(mLiveListView);
     }
@@ -146,6 +150,16 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         super.onResume();
 
         init();
+    }
+
+    public void onBackPressed() {
+
+        if (Mode.INITIAL == mStatus) {
+            onClickBtnLiveHome();
+        } else {
+            onClickBtnLiveBack();
+        }
+
     }
 
     @Override
@@ -159,52 +173,52 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         switch (v.getId()) {
         case R.id.btn_live_prelive:
-            onClickBtnLivePrelive(v);
+            onClickBtnLivePrelive();
             break;
         case R.id.btn_live_home:
-            onClickBtnLiveHome(v);
+            onClickBtnLiveHome();
             break;
         case R.id.btn_live_back:
-            onClickBtnLiveBack(v);
+            onClickBtnLiveBack();
             break;
         case R.id.btn_add_prelive:
-            onClickBtnAddPrelive(v);
+            onClickBtnAddPrelive();
             break;
         case R.id.btn_live_add_complete:
-            onClickBtnLiveAddComplete(v);
+            onClickBtnLiveAddComplete();
             break;
         case R.id.btn_live_edit_complete:
-            onClickBtnLiveEditComplete(v);
+            onClickBtnLiveEditComplete();
             break;
         default:
             break;
         }
     }
 
-    private void onClickBtnLivePrelive(View v) {
+    private void onClickBtnLivePrelive() {
         setMode(Mode.VIEW_PRELIVES);
 
         mEditLiveSchedule.requestFocus();
     }
 
-    private void onClickBtnLiveHome(View v) {
+    private void onClickBtnLiveHome() {
 
         if (null != mAttachedActivity) {
             mAttachedActivity.finish();
         }
     }
 
-    private void onClickBtnLiveBack(View v) {
+    private void onClickBtnLiveBack() {
         reset();
-        
+
         EventBus.getDefault().post(new EventReset());
     }
 
-    private void onClickBtnAddPrelive(View v) {
+    private void onClickBtnAddPrelive() {
         setMode(Mode.ADD_PRELIVE);
     }
 
-    private void onClickBtnLiveAddComplete(View v) {
+    private void onClickBtnLiveAddComplete() {
         setMode(Mode.VIEW_PRELIVES);
 
         final String title = mEditLiveTitle.getText().toString();
@@ -216,34 +230,41 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             protected Program doInBackground(Void... params) {
                 if (getActivity() != null) {
                     Log.d(TAG, "title: " + (null == title ? "null" : title) + "; starttime: " + starttime);
-                    
+
                     try {
                         String username = UserManager.getInstance(getActivity()).getUsernamePlain();
                         String token = UserManager.getInstance(getActivity()).getToken();
                         Program program = new Program(username, title, starttime);
-                        
+
                         program = ProgramService.getInstance().createProgram(token, program);
-                        
+
                         return program;
                     } catch (LiveHttpException e) {
-                        
+                        Log.d(TAG, "LiveHttpException");
                     }
                 }
-                
+
                 return null;
             }
 
             @Override
             protected void onPostExecute(Program program) {
+                if (program != null) {
+                    EventBus.getDefault().post(new EventProgramAdded(program));
 
-                EventBus.getDefault().post(new EventProgramAdded(program));
+                    //TODO Add alarm (event bus?)
+                    AlarmCenter.getInstance(mAttachedActivity).addPreliveAlarm(program);
+                } else {
+                    Toast.makeText(mAttachedActivity, "创建预播失败", Toast.LENGTH_SHORT).show();
+                }
+
             }
         };
 
         createLiveTask.execute();
     }
-    
-    private void onClickBtnLiveEditComplete(View v) {
+
+    private void onClickBtnLiveEditComplete() {
         setMode(Mode.VIEW_PRELIVES);
     }
 
@@ -298,10 +319,9 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         setMode(Mode.EDIT_PRELIVE);
 
-        if (null != program) {
-            mEditLiveTitle.setText(program.getTitle());
-        }
-
+        mSelectedProgram = program;
+        
+        init();
     }
 
     public String getLiveTitle() {
@@ -319,16 +339,26 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private void init() {
 
         if (null != mEditLiveTitle) {
-            String username = UserManager.getInstance(getActivity()).getNickname();
-            String live_title = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
-
-            mEditLiveTitle.setText(live_title);
+            
+            String liveTitle = null;
+            if (null != mSelectedProgram) {
+                liveTitle = mSelectedProgram.getTitle();
+            } else {
+                String username = UserManager.getInstance(getActivity()).getNickname();
+                liveTitle = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
+            }
+            
+            mEditLiveTitle.setText(liveTitle);
         }
     }
 
     public void reset() {
+        Log.d(TAG, "reset");
+
         setMode(Mode.INITIAL);
         
+        mSelectedProgram = null;
+
         init();
     }
 
@@ -354,8 +384,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         ViewUtil.setVisibility(mDateTimePicker, flags & Mode.FLAG_DATETIME_PICKER);
         ViewUtil.setVisibility(mLiveListView, flags & Mode.FLAG_LIVE_LISTVIEW);
     }
-    
-    public void setOnShareBtnClickListener(View.OnClickListener l){
+
+    public void setOnShareBtnClickListener(View.OnClickListener l) {
         mBtnLiveShare.setOnClickListener(l);
     }
 

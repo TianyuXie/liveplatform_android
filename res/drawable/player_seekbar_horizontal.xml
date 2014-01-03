@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- 背景图 -->
+
+    <item android:id="@android:id/background">
+        <shape>
+            <corners android:radius="0dip" />
+            <gradient
+                android:endColor="@color/player_seek_normal"
+                android:startColor="@color/player_seek_normal" />
+        </shape>
+    </item>
+
+    <!-- 全部能量图 -->
+
+    <item android:id="@android:id/secondaryProgress">
+        <scale
+            android:drawable="@drawable/player_progress_second"
+            android:scaleWidth="100%" />
+    </item>
+
+    <!-- 进和能量图 -->
+
+    <item android:id="@android:id/progress">
+        <scale
+            android:drawable="@drawable/player_progress"
+            android:scaleWidth="100%" />
+    </item>
+
+</layer-list>

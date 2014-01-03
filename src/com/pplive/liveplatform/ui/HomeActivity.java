@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +32,7 @@ import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.SideBar;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
+import com.pplive.liveplatform.update.Update;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
@@ -91,6 +94,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusUpAnimation.setFillAfter(true);
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
+
     }
 
     @Override
@@ -152,7 +156,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     }
 
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
-
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             Log.d(TAG, "onScroll");
@@ -267,12 +270,9 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     }
 
     private void rotateButton() {
-        // Find the center of the container
         final float centerX = mStatusButton.getWidth() / 2.0f;
         final float centerY = mStatusButton.getHeight() / 2.0f;
 
-        // Create a new 3D rotation with the supplied parameter
-        // The animation listener is used to trigger the next animation
         final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
         rotation.setDuration(350);
         rotation.setFillAfter(true);
@@ -295,26 +295,19 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
             doSlideBack();
             switch (checkedId) {
             case R.id.btn_sidebar_original:
-                Log.d(TAG, "btn_sidebar_original");
                 mHomeFragment.switchSubject(1);
                 break;
             case R.id.btn_sidebar_tv:
-                Log.d(TAG, "btn_sidebar_tv");
                 mHomeFragment.switchSubject(2);
                 break;
             case R.id.btn_sidebar_game:
-                Log.d(TAG, "btn_sidebar_game");
                 mHomeFragment.switchSubject(3);
                 break;
             case R.id.btn_sidebar_sport:
-                Log.d(TAG, "btn_sidebar_sport");
                 mHomeFragment.switchSubject(4);
                 break;
             case R.id.btn_sidebar_finance:
-                Log.d(TAG, "btn_sidebar_finance");
                 mHomeFragment.switchSubject(5);
-                break;
-            default:
                 break;
             }
         }

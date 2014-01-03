@@ -11,12 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-
-/**
- * 升级下载apk到本地
- * 
- * @author sugarzhang
- */
 public class DownManager
 {
     /**

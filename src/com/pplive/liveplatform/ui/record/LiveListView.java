@@ -1,9 +1,12 @@
 package com.pplive.liveplatform.ui.record;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.app.Service;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -20,6 +23,7 @@ import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
@@ -56,12 +60,18 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
     }
 
     @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemClick(AdapterView<?> parent, View view, final int position, final long id) {
         Log.d(TAG, "onItemClick position: " + position + "; id: " + id);
         
-        Program program = mLiveListAdapter.getItem(position);
-        
-        EventBus.getDefault().post(new EventProgramSelected(program));
+        DialogManager.alertPrelive(getContext(), new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Program program = mLiveListAdapter.getItem(position);
+                
+                EventBus.getDefault().post(new EventProgramSelected(program));
+            }
+        }, null).show();
     }
     
     public void onEvent(EventProgramDeleted event) {
@@ -174,9 +184,10 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             protected List<Program> doInBackground(Void... params) {
                 Log.d(TAG, "doInBackground");
                 String username = UserManager.getInstance(getContext()).getUsernamePlain();
+                String token = UserManager.getInstance(getContext()).getToken();
                 
                 try {
-                    List<Program> programs = ProgramService.getInstance().getProgramsByOwner(username, LiveStatusEnum.NOT_START);
+                    List<Program> programs = ProgramService.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.NOT_START);
     
                     return programs;
                 } catch (LiveHttpException e) {
@@ -186,11 +197,22 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 return null;
             }
 
-            protected void onPostExecute(java.util.List<Program> result) {
+            protected void onPostExecute(List<Program> programs) {
                 Log.d(TAG, "onPostExecute");
 
-                if (null != result) {
-                    mPreLiveList = result;
+                if (null != programs) {
+                    
+                    Collections.sort(programs, new Comparator<Program> () {
+                        
+                        @Override
+                        public int compare(Program program1, Program program2) {
+                            
+                            return (int)(program1.getStartTime() - program2.getStartTime());
+                        }
+                    });
+                    
+                    
+                    mPreLiveList = programs;
                     notifyDataSetChanged();
                 }
 

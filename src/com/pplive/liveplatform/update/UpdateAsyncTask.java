@@ -3,16 +3,7 @@ package com.pplive.liveplatform.update;
 import java.util.ArrayList;
 import android.app.Activity;
 import android.os.AsyncTask;
-/**
- * 手动更新异步任务
- * <一句话功能简述>
- * <功能详细描述>
- * 
- * @author  javonewang
- * @version  [版本号, 2013-5-22]
- * @see  [相关类/方法]
- * @since  [产品/模块版本]
- */
+
 public class UpdateAsyncTask extends AsyncTask<Activity, Integer, ArrayList<UpdateInfo>>
 {
     UpdateListener listener;

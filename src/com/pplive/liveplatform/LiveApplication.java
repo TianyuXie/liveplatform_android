@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.telephony.TelephonyManager;
+import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -32,11 +33,12 @@ public class LiveApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        StringManager.initContext(getApplicationContext());
         initAppInfo(getApplicationContext());
         initPaths(getApplicationContext());
-        NetworkManager.init(getApplicationContext());
         initImageLoader(getApplicationContext());
+
+        NetworkManager.init(getApplicationContext());
+        StringManager.initContext(getApplicationContext());
 
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
@@ -47,23 +49,22 @@ public class LiveApplication extends Application {
     private static void initAppInfo(Context context) {
         try {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-
             sAppVersionCode = packageInfo.versionCode;
             sAppVersionName = packageInfo.versionName;
-
         } catch (NameNotFoundException e) {
             Log.w(TAG, "warnings: " + e.toString());
         }
     }
 
     private static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 2)
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(3)
                 .denyCacheImageMultipleSizesInMemory().discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
-                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 500)).build();
+                .memoryCacheExtraOptions(160, 120).discCacheExtraOptions(160, 120, CompressFormat.JPEG, 75, null)
+                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 150)).build();
         ImageLoader.getInstance().init(config);
     }
 
-    private void initPaths(Context context) {
+    private static void initPaths(Context context) {
         FileUtil.checkPath(SysUtil.getAppPath(context));
         FileUtil.checkPath(SysUtil.getCachePath(context));
         FileUtil.checkPath(SysUtil.getFilesPath(context));
@@ -88,5 +89,9 @@ public class LiveApplication extends Application {
     
     public static String getChannel(){
         return "0";
+    }
+    
+    public static String getPlatform(){
+        return "android_phone";
     }
 }

@@ -62,6 +62,10 @@ public class Program implements Serializable {
         this.title = title;
     }
 
+    public void setLiveStatus(LiveStatusEnum status) {
+        this.livestatus = status;
+    }
+
     public long getId() {
         return pid;
     }
@@ -100,10 +104,6 @@ public class Program implements Serializable {
         return livestatus;
     }
 
-    public boolean isComing() {
-        return livestatus == LiveStatusEnum.INIT || livestatus == LiveStatusEnum.PREVIEW || livestatus == LiveStatusEnum.NOT_START;
-    }
-
     private String getCoverPre() {
         String coverUrl = getCoverUrl();
         return TextUtils.isEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
@@ -122,9 +122,12 @@ public class Program implements Serializable {
                 return getShotPre();
             }
         }
-
-        return getCoverPre();
+        return getShotPre();
     }
+
+    //    public String getRecommendCover() {
+    //        return getShotPre();
+    //    }
 
     private String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
@@ -134,12 +137,20 @@ public class Program implements Serializable {
         return StringUtil.isNullOrEmpty(screenshot_url) ? "" : screenshot_url;
     }
 
-    public int getVV() {
+    private int getVV() {
         return null == record ? 0 : record.vv;
     }
 
-    public int getOnline() {
+    private int getOnline() {
         return null == record ? 0 : record.online;
+    }
+
+    public int getViews() {
+        if (isLiving()) {
+            return getOnline();
+        } else {
+            return getVV();
+        }
     }
 
     public String getShareLinkUrl() {
@@ -148,6 +159,14 @@ public class Program implements Serializable {
 
     public String getLiveToken() {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
+    }
+
+    public boolean isLiving() {
+        return livestatus == LiveStatusEnum.LIVING;
+    }
+
+    public boolean isVOD() {
+        return livestatus == LiveStatusEnum.STOPPED;
     }
 
     public boolean isDeleted() {
@@ -159,7 +178,11 @@ public class Program implements Serializable {
     }
 
     public boolean isExpiredPrelive() {
-        return isPrelive() && new Date().getTime() > starttime + TimeUtil.MS_OF_HOUR;
+        return isPrelive() && System.currentTimeMillis() > starttime + TimeUtil.MS_OF_HOUR;
+    }
+
+    public boolean isOriginal() {
+        return subject_id == SUBJECT_ID_ORIGIN;
     }
 
     class Record implements Serializable {

@@ -15,8 +15,10 @@ import android.widget.AbsListView.OnScrollListener;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.util.TimeUtil;
 
 public class RefreshGridView extends GridView implements OnScrollListener {
     static final String TAG = "_RefreshGridView";
@@ -27,6 +29,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private final static int STATUS_DONE = 803;
 
     private final static float RATIO = 2.0f;
+    private final static float OVER_MULT = 1.2f;
     private final static int REVERSE_LIMIT = 5;
     private final static float MAX_STEP = 100.0f;
     private final static float MOVE_THRESHOLD = 5.0f;
@@ -35,8 +38,12 @@ public class RefreshGridView extends GridView implements OnScrollListener {
     private final static int POPUP_TIME = 500;
 
     private View mHeaderView;
+    private TextView mInfoText;
+    private TextView mTimeText;
     private LinearLayout mPullView;
     private ProgressBar mProgressBar;
+
+    private long mLastUpdateTime;
 
     private int mStatus;
     private int mHeaderHeight;
@@ -73,14 +80,20 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         LayoutInflater inflater = LayoutInflater.from(context);
         mPullView = (LinearLayout) inflater.inflate(R.layout.layout_home_pull_header, null);
         mProgressBar = (ProgressBar) mPullView.findViewById(R.id.progress_header);
+        mInfoText = (TextView) mPullView.findViewById(R.id.text_header_pullinfo);
+        mTimeText = (TextView) mPullView.findViewById(R.id.text_header_refreshtime);
         measureView(mPullView);
         mHeaderHeight = mPullView.getMeasuredHeight();
-        mPullView.setPadding(0, -mHeaderHeight, 0, 0);
+        updatePadding(-mHeaderHeight);
         mPullView.invalidate();
     }
 
     public View getPullView() {
         return mPullView;
+    }
+
+    private void updatePadding(float height) {
+        mPullView.setPadding(0, (int) (height * 7.0 / 10.0), 0, (int) (height * 3.0 / 10.0));
     }
 
     public void setHeader(View v) {
@@ -192,7 +205,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                         if (mStatus == STATUS_RELEASE_TO_REFRESH) {
                             setSelection(0);
                             // 往上推了，推到了屏幕足够掩盖head的程度，但是还没有推到全部掩盖的地步
-                            if ((mSavedDelta / RATIO < mHeaderHeight) && mSavedDelta > 0) {
+                            if ((mSavedDelta / RATIO < OVER_MULT * mHeaderHeight) && mSavedDelta > 0) {
                                 mStatus = STATUS_PULL_TO_REFRESH;
                                 updateHeader();
                                 Log.v(TAG, "由松开刷新状态转变到下拉刷新状态");
@@ -213,7 +226,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                         if (mStatus == STATUS_PULL_TO_REFRESH) {
                             setSelection(0);
                             // 下拉到可以进入RELEASE_TO_REFRESH的状态
-                            if (mSavedDelta / RATIO >= mHeaderHeight) {
+                            if (mSavedDelta / RATIO >= OVER_MULT * mHeaderHeight) {
                                 mStatus = STATUS_RELEASE_TO_REFRESH;
                                 updateHeader();
                                 Log.v(TAG, "由done或者下拉刷新状态转变到松开刷新");
@@ -233,7 +246,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
                         }
                         // 更新headView的size
                         if (mStatus == STATUS_PULL_TO_REFRESH || mStatus == STATUS_RELEASE_TO_REFRESH) {
-                            mPullView.setPadding(0, (int) (mSavedDelta / RATIO - mHeaderHeight), 0, 0);
+                            updatePadding((mSavedDelta / RATIO - mHeaderHeight));
                         }
                     } else if (delta != mSavedDelta && Math.abs(mSavedDelta - delta) > REVERSE_THRESHOLD) {
                         mReverseCount++;
@@ -259,18 +272,27 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         case STATUS_RELEASE_TO_REFRESH:
             Log.d(TAG, "STATUS_RELEASE_TO_REFRESH");
             mProgressBar.setVisibility(View.INVISIBLE);
+            mInfoText.setText(R.string.refresh_release);
             break;
         case STATUS_PULL_TO_REFRESH:
             Log.d(TAG, "STATUS_PULL_TO_REFRESH");
             mProgressBar.setVisibility(View.INVISIBLE);
+            mInfoText.setVisibility(View.VISIBLE);
+            mTimeText.setVisibility(View.VISIBLE);
+            mInfoText.setText(R.string.refresh_pull);
+            mTimeText.setText(String.format(getContext().getString(R.string.refresh_last_update), TimeUtil.stamp2String(mLastUpdateTime)));
             break;
         case STATUS_REFRESHING:
             Log.d(TAG, "STATUS_REFRESHING");
             mProgressBar.setVisibility(View.VISIBLE);
+            mInfoText.setVisibility(View.GONE);
+            mTimeText.setVisibility(View.GONE);
             break;
         case STATUS_DONE:
             Log.v(TAG, "STATUS_DONE");
             mProgressBar.setVisibility(View.INVISIBLE);
+            mInfoText.setVisibility(View.GONE);
+            mTimeText.setVisibility(View.GONE);
             break;
         }
     }
@@ -369,12 +391,16 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         super.onScrollChanged(l, t, oldl, oldt);
     }
 
+    public void setLastUpdateTime(long time) {
+        this.mLastUpdateTime = time;
+    }
+
     private void bounceHeader(int yTranslate) {
         mAniming = true;
         if (mStatus == STATUS_REFRESHING) {
-            mPullView.setPadding(0, 0, 0, 0);
+            updatePadding(0);
         } else if (mStatus == STATUS_DONE) {
-            mPullView.setPadding(0, -mHeaderHeight, 0, 0);
+            updatePadding(-mHeaderHeight);
         }
         TranslateAnimation bodyAnim = new TranslateAnimation(0, 0, -yTranslate, 0);
         bodyAnim.setDuration(POPUP_TIME);

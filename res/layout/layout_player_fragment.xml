@@ -11,6 +11,30 @@
         android:layout_height="fill_parent"
         android:layout_centerInParent="true" />
 
+    <LinearLayout
+        android:id="@+id/wrapper_player_controller"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" >
+
+        <include
+            android:id="@+id/live_player_controller"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            layout="@layout/layout_player_controller" >
+        </include>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/image_player_pptv_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="15dp"
+        android:background="@drawable/player_pptv_icon"
+        android:contentDescription="@null" />
+
     <ImageView
         android:id="@+id/image_player_loading"
         android:layout_width="fill_parent"
@@ -25,8 +49,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:lineSpacingMultiplier="1.2"
+        android:paddingBottom="20dp"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="32sp"
         android:visibility="gone" />
 
     <RelativeLayout
@@ -112,9 +139,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/player_finish"
             android:textColor="@color/white"
             android:textSize="12sp" />
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/layout_player_buffering"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </RelativeLayout>

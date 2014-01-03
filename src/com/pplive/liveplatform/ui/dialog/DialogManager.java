@@ -52,26 +52,28 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog alertHasLivingProgram(final Context context, DialogInterface.OnClickListener positiveListener,
+    public static Dialog alertLivingTerminated(final Context context, DialogInterface.OnClickListener positiveListener,
             DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle(R.string.mobile_alert_title);
-        builder.setMessage("你要继续直播吗?");
-        builder.setPositiveButton("不要", positiveListener);
-        builder.setNegativeButton("继续直播", negativeListener);
+        builder.setMessage(R.string.alert_message_living_terminated);
+        builder.setPositiveButton(R.string.alert_positive_living_terminated, positiveListener);
+        builder.setNegativeButton(R.string.alert_negative, negativeListener);
 
         return builder.create();
     }
 
-    public static Dialog alertLivingfailed(final Context context, DialogInterface.OnClickListener positiveListener) {
+    public static Dialog alertPrelive(final Context context, DialogInterface.OnClickListener positiveListener, DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_title);
-        builder.setMessage("推送失败");
-        builder.setPositiveButton("知道了", positiveListener);
+        builder.setTitle(R.string.alert_title_prelive);
+        builder.setMessage(R.string.alert_message_prelive);
+        builder.setPositiveButton(R.string.alert_positive_prelive, positiveListener);
+        builder.setNegativeButton(R.string.alert_negative, negativeListener);
+
         return builder.create();
     }
 }

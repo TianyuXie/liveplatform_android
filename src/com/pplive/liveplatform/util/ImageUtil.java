@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -112,10 +113,30 @@ public class ImageUtil {
         return new BitmapDrawable(res, getCircleBitmap(res, id));
     }
 
-    public static Bitmap loadImageFromUrl(String url) throws IOException {
+    public static Bitmap loadImageFromUrl(String url, float width, float height) throws IOException {
         InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
-        BitmapFactory.Options bpo = new BitmapFactory.Options();
-        return BitmapFactory.decodeStream(inputStream, null, bpo);
+        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+        newOpts.inJustDecodeBounds = true;
+        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
+        newOpts.inJustDecodeBounds = false;
+        int w = newOpts.outWidth;
+        int h = newOpts.outHeight;
+        int be = 1;
+        if (w >= h && w > width) {
+            be = (int) (w / width);
+        } else if (w < h && h > height) {
+            be = (int) (h / height);
+        }
+        if (be <= 0) {
+            be = 1;
+        }
+        newOpts.inSampleSize = be;
+        newOpts.inPreferredConfig = Config.ARGB_8888;
+        newOpts.inPurgeable = true;
+        newOpts.inInputShareable = true;
+        inputStream = (InputStream) new java.net.URL(url).getContent();
+        bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
+        return bitmap;
     }
 
     public static void bitmap2File(Bitmap bitmap, String filename) {
@@ -133,6 +154,19 @@ public class ImageUtil {
 
     public static Bitmap getBitmapFromRes(Context context, int resid) {
         return ((BitmapDrawable) context.getApplicationContext().getResources().getDrawable(resid)).getBitmap();
+    }
+
+    public static Bitmap getBitmapFromAssets(Context context, String fileName) {
+        Bitmap image = null;
+        AssetManager am = context.getAssets();
+        try {
+            InputStream is = am.open(fileName);
+            image = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
     }
 
     static class UnsupportedException extends RuntimeException {

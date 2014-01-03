@@ -27,8 +27,6 @@ import org.apache.http.util.EntityUtils;
 
 import android.os.Bundle;
 
-import com.pplive.android.util.LogUtils;
-
 public class HttpUtil {
     private static final String CHARSET = HTTP.UTF_8;
 
@@ -78,45 +76,6 @@ public class HttpUtil {
             }
         }
         return html;
-    }
-    
-    /** 生成http query */
-    public static String generateQuery(Bundle param)
-    {
-        if (param == null || param.isEmpty())
-        {
-            return "";
-        }
-
-        StringBuffer sbBuffer = new StringBuffer();
-        if (param != null)
-        {
-            int i = 0;
-            for (String key : param.keySet())
-            {
-
-                if (i == 0)
-                {
-                    sbBuffer.append("");
-                }
-                else
-                {
-                    sbBuffer.append("&");
-                }
-
-                try
-                {
-                    sbBuffer.append(URLEncoder.encode(key, HTTP.UTF_8) + "="
-                            + URLEncoder.encode(param.getString(key), HTTP.UTF_8));
-                }
-                catch (UnsupportedEncodingException e)
-                {
-                }
-
-                i++;
-            }
-        }
-        return sbBuffer.toString();
     }
 
 }

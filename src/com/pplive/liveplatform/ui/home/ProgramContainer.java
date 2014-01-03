@@ -18,6 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
@@ -77,6 +78,7 @@ public class ProgramContainer extends RelativeLayout {
     public void refreshData(List<Program> data) {
         mPrograms.clear();
         mPrograms.addAll(data);
+        ImageLoader.getInstance().clearMemoryCache();
         mAdapter.notifyDataSetChanged();
     }
 
@@ -142,6 +144,10 @@ public class ProgramContainer extends RelativeLayout {
     public void setStatusVisibility(int visibility) {
         findViewById(R.id.btn_status_tolive).setVisibility(visibility);
         findViewById(R.id.btn_status_replay).setVisibility(visibility);
+    }
+
+    public void setUpdateTime(long time) {
+        mGridView.setLastUpdateTime(time);
     }
 
 }
