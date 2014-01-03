@@ -84,14 +84,6 @@ public class Update {
 
     }
 
-    /**
-     * 个人中心手动升级(无91弹框界面)
-     * 
-     * @param updateInfos
-     * @param activity
-     * @return
-     * @see [类、类#方法、类#成员]
-     */
     public static boolean doUpdate(ArrayList<UpdateInfo> updateInfos, final Activity activity) {
         if (updateInfos == null) {
             //Toast.makeText(activity, R.string.no_update_information, Toast.LENGTH_SHORT).show();
