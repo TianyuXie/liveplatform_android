@@ -117,6 +117,13 @@
             android:name=".ui.AlarmActivity"
             android:theme="@style/no_title_dialog" >
         </activity>
+        <activity
+            android:name=".update.UpdateProgressActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
 
         <!-- Receivers -->
         <receiver android:name="com.pplive.liveplatform.net.NetworkManager" >
