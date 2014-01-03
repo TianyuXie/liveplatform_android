@@ -15,11 +15,10 @@ import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.update.Update;
 
 public class SettingsActivity extends Activity {
     static final String TAG = "_SettingsActivity";
-
-    public static final int FROM_USERPAGE = 6001;
 
     public static final int LOGOUT = 5801;
 
@@ -49,6 +48,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.btn_settings_login).setOnClickListener(onLoginBtnClickListener);
         findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
         findViewById(R.id.layout_settings_about).setOnClickListener(onAboutClickListener);
+        findViewById(R.id.layout_settings_update).setOnClickListener(onUpdateClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
@@ -151,6 +151,13 @@ public class SettingsActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
             startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Update.doUpdateAPP(SettingsActivity.this);
         }
     };
 

@@ -9,10 +9,13 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -65,6 +68,12 @@ public class UserpageActivity extends Activity {
 
     private final static int PULL_TIMEOUT_TIME = 10000;
 
+    private final static int REQUEST_PICKPIC = 7801;
+
+    private final static int REQUEST_SETTINGS = 7802;
+
+    private final static int REQUEST_RECORD = 7803;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
@@ -104,6 +113,7 @@ public class UserpageActivity extends Activity {
         mListView.setOnUpdateListener(onUpdateListener);
 
         mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
+        mUserIcon.setOnClickListener(onIconClickListener);
         mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         mRefreshDialog = new RefreshDialog(this);
 
@@ -179,7 +189,7 @@ public class UserpageActivity extends Activity {
                     if (isLogin(mUsername)) {
                         intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
                         intent.setClass(mContext, LiveRecordActivity.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, REQUEST_RECORD);
                     } else {
                         intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
                         intent.setClass(mContext, LivePlayerActivity.class);
@@ -204,7 +214,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, SettingsActivity.class);
-            startActivityForResult(intent, SettingsActivity.FROM_USERPAGE);
+            startActivityForResult(intent, REQUEST_SETTINGS);
         }
     };
 
@@ -213,6 +223,14 @@ public class UserpageActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(mContext, LiveRecordActivity.class);
             startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener onIconClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, REQUEST_PICKPIC);
         }
     };
 
@@ -225,8 +243,21 @@ public class UserpageActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SettingsActivity.FROM_USERPAGE && resultCode == SettingsActivity.LOGOUT) {
+        if (requestCode == REQUEST_SETTINGS && resultCode == SettingsActivity.LOGOUT) {
             finish();
+        } else if (requestCode == REQUEST_PICKPIC && resultCode == Activity.RESULT_OK) {
+            try {
+                Uri uri = data.getData();
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                cursor.moveToFirst();
+                String imageUri = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                Log.d(TAG, imageUri);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Column does not exist");
+            }
+
+        } else if (requestCode == REQUEST_RECORD) {
+            refreshData(false);
         }
     };
 
