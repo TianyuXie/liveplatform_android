@@ -3,9 +3,10 @@ package com.pplive.liveplatform.update;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-
 public class UpdateInfo implements Serializable
 {
+    private static final long serialVersionUID = -8358993893534855440L;
+
     /**
      * 普通升级
      */

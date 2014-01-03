@@ -31,7 +31,7 @@
     <string name="refresh_last_update">上次更新时间: %s</string>
 
     <!-- For network -->
-    <string name="mobile_alert_title">PPTV提醒您</string>
+    <string name="mobile_alert_title">爱播提醒您</string>
     <string name="mobile_go_settings">去设置</string>
     <string name="mobile_i_know">知道了</string>
     <string name="mobile_next_time">下次再说</string>

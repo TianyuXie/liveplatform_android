@@ -9,10 +9,13 @@ import java.util.List;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,12 +26,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -37,6 +42,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
+import com.pplive.liveplatform.core.task.user.UpdateIconTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.widget.RefreshListView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
@@ -65,10 +71,17 @@ public class UserpageActivity extends Activity {
 
     private final static int PULL_TIMEOUT_TIME = 10000;
 
+    private final static int REQUEST_PICKPIC = 7801;
+
+    private final static int REQUEST_SETTINGS = 7802;
+
+    private final static int REQUEST_RECORD = 7803;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
 
+    private TextView mNicknameText;
     private RefreshListView mListView;
     private TextView mNodataText;
     private Button mNodataButton;
@@ -103,7 +116,9 @@ public class UserpageActivity extends Activity {
         mListView.setOnItemClickListener(onItemClickListener);
         mListView.setOnUpdateListener(onUpdateListener);
 
+        mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
         mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
+        mUserIcon.setOnClickListener(onIconClickListener);
         mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
         mRefreshDialog = new RefreshDialog(this);
 
@@ -125,8 +140,7 @@ public class UserpageActivity extends Activity {
     }
 
     private void initUserinfo() {
-        TextView nicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
-        nicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
+        mNicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
         mUserIcon.setRounded(false);
         String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
         if (!TextUtils.isEmpty(iconUrl)) {
@@ -177,8 +191,9 @@ public class UserpageActivity extends Activity {
                 case PREVIEW:
                 case INIT:
                     if (isLogin(mUsername)) {
+                        intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
                         intent.setClass(mContext, LiveRecordActivity.class);
-                        startActivity(intent);
+                        startActivityForResult(intent, REQUEST_RECORD);
                     } else {
                         intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
                         intent.setClass(mContext, LivePlayerActivity.class);
@@ -203,7 +218,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, SettingsActivity.class);
-            startActivityForResult(intent, SettingsActivity.FROM_USERPAGE);
+            startActivityForResult(intent, REQUEST_SETTINGS);
         }
     };
 
@@ -212,6 +227,16 @@ public class UserpageActivity extends Activity {
         public void onClick(View v) {
             Intent intent = new Intent(mContext, LiveRecordActivity.class);
             startActivity(intent);
+        }
+    };
+
+    private View.OnClickListener onIconClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (UserManager.getInstance(mContext).isLogin(mUsername)) {
+                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_PICKPIC);
+            }
         }
     };
 
@@ -224,8 +249,71 @@ public class UserpageActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SettingsActivity.FROM_USERPAGE && resultCode == SettingsActivity.LOGOUT) {
-            finish();
+        if (requestCode == REQUEST_SETTINGS) {
+            if (resultCode == SettingsActivity.RESULT_LOGOUT) {
+                finish();
+            } else if (resultCode == SettingsActivity.RESULT_NICK_CHANGED) {
+                mNicknameText.setText(UserManager.getInstance(mContext).getNickname());
+            }
+        } else if (requestCode == REQUEST_RECORD) {
+            refreshData(false);
+        } else if (requestCode == REQUEST_PICKPIC && resultCode == Activity.RESULT_OK) {
+            if (!UserManager.getInstance(mContext).isLogin(mUsername)) {
+                return;
+            }
+            try {
+                mRefreshDialog.show();
+                Uri uri = data.getData();
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                cursor.moveToFirst();
+                String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
+                UpdateIconTask task = new UpdateIconTask();
+                task.addTaskListener(onIconTaskListener);
+                TaskContext taskContext = new TaskContext();
+                taskContext.set(UpdateIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
+                taskContext.set(UpdateIconTask.KEY_ICON, imagePath);
+                taskContext.set(UpdateIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+                task.execute(taskContext);
+            } catch (IllegalArgumentException e) {
+                Log.e(TAG, "Column does not exist");
+            }
+        }
+    };
+
+    private Task.OnTaskListener onIconTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            mRefreshDialog.dismiss();
+            UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UpdateIconTask.KEY_USERINFO));
+            String iconUrl = UserManager.getInstance(mContext).getIcon();
+            mUserIcon.setRounded(false);
+            if (!TextUtils.isEmpty(iconUrl)) {
+                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
+            } else {
+                mUserIcon.setImageResource(R.drawable.user_icon_default);
+            }
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            mRefreshDialog.dismiss();
+            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            mRefreshDialog.dismiss();
+            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            mRefreshDialog.dismiss();
         }
     };
 
@@ -261,9 +349,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
-            if ((Integer) event.getContext().get(ProgramTask.KEY_TYPE) == PULL) {
-                mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
-            }
+            mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             mPrograms.clear();
             mAdapter.notifyDataSetChanged();
             mNodataText.setText(R.string.userpage_user_error);

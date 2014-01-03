@@ -23,7 +23,7 @@
     <string name="error_weibo_auth">新浪微博授权错误</string>
     <string name="error_weibo_io">新浪微博网络错误</string>
     <string name="error_weibo_internal">新浪微博内部错误</string>
-    <string name="error_qq_init">手机QQ初始化错误</string>
+    <string name="error_qq_init">手机QQ初始化错误, 请再试一次</string>
     <string name="error_qq_data">手机QQ数据错误</string>
     <string name="error_qq_network">手机QQ网络错误</string>
     <string name="error_qq_timeout">手机QQ网络超时</string>

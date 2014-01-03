@@ -9,8 +9,8 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class UpdateUserTask extends Task {
-    final static String TAG = "_UpdateUserTask";
+public class UpdateNickTask extends Task {
+    final static String TAG = "_UpdateNickTask";
     public final static String KEY_USERINFO = "userinfo";
     public final static String KEY_NICKNAME = "nickname";
 
