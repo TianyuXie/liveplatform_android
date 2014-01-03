@@ -869,13 +869,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 String title = StringUtil.safeString(mLivingProgram.getTitle());
                 String shareUrl = mLivingProgram.getShareLinkUrl();
                 String imageUrl = mLivingProgram.getRecommendCover();
-                String summary = String.format(getString(R.string.share_summary_format), getString(R.string.app_name), title);
+                String summary = String.format(getString(R.string.share_watch_format), getString(R.string.app_name), title);
                 data.putString(ShareDialog.PARAM_TITLE, title);
                 data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
                 data.putString(ShareDialog.PARAM_SUMMARY, summary);
                 data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? getString(R.string.default_share_image_url) : imageUrl);
             } else {
-                String title = String.format(getString(R.string.share_user_title), getString(R.string.app_name));
+                String title = getString(R.string.share_user_title);
                 String shareUrl = getString(R.string.default_share_target_url);
                 String imageUrl = getString(R.string.default_share_image_url);
                 String summary = String.format(getString(R.string.share_user_format), getString(R.string.app_name));

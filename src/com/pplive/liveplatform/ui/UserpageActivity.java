@@ -177,6 +177,7 @@ public class UserpageActivity extends Activity {
                 case PREVIEW:
                 case INIT:
                     if (isLogin(mUsername)) {
+                        intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
                         intent.setClass(mContext, LiveRecordActivity.class);
                         startActivity(intent);
                     } else {

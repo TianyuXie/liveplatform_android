@@ -65,6 +65,11 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".ui.AboutActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".ui.NicknameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" >

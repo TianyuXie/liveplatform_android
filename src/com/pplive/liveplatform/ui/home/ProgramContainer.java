@@ -78,6 +78,7 @@ public class ProgramContainer extends RelativeLayout {
     public void refreshData(List<Program> data) {
         mPrograms.clear();
         mPrograms.addAll(data);
+        Log.d(TAG, "clearMemoryCache");
         ImageLoader.getInstance().clearMemoryCache();
         mAdapter.notifyDataSetChanged();
     }

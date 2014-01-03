@@ -47,7 +47,8 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
         findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
         findViewById(R.id.btn_settings_login).setOnClickListener(onLoginBtnClickListener);
-        findViewById(R.id.row_settings_nickname).setOnClickListener(onNicknameClickListener);
+        findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
+        findViewById(R.id.layout_settings_about).setOnClickListener(onAboutClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
@@ -142,6 +143,14 @@ public class SettingsActivity extends Activity {
                 Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
                 startActivity(intent);
             }
+        }
+    };
+
+    private View.OnClickListener onAboutClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
+            startActivity(intent);
         }
     };
 
