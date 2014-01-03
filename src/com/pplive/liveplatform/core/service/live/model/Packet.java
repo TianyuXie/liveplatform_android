@@ -6,9 +6,13 @@ public class Packet {
     
     int maxVersionCode;
     
+    int distVersionCode;
+    
     String distVersionName;
     
     String url;
+    
+    int mode;
     
     String description;
     
@@ -24,8 +28,16 @@ public class Packet {
         return distVersionName;
     }
     
+    public int getDistVersionCode() {
+        return distVersionCode;
+    }
+    
     public String getUrl() {
         return url;
+    }
+    
+    public int getMode() {
+        return mode;
     }
     
     public String getDescription() {

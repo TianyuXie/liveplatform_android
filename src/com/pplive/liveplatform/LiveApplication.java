@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.telephony.TelephonyManager;
 import android.graphics.Bitmap.CompressFormat;
 import android.util.Log;
 
@@ -27,6 +28,8 @@ public class LiveApplication extends Application {
     private static int sAppVersionCode = -1;
 
     private static String sAppVersionName = "unknown";
+    
+    private static String sIMEI = "unknown";
 
     @Override
     public void onCreate() {
@@ -50,6 +53,8 @@ public class LiveApplication extends Application {
             PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             sAppVersionCode = packageInfo.versionCode;
             sAppVersionName = packageInfo.versionName;
+            TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+            sIMEI = tm.getDeviceId(); 
         } catch (NameNotFoundException e) {
             Log.w(TAG, "warnings: " + e.toString());
         }
@@ -78,5 +83,18 @@ public class LiveApplication extends Application {
 
     public static String getVersionName() {
         return sAppVersionName;
+    }
+    
+    public static String getIMEI(){
+
+        return sIMEI;
+    }
+    
+    public static String getChannel(){
+        return "0";
+    }
+    
+    public static String getPlatform(){
+        return "android_phone";
     }
 }
