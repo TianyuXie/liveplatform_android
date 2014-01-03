@@ -6,6 +6,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -77,5 +78,15 @@ public class LiveApplication extends Application {
 
     public static String getVersionName() {
         return sAppVersionName;
+    }
+    
+    public static String getIMEI(Context context){
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String uid = tm.getDeviceId();
+        return uid;
+    }
+    
+    public static String getChannel(){
+        return "0";
     }
 }
