@@ -12,10 +12,10 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class UpdateIconTask extends Task {
+public class UploadIconTask extends Task {
     final static String TAG = "_UpdateIconTask";
     public final static String KEY_USERINFO = "userinfo";
-    public final static String KEY_ICON = "icon";
+    public final static String KEY_ICON_PATH = "iconpath";
 
     private final String ID = StringUtil.newGuid();
     public final static String TYPE = "UpdateIcon";
@@ -56,7 +56,7 @@ public class UpdateIconTask extends Task {
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
         String token = context.getString(KEY_TOKEN);
-        String icon = context.getString(KEY_ICON);
+        String icon = context.getString(KEY_ICON_PATH);
         GetUserInfoThread userThread = new GetUserInfoThread(username, token);
         userThread.start();
         UploadThread uploadThread = new UploadThread(username, token, icon);
