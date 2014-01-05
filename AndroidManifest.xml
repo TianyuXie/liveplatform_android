@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pplive.liveplatform"
-    android:versionCode="100"
-    android:versionName="1.0.0" >
+    android:versionCode="1"
+    android:versionName="1.0" >
 
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="19" >
+        android:targetSdkVersion="18" >
     </uses-sdk>
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- optional -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />s
 
     <application
         android:name="com.pplive.liveplatform.LiveApplication"
@@ -26,6 +25,16 @@
         android:label="@string/app_name" >
 
         <!-- Activities -->
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.LivePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -45,6 +54,7 @@
         <activity
             android:name=".ui.HomeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" >
             <intent-filter>
@@ -54,91 +64,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.SearchActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" >
-        </activity>
-        <activity
             android:name=".ui.SettingsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".ui.NicknameActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".ui.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name="com.tencent.tauth.AuthActivity"
-            android:launchMode="singleTask"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data android:scheme="tencent100585339" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.tencent.connect.common.AssistActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
-            android:name="com.tencent.plus.ImageActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
-        <activity
             android:name=".ui.RegisterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".ui.UserpageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
-        <activity
-            android:name=".ui.AlarmActivity"
-            android:theme="@style/no_title_dialog" >
-        </activity>
-        <activity
-            android:name=".update.UpdateProgressActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:windowSoftInputMode="adjustPan" >
-        </activity>
-
-        <!-- Receivers -->
-        <receiver android:name="com.pplive.liveplatform.net.NetworkManager" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.STATE_CHANGE" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.pplive.liveplatform.core.alarm.PreliveAlarmReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.pplive.liveplatform.START_PRELIVE" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.pplive.liveplatform.core.alarm.BootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

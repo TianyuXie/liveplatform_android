@@ -95,6 +95,6 @@ public class LiveApplication extends Application {
     }
     
     public static String getPlatform(){
-        return "android_phone";
+        return "android_ibo";
     }
 }
