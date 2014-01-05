@@ -61,10 +61,10 @@ public class LiveApplication extends Application {
     }
 
     private static void initImageLoader(Context context) {
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(3)
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(4)
                 .denyCacheImageMultipleSizesInMemory().discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
                 .memoryCacheExtraOptions(160, 120).discCacheExtraOptions(160, 120, CompressFormat.JPEG, 75, null)
-                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 150)).build();
+                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 200)).build();
         ImageLoader.getInstance().init(config);
     }
 

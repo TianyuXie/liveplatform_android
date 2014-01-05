@@ -42,6 +42,10 @@ public class User implements IUser, Serializable {
     long insert_time;
 
     long last_update_time;
+    
+    public void setIcon(String icon){
+        this.icon = icon;
+    }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;

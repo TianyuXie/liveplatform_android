@@ -32,7 +32,7 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.other.ImageTask;
+import com.pplive.liveplatform.core.task.other.LoadImageTask;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.SysUtil;
@@ -273,11 +273,11 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     private void shareImage(final int target) {
         mRefreshDialog.show();
-        ImageTask task = new ImageTask();
+        LoadImageTask task = new LoadImageTask();
         task.setTimeout(10000);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ImageTask.KEY_URL, mImageUrl);
-        taskContext.set(ImageTask.KEY_TARGET, target);
+        taskContext.set(LoadImageTask.KEY_URL, mImageUrl);
+        taskContext.set(LoadImageTask.KEY_TARGET, target);
         task.setReturnContext(taskContext);
         task.execute(taskContext);
         task.addTaskListener(taskListener);
@@ -304,21 +304,21 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            int target = (Integer) event.getContext().get(ImageTask.KEY_TARGET);
+            int target = (Integer) event.getContext().get(LoadImageTask.KEY_TARGET);
             Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
             shareImage(target, bitmap);
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            int target = (Integer) event.getContext().get(ImageTask.KEY_TARGET);
-            Bitmap bitmap = (Bitmap) event.getContext().get(ImageTask.KEY_RESULT);
+            int target = (Integer) event.getContext().get(LoadImageTask.KEY_TARGET);
+            Bitmap bitmap = (Bitmap) event.getContext().get(LoadImageTask.KEY_RESULT);
             shareImage(target, bitmap);
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            int target = (Integer) event.getContext().get(ImageTask.KEY_TARGET);
+            int target = (Integer) event.getContext().get(LoadImageTask.KEY_TARGET);
             Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
             shareImage(target, bitmap);
         }

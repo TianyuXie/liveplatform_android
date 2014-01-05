@@ -11,7 +11,7 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class ImageTask extends Task {
+public class LoadImageTask extends Task {
     static final String TAG = "_ImageTask";
 
     public final static String KEY_RESULT = "image_result";
