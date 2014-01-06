@@ -28,7 +28,13 @@ public class Program implements Serializable {
 
     LiveModeEnum mode;
 
+    long real_starttime;
+
+    long real_endtime;
+
     long starttime;
+
+    long insert_time;
 
     LiveStatusEnum livestatus;
 
@@ -220,6 +226,18 @@ public class Program implements Serializable {
         private static final long serialVersionUID = 235755470139323543L;
 
         String page_pic;
+    }
+
+    public long getInsertTime() {
+        return insert_time;
+    }
+
+    public long getRealStartTime() {
+        return real_starttime;
+    }
+
+    public long getLength() {
+        return real_endtime - real_starttime;
     }
 
 }
