@@ -94,7 +94,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusUpAnimation.setFillAfter(true);
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
-
         Update.doUpdateAPP(this);
 
         DacSender.sendAppStartDac(getApplicationContext());
