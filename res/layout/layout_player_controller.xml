@@ -2,6 +2,31 @@
 <com.pplive.liveplatform.ui.player.LivePlayerController xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
+            <LinearLayout
+            android:id="@+id/controller_volume_layout"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_height="200dp"
+            android:background="@drawable/live_play_volume_progress_bar_bg"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+             >
+
+            <com.pplive.liveplatform.ui.widget.VerticalSeekBar
+                android:id="@+id/controller_volume"
+                style="@style/player_progressBarStyleVertical"
+                android:layout_height="160dp"
+                android:max="100" />
+
+            <ImageView
+                android:id="@+id/controller_volume_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:clickable="true"
+                android:src="@drawable/live_play_volume_icon_small" >
+            </ImageView>
+        </LinearLayout>
 
     <RelativeLayout
         android:layout_width="fill_parent"
