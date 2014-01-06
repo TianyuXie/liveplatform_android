@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.pplive.liveplatform.util.ImageUtil;
 
 public class AsyncImageView extends ImageView {
     static final String TAG = "_AsyncImageView";
@@ -39,10 +40,14 @@ public class AsyncImageView extends ImageView {
 
     public void setImageAsync(String imageUri, int defaultImage, ImageLoadingListener listener) {
         DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cacheInMemory(true).bitmapConfig(Bitmap.Config.RGB_565)
-                .cacheOnDisc(!imageUri.startsWith("http://live2image0.pplive.cn/"));
+                .cacheOnDisc(!imageUri.startsWith("http://live2image"));
 
         if (defaultImage > 0) {
             builder.showStubImage(defaultImage).showImageForEmptyUri(defaultImage).showImageOnFail(defaultImage);
+        }
+
+        if (imageUri.startsWith("http://live2image")) {
+            imageUri = ImageUtil.getScreenshotBySize(imageUri, 160);
         }
         setImageAsync(imageUri, builder.build(), listener);
     }
