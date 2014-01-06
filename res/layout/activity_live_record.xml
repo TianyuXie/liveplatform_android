@@ -158,6 +158,7 @@
 
     <fragment
         android:id="@+id/footer_bar"
+        
         android:name="com.pplive.liveplatform.ui.record.FooterBarFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

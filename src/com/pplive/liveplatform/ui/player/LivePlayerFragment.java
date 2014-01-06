@@ -122,7 +122,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mLoadingImage = layout.findViewById(R.id.image_player_loading);
         mControllerWrapper = layout.findViewById(R.id.wrapper_player_controller);
         mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
-        mController.setAlwaysShow(true);
         mController.setCallbackListener(this);
         mBreakView = layout.findViewById(R.id.text_player_break);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
@@ -598,5 +597,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void setBreakVisibility(int visibility) {
         mBreakView.setVisibility(visibility);
+    }
+
+    @Override
+    public void onShow(int timeout) {
+        showBars(timeout);
     }
 }

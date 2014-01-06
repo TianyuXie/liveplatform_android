@@ -39,4 +39,21 @@
         <item name="android:requiresFadingEdge">vertical</item>
     </style>
 
+    <style name="player_progressBarStyleVertical">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/player_volume_seekbar</item>
+        <item name="android:indeterminate">false</item>
+        <item name="android:minHeight">8dip</item>
+        <item name="android:maxHeight">8dip</item>
+        <item name="android:thumbOffset">0dip</item>
+        <item name="android:thumb">@drawable/player_seek_thumb_vertical</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:paddingLeft">10dip</item>
+        <item name="android:paddingRight">10dip</item>
+        <item name="android:paddingTop">0dip</item>
+        <item name="android:paddingBottom">0dip</item>
+        <item name="android:layout_width">18dip</item>
+    </style>
+
 </resources>
