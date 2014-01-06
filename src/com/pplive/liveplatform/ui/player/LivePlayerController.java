@@ -16,6 +16,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.TimeUtil;
 
 public class LivePlayerController extends MediaController {
+    private boolean mStopped;
 
     private boolean mShowing;
 
@@ -247,10 +248,26 @@ public class LivePlayerController extends MediaController {
 
     private View.OnClickListener mPauseListener = new View.OnClickListener() {
         public void onClick(View v) {
-            doPauseResume();
-            show();
+            if (mStopped) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onReplay();
+                }
+            } else {
+                doPauseResume();
+                show();
+            }
         }
     };
+
+    public void start() {
+        mStopped = false;
+        show();
+    }
+
+    public void stop() {
+        mStopped = true;
+        updatePausePlay();
+    }
 
     // There are two scenarios that can trigger the seekbar listener to
     // trigger:
@@ -311,4 +328,14 @@ public class LivePlayerController extends MediaController {
             mHandler.sendEmptyMessage(SHOW_PROGRESS);
         }
     };
+
+    public interface Callback {
+        public void onReplay();
+    }
+
+    private Callback mCallbackListener;
+
+    public void setCallbackListener(Callback listener) {
+        this.mCallbackListener = listener;
+    }
 }

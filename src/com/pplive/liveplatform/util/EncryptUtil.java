@@ -7,12 +7,18 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import android.text.TextUtils;
 import android.util.Base64;
 
 public class EncryptUtil {
     private static final String ALGORITHM = "AES";
 
+    private static final String DEFAULT_SEED = "32abecd2d70da57be5f7e8ad8bc28fe9";
+
     public static String encrypt(String cleartext, String seed) {
+        if (TextUtils.isEmpty(seed)) {
+            seed = DEFAULT_SEED;
+        }
         try {
             byte[] rawKey = getRawKey(seed.getBytes());
             byte[] result = encrypt(rawKey, cleartext.getBytes("utf-8"));
@@ -24,6 +30,9 @@ public class EncryptUtil {
     }
 
     public static String decrypt(String encrypted, String seed) {
+        if (TextUtils.isEmpty(seed)) {
+            seed = DEFAULT_SEED;
+        }
         try {
             byte[] rawKey = getRawKey(seed.getBytes());
             byte[] enc = Base64.decode(encrypted, Base64.DEFAULT);

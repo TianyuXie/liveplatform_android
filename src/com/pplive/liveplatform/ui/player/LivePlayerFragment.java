@@ -38,7 +38,8 @@ import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
-public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, android.os.Handler.Callback {
+public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback,
+        android.os.Handler.Callback {
     static final String TAG = "_LivePlayerFragment";
 
     private static final int TIMER_DELAY = 1000;
@@ -77,7 +78,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private View mLoadingImage;
 
-    //    private View mBufferView;
+    private View mBreakView;
+
+    private View mBufferView;
 
     private CircularImageView mUserIcon;
 
@@ -120,6 +123,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mControllerWrapper = layout.findViewById(R.id.wrapper_player_controller);
         mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mController.setAlwaysShow(true);
+        mController.setCallbackListener(this);
+        mBreakView = layout.findViewById(R.id.text_player_break);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mFinishText = (TextView) layout.findViewById(R.id.text_loading_finish);
@@ -127,7 +132,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mPPTVIcon = layout.findViewById(R.id.image_player_pptv_icon);
         mUserIcon = (CircularImageView) layout.findViewById(R.id.btn_player_user_icon);
         mUserIcon.setOnClickListener(onUserBtnClickListener);
-        //        mBufferView = layout.findViewById(R.id.layout_player_buffering);
+        mBufferView = layout.findViewById(R.id.layout_player_buffering);
         layout.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
         layout.findViewById(R.id.btn_player_share).setOnClickListener(this);
@@ -246,6 +251,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private void stopPlayback() {
         PPBoxUtil.closeM3U8();
         mVideoView.stopPlayback();
+        mController.stop();
     }
 
     @Override
@@ -277,10 +283,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onPrepared() {
             Log.d(TAG, "MeetVideoView: onPrepared");
             if (mCallbackListener != null) {
-                mCallbackListener.onStartPlay();
+                mCallbackListener.onPrepare();
             }
             mVideoView.start();
-            mController.show();
+            mController.start();
         }
     };
 
@@ -289,10 +295,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public boolean onInfo(int what, int extra) {
             if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
-                //                mBufferView.setVisibility(View.VISIBLE);
+                mBufferView.setVisibility(View.VISIBLE);
                 return true;
             } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
-                //                mBufferView.setVisibility(View.GONE);
+                mBufferView.setVisibility(View.GONE);
                 return true;
             }
             return false;
@@ -438,8 +444,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     });
 
     public interface Callback {
-        public void onStartPlay();
-
         public void onTouch();
 
         public void onModeClick();
@@ -448,10 +452,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         public void onShareClick();
 
-        public boolean onError(int what, int extra);
+        public void onReplay();
+
+        public void onPrepare();
 
         public void onCompletion();
 
+        public boolean onError(int what, int extra);
     }
 
     public void setCallbackListener(Callback listener) {
@@ -580,5 +587,16 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mStartTime = -1;
         mCountTextView.setVisibility(View.GONE);
         handler.removeCallbacks(runnable);
+    }
+
+    @Override
+    public void onReplay() {
+        if (mCallbackListener != null) {
+            mCallbackListener.onReplay();
+        }
+    }
+
+    public void setBreakVisibility(int visibility) {
+        mBreakView.setVisibility(visibility);
     }
 }

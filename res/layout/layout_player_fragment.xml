@@ -35,6 +35,19 @@
         android:background="@drawable/player_pptv_icon"
         android:contentDescription="@null" />
 
+    <TextView
+        android:id="@+id/text_player_break"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/player_infobox_bg"
+        android:gravity="center_horizontal"
+        android:padding="10dp"
+        android:text="@string/player_signal_break"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:visibility="gone" />
+
     <ImageView
         android:id="@+id/image_player_loading"
         android:layout_width="fill_parent"
@@ -145,8 +158,8 @@
 
     <ProgressBar
         android:id="@+id/layout_player_buffering"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_centerInParent="true"
         android:visibility="gone" />
 

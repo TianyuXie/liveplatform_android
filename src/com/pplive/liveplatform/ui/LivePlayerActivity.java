@@ -122,6 +122,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mLoadDelayed;
 
+    private boolean mInterrupted;
+
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -423,6 +425,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mChatBox.getLayoutParams();
         lp.topMargin = mRootLayout.getHalfHeight() - DisplayUtil.dp2px(this, 170);
         ViewUtil.showLayoutDelay(mChatBox, 100);
+        ViewUtil.requestLayoutDelay(mCommentWrapper, 100);
     }
 
     private void popdownDialog() {
@@ -518,11 +521,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case STOPPED:
             case DELETED:
             case SYS_DELETED:
-                Toast.makeText(mContext, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+                Log.d(TAG, "Stopped!");
+                DialogManager.playendDialog(LivePlayerActivity.this).show();
+                //Toast.makeText(mContext, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
                 break;
             case LIVING:
-                //TODO
-                keepAliveDelay(delay * 1000);
+                if (mInterrupted) {
+                    //TODO
+                    Log.d(TAG, "Interrupted, Retry...");
+                    mLivePlayerFragment.setBreakVisibility(View.VISIBLE);
+                    mLivePlayerFragment.setupPlayerDirect(mUrl);
+                    keepAliveDelay(10000);
+                } else {
+                    keepAliveDelay(delay * 1000);
+                }
                 break;
             default:
                 break;
@@ -722,17 +734,27 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public boolean onError(int what, int extra) {
+        //TODO onError
+        mInterrupted = true;
         keepAliveDelay(0);
         return true;
     }
 
     @Override
     public void onCompletion() {
-        Toast.makeText(this, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
+        mInterrupted = true;
+        keepAliveDelay(0);
     }
 
     @Override
-    public void onStartPlay() {
+    public void onPrepare() {
+        mInterrupted = false;
         mHandler.sendEmptyMessage(MSG_START_PLAY);
+        mLivePlayerFragment.setBreakVisibility(View.GONE);
+    }
+
+    @Override
+    public void onReplay() {
+        mLivePlayerFragment.setupPlayer(mUrl);
     }
 }
