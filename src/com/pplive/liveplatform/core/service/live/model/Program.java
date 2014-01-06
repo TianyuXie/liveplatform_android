@@ -8,6 +8,7 @@ import java.util.Locale;
 import android.text.TextUtils;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
@@ -106,12 +107,29 @@ public class Program implements Serializable {
 
     private String getCoverPre() {
         String coverUrl = getCoverUrl();
-        return TextUtils.isEmpty(coverUrl) ? getScreenshotUrl() : coverUrl;
+        if (!TextUtils.isEmpty(coverUrl)) {
+            return coverUrl;
+        } else {
+            String shotUrl = getScreenshotUrl();
+            if (shotUrl.startsWith("http://live2image")) {
+                return ImageUtil.getScreenshotBySize(shotUrl, 160);
+            } else {
+                return shotUrl;
+            }
+        }
     }
 
     private String getShotPre() {
         String shotUrl = getScreenshotUrl();
-        return TextUtils.isEmpty(shotUrl) ? getCoverUrl() : shotUrl;
+        if (!TextUtils.isEmpty(shotUrl)) {
+            if (shotUrl.startsWith("http://live2image")) {
+                return ImageUtil.getScreenshotBySize(shotUrl, 160);
+            } else {
+                return shotUrl;
+            }
+        } else {
+            return getCoverUrl();
+        }
     }
 
     public String getRecommendCover() {
@@ -124,10 +142,6 @@ public class Program implements Serializable {
         }
         return getShotPre();
     }
-
-    //    public String getRecommendCover() {
-    //        return getShotPre();
-    //    }
 
     private String getCoverUrl() {
         return StringUtil.isNullOrEmpty(cover_url) ? "" : cover_url;
