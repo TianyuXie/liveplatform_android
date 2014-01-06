@@ -7,7 +7,9 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/layout_player_controlbar"
-        android:background="@color/player_seekbar_black" >
+        android:background="@color/player_seekbar_black"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp" >
 
         <TextView
             android:id="@+id/text_player_current_time"
@@ -31,14 +33,14 @@
             android:paddingRight="15dp"
             android:text="@string/player_default_time"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:visibility="visible" />
+            android:textSize="14sp" />
 
         <SeekBar
             android:id="@+id/player_seekbar"
             style="@style/player_progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_toLeftOf="@id/text_player_duration"
             android:layout_toRightOf="@id/text_player_current_time" />
     </RelativeLayout>
@@ -62,6 +64,5 @@
             android:textOff=""
             android:textOn="" />
     </RelativeLayout>
-
 
 </com.pplive.liveplatform.ui.player.LivePlayerController>

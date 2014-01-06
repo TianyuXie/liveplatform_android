@@ -75,6 +75,7 @@ public class TencentPassport {
 
     public void init(Context context) {
         if (mTencent == null) {
+            Log.d(TAG, "Tencent.createInstance");
             mTencent = Tencent.createInstance(mAppid, context.getApplicationContext());
         }
     }

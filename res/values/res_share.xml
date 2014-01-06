@@ -2,9 +2,10 @@
 <resources>
 
     <string name="share_dialog_title">分享直播</string>
-    <string name="share_watch_format">我正在用爱播观看%s</string>
-    <string name="share_user_title">爱播分享</string>
-    <string name="share_user_format">我正在使用%s, 快来关注我的主页吧!</string>
+    <string name="share_watch_format">我正在用\"爱播\"观看%s</string>
+    <string name="share_record_format">我正在用\"爱播\"直播%s, 快来关注我吧!</string>
+    <string name="share_record_default_title">爱播分享</string>
+    <string name="share_record_default_text">我正在使用\"爱播\", 快来关注我吧!</string>
     <string name="share_failed">分享失败</string>
 
     <!-- third party -->

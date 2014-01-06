@@ -44,9 +44,8 @@
             android:name=".ui.LiveRecordActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
-            android:launchMode="singleTask"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" >
+ >
         </activity>
         <activity
             android:name=".ui.HomeActivity"
