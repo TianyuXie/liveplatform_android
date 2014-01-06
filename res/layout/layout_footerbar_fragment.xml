@@ -66,6 +66,7 @@
             <EditText
                 android:id="@+id/edit_live_title"
                 style="@style/Widget.EditText"
+                android:imeOptions="flagNoExtractUi"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
