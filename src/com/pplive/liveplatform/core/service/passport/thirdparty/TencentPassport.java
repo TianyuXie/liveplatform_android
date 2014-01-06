@@ -18,7 +18,7 @@ import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.util.StringManager;
-import com.pplive.liveplatform.util.URLEncoderUtil;
+import com.pplive.liveplatform.util.URLUtil;
 import com.tencent.open.HttpStatusException;
 import com.tencent.open.NetworkUnavailableException;
 import com.tencent.tauth.Constants;
@@ -242,7 +242,7 @@ public class TencentPassport {
                 }
             } catch (LiveHttpException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.loginFailed(URLEncoderUtil.decode(e.getMessage()));
+                    mLoginListener.loginFailed(URLUtil.decode(e.getMessage()));
                 }
             }
             if (mLoginListener != null) {

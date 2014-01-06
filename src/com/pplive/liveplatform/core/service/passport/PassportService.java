@@ -55,7 +55,7 @@ import com.pplive.liveplatform.core.service.passport.resp.MessageResp;
 import com.pplive.liveplatform.util.ThreeDESUtil;
 import com.pplive.liveplatform.util.ThreeDESUtil.EncryptException;
 import com.pplive.liveplatform.util.URL.Protocol;
-import com.pplive.liveplatform.util.URLEncoderUtil;
+import com.pplive.liveplatform.util.URLUtil;
 
 public class PassportService {
 
@@ -149,7 +149,7 @@ public class PassportService {
         }
 
         if (null != resp) {
-            throw new LiveHttpException(resp.getErrorCode(), URLEncoderUtil.decode(resp.getMessage()));
+            throw new LiveHttpException(resp.getErrorCode(), URLUtil.decode(resp.getMessage()));
         } else {
             throw new LiveHttpException();
         }
@@ -170,9 +170,9 @@ public class PassportService {
         Random random = new Random();
         int keyIndex = random.nextInt(10) + 1;
         try {
-            infovalue = String.format("%s&%s&%s", URLEncoderUtil.encode(id), URLEncoderUtil.encode(faceUrl), URLEncoderUtil.encode(nickName));
+            infovalue = String.format("%s&%s&%s", URLUtil.encode(id), URLUtil.encode(faceUrl), URLUtil.encode(nickName));
 
-            infovalue = URLEncoderUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
+            infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
         } catch (EncryptException e) {
             Log.w(TAG, e.toString());
         }
@@ -227,7 +227,7 @@ public class PassportService {
         }
 
         if (null != resp) {
-            throw new LiveHttpException(resp.getErrorCode(), URLEncoderUtil.decode(resp.getMessage()));
+            throw new LiveHttpException(resp.getErrorCode(), URLUtil.decode(resp.getMessage()));
         } else {
             throw new LiveHttpException();
         }

@@ -702,6 +702,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 }
             }).show();
             break;
+        default:
+            break;
         }
     }
 

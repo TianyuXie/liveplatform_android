@@ -3,9 +3,9 @@ package com.pplive.liveplatform.update;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+public class UpdateInfo implements Serializable {
+    private static final long serialVersionUID = -8358993893534855440L;
 
-public class UpdateInfo implements Serializable
-{
     /**
      * 普通升级
      */
@@ -67,12 +67,10 @@ public class UpdateInfo implements Serializable
     public int model;
 
     @Override
-    public String toString()
-    {
-        return "UpdateInfo [distVersionCode=" + distVersionCode + ", minVersionCode=" + minVersionCode
-                + ", maxVersionCode=" + maxVersionCode + ", distVersionName=" + distVersionName + ", url=" + url
-                + ", description=" + description + ", whiteChannels=" + whiteChannels + ", blackChannels="
-                + blackChannels + ", model=" + model + "]";
+    public String toString() {
+        return "UpdateInfo [distVersionCode=" + distVersionCode + ", minVersionCode=" + minVersionCode + ", maxVersionCode=" + maxVersionCode
+                + ", distVersionName=" + distVersionName + ", url=" + url + ", description=" + description + ", whiteChannels=" + whiteChannels
+                + ", blackChannels=" + blackChannels + ", model=" + model + "]";
     }
 
 }

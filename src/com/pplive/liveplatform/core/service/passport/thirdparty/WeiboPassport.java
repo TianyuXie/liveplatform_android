@@ -18,7 +18,7 @@ import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.util.StringManager;
-import com.pplive.liveplatform.util.URLEncoderUtil;
+import com.pplive.liveplatform.util.URLUtil;
 import com.sina.weibo.sdk.api.WebpageObject;
 import com.sina.weibo.sdk.api.WeiboMessage;
 import com.sina.weibo.sdk.api.share.IWeiboShareAPI;
@@ -180,7 +180,7 @@ public class WeiboPassport {
                 }
             } catch (LiveHttpException e) {
                 if (mLoginListener != null) {
-                    mLoginListener.loginFailed(URLEncoderUtil.decode(e.getMessage()));
+                    mLoginListener.loginFailed(URLUtil.decode(e.getMessage()));
                 }
             }
             if (mLoginListener != null) {

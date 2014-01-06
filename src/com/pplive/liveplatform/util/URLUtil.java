@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-public class URLEncoderUtil {
+public class URLUtil {
 
     public static String encode(String s) {
         
@@ -30,6 +30,6 @@ public class URLEncoderUtil {
         return null;
     }
     
-    private URLEncoderUtil() {
+    private URLUtil() {
     }
 }

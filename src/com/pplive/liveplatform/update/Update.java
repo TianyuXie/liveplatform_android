@@ -15,11 +15,10 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
-import com.pplive.liveplatform.LiveApplication;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.UpdateService;
 import com.pplive.liveplatform.core.service.live.model.Packet;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.dac.info.AppInfo;
 import com.pplive.liveplatform.util.SysUtil;
 
 public class Update {
@@ -90,12 +89,12 @@ public class Update {
             return false;
         }
 
-        final int localVersion = LiveApplication.getVersionCode();
+        final int localVersion = AppInfo.getVersionCode();
         // final int localVersion = 99;
         String msg;
 
         for (UpdateInfo updateInfo : updateInfos) {
-            msg = activity.getString(R.string.update_latest_update, LiveApplication.getVersionName());
+            msg = activity.getString(R.string.update_latest_update, AppInfo.getVersionName());
             if (updateInfo.minVersionCode <= localVersion && localVersion <= updateInfo.maxVersionCode) {
                 if (updateInfo.model != UpdateInfo.MODE_FORCE && updateInfo.model != UpdateInfo.MODE_RECOMMEND) {
                     updateInfo.model = UpdateInfo.MODE_NORMAL;
@@ -189,7 +188,7 @@ public class Update {
         for (UpdateInfo updateInfo : updateInfos) {
             // msg = activity.getString(R.string.the_latest_update,
             // UtilMethod.getLocalVersionName(activity));
-            final int localVersion = LiveApplication.getVersionCode();
+            final int localVersion = AppInfo.getVersionCode();
             if (updateInfo.minVersionCode <= localVersion && localVersion <= updateInfo.maxVersionCode) {
 
                 if (updateInfo.model != UpdateInfo.MODE_FORCE && updateInfo.model != UpdateInfo.MODE_RECOMMEND) {
@@ -238,8 +237,8 @@ public class Update {
 
     public static ArrayList<UpdateInfo> getUpdateInfos(Context context) {
         try {
-            Packet result = UpdateService.getInstance().checkUpdate(LiveApplication.getChannel(), LiveApplication.getPlatform(), Build.VERSION.RELEASE,
-                    LiveApplication.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
+            Packet result = UpdateService.getInstance().checkUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                    AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
             if (result == null) {
                 return null;
             }
