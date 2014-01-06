@@ -76,6 +76,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int CHAT_SHORT_DELAY = 5000;
 
     private static final int CHAT_LONG_DELAY = 10000;
+    
+    private static final int WHAT_INVALIDATE_DOOR = 9007;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -274,6 +276,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mOpened = true;
             mStatusButton.startLoading();
+            mInnerHandler.sendEmptyMessage(WHAT_INVALIDATE_DOOR);
             mInnerHandler.sendEmptyMessageDelayed(WHAT_OPEN_DOOR, 2000);
         }
     }
@@ -281,7 +284,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         Log.d(TAG, "onConfigurationChanged");
     }
 
@@ -354,6 +356,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_LIVE_FAILED:
             onLiveFailed();
             break;
+        case WHAT_INVALIDATE_DOOR:
+           mAnimDoor.invalidate();
+           mInnerHandler.sendEmptyMessageDelayed(WHAT_INVALIDATE_DOOR, 1000);
         default:
             break;
         }
@@ -466,6 +471,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void onOpenDoor() {
         mStatusButton.finishLoading();
+        mInnerHandler.removeMessages(WHAT_INVALIDATE_DOOR);
         moveButton();
         mAnimDoor.open();
     }
