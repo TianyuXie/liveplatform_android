@@ -760,7 +760,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+        case KeyEvent.KEYCODE_VOLUME_UP:
+            super.onKeyDown(keyCode, event);
+            mLivePlayerFragment.syncVolume();
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKeyUp");
         switch (keyCode) {
         case KeyEvent.KEYCODE_VOLUME_DOWN:
         case KeyEvent.KEYCODE_VOLUME_UP:
@@ -769,4 +782,5 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
         return super.onKeyUp(keyCode, event);
     }
+
 }
