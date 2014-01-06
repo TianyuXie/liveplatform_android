@@ -143,7 +143,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     private void startLogin(String username, String password, int dalay) {
         LoginTask task = new LoginTask();
-        task.addTaskListener(onTaskListener);
+        task.addTaskListener(onLoginTaskListener);
         task.setDelay(dalay);
         TaskContext taskContext = new TaskContext();
         taskContext.set(LoginTask.KEY_USERNAME, username);
@@ -171,19 +171,18 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         }
     };
 
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onLoginTaskListener = new Task.OnTaskListener() {
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            Toast.makeText(mContext, R.string.toast_sucess, Toast.LENGTH_SHORT).show();
             String usrPlain = event.getContext().getString(LoginTask.KEY_USERNAME);
             String pwdPlain = event.getContext().getString(LoginTask.KEY_PASSWORD);
             String token = event.getContext().getString(LoginTask.KEY_TOKEN);
             mUserManager.login(usrPlain, pwdPlain, token);
             User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
             mUserManager.setUserinfo(userinfo);
-            String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
             mRefreshDialog.dismiss();
+            String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
             if (!TextUtils.isEmpty(targetClass)) {
                 try {
                     Intent intent = new Intent(mContext, Class.forName(targetClass));

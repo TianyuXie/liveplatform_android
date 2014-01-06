@@ -16,12 +16,11 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.util.TimeUtil;
 
 public class LivePlayerController extends MediaController {
+    static final String TAG = "_LivePlayerController";
 
-    private boolean mShowing;
+    private boolean mStopped;
 
     private boolean mDragging;
-
-    private boolean mShowAlways;
 
     private SeekBar mPlayerProgressBar;
 
@@ -29,9 +28,9 @@ public class LivePlayerController extends MediaController {
 
     private ToggleButton mPlayPauseButton;
 
-    private static final int sDefaultTimeout = 6000;
+    private static final int DEFAULT_TIMEOUT = 6000;
 
-    private static final int FADE_OUT = 1;
+    private static final int NO_TIMEOUT = 0;
 
     private static final int SHOW_PROGRESS = 2;
 
@@ -72,20 +71,11 @@ public class LivePlayerController extends MediaController {
         updatePausePlay();
     }
 
-    public boolean switchVisibility() {
-        if (mShowing) {
-            hide();
-        } else {
-            show();
-        }
-        return mShowing;
-    }
-
     /**
      * Show the controller on screen. It will go away automatically after 3 seconds of inactivity.
      */
     public void show() {
-        show(sDefaultTimeout);
+        show(DEFAULT_TIMEOUT);
     }
 
     /**
@@ -95,40 +85,19 @@ public class LivePlayerController extends MediaController {
      *            The timeout in milliseconds. Use 0 to show the controller until hide() is called.
      */
     public void show(int timeout) {
-        if (!mShowing) {
-            setProgress();
-            mPlayPauseButton.requestFocus();
-            disableUnsupportedButtons();
-            mRoot.setVisibility(VISIBLE);
-            mShowing = true;
-        }
+        setProgress();
+        mPlayPauseButton.requestFocus();
+        disableUnsupportedButtons();
         updatePausePlay();
+        if (mCallbackListener != null) {
+            mCallbackListener.onShow(timeout);
+        }
 
         // cause the progress bar to be updated even if mShowing
         // was already true. This happens, for example, if we're
         // paused with the progress bar showing the user hits play.
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
 
-        Message msg = mHandler.obtainMessage(FADE_OUT);
-        if (timeout != 0) {
-            mHandler.removeMessages(FADE_OUT);
-            mHandler.sendMessageDelayed(msg, timeout);
-        }
-    }
-
-    /**
-     * Remove the controller from the screen.
-     */
-    public void hide() {
-        if (mShowing && !mShowAlways) {
-            mRoot.setVisibility(View.GONE);
-            mHandler.removeMessages(SHOW_PROGRESS);
-            mShowing = false;
-        }
-    }
-
-    public void setAlwaysShow(boolean status) {
-        mShowAlways = status;
     }
 
     private Handler mHandler = new Handler() {
@@ -136,12 +105,9 @@ public class LivePlayerController extends MediaController {
         public void handleMessage(Message msg) {
             int pos;
             switch (msg.what) {
-            case FADE_OUT:
-                hide();
-                break;
             case SHOW_PROGRESS:
                 pos = setProgress();
-                if (!mDragging && mShowing && mPlayer != null && mPlayer.isPlaying()) {
+                if (!mDragging && mPlayer != null && mPlayer.isPlaying()) {
                     msg = obtainMessage(SHOW_PROGRESS);
                     sendMessageDelayed(msg, 1000 - (pos % 1000));
                 }
@@ -228,7 +194,7 @@ public class LivePlayerController extends MediaController {
             return super.dispatchKeyEvent(event);
         } else if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_MENU) {
             if (uniqueDown) {
-                hide();
+                //hide();
             }
             return true;
         }
@@ -247,10 +213,26 @@ public class LivePlayerController extends MediaController {
 
     private View.OnClickListener mPauseListener = new View.OnClickListener() {
         public void onClick(View v) {
-            doPauseResume();
-            show();
+            if (mStopped) {
+                if (mCallbackListener != null) {
+                    mCallbackListener.onReplay();
+                }
+            } else {
+                doPauseResume();
+                show();
+            }
         }
     };
+
+    public void start() {
+        mStopped = false;
+        show();
+    }
+
+    public void stop() {
+        mStopped = true;
+        updatePausePlay();
+    }
 
     // There are two scenarios that can trigger the seekbar listener to
     // trigger:
@@ -272,7 +254,7 @@ public class LivePlayerController extends MediaController {
     // updates.
     private OnSeekBarChangeListener mSeekListener = new OnSeekBarChangeListener() {
         public void onStartTrackingTouch(SeekBar bar) {
-            show(3600000);
+            show(NO_TIMEOUT);
 
             mDragging = true;
 
@@ -311,4 +293,16 @@ public class LivePlayerController extends MediaController {
             mHandler.sendEmptyMessage(SHOW_PROGRESS);
         }
     };
+
+    public interface Callback {
+        public void onReplay();
+
+        public void onShow(int timeout);
+    }
+
+    private Callback mCallbackListener;
+
+    public void setCallbackListener(Callback listener) {
+        this.mCallbackListener = listener;
+    }
 }

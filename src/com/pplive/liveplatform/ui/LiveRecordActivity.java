@@ -76,6 +76,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int CHAT_SHORT_DELAY = 5000;
 
     private static final int CHAT_LONG_DELAY = 10000;
+    
+    private static final int WHAT_INVALIDATE_DOOR = 9007;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -281,6 +283,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mOpened = true;
             mStatusButton.startLoading();
+            mInnerHandler.sendEmptyMessage(WHAT_INVALIDATE_DOOR);
             mInnerHandler.sendEmptyMessageDelayed(WHAT_OPEN_DOOR, 2000);
         }
     }
@@ -288,7 +291,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         Log.d(TAG, "onConfigurationChanged");
     }
 
@@ -361,6 +363,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_LIVE_FAILED:
             onLiveFailed();
             break;
+        case WHAT_INVALIDATE_DOOR:
+           mAnimDoor.invalidate();
+           mInnerHandler.sendEmptyMessageDelayed(WHAT_INVALIDATE_DOOR, 1000);
         default:
             break;
         }
@@ -473,6 +478,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void onOpenDoor() {
         mStatusButton.finishLoading();
+        mInnerHandler.removeMessages(WHAT_INVALIDATE_DOOR);
         moveButton();
         mAnimDoor.open();
     }
@@ -876,16 +882,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 String title = StringUtil.safeString(mLivingProgram.getTitle());
                 String shareUrl = mLivingProgram.getShareLinkUrl();
                 String imageUrl = mLivingProgram.getRecommendCover();
-                String summary = String.format(getString(R.string.share_watch_format), getString(R.string.app_name), title);
+                String summary = String.format(getString(R.string.share_record_format), title);
                 data.putString(ShareDialog.PARAM_TITLE, title);
                 data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
                 data.putString(ShareDialog.PARAM_SUMMARY, summary);
                 data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? getString(R.string.default_share_image_url) : imageUrl);
             } else {
-                String title = getString(R.string.share_user_title);
+                String title = getString(R.string.share_record_default_title);
                 String shareUrl = getString(R.string.default_share_target_url);
                 String imageUrl = getString(R.string.default_share_image_url);
-                String summary = String.format(getString(R.string.share_user_format), getString(R.string.app_name));
+                String summary = getString(R.string.share_record_default_text);
                 data.putString(ShareDialog.PARAM_TITLE, title);
                 data.putString(ShareDialog.PARAM_TARGET_URL, shareUrl);
                 data.putString(ShareDialog.PARAM_SUMMARY, summary);

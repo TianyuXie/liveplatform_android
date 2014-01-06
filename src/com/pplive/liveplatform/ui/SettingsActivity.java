@@ -15,13 +15,16 @@ import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.update.Update;
 
 public class SettingsActivity extends Activity {
     static final String TAG = "_SettingsActivity";
 
-    public static final int FROM_USERPAGE = 6001;
+    public static final int RESULT_LOGOUT = 5801;
 
-    public static final int LOGOUT = 5801;
+    public static final int RESULT_NICK_CHANGED = 5802;
+
+    private static final int REQUEST_NICK = 9801;
 
     private AppPrefs mUserPrefs;
 
@@ -39,6 +42,8 @@ public class SettingsActivity extends Activity {
 
     private View mThirdpartyView;
 
+    private int mResultCode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +54,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.btn_settings_login).setOnClickListener(onLoginBtnClickListener);
         findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
         findViewById(R.id.layout_settings_about).setOnClickListener(onAboutClickListener);
+        findViewById(R.id.layout_settings_update).setOnClickListener(onUpdateClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
@@ -57,6 +63,8 @@ public class SettingsActivity extends Activity {
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
         mPPTVUserView = findViewById(R.id.row_settings_user);
         mThirdpartyView = findViewById(R.id.layout_settings_thirdparty);
+
+        mResultCode = -1;
     }
 
     @Override
@@ -67,6 +75,7 @@ public class SettingsActivity extends Activity {
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mPPTVUserText.setText(UserManager.getInstance(this).getUsernamePlain());
         mNicknameText.setText(UserManager.getInstance(this).getNickname());
+        mNicknameText.requestLayout();
         View nickView = findViewById(R.id.layout_settings_nickname);
         View userView = findViewById(R.id.layout_settings_user);
         View logoutBtn = findViewById(R.id.btn_settings_logout);
@@ -118,7 +127,7 @@ public class SettingsActivity extends Activity {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     UserManager.getInstance(SettingsActivity.this).logout();
-                    setResult(LOGOUT);
+                    mResultCode = RESULT_LOGOUT;
                     finish();
                 }
             });
@@ -141,7 +150,7 @@ public class SettingsActivity extends Activity {
         public void onClick(View v) {
             if (UserManager.getInstance(SettingsActivity.this).isPPTVLogin()) {
                 Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
-                startActivity(intent);
+                startActivityForResult(intent, REQUEST_NICK);
             }
         }
     };
@@ -153,5 +162,25 @@ public class SettingsActivity extends Activity {
             startActivity(intent);
         }
     };
+
+    private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Update.doUpdateAPP(SettingsActivity.this);
+        }
+    };
+
+    public void finish() {
+        setResult(mResultCode);
+        super.finish();
+    };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_NICK && resultCode == NicknameActivity.RESULT_NICK_CHANGED) {
+            mResultCode = RESULT_NICK_CHANGED;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
 }
