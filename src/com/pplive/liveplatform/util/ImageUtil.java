@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import android.content.Context;
 import android.content.res.AssetManager;
@@ -131,7 +132,7 @@ public class ImageUtil {
             be = 1;
         }
         newOpts.inSampleSize = be;
-        newOpts.inPreferredConfig = Config.ARGB_8888;
+        newOpts.inPreferredConfig = Config.RGB_565;
         newOpts.inPurgeable = true;
         newOpts.inInputShareable = true;
         inputStream = (InputStream) new java.net.URL(url).getContent();
@@ -167,6 +168,11 @@ public class ImageUtil {
             e.printStackTrace();
         }
         return image;
+    }
+
+    public static String getScreenshotBySize(String url, int size) {
+        int index = url.lastIndexOf("/");
+        return String.format(Locale.US, "%s/sp%d%s", url.substring(0, index), size, url.substring(index));
     }
 
     static class UnsupportedException extends RuntimeException {
