@@ -9,6 +9,22 @@ import android.content.DialogInterface;
 import com.pplive.liveplatform.R;
 
 public class DialogManager {
+    public static Dialog playendDialog(final Activity activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setCancelable(true);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.player_end_title);
+        builder.setMessage(R.string.toast_player_complete);
+        builder.setPositiveButton(R.string.player_end_confirm, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                activity.finish();
+            }
+        });
+        builder.setNegativeButton(R.string.player_end_cancel, null);
+        return builder.create();
+    }
+
     public static Dialog logoutAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(true);

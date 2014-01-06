@@ -59,7 +59,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     static final String TAG = "_LiveRecordActivity";
 
-    public static final String EXTRA_PROGRAM = "extra_program";
+    static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;
@@ -206,7 +206,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
     }
-
+    
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        
+        Log.d(TAG, "onNewIntent");
+        
+        setIntent(intent);
+    }
+    
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart");
@@ -222,11 +231,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
-
         super.onResume();
+        
+        Log.d(TAG, "onResume");
+        
+        mLivingProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
 
         if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
+            mFooterBarFragment.setPreLiveProgram(mLivingProgram);
             startCountDown();
         }
 
@@ -249,11 +261,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopPreview();
 
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
     }
 
     @Override
