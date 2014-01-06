@@ -1,23 +1,18 @@
 package com.pplive.liveplatform.ui.player;
 
-import android.app.Service;
 import android.content.Context;
-import android.media.AudioManager;
 import android.os.Handler;
 import android.os.Message;
 import android.pplive.media.player.MediaController;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.widget.VerticalSeekBar;
 import com.pplive.liveplatform.util.TimeUtil;
 
 public class LivePlayerController extends MediaController {
@@ -33,21 +28,11 @@ public class LivePlayerController extends MediaController {
 
     private ToggleButton mPlayPauseButton;
 
-    private VerticalSeekBar mVolumeBar;
-
-    private ImageView mVolumeIcon;
-
-    private AudioManager mAudioManager;
-
     private static final int DEFAULT_TIMEOUT = 6000;
 
     private static final int NO_TIMEOUT = 0;
 
     private static final int SHOW_PROGRESS = 2;
-
-    private boolean mute = false;
-
-    private int mSavedVolume = 5;
 
     public LivePlayerController(Context context) {
         super(context);
@@ -55,7 +40,6 @@ public class LivePlayerController extends MediaController {
 
     public LivePlayerController(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mAudioManager = (AudioManager) context.getSystemService(Service.AUDIO_SERVICE);
     }
 
     @Override
@@ -73,11 +57,6 @@ public class LivePlayerController extends MediaController {
         mPlayerProgressBar.setMax(1000);
         mEndTime = (TextView) v.findViewById(R.id.text_player_duration);
         mCurrentTime = (TextView) v.findViewById(R.id.text_player_current_time);
-        mVolumeBar = (VerticalSeekBar) v.findViewById(R.id.seekbar_player_volume);
-        mVolumeBar.setOnSeekBarChangeListener(mVolumeSeekListener);
-        mVolumeIcon = (ImageView) v.findViewById(R.id.image_player_volume);
-        mVolumeIcon.setOnClickListener(mVolumeIconClickListener);
-        syncVolume();
     }
 
     @Override
@@ -110,7 +89,7 @@ public class LivePlayerController extends MediaController {
         mPlayPauseButton.requestFocus();
         disableUnsupportedButtons();
         updatePausePlay();
-        if (mCallbackListener != null){
+        if (mCallbackListener != null) {
             mCallbackListener.onShow(timeout);
         }
 
@@ -244,66 +223,6 @@ public class LivePlayerController extends MediaController {
             }
         }
     };
-
-    private void syncVolume() {
-        int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-        mVolumeBar.setProgress((int) (volume * 100.0 / maxVolume));
-    }
-
-    private OnClickListener mVolumeIconClickListener = new OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            if (!mute) {
-                mSavedVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
-                mVolumeBar.setProgress(0);
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-            } else {
-                int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-                mVolumeBar.setProgress((int) (mSavedVolume * 100.0 / maxVolume));
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mSavedVolume, 0);
-            }
-        }
-    };
-
-    private VerticalSeekBar.OnSeekBarChangeListener mVolumeSeekListener = new VerticalSeekBar.OnSeekBarChangeListener() {
-
-        @Override
-        public void onStopTrackingTouch(VerticalSeekBar seekBar) {
-            Log.d(TAG, "onStopTrackingTouch");
-            show();
-        }
-
-        @Override
-        public void onStartTrackingTouch(VerticalSeekBar seekBar) {
-            Log.d(TAG, "onStartTrackingTouch");
-            show(NO_TIMEOUT);
-        }
-
-        @Override
-        public void onProgressChanged(VerticalSeekBar seekBar, int progress, boolean fromUser) {
-            mute = (progress <= 0);
-            float maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
-            int volume = (int) (maxVolume * progress / 100.0);
-            if (volume > 0) {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
-            } else if (progress > 0) {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
-            } else {
-                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
-            }
-            updateVolumeIcon(progress);
-        }
-    };
-
-    public void updateVolumeIcon(int value) {
-        if (mVolumeIcon != null && value > 0) {
-            mVolumeIcon.setImageResource(R.drawable.player_volume_icon_small);
-        } else {
-            mVolumeIcon.setImageResource(R.drawable.player_volume_mute_icon_small);
-        }
-    }
 
     public void start() {
         mStopped = false;

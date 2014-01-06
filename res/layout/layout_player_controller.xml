@@ -3,39 +3,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:id="@+id/layout_player_volume"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="15dp"
-        android:background="@drawable/player_volume_progress_bar_bg"
-        android:clickable="true"
-        android:gravity="center_horizontal"
-        android:orientation="vertical" >
-
-        <com.pplive.liveplatform.ui.widget.VerticalSeekBar
-            android:id="@+id/seekbar_player_volume"
-            style="@style/player_progressBarStyleVertical"
-            android:layout_height="160dp"
-            android:max="100" />
-
-        <ImageView
-            android:id="@+id/image_player_volume"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:clickable="true"
-            android:contentDescription="@null"
-            android:src="@drawable/player_volume_icon_small" >
-        </ImageView>
-    </LinearLayout>
-
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/layout_player_controlbar"
-        android:background="@color/player_seekbar_black" >
+        android:background="@color/player_seekbar_black"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp" >
 
         <TextView
             android:id="@+id/text_player_current_time"
@@ -59,14 +33,14 @@
             android:paddingRight="15dp"
             android:text="@string/player_default_time"
             android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:visibility="visible" />
+            android:textSize="14sp" />
 
         <SeekBar
             android:id="@+id/player_seekbar"
             style="@style/player_progressBarStyleHorizontal"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_toLeftOf="@id/text_player_duration"
             android:layout_toRightOf="@id/text_player_current_time" />
     </RelativeLayout>

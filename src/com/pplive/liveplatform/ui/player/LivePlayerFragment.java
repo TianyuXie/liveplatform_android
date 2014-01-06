@@ -1,8 +1,10 @@
 package com.pplive.liveplatform.ui.player;
 
+import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,10 +18,12 @@ import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -33,6 +37,7 @@ import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.ui.widget.VerticalSeekBar;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
@@ -55,6 +60,20 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private static final int FLAG_USER_VIEW = 0x4;
 
     private static final int FLAG_TIME_BAR = 0x8;
+
+    private static final int FLAG_VOLUME_BAR = 0x10;
+
+    private boolean mMuted = false;
+
+    private int mSavedVolume = 5;
+
+    private View mVolumeWrapper;
+
+    private VerticalSeekBar mVolumeBar;
+
+    private ImageView mVolumeIcon;
+
+    private AudioManager mAudioManager;
 
     private MeetVideoView mVideoView;
 
@@ -120,18 +139,28 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mTitleTextView = (TextView) layout.findViewById(R.id.text_player_title);
         mCountTextView = (TextView) layout.findViewById(R.id.text_player_countdown);
         mLoadingImage = layout.findViewById(R.id.image_player_loading);
+
         mControllerWrapper = layout.findViewById(R.id.wrapper_player_controller);
         mController = (LivePlayerController) layout.findViewById(R.id.live_player_controller);
         mController.setCallbackListener(this);
+
+        mVolumeWrapper = layout.findViewById(R.id.layout_player_volume);
+        mVolumeBar = (VerticalSeekBar) layout.findViewById(R.id.seekbar_player_volume);
+        mVolumeBar.setOnSeekBarChangeListener(mVolumeSeekListener);
+        mVolumeIcon = (ImageView) layout.findViewById(R.id.image_player_volume);
+        mVolumeIcon.setOnClickListener(mVolumeIconClickListener);
+
         mBreakView = layout.findViewById(R.id.text_player_break);
         mBottomBarView = layout.findViewById(R.id.layout_player_bottombar);
         mTitleBarView = layout.findViewById(R.id.layout_player_titlebar);
         mFinishText = (TextView) layout.findViewById(R.id.text_loading_finish);
         mIconWrapper = layout.findViewById(R.id.wrapper_player_user_icon);
+
         mPPTVIcon = layout.findViewById(R.id.image_player_pptv_icon);
         mUserIcon = (CircularImageView) layout.findViewById(R.id.btn_player_user_icon);
         mUserIcon.setOnClickListener(onUserBtnClickListener);
         mBufferView = layout.findViewById(R.id.layout_player_buffering);
+
         layout.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
         layout.findViewById(R.id.btn_player_share).setOnClickListener(this);
@@ -182,6 +211,66 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     }
 
+    public void syncVolume() {
+        int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mVolumeBar.setProgress((int) (volume * 100.0 / maxVolume));
+    }
+
+    private OnClickListener mVolumeIconClickListener = new OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (!mMuted) {
+                mSavedVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                mVolumeBar.setProgress(0);
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            } else {
+                int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                mVolumeBar.setProgress((int) (mSavedVolume * 100.0 / maxVolume));
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, mSavedVolume, 0);
+            }
+        }
+    };
+
+    private VerticalSeekBar.OnSeekBarChangeListener mVolumeSeekListener = new VerticalSeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onStopTrackingTouch(VerticalSeekBar seekBar) {
+            Log.d(TAG, "onStopTrackingTouch");
+            showBars(SHOW_DELAY);
+        }
+
+        @Override
+        public void onStartTrackingTouch(VerticalSeekBar seekBar) {
+            Log.d(TAG, "onStartTrackingTouch");
+            showBars(0);
+        }
+
+        @Override
+        public void onProgressChanged(VerticalSeekBar seekBar, int progress, boolean fromUser) {
+            mMuted = (progress <= 0);
+            float maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            int volume = (int) (maxVolume * progress / 100.0);
+            if (volume > 0) {
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, volume, 0);
+            } else if (progress > 0) {
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 1, 0);
+            } else {
+                mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            }
+            updateVolumeIcon(progress);
+        }
+    };
+
+    public void updateVolumeIcon(int value) {
+        if (mVolumeIcon != null && value > 0) {
+            mVolumeIcon.setImageResource(R.drawable.player_volume_icon_small);
+        } else {
+            mVolumeIcon.setImageResource(R.drawable.player_volume_mute_icon_small);
+        }
+    }
+
     private void setupVideoView(String url) {
         Log.d(TAG, "setupVideoView:" + url);
         Uri uri = Uri.parse(url);
@@ -224,6 +313,10 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        if (getActivity() != null) {
+            mAudioManager = (AudioManager) getActivity().getSystemService(Service.AUDIO_SERVICE);
+            syncVolume();
+        }
     }
 
     @Override
@@ -368,7 +461,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void setLayout(boolean isFull, boolean isVod) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
-            mFlagMask = FLAG_TITLE_BAR;
+            mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR;
             if (isVod) {
                 mFlagMask |= FLAG_TIME_BAR;
             }
@@ -385,6 +478,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         ViewUtil.setVisibility(mBottomBarView, flags & FLAG_BOTTOM_BAR);
         ViewUtil.setVisibility(mUserIcon, flags & FLAG_USER_VIEW);
         ViewUtil.setVisibility(mControllerWrapper, flags & FLAG_TIME_BAR);
+        ViewUtil.setVisibility(mVolumeWrapper, flags & FLAG_VOLUME_BAR);
     }
 
     private void hideBars() {
@@ -392,7 +486,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             return;
         }
         mShowBar = false;
-        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR);
+        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
         setVisibilityByFlags();
         mHandler.removeMessages(HIDE);
     }
@@ -400,8 +494,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void showBars(int timeout) {
         if (!mShowBar) {
             mShowBar = true;
-            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR);
+            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
             setVisibilityByFlags();
+            syncVolume();
         }
         mHandler.removeMessages(HIDE);
         if (timeout != 0) {
@@ -603,4 +698,5 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void onShow(int timeout) {
         showBars(timeout);
     }
+
 }

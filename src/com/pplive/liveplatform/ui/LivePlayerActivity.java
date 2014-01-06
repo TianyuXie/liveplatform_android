@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -756,5 +757,16 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onReplay() {
         mLivePlayerFragment.setupPlayer(mUrl);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+        case KeyEvent.KEYCODE_VOLUME_DOWN:
+        case KeyEvent.KEYCODE_VOLUME_UP:
+            mLivePlayerFragment.syncVolume();
+            return super.onKeyUp(keyCode, event);
+        }
+        return super.onKeyUp(keyCode, event);
     }
 }
