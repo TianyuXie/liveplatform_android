@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.service;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.LiveApplication;
+import com.pplive.liveplatform.dac.info.AppInfo;
 import com.pplive.liveplatform.util.URL;
 
 public class BaseURL extends URL {
@@ -17,6 +17,6 @@ public class BaseURL extends URL {
         
         this.addParameter("_coname", Constants.DEFAULT_CONAME_PPTV);
         this.addParameter("from", Constants.PLATFORM_ANDROID_PHONE);
-        this.addParameter("version", LiveApplication.getVersionName());
+        this.addParameter("version", AppInfo.getVersionName());
     }
 }
