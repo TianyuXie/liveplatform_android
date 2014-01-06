@@ -16,7 +16,7 @@ enum Mode {
     EDIT_PRELIVE {
         @Override
         public int flags() {
-            return FLAG_BTN_LIVE_BACK | FLAG_EDIT_LIVE_TITLE | FLAG_BTN_LIVE_EDIT_COMPLETE | FLAG_BTN_LIVE_SHARE | FLAG_BTN_LIVE_PRELIVE;
+            return FLAG_BTN_LIVE_BACK | FLAG_EDIT_LIVE_TITLE | FLAG_BTN_LIVE_SHARE | FLAG_BTN_LIVE_PRELIVE;
         }
     },
     VIEW_PRELIVES {
@@ -28,8 +28,7 @@ enum Mode {
     PRELIVE {
         @Override
         public int flags() {
-            // TODO Auto-generated method stub
-            return 0;
+            return FLAG_BTN_LIVE_BACK | FLAG_EDIT_LIVE_TITLE | FLAG_BTN_LIVE_SHARE | FLAG_BTN_LIVE_PRELIVE;
         }
     },
     LIVING {
