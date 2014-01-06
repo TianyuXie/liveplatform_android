@@ -35,6 +35,7 @@ import com.pplive.liveplatform.update.Update;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
+    
     static final String TAG = "_HomeActivity";
 
     private static final int TIME_BUTTON_UP = 400;
@@ -93,7 +94,6 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusUpAnimation.setFillAfter(true);
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
-        
         Update.doUpdateAPP(this);
 
         DacSender.sendAppStartDac(getApplicationContext());
