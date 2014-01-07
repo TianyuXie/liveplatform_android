@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.pplive.liveplatform.LiveApplication;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.UpdateService;
 import com.pplive.liveplatform.core.service.live.model.Packet;
@@ -71,30 +72,33 @@ public class Update {
      */
     public static void updateManual(final Activity activity) {
         //Toast.makeText(activity, R.string.manual_update_start, Toast.LENGTH_SHORT).show();
-        UpdateListener updateListener = new UpdateListener() {
+        Thread updateThread = new Thread() {
+
             @Override
-            public void onCompleted(ArrayList<UpdateInfo> updateInfos) {
-
+            public void run() {
+                // TODO Auto-generated method stub
+                super.run();
+                ArrayList<UpdateInfo> updateInfos = getUpdateInfos(activity, true);
+                doUpdate(updateInfos, activity);
             }
-        };
 
-        UpdateAsyncTask updateTask = new UpdateAsyncTask(updateListener);
-        updateTask.execute(activity);
+        };
+        updateThread.start();
 
     }
 
     public static boolean doUpdate(ArrayList<UpdateInfo> updateInfos, final Activity activity) {
         if (updateInfos == null) {
-            //Toast.makeText(activity, R.string.no_update_information, Toast.LENGTH_SHORT).show();
+            runInUiThreadToast(activity, R.string.update_no_update_information);
             return false;
         }
 
         final int localVersion = AppInfo.getVersionCode();
         // final int localVersion = 99;
-        String msg;
+
 
         for (UpdateInfo updateInfo : updateInfos) {
-            msg = activity.getString(R.string.update_latest_update, AppInfo.getVersionName());
+            
             if (updateInfo.minVersionCode <= localVersion && localVersion <= updateInfo.maxVersionCode) {
                 if (updateInfo.model != UpdateInfo.MODE_FORCE && updateInfo.model != UpdateInfo.MODE_RECOMMEND) {
                     updateInfo.model = UpdateInfo.MODE_NORMAL;
@@ -113,13 +117,38 @@ public class Update {
                 editor.putLong(PREF_UPDATE_VERSION, info.distVersionCode);
                 editor.commit();
 
-                showUpdateDialog(activity, info);
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showUpdateDialog(activity, info);
+                    }
+                });
                 return true;
             } else {
-                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+                String msg;
+                msg = activity.getString(R.string.update_latest_update, AppInfo.getVersionName());
+                runInUiThreadToast(activity, msg);
             }
         }
         return false;
+    }
+    
+    private static void runInUiThreadToast(final Activity activity, final String msg){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    
+    private static void runInUiThreadToast(final Activity activity, final int msg){
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(activity, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public static void doUpdateAPP(final Activity context) {
@@ -147,7 +176,7 @@ public class Update {
     public static boolean update(final Activity activity) {
         // 删除以前的更新文件
         deleteLastUpdateApk();
-        final ArrayList<UpdateInfo> updateInfos = getUpdateInfos(activity);
+        final ArrayList<UpdateInfo> updateInfos = getUpdateInfos(activity, false);
         // ArrayList<UpdateInfo> updateInfos = getUpdateInfosByTest(activity);
         if (updateInfos == null) {
             return false;
@@ -235,10 +264,17 @@ public class Update {
         return false;
     }
 
-    public static ArrayList<UpdateInfo> getUpdateInfos(Context context) {
+    public static ArrayList<UpdateInfo> getUpdateInfos(Context context, boolean ifmanual) {
         try {
-            Packet result = UpdateService.getInstance().checkUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
-                    AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
+            Packet result = null;
+            if(ifmanual){
+                result = UpdateService.getInstance().checkManUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                        AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
+            }else {
+                result = UpdateService.getInstance().checkUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                        AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
+            }
+
             if (result == null) {
                 return null;
             }
