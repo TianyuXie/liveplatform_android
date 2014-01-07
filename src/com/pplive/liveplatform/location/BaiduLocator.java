@@ -1,11 +1,6 @@
 package com.pplive.liveplatform.location;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.baidu.location.BDLocation;
@@ -77,7 +72,6 @@ public class BaiduLocator extends Locator implements BDLocationListener {
             locationClient.setLocOption(option);
         }
         if (this.provider == Provider.NONE) {
-            showDialog(context);
             stop();
         } else {
             retryCount = 0;
@@ -91,36 +85,11 @@ public class BaiduLocator extends Locator implements BDLocationListener {
         }
     }
 
-    private void showDialog(final Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("No Network Service");
-        builder.setMessage("Do you want to open the service?");
-        builder.setPositiveButton("WiFi", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                ((Activity) context).startActivityForResult(new Intent(
-                        Settings.ACTION_WIFI_SETTINGS), LOCATION_SETTINGS_REQUEST_CODE);
-            }
-        });
-        builder.setNeutralButton("Mobile", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                ((Activity) context).startActivityForResult(new Intent(
-                        Settings.ACTION_WIRELESS_SETTINGS), LOCATION_SETTINGS_REQUEST_CODE);
-            }
-        });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                if (listener != null)
-                    listener.onLocationError("Fail to update location");
-            }
-        });
-        builder.show();
-    }
-
     @Override
     public void onReceiveLocation(BDLocation location) {
         if (location == null)
             return;
-        LocationInfo result = new LocationInfo();
+        LocationData result = new LocationData();
         switch (location.getLocType()) {
         case BDLocation.TypeGpsLocation:
         case BDLocation.TypeCacheLocation:

@@ -3,7 +3,6 @@ package com.pplive.liveplatform.location;
 import android.content.Context;
 
 public abstract class Locator {
-    public final static int LOCATION_SETTINGS_REQUEST_CODE = 1003;
 
     public enum Provider {
         GPS, WIFI, MOBILE, NONE
@@ -30,12 +29,12 @@ public abstract class Locator {
     }
 
     public interface OnLocationUpdateListener {
-        void onLocationUpdate(LocationInfo location);
+        void onLocationUpdate(LocationData location);
 
         void onLocationError(String message);
     }
 
-    public class LocationInfo {
+    public class LocationData {
         public final static int VALID = 90;
 
         public final static int INVALID = 91;
@@ -102,9 +101,8 @@ public abstract class Locator {
 
         @Override
         public String toString() {
-            String result = new StringBuffer().append(province).append(',').append(city)
-                    .append(',').append(district).toString();
-            return result.equals(",,") ? "Unknown" : result;
+            String result = new StringBuffer().append(province).append(',').append(city).append(',').append(district).toString();
+            return result.equals(",,") || result.equals("null,null,null") ? "unknown" : result;
         }
 
     }
