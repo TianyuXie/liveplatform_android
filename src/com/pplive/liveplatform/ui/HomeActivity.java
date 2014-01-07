@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.home.HomeFragment;
@@ -34,6 +35,7 @@ import com.pplive.liveplatform.update.Update;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends FragmentActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
+    
     static final String TAG = "_HomeActivity";
 
     private static final int TIME_BUTTON_UP = 400;
@@ -59,8 +61,8 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     private HomeFragment mHomeFragment;
 
     @Override
-    protected void onCreate(Bundle arg0) {
-        super.onCreate(arg0);
+    protected void onCreate(Bundle bundle) {
+        super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_home);
 
@@ -94,6 +96,7 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
         Update.doUpdateAPP(this);
 
+        DacSender.sendAppStartDac(getApplicationContext());
     }
 
     @Override

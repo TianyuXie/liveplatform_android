@@ -3,6 +3,7 @@ package com.pplive.liveplatform.util;
 import java.util.UUID;
 
 public class StringUtil {
+    
     public final static String EMPTY_STRING = "";
 
     public final static String NULL_STRING = "null";

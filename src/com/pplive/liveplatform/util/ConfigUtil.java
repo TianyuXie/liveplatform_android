@@ -12,6 +12,7 @@ import java.util.Properties;
  * 
  */
 public class ConfigUtil {
+
     private final static String CONFIG_FILE_PATH = "/assets/conf/config.properties";
     /**
      * Singleton pattern

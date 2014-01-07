@@ -76,7 +76,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private static final int CHAT_SHORT_DELAY = 5000;
 
     private static final int CHAT_LONG_DELAY = 10000;
-    
+
     private static final int WHAT_INVALIDATE_DOOR = 9007;
 
     private Handler mInnerHandler = new Handler(this);
@@ -206,16 +206,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
     }
-    
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        
+
         Log.d(TAG, "onNewIntent");
-        
+
         setIntent(intent);
     }
-    
+
     @Override
     protected void onStart() {
         Log.d(TAG, "onStart");
@@ -232,9 +232,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     protected void onResume() {
         super.onResume();
-        
+
         Log.d(TAG, "onResume");
-        
+
         mLivingProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
 
         if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
@@ -364,8 +364,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             onLiveFailed();
             break;
         case WHAT_INVALIDATE_DOOR:
-           mAnimDoor.invalidate();
-           mInnerHandler.sendEmptyMessageDelayed(WHAT_INVALIDATE_DOOR, 1000);
+            onInvalidateDoor();
         default:
             break;
         }
@@ -502,6 +501,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 performOnClickStopRecording();
             }
         }).show();
+    }
+
+    private void onInvalidateDoor() {
+        mAnimDoor.invalidate();
+        mInnerHandler.sendEmptyMessageDelayed(WHAT_INVALIDATE_DOOR, 1000);
     }
 
     private void startPreview() {
