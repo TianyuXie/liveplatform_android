@@ -24,6 +24,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+
+    <!-- Location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name="com.pplive.liveplatform.LiveApplication"
@@ -105,7 +110,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-        
+
         <!-- Tencent -->
         <activity
             android:name="com.tencent.tauth.AuthActivity"
@@ -132,11 +137,16 @@
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
-        
+
         <!-- Services -->
         <service
             android:name="com.pplive.liveplatform.dac.DacReportService"
             android:process=":service" >
+        </service>
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
         </service>
 
         <!-- Receivers -->
