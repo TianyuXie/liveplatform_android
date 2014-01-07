@@ -5,14 +5,17 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Locale;
+
+import com.pplive.liveplatform.ui.UpdateProgressActivity;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class DownManager
-{
+public class DownManager {
+
     /**
      * len
      */
@@ -42,43 +45,39 @@ public class DownManager
     /**
      * 下载 url-apk路径，dir-本地路径如/sdcard/
      * 
-     * @param context Context
-     * @param url url
-     * @param dir dir
+     * @param context
+     *            Context
+     * @param url
+     *            url
+     * @param dir
+     *            dir
      * @see [类、类#方法、类#成员]
      */
-    public static void down(final Context context, final String url, final File dir)
-    {
+    public static void down(final Context context, final String url, final File dir) {
         // mContext = context;
         // 获取文件
         // 进度条提示文件下载中
-        if (!beginUpload)
-        {
+        if (!beginUpload) {
             getFile(context, url, dir);
         }
     }
 
-    private static void getFile(Context context, final String strPath, final File dir)
-    {
+    private static void getFile(Context context, final String strPath, final File dir) {
 
         // Runnable r = new Runnable() {
         // public void run() {
-        try
-        {
+        try {
             beginUpload = true;
             error = false;
 
             final Intent intent = new Intent(context, UpdateProgressActivity.class);
             context.startActivity(intent);
 
-            synchronized (DownManager.class)
-            {
+            synchronized (DownManager.class) {
                 getDataSource(context, strPath, dir);
             }
             beginUpload = false;
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             beginUpload = false;
             error = true;
         }
@@ -98,8 +97,7 @@ public class DownManager
      * @throws Exception
      * @see [类、类#方法、类#成员]
      */
-    private static void getDataSource(Context context, final String strPath, final File dir) throws Exception
-    {
+    private static void getDataSource(Context context, final String strPath, final File dir) throws Exception {
 
         // if (!URLUtil.isNetworkUrl(strPath))
         // {
@@ -113,14 +111,12 @@ public class DownManager
         conn.setReadTimeout(readTimeout);
         conn.connect();
         InputStream is = conn.getInputStream();
-        if (is == null)
-        {
+        if (is == null) {
             throw new RuntimeException("stream is null");
         }
 
         // 不存在dir时创建目录
-        if (!dir.isDirectory())
-        {
+        if (!dir.isDirectory()) {
             dir.mkdir();
         }
 
@@ -132,34 +128,25 @@ public class DownManager
         len = conn.getContentLength();
         cLen = 0;
         byte buf[] = new byte[128];
-        do
-        {
+        do {
             int numread = is.read(buf);
-            if (numread <= 0)
-            {
+            if (numread <= 0) {
                 break;
             }
             fos.write(buf, 0, numread);
             cLen += numread;
             // Log.e("----------update-----------",cLen+"/"+len);
-        }
-        while (true);
-        try
-        {
+        } while (true);
+        try {
             is.close();
-        }
-        catch (Exception e)
-        {
-            
+        } catch (Exception e) {
+
         }
 
-        try
-        {
+        try {
             fos.close();
-        }
-        catch (Exception e)
-        {
-            
+        } catch (Exception e) {
+
         }
 
         // 关闭滚动框
@@ -168,14 +155,11 @@ public class DownManager
         // ShowProgressBar.sendMessage(msg2);
 
         // 安装apk
-        if ("apk".equals(fileEx))
-        {
-            if (context instanceof Activity)
-            {
+        if ("apk".equals(fileEx)) {
+            if (context instanceof Activity) {
                 Activity activity = (Activity) context;
 
-                if (!activity.isFinishing())
-                {
+                if (!activity.isFinishing()) {
                     activity.finish();
                 }
             }
@@ -188,12 +172,13 @@ public class DownManager
     /**
      * openFile
      * 
-     * @param context Context
-     * @param file File
+     * @param context
+     *            Context
+     * @param file
+     *            File
      * @see [类、类#方法、类#成员]
      */
-    public static void openFile(final Context context, final File file)
-    {
+    public static void openFile(final Context context, final File file) {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setAction(android.content.Intent.ACTION_VIEW);
@@ -202,38 +187,24 @@ public class DownManager
         context.startActivity(intent);
     }
 
-    private static String getMIMEType(File f)
-    {
+    private static String getMIMEType(File f) {
         String type = "";
         String fName = f.getName();
-        String end = fName.substring(fName.lastIndexOf(".") + 1, fName.length()).toLowerCase();
-        if (end.equals("m4a") || end.equals("mp3") || end.equals("mid") || end.equals("xmf") || end.equals("ogg")
-                || end.equals("wav"))
-        {
+        String end = fName.substring(fName.lastIndexOf(".") + 1, fName.length()).toLowerCase(Locale.US);
+        if (end.equals("m4a") || end.equals("mp3") || end.equals("mid") || end.equals("xmf") || end.equals("ogg") || end.equals("wav")) {
             type = "audio";
-        }
-        else if (end.equals("3gp") || end.equals("mp4"))
-        {
+        } else if (end.equals("3gp") || end.equals("mp4")) {
             type = "video";
-        }
-        else if (end.equals("jpg") || end.equals("gif") || end.equals("png") || end.equals("jpeg") || end.equals("bmp"))
-        {
+        } else if (end.equals("jpg") || end.equals("gif") || end.equals("png") || end.equals("jpeg") || end.equals("bmp")) {
             type = "image";
-        }
-        else if (end.equals("apk"))
-        {
+        } else if (end.equals("apk")) {
             /* android.permission.INSTALL_PACKAGES */
             type = "application/vnd.android.package-archive";
-        }
-        else
-        {
+        } else {
             type = "*";
         }
-        if (end.equals("apk"))
-        {
-        }
-        else
-        {
+        if (end.equals("apk")) {
+        } else {
             type += "/*";
         }
         return type;

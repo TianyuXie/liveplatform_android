@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.text.TextUtils;
 
 public class SysUtil {
+
     public final static String SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
 
     public final static String SD_APP_PATH = SD_PATH + "/ibo";
@@ -46,7 +47,7 @@ public class SysUtil {
     public static String getShareCachePath(Context context) {
         return getCachePath(context) + "/share";
     }
-    
+
     public static String getImageCachePath(Context context) {
         return getCachePath(context) + "/image";
     }
