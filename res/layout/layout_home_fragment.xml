@@ -37,7 +37,7 @@
         android:background="@color/home_fragment_body_bg" />
 
     <LinearLayout
-        android:id="@+id/layout_home_nodata"
+        android:id="@+id/layout_home_retry"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignTop="@id/layout_home_body"
@@ -55,6 +55,7 @@
             android:background="@drawable/home_empty_btn_bg" />
 
         <TextView
+            android:id="@+id/text_home_retry"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"

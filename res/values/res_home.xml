@@ -8,6 +8,7 @@
     <string name="home_all_loaded">已全部加载</string>
     <string name="home_nodata_button">没有数据</string>
     <string name="home_nodata_text">暂无直播\n点击上图尝试刷新</string>
+    <string name="home_fail_text">网络不给力\n点击上图尝试刷新</string>
     <string name="home_retry">刷新</string>
     <string name="program_live">Live</string>
     <string name="default_program_viewcount">0</string>
