@@ -18,7 +18,7 @@ public class UpdateAsyncTask extends AsyncTask<Activity, Integer, ArrayList<Upda
     {
         // TODO Auto-generated method stub
               Update.deleteLastUpdateApk();
-        return Update.getUpdateInfos(params[0]);
+        return Update.getUpdateInfos(params[0], true);
     }
 
     @Override
