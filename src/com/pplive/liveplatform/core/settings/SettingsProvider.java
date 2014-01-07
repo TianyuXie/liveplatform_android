@@ -13,6 +13,7 @@ public class SettingsProvider {
     private static final String KEY_TOKEN = "token";
     private static final String KEY_ICON = "icon";
     private static final String KEY_THIRDPARTY = "thirdparty";
+    private static final String KEY_FIRST_LAUNCH = "first_launch";
 
     private SharedPreferences sharedPreferences;
 
@@ -60,6 +61,14 @@ public class SettingsProvider {
 
     public int getThirdParty() {
         return sharedPreferences.getInt(KEY_THIRDPARTY, -1);
+    }
+
+    public boolean isFirstLaunch() {
+        boolean result = sharedPreferences.getBoolean(KEY_FIRST_LAUNCH, true);
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putBoolean(KEY_FIRST_LAUNCH, false);
+        editor.commit();
+        return result;
     }
 
     public void clearUser() {
