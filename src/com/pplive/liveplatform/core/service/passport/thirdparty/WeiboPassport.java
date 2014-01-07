@@ -15,6 +15,8 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.live.UserService;
+import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.util.StringManager;
@@ -37,8 +39,8 @@ import com.sina.weibo.sdk.utils.Utility;
 public class WeiboPassport {
     static final String TAG = "_WeiboPassport";
 
-//    private static final String CONSUMER_KEY = "3353159992";
-//    private static final String CONSUMER_SECRET = "";
+    //    private static final String CONSUMER_KEY = "3353159992";
+    //    private static final String CONSUMER_SECRET = "";
 
     public static final String APP_KEY = "3353159992";
 
@@ -157,23 +159,15 @@ public class WeiboPassport {
     private BasicRequestListener mLoginRequestListener = new BasicRequestListener() {
         @Override
         public void onComplete(String response) {
+            LoginResult tempresult = null;
             try {
                 JSONObject res = new JSONObject(response);
                 mLoginResult.setThirdPartyNickName(res.getString("name"));
                 mLoginResult.setThirdPartyID(res.getString("id"));
                 mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
                 mLoginResult.setThirdPartyToken(mAccessToken.toString());
-                LoginResult tempresult = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
+                tempresult = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
                         mLoginResult.getThirdPartyNickName(), "sina");
-                if (tempresult != null) {
-                    mLoginResult.setToken(tempresult.getToken());
-                    mLoginResult.setUsername(tempresult.getUsername());
-                    mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
-                } else {
-                    if (mLoginListener != null) {
-                        mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_data));
-                    }
-                }
             } catch (JSONException e) {
                 if (mLoginListener != null) {
                     mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_format));
@@ -183,6 +177,27 @@ public class WeiboPassport {
                     mLoginListener.loginFailed(URLUtil.decode(e.getMessage()));
                 }
             }
+            if (tempresult != null) {
+                String token = tempresult.getToken();
+                String username = tempresult.getUsername();
+                mLoginResult.setToken(token);
+                mLoginResult.setUsername(username);
+                mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
+                User userinfo = null;
+                try {
+                    userinfo = UserService.getInstance().getUserInfo(token, username);
+                } catch (LiveHttpException e) {
+                }
+                if (userinfo != null) {
+                    mLoginResult.setFaceUrl(userinfo.getIcon());
+                    mLoginResult.setNickName(userinfo.getNickname());
+                }
+            } else {
+                if (mLoginListener != null) {
+                    mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_data));
+                }
+            }
+
             if (mLoginListener != null) {
                 mLoginListener.loginSuccess(mLoginResult);
             }

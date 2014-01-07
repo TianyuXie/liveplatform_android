@@ -1,5 +1,8 @@
 package com.pplive.liveplatform.core.task.user;
 
+import android.util.Log;
+
+import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;
@@ -7,10 +10,11 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
+import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class UpdateInfoTask extends Task {
-    final static String TAG = "_UpdateNickTask";
+    final static String TAG = "_UpdateInfoTask";
     public final static String KEY_USERINFO = "userinfo";
     public final static String KEY_NICKNAME = "nickname";
     public final static String KEY_ICON_URL = "iconurl";
@@ -64,6 +68,7 @@ public class UpdateInfoTask extends Task {
         if (userinfo == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
+        Log.d(TAG, "UserService OK!");
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
@@ -71,17 +76,23 @@ public class UpdateInfoTask extends Task {
         boolean changeNick = !StringUtil.isNullOrEmpty(nickname) && !nickname.equals(userinfo.getNickname());
         boolean changeIcon = !StringUtil.isNullOrEmpty(iconurl) && !iconurl.equals(userinfo.getIcon());
         if (changeNick) {
-            userinfo.setIcon(iconurl);
+            Log.d(TAG, "setNickname");
+            userinfo.setNickname(nickname);
         }
         if (changeIcon) {
-            userinfo.setNickname(nickname);
+            Log.d(TAG, "setIcon");
+            userinfo.setIcon(iconurl);
         }
         if (changeIcon || changeNick) {
             boolean status = false;
             try {
                 status = UserService.getInstance().updateOrCreateUser(token, userinfo);
             } catch (LiveHttpException e) {
-                return new TaskResult(TaskStatus.Failed, "UserService: Update info error");
+                String message = null;
+                if (e.getMessage().equals(StringManager.getRes(R.string.error_nickname_duplicated))) {
+                    message = StringManager.getRes(R.string.toast_nickname_duplicated);
+                }
+                return new TaskResult(TaskStatus.Failed, message);
             }
             if (!status) {
                 return new TaskResult(TaskStatus.Failed, "fail to update");

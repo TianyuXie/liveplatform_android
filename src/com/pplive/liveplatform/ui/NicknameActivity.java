@@ -92,7 +92,9 @@ public class NicknameActivity extends Activity {
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "onTaskFinished");
             mRefreshDialog.dismiss();
+            Toast.makeText(mContext, R.string.toast_nickname_changed, Toast.LENGTH_SHORT).show();
             UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UpdateInfoTask.KEY_USERINFO));
             setResult(RESULT_NICK_CHANGED);
             finish();
@@ -102,7 +104,11 @@ public class NicknameActivity extends Activity {
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            String message = event.getMessage();
+            if (TextUtils.isEmpty(message)) {
+                message = getString(R.string.toast_nickname_failed);
+            }
+            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
         }
 
         @Override

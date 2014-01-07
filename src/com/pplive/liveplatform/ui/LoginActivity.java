@@ -230,8 +230,9 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     public void loginSuccess(LoginResult res) {
         Log.d(TAG, res.getUsername() + " | " + res.getToken() + " | " + res.getThirdPartyNickName() + " | " + res.getThirdPartyFaceUrl());
         mUserManager.login(res.getUsername(), "", res.getToken());
-        mUserManager.setUserinfo(res.getThirdPartyNickName(), res.getThirdPartyFaceUrl());
         mUserManager.setThirdParty(res.getThirdPartySource());
+        mUserManager.setUserinfo(res.getNickName(), res.getFaceUrl());
+
         String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
         mRefreshDialog.dismiss();
         if (!TextUtils.isEmpty(targetClass)) {

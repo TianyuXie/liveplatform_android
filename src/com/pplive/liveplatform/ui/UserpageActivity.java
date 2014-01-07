@@ -103,6 +103,7 @@ public class UserpageActivity extends Activity {
 
         mPrograms = new ArrayList<Program>();
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
+        mRefreshDialog = new RefreshDialog(this);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
         mNodataButton = (Button) findViewById(R.id.btn_userpage_record);
@@ -121,7 +122,6 @@ public class UserpageActivity extends Activity {
         mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
         mUserIcon.setOnClickListener(onIconClickListener);
         mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
-        mRefreshDialog = new RefreshDialog(this);
 
         //init views
         TextView title = (TextView) findViewById(R.id.text_userpage_title);
@@ -290,6 +290,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
+            Toast.makeText(mContext, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
             UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mContext).getIcon();
             mUserIcon.setRounded(false);
@@ -303,7 +304,7 @@ public class UserpageActivity extends Activity {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.toast_icon_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
