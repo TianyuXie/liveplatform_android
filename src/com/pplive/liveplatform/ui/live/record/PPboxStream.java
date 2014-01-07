@@ -13,7 +13,7 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class PPboxStream {
+public abstract class PPboxStream {
 
     protected static final String TAG = PPboxStream.class.getSimpleName();
 
@@ -46,6 +46,8 @@ public class PPboxStream {
 
     protected long mCaptureId;
 
+    protected long mStartTime;
+
     protected MediaCodec mEncoder;
 
     protected InBuffer[] mInBuffers;
@@ -62,6 +64,11 @@ public class PPboxStream {
 
     protected String mStreamType;
 
+    public PPboxStream(long captureId, long startTime) {
+        mCaptureId = captureId;
+        mStartTime = startTime;
+    }
+
     public void start() {
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             mEncoder.start();
@@ -75,7 +82,9 @@ public class PPboxStream {
         }
     }
 
-    public void stop() {
+    public abstract void stop();
+
+    public void close() {
         if (null != mEncoder) {
             mEncoder.stop();
             mEncoder.release();
@@ -98,7 +107,7 @@ public class PPboxStream {
                 return mInBuffers[index];
             }
         }
-        
+
         return null;
     }
 
@@ -142,7 +151,6 @@ public class PPboxStream {
             }
         }
     }
-
 
     public void drop() {
         //        sample.decode_time += sample.duration;

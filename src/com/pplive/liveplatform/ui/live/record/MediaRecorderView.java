@@ -146,7 +146,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         startPreview();
 
         if (isRecording()) {
-            mMediaRecoder.changeCamera(mCamera);
+            mMediaRecoder.resetCamera(mCamera);
         }
     }
 

@@ -1,7 +1,6 @@
 package com.pplive.liveplatform.ui.live.record;
 
 import java.io.File;
-import java.nio.ByteBuffer;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -21,57 +20,13 @@ public class PPboxSink {
 
     private AudioRecord mAudioRecord;
 
-    private PPboxStream mVideoStream;
+    private PPboxVideoStream mVideoStream;
 
-    private PPboxStream mAudioStream;
-
-    private Thread mAudioThread;
+    private PPboxAudioStream mAudioStream;
 
     private long mStartTime;
 
     private Download_Callback mDownloadCallback;
-
-    private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
-
-        private final long time_scale = 1000 * 1000 * 1000;
-        private int num_total = 0;
-        private int num_drop = 0;
-        private long next_time = 5 * time_scale;
-
-        private long put_preview_interval = 50 /* millisecond */;
-
-        private long last_put_preview_time = System.currentTimeMillis();
-
-        @Override
-        public void onPreviewFrame(byte[] data, Camera camera) {
-            ++num_total;
-
-            long cur_time = System.currentTimeMillis();
-            long time_stamp = System.nanoTime() - mStartTime;
-
-            Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
-
-            if (cur_time - last_put_preview_time > put_preview_interval) {
-                PPboxStream.InBuffer buffer = mVideoStream.pop();
-                if (buffer == null) {
-                    ++num_drop;
-                } else {
-                    Log.d(TAG, "image size: " + data.length);
-
-                    buffer.byte_buffer().put(data);
-                    mVideoStream.put(time_stamp / 1000, buffer);
-                    last_put_preview_time = cur_time;
-                }
-
-                if (time_stamp >= next_time) {
-                    Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
-                    next_time += 5 * time_scale;
-                }
-            }
-
-            camera.addCallbackBuffer(data);
-        }
-    };
 
     public static void init(Context c) {
         File cacheDirFile = c.getCacheDir();
@@ -111,100 +66,44 @@ public class PPboxSink {
         MediaSDK.CaptureInit(mCaptureId, config);
 
         mStartTime = System.nanoTime();
-        mVideoStream = new PPboxVideoStream(mCaptureId, 0, mCamera);
-        mAudioStream = new PPboxAudioStream(mCaptureId, 1, mAudioRecord);
+        mVideoStream = new PPboxVideoStream(mCaptureId, 0, mStartTime, mCamera);
+        mAudioStream = new PPboxAudioStream(mCaptureId, 1, mStartTime, mAudioRecord);
     }
 
-    public void initCamera(Camera camera) {
+    public void resetCamera(Camera camera) {
         mCamera = camera;
-
+        
         if (null != mVideoStream) {
-            final byte[] video_buffer = new byte[mVideoStream.bufferSize()];
-
-            camera.addCallbackBuffer(video_buffer);
-            camera.setPreviewCallbackWithBuffer(mPreviewCallback);
+            mVideoStream.resetCamera(mCamera);
         }
     }
 
     public void start() {
         mVideoStream.start();
 
-        initCamera(mCamera);
-
         mAudioStream.start();
-        mAudioThread = new Thread() {
-            @Override
-            public void run() {
-                audio_read_thread();
-            }
-        };
-        mAudioThread.setPriority(Thread.MAX_PRIORITY);
-        mAudioThread.start();
-    }
-
-    private void audio_read_thread() {
-        final long time_scale = 1000 * 1000 * 1000;
-        final int read_size = mAudioStream.bufferSize();
-        int num_total = 0;
-        int num_drop = 0;
-        long next_time = 5 * time_scale;
-
-        ByteBuffer drop_buffer = ByteBuffer.allocateDirect(read_size);
-
-        mAudioRecord.startRecording();
-        while (!Thread.interrupted()) {
-            long time = System.nanoTime() - mStartTime;
-            if (time >= next_time) {
-                Log.d(TAG, "audio " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
-                next_time += 5 * time_scale;
-            }
-            ++num_total;
-            PPboxStream.InBuffer buffer = mAudioStream.pop();
-            if (buffer == null) {
-                // System.out.println("audio drop");
-                mAudioRecord.read(drop_buffer, read_size);
-                mAudioStream.drop();
-                ++num_drop;
-                continue;
-            }
-            int read = mAudioRecord.read(buffer.byte_buffer(), read_size);
-            if (read != read_size) {
-                Log.d(TAG, "audio.read failed. read = " + read);
-                break;
-            }
-
-            mAudioStream.put(time / 1000, buffer);
-        }
-
-        mAudioRecord.stop();
     }
 
     public void stop() {
-        mAudioThread.interrupt();
-        try {
-            mAudioThread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        mCamera.setPreviewCallbackWithBuffer(null);
+        mVideoStream.stop();
+        mAudioStream.stop();
     }
 
     public void close() {
 
-        if (null != mAudioRecord) {
-            mAudioRecord.release();
-            mAudioRecord = null;
-        }
-
         if (null != mVideoStream) {
-            mVideoStream.stop();
+            mVideoStream.close();
             mVideoStream = null;
         }
 
         if (null != mAudioStream) {
-            mAudioStream.stop();
+            mAudioStream.close();
             mAudioStream = null;
+        }
+        
+        if (null != mAudioRecord) {
+            mAudioRecord.release();
+            mAudioRecord = null;
         }
 
         Log.d(TAG, "Before destroy capture");

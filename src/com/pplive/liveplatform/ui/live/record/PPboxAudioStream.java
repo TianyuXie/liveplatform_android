@@ -2,25 +2,31 @@ package com.pplive.liveplatform.ui.live.record;
 
 import java.nio.ByteBuffer;
 
-import com.pplive.liveplatform.Constants;
-import com.pplive.sdk.MediaSDK;
-
 import android.annotation.TargetApi;
 import android.media.AudioRecord;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
+import android.util.Log;
+
+import com.pplive.liveplatform.Constants;
+import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PPboxAudioStream extends PPboxStream {
     
+    private AudioRecord mAudioRecord;
 
-    public PPboxAudioStream(long capture, int itrack, AudioRecord audio) {
+    private Thread mAudioThread;
+
+    public PPboxAudioStream(long capture, int itrack, long startTime, AudioRecord audio) {
+        super(capture, startTime);
+        
         mStreamType = "Audio";
 
-        this.mCaptureId = capture;
+        mCaptureId = capture;
+        
+        mAudioRecord = audio;
 
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             MediaFormat format = MediaManager.getInstance().getSupportedEncodingAudioFormat(MediaManager.MIME_TYPE_AUDIO_AAC, audio.getSampleRate(),
@@ -61,6 +67,63 @@ public class PPboxAudioStream extends PPboxStream {
     public void start() {
         super.start();
         
+        mAudioThread = new Thread() {
+            @Override
+            public void run() {
+                audio_read_thread();
+            }
+        };
+        mAudioThread.setPriority(Thread.MAX_PRIORITY);
+        mAudioThread.start();
+    }
+    
+    @Override
+    public void stop() {
         
+        mAudioThread.interrupt();
+        try {
+            mAudioThread.join();
+        } catch (InterruptedException e) {
+            Log.w(TAG, e.toString());
+        }
+        
+        mAudioThread = null;
+    }
+    
+    private void audio_read_thread() {
+        final long time_scale = 1000 * 1000 * 1000;
+        final int read_size = bufferSize();
+        int num_total = 0;
+        int num_drop = 0;
+        long next_time = 5 * time_scale;
+
+        ByteBuffer drop_buffer = ByteBuffer.allocateDirect(read_size);
+
+        mAudioRecord.startRecording();
+        while (!Thread.interrupted()) {
+            long time = System.nanoTime() - mStartTime;
+            if (time >= next_time) {
+                Log.d(TAG, "audio " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: " + num_drop);
+                next_time += 5 * time_scale;
+            }
+            ++num_total;
+            PPboxStream.InBuffer buffer = pop();
+            if (buffer == null) {
+                // System.out.println("audio drop");
+                mAudioRecord.read(drop_buffer, read_size);
+                drop();
+                ++num_drop;
+                continue;
+            }
+            int read = mAudioRecord.read(buffer.byte_buffer(), read_size);
+            if (read != read_size) {
+                Log.d(TAG, "audio.read failed. read = " + read);
+                break;
+            }
+
+            put(time / 1000, buffer);
+        }
+
+        mAudioRecord.stop();
     }
 }

@@ -7,8 +7,6 @@ import android.hardware.Camera;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
@@ -16,11 +14,60 @@ import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PPboxVideoStream extends PPboxStream {
+    
+    private Camera mCamera;
 
-    public PPboxVideoStream(long capture, int itrack, Camera camera) {
+    private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
+
+        private final long time_scale = 1000 * 1000 * 1000;
+        private int num_total = 0;
+        private int num_drop = 0;
+        private long next_time = 5 * time_scale;
+
+        private long put_preview_interval = 50 /* millisecond */;
+
+        private long last_put_preview_time = System.currentTimeMillis();
+
+        @Override
+        public void onPreviewFrame(byte[] data, Camera camera) {
+            ++num_total;
+
+            long cur_time = System.currentTimeMillis();
+            long time_stamp = System.nanoTime() - mStartTime;
+
+            Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
+
+            if (cur_time - last_put_preview_time > put_preview_interval) {
+                PPboxStream.InBuffer buffer = pop();
+                if (buffer == null) {
+                    ++num_drop;
+                } else {
+                    Log.d(TAG, "image size: " + data.length);
+
+                    buffer.byte_buffer().put(data);
+                    put(time_stamp / 1000, buffer);
+                    last_put_preview_time = cur_time;
+                }
+
+                if (time_stamp >= next_time) {
+                    Log.d(TAG, "video " + " time:" + next_time / time_scale + " total: " + num_total + " accept: " + (num_total - num_drop) + " drop: "
+                            + num_drop);
+                    next_time += 5 * time_scale;
+                }
+            }
+
+            camera.addCallbackBuffer(data);
+        }
+    };
+
+    public PPboxVideoStream(long capture, int itrack, long startTime, Camera camera) {
+        super(capture, startTime);
+
         mStreamType = "Video";
 
-        this.mCaptureId = capture;
+        mCaptureId = capture;
+        
+        mCamera = camera;
 
         Camera.Parameters p = camera.getParameters();
 
@@ -44,7 +91,7 @@ public class PPboxVideoStream extends PPboxStream {
         mStreamInfo.__union1 = p.getPreviewSize().height;
         mStreamInfo.__union2 = MediaManager.FRAME_RATE;
         mStreamInfo.__union3 = 0;
-        
+
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             mStreamInfo.format_size = 0;
             mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
@@ -58,9 +105,25 @@ public class PPboxVideoStream extends PPboxStream {
         mSample.size = mInSize;
         mSample.buffer = null;
     }
-    
+
     @Override
     public void start() {
         super.start();
+        
+        resetCamera(mCamera);
+    }
+    
+    @Override
+    public void stop() {
+        mCamera.setPreviewCallbackWithBuffer(null);
+    }
+
+    public void resetCamera(Camera camera) {
+        mCamera = camera;
+
+        final byte[] video_buffer = new byte[bufferSize()];
+
+        camera.addCallbackBuffer(video_buffer);
+        camera.setPreviewCallbackWithBuffer(mPreviewCallback);
     }
 }
