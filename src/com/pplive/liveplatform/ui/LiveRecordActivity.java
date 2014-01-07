@@ -62,7 +62,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
+    
     private static final int WHAT_RECORD_END = 9002;
+    
     private static final int WHAT_RECORD_UPDATE = 9003;
 
     private static final int WHAT_LIVE_COMING_UPDATE = 9005;
@@ -487,6 +489,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                mMediaRecorderView.stopRecording();
+                
                 onClickBtnLiveRecord();
             }
         }, new DialogInterface.OnClickListener() {

@@ -10,9 +10,7 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.media.AudioRecord;
 import android.media.MediaCodec;
-import android.media.MediaFormat;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
@@ -23,7 +21,7 @@ import com.pplive.sdk.MediaSDK;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PPboxStream {
 
-    private static final String TAG = PPboxStream.class.getSimpleName();
+    protected static final String TAG = PPboxStream.class.getSimpleName();
 
     public class InBuffer {
         int mIndex;
@@ -52,120 +50,25 @@ public class PPboxStream {
         }
     }
 
-    private long mCaptureId;
+    protected long mCaptureId;
 
-    private MediaCodec mEncoder;
+    protected MediaCodec mEncoder;
 
-    private InBuffer[] mInBuffers;
+    protected InBuffer[] mInBuffers;
 
-    private ByteBuffer[] mOutBuffers;
+    protected ByteBuffer[] mOutBuffers;
 
-    private MediaCodec.BufferInfo mBufferInfo;
+    protected MediaCodec.BufferInfo mBufferInfo;
 
-    private Cycle<InBuffer> mCycleBuffer;
+    protected Cycle<InBuffer> mCycleBuffer;
 
-    private int mInSize;
+    protected int mInSize;
 
-    private MediaSDK.StreamInfo mStreamInfo;
+    protected MediaSDK.StreamInfo mStreamInfo;
 
-    private MediaSDK.Sample mSample;
+    protected MediaSDK.Sample mSample;
 
-    private String mStreamType;
-
-    private static PPboxStream[] mStreams = new PPboxStream[2];
-
-    public PPboxStream(long capture, int itrack, Camera camera) {
-        mStreamType = "Video";
-
-        this.mCaptureId = capture;
-        mStreams[itrack] = this;
-
-        Camera.Parameters p = camera.getParameters();
-
-        p.getPreviewFormat();
-        Log.d(TAG, "Preview Format: " + p.getPreviewFormat());
-
-        Camera.Size size = p.getPreviewSize();
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            MediaFormat format = MediaManager.getInstance().getSupportedEncodingVideoFormat(MediaManager.MIME_TYPE_VIDEO_AVC, size);
-            mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_VIDEO_AVC);
-            mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        }
-
-        mInSize = pic_size(p);
-
-        mStreamInfo = new MediaSDK.StreamInfo();
-
-        mStreamInfo.time_scale = 1000 * 1000;
-        mStreamInfo.bitrate = 0;
-        mStreamInfo.__union0 = p.getPreviewSize().width;
-        mStreamInfo.__union1 = p.getPreviewSize().height;
-        mStreamInfo.__union2 = MediaManager.FRAME_RATE;
-        mStreamInfo.__union3 = 0;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            mStreamInfo.format_size = 0;
-            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
-        } else {
-            mStreamInfo.format_size = 0;
-            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
-        }
-
-        //        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
-
-        mSample = new MediaSDK.Sample();
-        mSample.itrack = itrack;
-        mSample.flags = 0;
-        mSample.time = 0;
-        mSample.composite_time_delta = 0;
-        mSample.size = mInSize;
-        mSample.buffer = null;
-    }
-
-    public PPboxStream(long capture, int itrack, AudioRecord audio) {
-        mStreamType = "Audio";
-
-        this.mCaptureId = capture;
-        mStreams[itrack] = this;
-
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            MediaFormat format = MediaManager.getInstance().getSupportedEncodingAudioFormat(MediaManager.MIME_TYPE_AUDIO_AAC, audio.getSampleRate(),
-                    audio.getChannelCount());
-            mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_AUDIO_AAC);
-            mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
-        }
-
-        mInSize = frame_size(1024, audio.getChannelConfiguration(), audio.getAudioFormat());
-
-        mStreamInfo = new MediaSDK.StreamInfo();
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            mStreamInfo.time_scale = 1000 * 1000;
-        } else {
-            mStreamInfo.time_scale = audio.getSampleRate();
-        }
-        mStreamInfo.bitrate = 0;
-        mStreamInfo.__union0 = audio.getChannelCount();
-        mStreamInfo.__union1 = 8 * (4 - audio.getAudioFormat());
-        mStreamInfo.__union2 = audio.getSampleRate();
-        mStreamInfo.__union3 = 1024;
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            mStreamInfo.format_size = 0;
-            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
-            ;
-        } else {
-            mStreamInfo.format_size = 0;
-            mStreamInfo.format_buffer = ByteBuffer.allocateDirect(0);
-        }
-
-        //        MediaSDK.CaptureSetStream(capture, itrack, mStreamInfo);
-
-        mSample = new MediaSDK.Sample();
-        mSample.itrack = itrack;
-        mSample.flags = 0;
-        mSample.time = 0;
-        mSample.composite_time_delta = 0;
-        mSample.size = mInSize;
-        mSample.buffer = null;
-    }
+    protected String mStreamType;
 
     public void start() {
         if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
@@ -315,24 +218,6 @@ public class PPboxStream {
 
     public void drop() {
         //        sample.decode_time += sample.duration;
-    }
-
-    private boolean free_sample2(int index) {
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
-            mEncoder.releaseOutputBuffer(index, false);
-        } else {
-            InBuffer buffer = mInBuffers[index];
-            buffer.byte_buffer().clear();
-            mCycleBuffer.push(buffer);
-        }
-        return true;
-    }
-
-    public static boolean free_sample(long context) {
-        --context;
-        int itrack = (int) (context >> 16);
-        int index = (int) (context & 0xffff);
-        return mStreams[itrack].free_sample2(index);
     }
 
     public static int fourcc(String f) {

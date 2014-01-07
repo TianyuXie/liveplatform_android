@@ -111,8 +111,8 @@ public class PPboxSink {
         MediaSDK.CaptureInit(mCaptureId, config);
 
         mStartTime = System.nanoTime();
-        mVideoStream = new PPboxStream(mCaptureId, 0, mCamera);
-        mAudioStream = new PPboxStream(mCaptureId, 1, mAudioRecord);
+        mVideoStream = new PPboxVideoStream(mCaptureId, 0, mCamera);
+        mAudioStream = new PPboxAudioStream(mCaptureId, 1, mAudioRecord);
     }
 
     public void changeCamera(Camera camera) {
