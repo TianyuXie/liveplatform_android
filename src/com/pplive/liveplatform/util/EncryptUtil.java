@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 public class EncryptUtil {
+
     private static final String ALGORITHM = "AES";
 
     private static final String DEFAULT_SEED = "32abecd2d70da57be5f7e8ad8bc28fe9";

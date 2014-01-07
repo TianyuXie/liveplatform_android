@@ -23,6 +23,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public class ImageUtil {
+
     private static Paint sCirclePaint;
 
     private static Paint sLinePaint;
