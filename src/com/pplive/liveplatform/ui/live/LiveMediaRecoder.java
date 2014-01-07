@@ -1,9 +1,10 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live;
 
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
 
+import com.pplive.liveplatform.ui.live.record.PPboxSink;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 
 public class LiveMediaRecoder {
@@ -58,11 +59,12 @@ public class LiveMediaRecoder {
     public void stop() {
         mCapture.stop();
         mCapture.close();
+        mCapture = null;
     }
 
-    public void changeCamera(Camera camera) {
+    public void resetCamera(Camera camera) {
         if (null != mCapture) {
-            mCapture.changeCamera(camera);
+            mCapture.resetCamera(camera);
         }
     }
 

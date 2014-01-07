@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live;
 
 enum Mode {
     INITIAL {

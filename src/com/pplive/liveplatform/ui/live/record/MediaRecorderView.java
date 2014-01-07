@@ -1,6 +1,7 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live.record;
 
 import java.io.IOException;
+import java.util.List;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
@@ -10,6 +11,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.pplive.liveplatform.ui.live.LiveMediaRecoder;
 
 public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -27,7 +30,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
     private LiveMediaRecoder mMediaRecoder;
     private String mOutputPath;
-    
+
     private LiveMediaRecoder.OnErrorListener mOnErrorListener;
 
     private boolean mRecording = false;
@@ -53,7 +56,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         Log.d(TAG, "surfaceChanged");
 
         mSurfaceHolder = holder;
-        
+
         startPreview();
     }
 
@@ -72,7 +75,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     public void setOutputPath(String path) {
         mOutputPath = path;
     }
-    
+
     public void setOnErrorListener(LiveMediaRecoder.OnErrorListener listener) {
         mOnErrorListener = listener;
     }
@@ -83,15 +86,15 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
     public void startPreview() {
         Log.d(TAG, "startPreview 1");
-        
+
         openCamera();
         initCamera();
-        
+
         if (mConfigured && !mPreviewing && null != mCamera) {
             Log.d(TAG, "startPreview 2");
-            
+
             mCamera.startPreview();
-            
+
             mPreviewing = true;
         }
     }
@@ -103,7 +106,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
             if (isFlashOn()) {
                 setFlashMode(false);
             }
-            
+
             mCamera.stopPreview();
             mCamera.release();
             mCamera = null;
@@ -112,7 +115,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
             mConfigured = false;
         }
     }
-    
+
     private void openCamera() {
         if (null == mCamera) {
             mCamera = CameraManager.getInstance().open(mCurrentCameraId);
@@ -137,13 +140,13 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
         changeCamera(mCurrentCameraId);
     }
-    
+
     public void changeCamera(int cameraId) {
         stopPreview();
         startPreview();
-        
+
         if (isRecording()) {
-            mMediaRecoder.changeCamera(mCamera);
+            mMediaRecoder.resetCamera(mCamera);
         }
     }
 
@@ -172,7 +175,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
             }
         }
     }
-    
+
     public boolean isFlashOn() {
         return mFlashOn;
     }
@@ -183,32 +186,52 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
     public void startRecording() {
         Log.d(TAG, "startRecording 1");
-        
+
         if (TextUtils.isEmpty(mOutputPath)) {
             return;
         }
-        
+
         if (!isRecording()) {
             Log.d(TAG, "startRecording 2");
-            
+
             mMediaRecoder = new LiveMediaRecoder(getContext(), mCamera);
             mMediaRecoder.setOnErrorListener(mOnErrorListener);
             mMediaRecoder.setOutputPath(mOutputPath);
-            
+
             mMediaRecoder.start();
-            
+
             mRecording = true;
         }
     }
 
     public void stopRecording() {
         Log.d(TAG, "stopRecording 1");
-        
+
         if (isRecording()) {
             mRecording = false;
-            
+
             mMediaRecoder.stop();
             mMediaRecoder = null;
         }
+    }
+
+    public List<Camera.Size> getSupportedSize() {
+        if (null != mCamera) {
+            Camera.Parameters params = mCamera.getParameters();
+
+            return params.getSupportedPreviewSizes();
+        }
+
+        return null;
+    }
+
+    public Camera.Size getPreviewSize() {
+        if (null != mCamera) {
+            Camera.Parameters params = mCamera.getParameters();
+
+            return params.getPreviewSize();
+        }
+
+        return null;
     }
 }

@@ -17,7 +17,8 @@ public abstract class BaseDacStat extends DacStat implements CommonData {
         addValueItem(KEY_DEVICE_ID, DeviceInfo.getIMEI() + "|" + DeviceInfo.getWLANMac());
         addValueItem(KEY_DEVICE_BOARD, Build.BOARD);
         addValueItem(KEY_DEVICE_MODULE, Build.MODEL + "&" + Build.PRODUCT);
-        addValueItem(KEY_OS_VERSION, DeviceInfo.getCPUModule());
+        addValueItem(KEY_OS_VERSION, DeviceInfo.getOSVersion());
+        addValueItem(KEY_CPU_MODULE, DeviceInfo.getCPUModule());
         addValueItem(KEY_SCREEN_RESOLUTION, DeviceInfo.getScreenResolution());
         addValueItem(KEY_TERMINAL_CATEGORY, 4 /* aph */);
         addValueItem(KEY_USER_ID, DeviceInfo.getIMEI());

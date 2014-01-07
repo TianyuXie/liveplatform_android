@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live;
 
 import java.util.Calendar;
 
@@ -24,9 +24,9 @@ import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.ui.record.event.EventProgramAdded;
-import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
-import com.pplive.liveplatform.ui.record.event.EventReset;
+import com.pplive.liveplatform.ui.live.event.EventProgramAdded;
+import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
+import com.pplive.liveplatform.ui.live.event.EventReset;
 import com.pplive.liveplatform.ui.widget.DateTimePicker;
 import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.util.ViewUtil;
