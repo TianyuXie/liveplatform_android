@@ -19,6 +19,7 @@ import com.pplive.liveplatform.LiveApplication;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.UpdateService;
 import com.pplive.liveplatform.core.service.live.model.Packet;
+import com.pplive.liveplatform.dac.info.AppInfo;
 import com.pplive.liveplatform.util.SysUtil;
 
 public class Update {
@@ -92,7 +93,7 @@ public class Update {
             return false;
         }
 
-        final int localVersion = LiveApplication.getVersionCode();
+        final int localVersion = AppInfo.getVersionCode();
         // final int localVersion = 99;
 
 
@@ -125,7 +126,7 @@ public class Update {
                 return true;
             } else {
                 String msg;
-                msg = activity.getString(R.string.update_latest_update, LiveApplication.getVersionName());
+                msg = activity.getString(R.string.update_latest_update, AppInfo.getVersionName());
                 runInUiThreadToast(activity, msg);
             }
         }
@@ -216,7 +217,7 @@ public class Update {
         for (UpdateInfo updateInfo : updateInfos) {
             // msg = activity.getString(R.string.the_latest_update,
             // UtilMethod.getLocalVersionName(activity));
-            final int localVersion = LiveApplication.getVersionCode();
+            final int localVersion = AppInfo.getVersionCode();
             if (updateInfo.minVersionCode <= localVersion && localVersion <= updateInfo.maxVersionCode) {
 
                 if (updateInfo.model != UpdateInfo.MODE_FORCE && updateInfo.model != UpdateInfo.MODE_RECOMMEND) {
@@ -267,11 +268,11 @@ public class Update {
         try {
             Packet result = null;
             if(ifmanual){
-                result = UpdateService.getInstance().checkManUpdate(LiveApplication.getChannel(), LiveApplication.getPlatform(), Build.VERSION.RELEASE,
-                        LiveApplication.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
+                result = UpdateService.getInstance().checkManUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                        AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
             }else {
-                result = UpdateService.getInstance().checkUpdate(LiveApplication.getChannel(), LiveApplication.getPlatform(), Build.VERSION.RELEASE,
-                        LiveApplication.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
+                result = UpdateService.getInstance().checkUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                        AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
             }
 
             if (result == null) {
