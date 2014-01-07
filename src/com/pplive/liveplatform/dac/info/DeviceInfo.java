@@ -8,6 +8,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
@@ -32,7 +33,7 @@ public class DeviceInfo {
         sCPUModule = Build.CPU_ABI;
 
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        sIMEI = tm.getDeviceId();
+        sIMEI = TextUtils.isEmpty(tm.getDeviceId()) ? sIMEI : tm.getDeviceId();
 
         WindowManager windowManager = (WindowManager) context.getSystemService(Service.WINDOW_SERVICE);
         DisplayMetrics metrics = new DisplayMetrics();
@@ -42,7 +43,7 @@ public class DeviceInfo {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Service.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         if (null != wifiInfo) {
-            sWLANMac = wifiInfo.getMacAddress();
+            sWLANMac = TextUtils.isEmpty(wifiInfo.getMacAddress()) ? sWLANMac : wifiInfo.getMacAddress();
         }
 
         Log.d(TAG, "IMEI: " + sIMEI);
@@ -59,7 +60,7 @@ public class DeviceInfo {
     public static String getCPUModule() {
         return sCPUModule;
     }
-    
+
     public static String getScreenResolution() {
         return sScreenResolution;
     }
