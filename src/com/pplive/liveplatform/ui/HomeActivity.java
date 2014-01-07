@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -24,6 +23,9 @@ import android.widget.Toast;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.dac.DacSender;
+import com.pplive.liveplatform.dac.info.LocationInfo;
+import com.pplive.liveplatform.location.Locator.LocationData;
+import com.pplive.liveplatform.location.LocatorActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.home.HomeFragment;
@@ -34,8 +36,8 @@ import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.update.Update;
 import com.pplive.liveplatform.util.DisplayUtil;
 
-public class HomeActivity extends FragmentActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
-    
+public class HomeActivity extends LocatorActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
+
     static final String TAG = "_HomeActivity";
 
     private static final int TIME_BUTTON_UP = 400;
@@ -141,6 +143,9 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
         Log.d(TAG, "onStart");
         super.onStart();
         mSideBar.updateUsername();
+        if (!LocationInfo.isUpdated()) {
+            startLocator();
+        }
     }
 
     @Override
@@ -325,6 +330,18 @@ public class HomeActivity extends FragmentActivity implements HomeFragment.Callb
     public void onSlideBack() {
         mStatusButtonWrapper.setVisibility(View.VISIBLE);
         mStatusButtonWrapper.startAnimation(AnimationUtils.loadAnimation(getApplicationContext(), R.anim.loadbtn_show));
+    }
+
+    @Override
+    public void onLocationUpdate(LocationData location) {
+        if (location == null) {
+            return;
+        }
+        LocationInfo.updateData(location);
+    }
+
+    @Override
+    public void onLocationError(String message) {
     }
 
 }

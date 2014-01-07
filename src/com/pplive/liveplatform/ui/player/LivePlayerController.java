@@ -276,13 +276,18 @@ public class LivePlayerController extends MediaController {
             if (mPlayer != null) {
                 long duration = mPlayer.getDuration();
                 long newposition = duration * progress / 1000L;
-                mPlayer.seekTo((int) newposition);
                 mCurrentTime.setText(TimeUtil.stringForTimeMin((int) newposition));
             }
         }
 
         public void onStopTrackingTouch(SeekBar bar) {
             mDragging = false;
+            if (mPlayer != null) {
+                long duration = mPlayer.getDuration();
+                long newposition = duration * bar.getProgress() / 1000L;
+                mPlayer.seekTo((int) newposition);
+                mCurrentTime.setText(TimeUtil.stringForTimeMin((int) newposition));
+            }
             setProgress();
             updatePausePlay();
             show();

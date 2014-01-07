@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.os.AsyncTask;
 
 public class UpdateAsyncTask extends AsyncTask<Activity, Integer, ArrayList<UpdateInfo>> {
-
     UpdateListener listener;
 
     public UpdateAsyncTask(UpdateListener _listener) {
@@ -16,7 +15,7 @@ public class UpdateAsyncTask extends AsyncTask<Activity, Integer, ArrayList<Upda
     protected ArrayList<UpdateInfo> doInBackground(Activity... params) {
         // TODO Auto-generated method stub
         Update.deleteLastUpdateApk();
-        return Update.getUpdateInfos(params[0]);
+        return Update.getUpdateInfos(params[0], true);
     }
 
     @Override

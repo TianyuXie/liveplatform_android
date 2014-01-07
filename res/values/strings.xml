@@ -47,5 +47,6 @@
     <string name="update_download_error">下载失败</string>
     <string name="update_title">软件更新</string>
     <string name="update_ing">正在下载...</string>
+    <string name="update_no_update_information">没有升级信息</string>
 
 </resources>

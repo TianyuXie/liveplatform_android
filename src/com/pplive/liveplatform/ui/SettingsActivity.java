@@ -148,10 +148,8 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onNicknameClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (UserManager.getInstance(SettingsActivity.this).isPPTVLogin()) {
-                Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
-                startActivityForResult(intent, REQUEST_NICK);
-            }
+            Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
+            startActivityForResult(intent, REQUEST_NICK);
         }
     };
 
@@ -166,7 +164,7 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Update.doUpdateAPP(SettingsActivity.this);
+            Update.updateManual(SettingsActivity.this);
         }
     };
 

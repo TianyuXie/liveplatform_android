@@ -1,5 +1,8 @@
 package com.pplive.liveplatform.ui.player;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +15,6 @@ import android.os.Message;
 import android.pplive.media.player.MeetVideoView;
 import android.pplive.media.player.MeetVideoView.DecodeMode;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -43,15 +46,18 @@ import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
-public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback,
-        android.os.Handler.Callback {
+public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback {
     static final String TAG = "_LivePlayerFragment";
 
     private static final int TIMER_DELAY = 1000;
 
     private static final int SHOW_DELAY = 6000;
 
+    private static final int PLAYER_TIMEOUT = 10000;
+
     private static final int HIDE = 301;
+
+    private static final int TIMEOUT = 302;
 
     private static final int FLAG_TITLE_BAR = 0x1;
 
@@ -95,15 +101,15 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private boolean mLoading;
 
-    private String mIconUrl;
-
-    private Callback mCallbackListener;
-
     private int mFlagMask;
 
     private int mViewFlags;
 
     private long mStartTime;
+
+    private Program mProgram;
+
+    private Timer mTimer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -137,20 +143,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mUserIcon = (CircularImageView) mRoot.findViewById(R.id.btn_player_user_icon);
         mUserIcon.setOnClickListener(onUserBtnClickListener);
 
-        mModeBtn.setOnClickListener(this);
         mRoot.setOnTouchListener(this);
+        mModeBtn.setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_share).setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_back).setOnClickListener(this);
         return mRoot;
-    }
-
-    public void setUserIcon(String url) {
-        mIconWrapper.setVisibility(View.INVISIBLE);
-        if (!TextUtils.isEmpty(url)) {
-            mIconUrl = url;
-            //preload the image
-            mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
-        }
     }
 
     public void setupPlayerDirect(String url) {
@@ -190,7 +187,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void syncVolume() {
         int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mMuted = (volume <= 0);
         mVolumeBar.setProgress((int) (volume * 100.0 / maxVolume));
+        updateVolumeIcon();
     }
 
     private OnClickListener mVolumeIconClickListener = new OnClickListener() {
@@ -227,7 +226,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         @Override
         public void onProgressChanged(VerticalSeekBar seekBar, int progress, boolean fromUser) {
-            mMuted = (progress <= 0);
             if (mVolUser) {
                 float maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                 int volume = (int) (maxVolume * progress / 100.0);
@@ -239,15 +237,16 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                     mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
                 }
             }
-            updateVolumeIcon(progress);
+            mMuted = (progress <= 0);
+            updateVolumeIcon();
         }
     };
 
-    public void updateVolumeIcon(int value) {
-        if (mVolumeIcon != null && value > 0) {
-            mVolumeIcon.setImageResource(R.drawable.player_volume_icon_small);
-        } else {
+    private void updateVolumeIcon() {
+        if (mVolumeIcon != null && mMuted) {
             mVolumeIcon.setImageResource(R.drawable.player_volume_mute_icon_small);
+        } else {
+            mVolumeIcon.setImageResource(R.drawable.player_volume_icon_small);
         }
     }
 
@@ -261,6 +260,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mVideoView.setOnInfoListener(mInfoListener);
         mVideoView.setOnErrorListener(mErrorListener);
         mController.setMediaPlayer(mVideoView);
+        mTimer = new Timer();
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                mHandler.sendEmptyMessage(TIMEOUT);
+            }
+        }, PLAYER_TIMEOUT);
     }
 
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
@@ -277,16 +283,16 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    public void showPPTVIcon(boolean show) {
-        if (show) {
+    public void setProgram(Program program) {
+        mProgram = program;
+        ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
+        mIconWrapper.setVisibility(View.INVISIBLE);
+        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
+        if (program.isOriginal()) {
             mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.VISIBLE);
         } else {
             mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.GONE);
         }
-    }
-
-    public void setTitle(String title) {
-        ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(title);
     }
 
     @Override
@@ -333,21 +339,24 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onDestroy();
     }
 
-    private Handler mHandler = new Handler(this);
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
 
-    @Override
-    public boolean handleMessage(Message msg) {
-
-        switch (msg.what) {
-        case HIDE:
-            hideBars();
-            break;
-        default:
-            break;
+            switch (msg.what) {
+            case HIDE:
+                hideBars();
+                break;
+            case TIMEOUT:
+                if (getActivity() != null) {
+                    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
+                }
+                break;
+            default:
+                break;
+            }
         }
-
-        return true;
-    }
+    };
 
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
 
@@ -359,6 +368,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             }
             mVideoView.start();
             mController.start();
+            if (mTimer != null) {
+                mTimer.cancel();
+            }
         }
     };
 
@@ -366,12 +378,14 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         @Override
         public boolean onInfo(int what, int extra) {
-            if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
-                mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.VISIBLE);
-                return true;
-            } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
-                mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.GONE);
-                return true;
+            if (mProgram.isVOD()) {
+                if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
+                    mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.VISIBLE);
+                    return true;
+                } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
+                    mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.GONE);
+                    return true;
+                }
             }
             return false;
         }
@@ -422,8 +436,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mCallbackListener.onBackClick();
             }
             break;
-        default:
-            break;
         }
     }
 
@@ -438,11 +450,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         return false;
     }
 
-    public void setLayout(boolean isFull, boolean isVod) {
+    public void setLayout(boolean isFull) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
             mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR;
-            if (isVod) {
+            if (mProgram.isVOD()) {
                 mFlagMask |= FLAG_TIME_BAR;
             }
         } else {
@@ -535,6 +547,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public boolean onError(int what, int extra);
     }
 
+    private Callback mCallbackListener;
+
     public void setCallbackListener(Callback listener) {
         this.mCallbackListener = listener;
     }
@@ -567,7 +581,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void onStartPlay() {
         mUserIcon.setRounded(false);
-        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_finish);
         mRoot.findViewById(R.id.image_player_loading).setVisibility(View.GONE);
@@ -576,7 +590,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void onStartPrelive() {
         mUserIcon.setRounded(false);
-        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_prelive);
         rotateIcon();
@@ -586,7 +600,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mIconWrapper.clearAnimation();
         mIconWrapper.setVisibility(View.INVISIBLE);
         mUserIcon.setRounded(false);
-        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
         showBars(0);
     }
 
@@ -608,11 +622,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onRotateMiddle() {
             mFinishText.setText("");
-            if (!TextUtils.isEmpty(mIconUrl)) {
-                mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
-            } else {
-                mUserIcon.setImageResource(R.drawable.user_icon_default);
-            }
+            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
         }
     };
 
@@ -634,33 +644,33 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    private Handler handler = new Handler();
+    private Handler mCountHandler = new Handler();
 
     private Runnable runnable = new Runnable() {
         public void run() {
             Log.d(TAG, "Timer update");
             if (mStartTime - System.currentTimeMillis() > 15 * TimeUtil.MS_OF_MIN) {
                 mCountTextView.setText("节目尚未开始");
-                handler.postDelayed(this, 20 * TIMER_DELAY);
+                mCountHandler.postDelayed(this, 20 * TIMER_DELAY);
             } else {
                 mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForTimeHour(mStartTime - System.currentTimeMillis()));
-                handler.postDelayed(this, TIMER_DELAY);
+                mCountHandler.postDelayed(this, TIMER_DELAY);
             }
         }
     };
 
-    public void startTimer(long startTime) {
+    public void startTimer() {
         Log.d(TAG, "start timer");
-        mStartTime = startTime;
+        mStartTime = mProgram.getStartTime();
         mCountTextView.setVisibility(View.VISIBLE);
-        handler.post(runnable);
+        mCountHandler.post(runnable);
     }
 
     public void stopTimer() {
         Log.d(TAG, "stop timer");
         mStartTime = -1;
         mCountTextView.setVisibility(View.GONE);
-        handler.removeCallbacks(runnable);
+        mCountHandler.removeCallbacks(runnable);
     }
 
     @Override

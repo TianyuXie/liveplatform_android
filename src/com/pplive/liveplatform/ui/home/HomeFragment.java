@@ -70,6 +70,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private View mRetryLayout;
 
+    private TextView mRetryText;
+
     private Callback mCallbackListener;
 
     private boolean mSlided;
@@ -106,7 +108,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         mTitleBar.setOnClickListener(onTitleBarClickListener);
         mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
-        mRetryLayout = layout.findViewById(R.id.layout_home_nodata);
+        mRetryText = (TextView) layout.findViewById(R.id.text_home_retry);
+        mRetryLayout = layout.findViewById(R.id.layout_home_retry);
         layout.findViewById(R.id.btn_home_retry).setOnClickListener(onRetryClickListener);
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         updateCatalogText();
@@ -272,6 +275,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                                 mRetryLayout.setVisibility(View.GONE);
                             } else {
                                 mCallbackListener.doLoadResult(getString(R.string.home_nodata_button));
+                                mRetryText.setText(R.string.home_nodata_text);
                                 mRetryLayout.setVisibility(View.VISIBLE);
                             }
                         }
@@ -299,6 +303,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             if (getActivity() != null) {
                 mBusy = false;
+                mRetryText.setText(R.string.home_fail_text);
+                mRetryLayout.setVisibility(View.VISIBLE);
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
@@ -314,6 +320,8 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             Log.d(TAG, "SearchTask onTimeout");
             if (getActivity() != null) {
                 mBusy = false;
+                mRetryLayout.setVisibility(View.VISIBLE);
+                mRetryText.setText(R.string.home_fail_text);
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }

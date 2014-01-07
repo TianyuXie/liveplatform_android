@@ -15,6 +15,8 @@ import android.util.Log;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.live.UserService;
+import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.util.StringManager;
@@ -223,20 +225,12 @@ public class TencentPassport {
 
         @Override
         public void onComplete(final JSONObject response, Object state) {
+            LoginResult temp = null;
             try {
                 mLoginResult.setThirdPartyNickName(response.getString("nickname"));
                 mLoginResult.setThirdPartyFaceUrl(response.getString("figureurl_qq_2"));
-                LoginResult temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
+                temp = PassportService.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
                         mLoginResult.getThirdPartyNickName(), "qq");
-                if (temp != null) {
-                    mLoginResult.setToken(temp.getToken());
-                    mLoginResult.setUsername(temp.getUsername());
-                    mLoginResult.setThirdPartySource(LoginResult.FROM_TENCENT);
-                } else {
-                    if (mLoginListener != null) {
-                        mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_data));
-                    }
-                }
             } catch (JSONException e) {
                 if (mLoginListener != null) {
                     mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_format));
@@ -244,6 +238,26 @@ public class TencentPassport {
             } catch (LiveHttpException e) {
                 if (mLoginListener != null) {
                     mLoginListener.loginFailed(URLUtil.decode(e.getMessage()));
+                }
+            }
+            if (temp != null) {
+                String token = temp.getToken();
+                String username = temp.getUsername();
+                mLoginResult.setToken(token);
+                mLoginResult.setUsername(username);
+                mLoginResult.setThirdPartySource(LoginResult.FROM_TENCENT);
+                User userinfo = null;
+                try {
+                    userinfo = UserService.getInstance().getUserInfo(token, username);
+                } catch (LiveHttpException e) {
+                }
+                if (userinfo != null) {
+                    mLoginResult.setFaceUrl(userinfo.getIcon());
+                    mLoginResult.setNickName(userinfo.getNickname());
+                }
+            } else {
+                if (mLoginListener != null) {
+                    mLoginListener.loginFailed(StringManager.getRes(R.string.error_pptv_data));
                 }
             }
             if (mLoginListener != null) {

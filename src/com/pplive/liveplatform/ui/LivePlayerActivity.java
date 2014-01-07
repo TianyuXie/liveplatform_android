@@ -189,13 +189,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
-        mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         mLivePlayerFragment.setCallbackListener(this);
-        mLivePlayerFragment.setTitle(mProgram.getTitle());
-        mLivePlayerFragment.setUserIcon(mProgram.getOwnerIcon());
-        mLivePlayerFragment.showPPTVIcon(mProgram.isOriginal());
+        mLivePlayerFragment.setProgram(mProgram);
+        mLivePlayerFragment.setLayout(mIsFull);
         long pid = mProgram.getId();
-        if (mUrl == null) {
+        if (TextUtils.isEmpty(mUrl)) {
             String username = UserManager.getInstance(this).getUsernamePlain();
             String token = UserManager.getInstance(this).getToken();
             if (pid > 0) {
@@ -284,7 +282,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         if (!init) {
-            mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
+            mLivePlayerFragment.setLayout(mIsFull);
         }
     }
 
@@ -531,7 +529,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     //TODO
                     Log.d(TAG, "Interrupted, Retry...");
                     mLivePlayerFragment.setBreakVisibility(View.VISIBLE);
-                    mLivePlayerFragment.setupPlayerDirect(mUrl);
+                    if (!TextUtils.isEmpty(mUrl)) {
+                        mLivePlayerFragment.setupPlayerDirect(mUrl);
+                    }
                     keepAliveDelay(10000);
                 } else {
                     keepAliveDelay(delay * 1000);
@@ -642,9 +642,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mChatBox.setVisibility(View.VISIBLE);
         mCommentWrapper.setVisibility(View.VISIBLE);
         mWriteBtn.setVisibility(View.VISIBLE);
-        if (!TextUtils.isEmpty(mUrl)) {
-            mLivePlayerFragment.setupPlayer(mUrl);
-        }
     }
 
     public void hideSecondLoading() {
@@ -684,6 +681,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 checkSecondLoading(true);
             } else {
                 mLivePlayerFragment.stopTimer();
+                if (!TextUtils.isEmpty(mUrl)) {
+                    mLivePlayerFragment.setupPlayer(mUrl);
+                } else {
+                    Toast.makeText(mContext, R.string.toast_player_error, Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
@@ -693,7 +695,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             hideSecondLoading();
             if (isPrelive) {
                 mLivePlayerFragment.onStartPrelive();
-                mLivePlayerFragment.startTimer(mProgram.getStartTime());
+                mLivePlayerFragment.startTimer();
             } else {
                 mLivePlayerFragment.onStartPlay();
                 mLivePlayerFragment.stopTimer();
@@ -710,7 +712,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             DialogManager.alertMobileDialog(this, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    mLivePlayerFragment.setupPlayerDirect(mUrl);
+                    if (!TextUtils.isEmpty(mUrl)) {
+                        mLivePlayerFragment.setupPlayerDirect(mUrl);
+                    }
                 }
             }).show();
             break;
@@ -758,7 +762,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onReplay() {
-        mLivePlayerFragment.setupPlayer(mUrl);
+        if (!TextUtils.isEmpty(mUrl)) {
+            mLivePlayerFragment.setupPlayer(mUrl);
+        }
     }
 
     @Override
