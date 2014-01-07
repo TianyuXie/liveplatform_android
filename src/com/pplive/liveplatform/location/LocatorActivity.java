@@ -17,11 +17,7 @@ public abstract class LocatorActivity extends FragmentActivity implements OnLoca
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            this.locator = LocatorFactory.createLocator(this, GeoUtil.isInChina() ? LocatorType.BAIDU : LocatorType.GOOGLE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.locator = LocatorFactory.createLocator(this, GeoUtil.isInChina() ? LocatorType.BAIDU : LocatorType.GOOGLE);
     }
 
     @Override

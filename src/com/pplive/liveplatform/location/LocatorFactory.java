@@ -12,7 +12,7 @@ public class LocatorFactory {
         BAIDU, GOOGLE
     }
 
-    public static Locator createLocator(Context context, LocatorType type) throws Exception {
+    public static Locator createLocator(Context context, LocatorType type) {
         if (instances.containsKey(type)) {
             return instances.get(type);
         }
@@ -24,7 +24,7 @@ public class LocatorFactory {
             instances.put(type, new GoogleLocator(context));
             break;
         default:
-            throw new Exception("Unsupported locator type");
+            return instances.get(LocatorType.GOOGLE);
         }
         return instances.get(type);
     }
