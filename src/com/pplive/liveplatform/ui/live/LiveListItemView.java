@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
+import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;

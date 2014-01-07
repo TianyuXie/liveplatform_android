@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live.record;
 
 import java.io.File;
 import java.io.FileNotFoundException;

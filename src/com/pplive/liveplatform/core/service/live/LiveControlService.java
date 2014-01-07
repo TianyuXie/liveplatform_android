@@ -14,6 +14,7 @@ import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.resp.LiveAliveResp;
 import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.util.URL.Protocol;
@@ -37,7 +38,7 @@ public class LiveControlService extends RestService {
     private LiveControlService() {
     }
     
-    public void updateLiveStatusByCoTokenAsync(final String coToken, final long pid, final LiveStatusEnum livestatus, final String username) {
+    public void updateLiveStatusByCoTokenAsync(final String coToken, final Program program, final LiveStatusEnum livestatus, final String username) {
         AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
             
             @Override
@@ -45,7 +46,7 @@ public class LiveControlService extends RestService {
                 
                 try {
                     
-                    return updateLiveStatusByCoToken(coToken, pid, livestatus, username);
+                    return updateLiveStatusByCoToken(coToken, program, livestatus, username);
                 } catch (LiveHttpException e) {
                     
                 }
@@ -57,14 +58,14 @@ public class LiveControlService extends RestService {
         task.execute();
     }
     
-    public boolean updateLiveStatusByCoToken(String coToken, long pid, LiveStatusEnum livestatus, String username) throws LiveHttpException {
-        String liveToken = TokenService.getInstance().getLiveToken(coToken, pid, username);
+    public boolean updateLiveStatusByCoToken(String coToken, Program program, LiveStatusEnum livestatus, String username) throws LiveHttpException {
+        String liveToken = TokenService.getInstance().getLiveToken(coToken, program.getId(), username);
 
-        return updateLiveStatusByLiveToken(liveToken, pid, livestatus);
+        return updateLiveStatusByLiveToken(liveToken, program, livestatus);
     }
     
-    public boolean updateLiveStatusByLiveToken(String liveToken, long pid, LiveStatusEnum livestatus) throws LiveHttpException {
-        Log.d(TAG, "pid: " + pid + "; livestatus: " + livestatus);
+    public boolean updateLiveStatusByLiveToken(String liveToken, Program program, LiveStatusEnum livestatus) throws LiveHttpException {
+        Log.d(TAG, "pid: " + program.getId() + "; livestatus: " + livestatus);
         
         mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
         HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
@@ -72,9 +73,10 @@ public class LiveControlService extends RestService {
         MessageResp resp = null;
         try {
     
-            resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVE_STATUS, req, MessageResp.class, pid);
+            resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVE_STATUS, req, MessageResp.class, program.getId());
             
             if (0 == resp.getError()) {
+                program.setLiveStatus(livestatus);
                 return true;
             }
         } catch (Exception e) {

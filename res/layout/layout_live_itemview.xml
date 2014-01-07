@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pplive.liveplatform.ui.record.LiveListItemView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pplive.liveplatform.ui.live.LiveListItemView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="fill_parent"
     android:gravity="center_vertical"
@@ -75,4 +75,4 @@
         android:padding="10dp"
         android:src="@drawable/live_record_btn_prelive_delete" />
 
-</com.pplive.liveplatform.ui.record.LiveListItemView>
+</com.pplive.liveplatform.ui.live.LiveListItemView>

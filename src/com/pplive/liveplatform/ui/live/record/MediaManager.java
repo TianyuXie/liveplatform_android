@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live.record;
 
 import android.annotation.TargetApi;
 import android.hardware.Camera;

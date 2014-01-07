@@ -39,12 +39,12 @@ import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
-import com.pplive.liveplatform.ui.record.FooterBarFragment;
-import com.pplive.liveplatform.ui.record.LiveMediaRecoder;
-import com.pplive.liveplatform.ui.record.MediaRecorderView;
-import com.pplive.liveplatform.ui.record.event.EventProgramDeleted;
-import com.pplive.liveplatform.ui.record.event.EventProgramSelected;
-import com.pplive.liveplatform.ui.record.event.EventReset;
+import com.pplive.liveplatform.ui.live.FooterBarFragment;
+import com.pplive.liveplatform.ui.live.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
+import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
+import com.pplive.liveplatform.ui.live.event.EventReset;
+import com.pplive.liveplatform.ui.live.record.MediaRecorderView;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
@@ -493,11 +493,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
-                String coToken = UserManager.getInstance(getApplicationContext()).getToken();
-
-                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, mLivingProgram.getId(), LiveStatusEnum.STOPPED, username);
-
+                stopLiving(mLivingProgram);
+                
                 performOnClickStopRecording();
             }
         }).show();
@@ -588,8 +585,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
         String coToken = UserManager.getInstance(getApplicationContext()).getToken();
 
-        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
-        program.setLiveStatus(LiveStatusEnum.STOPPED);
+        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program, LiveStatusEnum.STOPPED, username);
     }
 
     private void performOnClickStartRecording() {
@@ -728,14 +724,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 if (LiveStatusEnum.LIVING == program.getLiveStatus()) {
 
                 } else {
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.INIT);
-                    program.setLiveStatus(LiveStatusEnum.INIT);
-
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.PREVIEW);
-                    program.setLiveStatus(LiveStatusEnum.PREVIEW);
-
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program.getId(), LiveStatusEnum.LIVING);
-                    program.setLiveStatus(LiveStatusEnum.LIVING);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.INIT);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.PREVIEW);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.LIVING);
 
                     Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
                 }
@@ -816,11 +807,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
-                        String coToken = UserManager.getInstance(getApplicationContext()).getToken();
-
-                        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program.getId(), LiveStatusEnum.STOPPED, username);
-
+                        stopLiving(program);
                         performOnClickStopRecording();
                     }
                 }).show();

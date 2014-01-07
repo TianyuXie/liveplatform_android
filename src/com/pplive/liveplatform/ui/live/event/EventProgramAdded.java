@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.record.event;
+package com.pplive.liveplatform.ui.live.event;
 
 import com.pplive.liveplatform.core.service.live.model.Program;
 

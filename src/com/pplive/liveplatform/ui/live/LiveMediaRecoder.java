@@ -1,9 +1,10 @@
-package com.pplive.liveplatform.ui.record;
+package com.pplive.liveplatform.ui.live;
 
 import android.content.Context;
 import android.hardware.Camera;
 import android.util.Log;
 
+import com.pplive.liveplatform.ui.live.record.PPboxSink;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 
 public class LiveMediaRecoder {

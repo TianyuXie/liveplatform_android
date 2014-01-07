@@ -4,7 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.pplive.liveplatform.ui.record.MediaRecorderView
+    <com.pplive.liveplatform.ui.live.record.MediaRecorderView
         android:id="@+id/media_recorder_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -159,7 +159,7 @@
     <fragment
         android:id="@+id/footer_bar"
         
-        android:name="com.pplive.liveplatform.ui.record.FooterBarFragment"
+        android:name="com.pplive.liveplatform.ui.live.FooterBarFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
