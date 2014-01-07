@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.stat.StartDacStat;
 
 public class DacSender {
@@ -15,7 +16,12 @@ public class DacSender {
         
         Intent intent = new Intent(context, DacReportService.class);
         intent.setAction(DacReportService.ACTION_DAC_REPORT);
-        intent.putExtra(DacReportService.EXTRA_DAC_STAT, new StartDacStat());
+        
+        StartDacStat startStat = new StartDacStat();
+        
+        startStat.setIsFirstStart(SettingsProvider.getInstance(context).isFirstLaunch());
+        
+        intent.putExtra(DacReportService.EXTRA_DAC_STAT, startStat);
         
         context.startService(intent);
     }
