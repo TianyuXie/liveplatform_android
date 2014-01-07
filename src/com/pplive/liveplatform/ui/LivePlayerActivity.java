@@ -189,11 +189,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
-        mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
         mLivePlayerFragment.setCallbackListener(this);
-        mLivePlayerFragment.setTitle(mProgram.getTitle());
-        mLivePlayerFragment.setUserIcon(mProgram.getOwnerIcon());
-        mLivePlayerFragment.showPPTVIcon(mProgram.isOriginal());
+        mLivePlayerFragment.setProgram(mProgram);
+        mLivePlayerFragment.setLayout(mIsFull);
         long pid = mProgram.getId();
         if (mUrl == null) {
             String username = UserManager.getInstance(this).getUsernamePlain();
@@ -284,7 +282,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
         if (!init) {
-            mLivePlayerFragment.setLayout(mIsFull, mProgram.isVOD());
+            mLivePlayerFragment.setLayout(mIsFull);
         }
     }
 
@@ -693,7 +691,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             hideSecondLoading();
             if (isPrelive) {
                 mLivePlayerFragment.onStartPrelive();
-                mLivePlayerFragment.startTimer(mProgram.getStartTime());
+                mLivePlayerFragment.startTimer();
             } else {
                 mLivePlayerFragment.onStartPlay();
                 mLivePlayerFragment.stopTimer();

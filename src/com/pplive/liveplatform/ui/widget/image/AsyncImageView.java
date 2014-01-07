@@ -46,16 +46,15 @@ public class AsyncImageView extends ImageView {
         setImageAsync(imageUri, builder.build(), listener);
     }
 
-    @Override
-    public void setImageResource(int resId) {
+    public void setLoadingImage(int resid) {
+        setImageResource(resid);
         mUrl = null;
-        super.setImageResource(resId);
     }
 
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
         if (imageUri != null && !imageUri.equals(mUrl)) {
-            mUrl = imageUri;
             Log.d(TAG, "imageUri:" + imageUri);
+            mUrl = imageUri;
             mImageLoader.displayImage(imageUri, this, options, listener);
         }
     }
