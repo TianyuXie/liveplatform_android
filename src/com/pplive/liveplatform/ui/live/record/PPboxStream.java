@@ -1,21 +1,15 @@
 package com.pplive.liveplatform.ui.live.record;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.media.MediaCodec;
 import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.Log;
 
+import com.pplive.liveplatform.Constants;
 import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -60,8 +54,6 @@ public class PPboxStream {
 
     protected MediaCodec.BufferInfo mBufferInfo;
 
-    protected Cycle<InBuffer> mCycleBuffer;
-
     protected int mInSize;
 
     protected MediaSDK.StreamInfo mStreamInfo;
@@ -71,7 +63,7 @@ public class PPboxStream {
     protected String mStreamType;
 
     public void start() {
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+        if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             mEncoder.start();
             ByteBuffer[] buffers = mEncoder.getInputBuffers();
             mInBuffers = new InBuffer[buffers.length];
@@ -80,13 +72,6 @@ public class PPboxStream {
             }
             mOutBuffers = mEncoder.getOutputBuffers();
             mBufferInfo = new MediaCodec.BufferInfo();
-        } else {
-            mInBuffers = new InBuffer[128];
-            mCycleBuffer = new Cycle<InBuffer>(mInBuffers.length);
-            for (int i = 0; i < mInBuffers.length; ++i) {
-                mInBuffers[i] = new InBuffer(i, mInSize);
-                mCycleBuffer.push(mInBuffers[i]);
-            }
         }
     }
 
@@ -107,16 +92,14 @@ public class PPboxStream {
     }
 
     public InBuffer pop() {
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+        if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             int index = mEncoder.dequeueInputBuffer(0);
             if (index >= 0) {
                 return mInBuffers[index];
-            } else {
-                return null;
             }
-        } else {
-            return mCycleBuffer.pop();
         }
+        
+        return null;
     }
 
     public void put(long time, InBuffer buffer) {
@@ -125,7 +108,7 @@ public class PPboxStream {
     }
 
     private void put2(InBuffer buffer) {
-        if (VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN) {
+        if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             mEncoder.queueInputBuffer(buffer.index(), 0, mInSize, mSample.time, 0);
             buffer.byte_buffer().clear();
             int index = mEncoder.dequeueOutputBuffer(mBufferInfo, 0);
@@ -157,93 +140,12 @@ public class PPboxStream {
 
                 Log.d(TAG, String.format("[%s] time: %s; size: %s; flag: %d", mStreamType, mSample.time, mSample.size, mBufferInfo.flags));
             }
-        } else {
-            mSample.buffer = buffer.byte_buffer();
-
-            MediaSDK.CapturePutSample(mCaptureId, mSample);
         }
     }
 
-    private int mWritedBufferCount = 0;
-
-    @SuppressLint("SdCardPath")
-    private void writeBuffer(ByteBuffer buffer, int size) {
-
-        if (mWritedBufferCount++ < 10) {
-
-            FileOutputStream fos = null;
-            if (mWritedBufferCount == 1) {
-                try {
-                    fos = new FileOutputStream(new File("/sdcard/buff/" + mStreamType + "_format_buff"));
-                    byte[] dst = new byte[mStreamInfo.format_size];
-                    mStreamInfo.format_buffer.get(dst);
-                    fos.write(dst, 0, mStreamInfo.format_size);
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } finally {
-                    if (null != fos) {
-                        try {
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-
-            try {
-                fos = new FileOutputStream(new File("/sdcard/buff/" + mStreamType + mWritedBufferCount));
-                byte[] dst = new byte[size];
-                buffer.get(dst);
-                fos.write(dst, 0, size);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (null != fos) {
-                    try {
-                        fos.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 
     public void drop() {
         //        sample.decode_time += sample.duration;
-    }
-
-    public static int fourcc(String f) {
-        byte[] bytes = f.getBytes();
-        return (int) bytes[3] << 24 | (int) bytes[2] << 16 | (int) bytes[1] << 8 | (int) bytes[0];
-    }
-
-    public static int pic_format(int f) {
-        switch (f) {
-        case ImageFormat.NV16:
-            f = fourcc("NV16");
-            break;
-        case ImageFormat.YV12:
-            f = fourcc("YV12");
-            break;
-        case ImageFormat.YUY2:
-            f = fourcc("YUY2");
-            break;
-        case ImageFormat.NV21:
-            f = fourcc("NV21");
-            break;
-        case ImageFormat.RGB_565:
-            f = fourcc("RGB5");
-            break;
-        }
-        return f;
     }
 
     public static int pic_size(Camera.Parameters p) {

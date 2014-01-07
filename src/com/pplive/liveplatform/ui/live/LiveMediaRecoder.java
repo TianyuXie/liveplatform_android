@@ -63,7 +63,7 @@ public class LiveMediaRecoder {
 
     public void changeCamera(Camera camera) {
         if (null != mCapture) {
-            mCapture.changeCamera(camera);
+            mCapture.initCamera(camera);
         }
     }
 
