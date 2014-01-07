@@ -12,7 +12,6 @@ import android.os.Message;
 import android.pplive.media.player.MeetVideoView;
 import android.pplive.media.player.MeetVideoView.DecodeMode;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
@@ -95,15 +94,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private boolean mLoading;
 
-    private String mIconUrl;
-
-    private Callback mCallbackListener;
-
     private int mFlagMask;
 
     private int mViewFlags;
 
     private long mStartTime;
+
+    private Program mProgram;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -144,15 +141,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         return mRoot;
     }
 
-    public void setUserIcon(String url) {
-        mIconWrapper.setVisibility(View.INVISIBLE);
-        if (!TextUtils.isEmpty(url)) {
-            mIconUrl = url;
-            //preload the image
-            mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
-        }
-    }
-
     public void setupPlayerDirect(String url) {
         setupVideoView(url);
     }
@@ -190,7 +178,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void syncVolume() {
         int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mMuted = (volume <= 0);
         mVolumeBar.setProgress((int) (volume * 100.0 / maxVolume));
+        updateVolumeIcon();
     }
 
     private OnClickListener mVolumeIconClickListener = new OnClickListener() {
@@ -227,7 +217,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         @Override
         public void onProgressChanged(VerticalSeekBar seekBar, int progress, boolean fromUser) {
-            mMuted = (progress <= 0);
             if (mVolUser) {
                 float maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                 int volume = (int) (maxVolume * progress / 100.0);
@@ -239,15 +228,16 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                     mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
                 }
             }
-            updateVolumeIcon(progress);
+            mMuted = (progress <= 0);
+            updateVolumeIcon();
         }
     };
 
-    public void updateVolumeIcon(int value) {
-        if (mVolumeIcon != null && value > 0) {
-            mVolumeIcon.setImageResource(R.drawable.player_volume_icon_small);
-        } else {
+    private void updateVolumeIcon() {
+        if (mVolumeIcon != null && mMuted) {
             mVolumeIcon.setImageResource(R.drawable.player_volume_mute_icon_small);
+        } else {
+            mVolumeIcon.setImageResource(R.drawable.player_volume_icon_small);
         }
     }
 
@@ -277,16 +267,16 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    public void showPPTVIcon(boolean show) {
-        if (show) {
+    public void setProgram(Program program) {
+        mProgram = program;
+        ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
+        mIconWrapper.setVisibility(View.INVISIBLE);
+        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
+        if (program.isOriginal()) {
             mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.VISIBLE);
         } else {
             mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.GONE);
         }
-    }
-
-    public void setTitle(String title) {
-        ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(title);
     }
 
     @Override
@@ -366,12 +356,14 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         @Override
         public boolean onInfo(int what, int extra) {
-            if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
-                mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.VISIBLE);
-                return true;
-            } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
-                mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.GONE);
-                return true;
+            if (mProgram.isVOD()) {
+                if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
+                    mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.VISIBLE);
+                    return true;
+                } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
+                    mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.GONE);
+                    return true;
+                }
             }
             return false;
         }
@@ -438,11 +430,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         return false;
     }
 
-    public void setLayout(boolean isFull, boolean isVod) {
+    public void setLayout(boolean isFull) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
             mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR;
-            if (isVod) {
+            if (mProgram.isVOD()) {
                 mFlagMask |= FLAG_TIME_BAR;
             }
         } else {
@@ -535,6 +527,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public boolean onError(int what, int extra);
     }
 
+    private Callback mCallbackListener;
+
     public void setCallbackListener(Callback listener) {
         this.mCallbackListener = listener;
     }
@@ -567,7 +561,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void onStartPlay() {
         mUserIcon.setRounded(false);
-        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_finish);
         mRoot.findViewById(R.id.image_player_loading).setVisibility(View.GONE);
@@ -576,7 +570,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void onStartPrelive() {
         mUserIcon.setRounded(false);
-        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_prelive);
         rotateIcon();
@@ -586,7 +580,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mIconWrapper.clearAnimation();
         mIconWrapper.setVisibility(View.INVISIBLE);
         mUserIcon.setRounded(false);
-        mUserIcon.setImageResource(R.drawable.home_status_btn_loading);
+        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
         showBars(0);
     }
 
@@ -608,11 +602,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onRotateMiddle() {
             mFinishText.setText("");
-            if (!TextUtils.isEmpty(mIconUrl)) {
-                mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default, imageLoadingListener);
-            } else {
-                mUserIcon.setImageResource(R.drawable.user_icon_default);
-            }
+            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
         }
     };
 
@@ -649,9 +639,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    public void startTimer(long startTime) {
+    public void startTimer() {
         Log.d(TAG, "start timer");
-        mStartTime = startTime;
+        mStartTime = mProgram.getStartTime();
         mCountTextView.setVisibility(View.VISIBLE);
         handler.post(runnable);
     }
