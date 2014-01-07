@@ -38,8 +38,9 @@ public class AsyncImageView extends ImageView {
     }
 
     public void setImageAsync(String imageUri, int defaultImage, ImageLoadingListener listener) {
+        boolean cacheOnDisc = imageUri != null && !imageUri.startsWith("http://live2image");
         DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cacheInMemory(true).bitmapConfig(Bitmap.Config.RGB_565)
-                .cacheOnDisc(!imageUri.startsWith("http://live2image"));
+                .cacheOnDisc(cacheOnDisc);
         if (defaultImage > 0) {
             builder.showStubImage(defaultImage).showImageForEmptyUri(defaultImage).showImageOnFail(defaultImage);
         }
@@ -52,7 +53,9 @@ public class AsyncImageView extends ImageView {
     }
 
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
-        if (imageUri != null && !imageUri.equals(mUrl)) {
+        if (imageUri == null) {
+            setImageResource(options.getImageForEmptyUri());
+        } else if (!imageUri.equals(mUrl)) {
             Log.d(TAG, "imageUri:" + imageUri);
             mUrl = imageUri;
             mImageLoader.displayImage(imageUri, this, options, listener);
