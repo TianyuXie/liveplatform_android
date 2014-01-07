@@ -164,7 +164,7 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Update.doUpdateAPP(SettingsActivity.this);
+            Update.updateManual(SettingsActivity.this);
         }
     };
 
