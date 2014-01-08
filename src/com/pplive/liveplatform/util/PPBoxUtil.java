@@ -37,8 +37,13 @@ public class PPBoxUtil {
         MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
     }
 
-    public static void startPPBox() {
-        MediaSDK.startP2PEngine("161", "12", "111");
+    public static long startPPBox() {
+        return MediaSDK.startP2PEngine("161", "12", "111");
+    }
+    
+    public static boolean isSDKRuning() {
+        long ret = startPPBox();
+        return -1 != ret && 9 != ret;
     }
 
     public static URL getRtmpM3U8PlayURL(String playLink) {

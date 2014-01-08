@@ -80,6 +80,10 @@ public class Program implements Serializable {
     public String getTitle() {
         return title;
     }
+    
+    public int getSubjectId() {
+        return subject_id;
+    }
 
     public String getOwner() {
         return owner;

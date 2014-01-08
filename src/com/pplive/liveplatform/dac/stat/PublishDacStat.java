@@ -9,6 +9,7 @@ public class PublishDacStat extends MediaDacStat implements PublishData {
     private static final long serialVersionUID = 7102952405135080314L;
     
     public PublishDacStat() {
+        addMetaItem(KEY_LOG_KIND, LOG_KIND_PUBLISH);
         addValueItem(KEY_BIT_RATE, UNKNOWN_INT);
         addValueItem(KEY_VIDEO_RESOLUTION, UNKNOWN_STRING);
         addValueItem(KEY_VIDEO_FPS, UNKNOWN_INT);
@@ -18,13 +19,17 @@ public class PublishDacStat extends MediaDacStat implements PublishData {
         addValueItem(KEY_PAUSE_COUNT, 0);
         addValueItem(KEY_PREVIEW_TIME, 0);
     }
-
+    
     public void setBitrate(long bitrate) {
         addValueItem(KEY_BIT_RATE, bitrate);
     }
 
     public void setVideoResolution(int height, int width) {
         addValueItem(KEY_VIDEO_RESOLUTION, MessageFormat.format("{0,number,#}*{1,number,#}", height, width));
+    }
+    
+    public void setVideoFPS(int fps) {
+        addValueItem(KEY_VIDEO_FPS, fps);
     }
     
     public void setPublishStyle(boolean isPreLive) {

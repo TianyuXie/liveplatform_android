@@ -7,6 +7,7 @@ public class WatchDacStat extends MediaDacStat implements WatchData {
     private static final long serialVersionUID = -8496347648846165725L;
     
     public WatchDacStat() {
+        addMetaItem(KEY_LOG_KIND, LOG_KIND_WATCH);
         addValueItem(KEY_WATCH_TYPE, WATCH_TYPE_UNKNOWN);
     }
 

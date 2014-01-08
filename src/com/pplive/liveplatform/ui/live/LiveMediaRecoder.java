@@ -27,6 +27,7 @@ public class LiveMediaRecoder {
         mOutputPath = url;
         //        mOutputPath = "rtmp://172.16.205.53:1936/push/test?ts=1386312842&token=44b3f8302518eb86b1f16b3cb3c05f63";
         //        mOutputPath = "/sdcard/test.flv";
+        mOutputPath = "rtmp://dhdh";
     }
 
     public void setOnErrorListener(final OnErrorListener listener) {
