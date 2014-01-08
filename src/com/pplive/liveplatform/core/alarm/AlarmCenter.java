@@ -14,6 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.pplive.liveplatform.core.service.live.model.Program;
 
 public class AlarmCenter {
@@ -51,19 +52,39 @@ public class AlarmCenter {
 
     public void syncPrelive() {
         Cursor c = mAlarmDatabase.rawQuery("SELECT data FROM prelive WHERE status=1 AND starttime > datetime('now')", new String[] {});
+        Gson gson = new Gson();
         while (c.moveToNext()) {
-            Log.d(TAG, c.getString(c.getColumnIndex("data")));
+            String data = c.getString(c.getColumnIndex("data"));
+            Log.d(TAG, data);
+            addPreliveAlarm(gson.fromJson(data, Program.class));
         }
         c.close();
     }
 
     public void addPrelive(Program program) {
         if (program.getStartTime() > System.currentTimeMillis() + 15000) {
-            Intent intent = new Intent(START_PRELIVE, null);
-            intent.putExtra(EXTRA_PROGRAM, program);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(mAppContext, mReqGenerator.nextInt(), intent, PendingIntent.FLAG_ONE_SHOT);
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP, program.getStartTime(), pendingIntent);
+            addPreliveAlarm(program);
             addPreliveDB(program);
+        }
+    }
+
+    private void addPreliveAlarm(Program program) {
+        Intent intent = new Intent(START_PRELIVE, null);
+        intent.putExtra(EXTRA_PROGRAM, program);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(mAppContext, mReqGenerator.nextInt(), intent, PendingIntent.FLAG_ONE_SHOT);
+        mAlarmManager.set(AlarmManager.RTC_WAKEUP, program.getStartTime(), pendingIntent);
+    }
+
+    private void addPreliveDB(Program program) {
+        mAlarmDatabase.beginTransaction();
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+            df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+            mAlarmDatabase.execSQL("INSERT INTO prelive (pid, owner, data, starttime) VALUES(?, ?, ?, datetime(?))",
+                    new Object[] { program.getId(), program.getOwner(), program.toString(), df.format(new Date(program.getStartTime())) });
+            mAlarmDatabase.setTransactionSuccessful();
+        } finally {
+            mAlarmDatabase.endTransaction();
         }
     }
 
@@ -81,8 +102,7 @@ public class AlarmCenter {
         mAlarmDatabase.delete("prelive", "pid=?", new String[] { String.valueOf(pid) });
     }
 
-    public boolean isPreliveAvailable(long pid, String username) {
-        Log.d(TAG, pid + "|" + username);
+    public boolean isAvailablePrelive(long pid, String username) {
         Cursor c = mAlarmDatabase.rawQuery("SELECT status FROM prelive WHERE pid=? AND owner=?", new String[] { String.valueOf(pid), username });
         boolean result = false;
         if (c.moveToFirst()) {
@@ -90,19 +110,5 @@ public class AlarmCenter {
         }
         c.close();
         return result;
-    }
-
-    private void addPreliveDB(Program program) {
-        mAlarmDatabase.beginTransaction();
-        try {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-            df.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-            program.getStartTime();
-            mAlarmDatabase.execSQL("INSERT INTO prelive (pid, owner, data, starttime) VALUES(?, ?, ?, datetime(?))",
-                    new Object[] { program.getId(), program.getOwner(), program.toString(), df.format(new Date(program.getStartTime())) });
-            mAlarmDatabase.setTransactionSuccessful();
-        } finally {
-            mAlarmDatabase.endTransaction();
-        }
     }
 }

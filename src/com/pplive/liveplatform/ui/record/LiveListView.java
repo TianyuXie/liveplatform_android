@@ -77,7 +77,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
     
     public void onEvent(EventProgramDeleted event) {
         final Program program = event.getObject();
-
         for (int i = 0, len = mLiveListAdapter.getCount(); i < len; ++i) {
             Program p = mLiveListAdapter.getItem(i);
             if (p.getId() == program.getId()) {
@@ -85,6 +84,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 break;
             }
         }
+        AlarmCenter.getInstance(getContext()).deletePrelive(program.getId());
 
         AsyncTask<Void, Void, Boolean> delTask = new AsyncTask<Void, Void, Boolean>() {
 
@@ -92,7 +92,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             protected Boolean doInBackground(Void... params) {
                 String token = UserManager.getInstance(getContext()).getToken();
                 try {
-                    AlarmCenter.getInstance(getContext()).deletePrelive(program.getId());
                     return ProgramService.getInstance().deleteProgramById(token, program.getId());
                 } catch (LiveHttpException e) {
                     

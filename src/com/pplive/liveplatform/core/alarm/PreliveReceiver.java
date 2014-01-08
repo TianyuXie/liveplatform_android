@@ -21,11 +21,10 @@ public class PreliveReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
-        AlarmCenter.getInstance(context).syncPrelive();
         if (SettingsProvider.getInstance(context).getAppPrefs().isPreliveNotify()) {
             Log.d(TAG, "isPreliveNotify");
             Program program = (Program) intent.getSerializableExtra(AlarmCenter.EXTRA_PROGRAM);
-            if (AlarmCenter.getInstance(context).isPreliveAvailable(program.getId(), UserManager.getInstance(context).getUsernamePlain())) {
+            if (AlarmCenter.getInstance(context).isAvailablePrelive(program.getId(), UserManager.getInstance(context).getUsernamePlain())) {
                 Log.d(TAG, "isPreliveAvailable");
                 Intent newIntent = new Intent(context, LiveRecordActivity.class);
                 newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
