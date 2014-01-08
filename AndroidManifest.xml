@@ -154,7 +154,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.pplive.liveplatform.core.alarm.PreliveAlarmReceiver"
+            android:name="com.pplive.liveplatform.core.alarm.PreliveReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.pplive.liveplatform.START_PRELIVE" />

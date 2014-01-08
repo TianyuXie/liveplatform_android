@@ -9,21 +9,23 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.ui.LiveRecordActivity;
 
-public class PreliveAlarmReceiver extends BroadcastReceiver {
+public class PreliveReceiver extends BroadcastReceiver {
     static final String TAG = "_PreliveAlarmReceiver";
 
     @SuppressWarnings("deprecation")
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
+        AlarmCenter.getInstance(context).syncPrelive();
         if (SettingsProvider.getInstance(context).getAppPrefs().isPreliveNotify()) {
             Log.d(TAG, "isPreliveNotify");
             Program program = (Program) intent.getSerializableExtra(AlarmCenter.EXTRA_PROGRAM);
-            if (AlarmCenter.getInstance(context).isPreliveAvailable(program.getId(), program.getOwner())) {
+            if (AlarmCenter.getInstance(context).isPreliveAvailable(program.getId(), UserManager.getInstance(context).getUsernamePlain())) {
                 Log.d(TAG, "isPreliveAvailable");
                 Intent newIntent = new Intent(context, LiveRecordActivity.class);
                 newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

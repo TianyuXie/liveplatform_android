@@ -33,7 +33,7 @@ public class AlarmCenter {
 
     private Context mAppContext;
 
-    private Random mRand = new Random();
+    private Random mReqGenerator;
 
     public static synchronized AlarmCenter getInstance(Context context) {
         if (instance == null)
@@ -46,20 +46,28 @@ public class AlarmCenter {
         mAppContext = context.getApplicationContext();
         mAlarmDBHelper = new AlarmDBHelper(context);
         mAlarmDatabase = mAlarmDBHelper.getWritableDatabase();
+        mReqGenerator = new Random();
+    }
+
+    public void syncPrelive() {
+        Cursor c = mAlarmDatabase.rawQuery("SELECT data FROM prelive WHERE status=1 AND starttime > datetime('now')", new String[] {});
+        while (c.moveToNext()) {
+            Log.d(TAG, c.getString(c.getColumnIndex("data")));
+        }
+        c.close();
     }
 
     public void addPrelive(Program program) {
         if (program.getStartTime() > System.currentTimeMillis() + 15000) {
             Intent intent = new Intent(START_PRELIVE, null);
             intent.putExtra(EXTRA_PROGRAM, program);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(mAppContext, mRand.nextInt(), intent, PendingIntent.FLAG_ONE_SHOT);
-            //            mAlarmManager.set(AlarmManager.RTC_WAKEUP, program.getStartTime(), pendingIntent);
-            mAlarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10000, pendingIntent);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(mAppContext, mReqGenerator.nextInt(), intent, PendingIntent.FLAG_ONE_SHOT);
+            mAlarmManager.set(AlarmManager.RTC_WAKEUP, program.getStartTime(), pendingIntent);
             addPreliveDB(program);
         }
     }
 
-    public void deletePrelive(long pid) {
+    public void startPrelive(long pid) {
         mAlarmDatabase.beginTransaction();
         try {
             mAlarmDatabase.execSQL("UPDATE prelive SET status=0 WHERE pid=?", new Object[] { pid });
@@ -69,14 +77,19 @@ public class AlarmCenter {
         }
     }
 
+    public void deletePrelive(long pid) {
+        mAlarmDatabase.delete("prelive", "pid=?", new String[] { String.valueOf(pid) });
+    }
+
     public boolean isPreliveAvailable(long pid, String username) {
         Log.d(TAG, pid + "|" + username);
         Cursor c = mAlarmDatabase.rawQuery("SELECT status FROM prelive WHERE pid=? AND owner=?", new String[] { String.valueOf(pid), username });
+        boolean result = false;
         if (c.moveToFirst()) {
-            return c.getInt(c.getColumnIndex("status")) == 1;
-        } else {
-            return false;
+            result = c.getInt(c.getColumnIndex("status")) == 1;
         }
+        c.close();
+        return result;
     }
 
     private void addPreliveDB(Program program) {
