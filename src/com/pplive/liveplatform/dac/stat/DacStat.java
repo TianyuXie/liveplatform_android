@@ -25,7 +25,7 @@ public abstract class DacStat implements Serializable {
     }
 
     private void addItem(Map<String, String> map, String key, Object value) {
-        addItem(map, key, value.toString());
+        addItem(map, key, null != value ? value.toString() : "unknown");
     }
 
     private void addItem(Map<String, String> map, String key, String value) {

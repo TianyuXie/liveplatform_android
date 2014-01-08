@@ -1,8 +1,10 @@
 package com.pplive.liveplatform.dac.data;
 
-public interface WatchData extends PublishWatchData {
+public interface WatchData extends MediaData {
 
     static final String KEY_WATCH_TYPE = "WK";
+    
+    static final int WATCH_TYPE_UNKNOWN = UNKNOWN_INT;
     
     static final int WATCH_TYPE_LIVE = 0;
     

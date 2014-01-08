@@ -1,6 +1,6 @@
 package com.pplive.liveplatform.dac.data;
 
-public interface PublishWatchData extends CommonData {
+public interface MediaData extends CommonData {
 
     static final String KEY_VV_ID = "VV";
     
@@ -45,6 +45,14 @@ public interface PublishWatchData extends CommonData {
     static final int SDK_RUNNING_FALSE = 0;
     
     static final int SDK_RUNNING_TRUE = 1;
+    
+    static final int PLAY_PROTOCOL_UNKNONW = UNKNOWN_INT;
+    
+    static final int PLAY_PROTOCOL_LIVE2 = 0;
+    
+    static final int PLAY_PROTOCOL_RTMP = 1;
+    
+    static final int ACCESS_TYPE_UNKNOWN = UNKNOWN_INT;
     
     static final int ACCESS_TYPE_LAN = 0;
     
