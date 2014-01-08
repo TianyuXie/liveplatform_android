@@ -24,6 +24,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.dac.info.LocationInfo;
+import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.location.Locator.LocationData;
 import com.pplive.liveplatform.location.LocatorActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
@@ -108,6 +109,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
                 Toast.makeText(this, R.string.app_exit, Toast.LENGTH_SHORT).show();
                 mExitTime = System.currentTimeMillis();
             } else {
+                SessionInfo.reset();
                 finish();
             }
             return true;

@@ -47,14 +47,21 @@ public class AsyncImageView extends ImageView {
         setImageAsync(imageUri, builder.build(), listener);
     }
 
-    public void setLoadingImage(int resid) {
+    @Override
+    @Deprecated
+    public void setImageResource(int resId) {
+        // TODO Auto-generated method stub
+        super.setImageResource(resId);
+    }
+
+    public void setLocalImage(int resid) {
         setImageResource(resid);
         mUrl = null;
     }
 
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
         if (imageUri == null) {
-            setImageResource(options.getImageForEmptyUri());
+            setLocalImage(options.getImageForEmptyUri());
         } else if (!imageUri.equals(mUrl)) {
             Log.d(TAG, "imageUri:" + imageUri);
             mUrl = imageUri;
