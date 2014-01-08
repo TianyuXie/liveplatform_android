@@ -14,20 +14,25 @@
     <LinearLayout
         android:id="@+id/layout_player_volume"
         android:layout_width="wrap_content"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_player_bottombar"
         android:layout_alignParentRight="true"
+        android:layout_below="@+id/layout_player_titlebar"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="10dp"
         android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
         android:background="@drawable/player_volume_progress_bar_bg"
         android:clickable="true"
         android:gravity="center_horizontal"
+        android:maxHeight="200dp"
         android:orientation="vertical" >
 
         <com.pplive.liveplatform.ui.widget.VerticalSeekBar
             android:id="@+id/seekbar_player_volume"
             style="@style/player_progressBarStyleVertical"
             android:layout_width="18dp"
-            android:layout_height="160dp"
+            android:layout_height="170dp"
             android:max="100" />
 
         <ImageView
@@ -99,7 +104,7 @@
         android:visibility="gone" />
 
     <RelativeLayout
-        android:id="@+id/layout_player_titlebar"
+        android:id="@id/layout_player_titlebar"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_alignParentTop="true" >
@@ -135,7 +140,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/layout_player_bottombar"
+        android:id="@id/layout_player_bottombar"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
