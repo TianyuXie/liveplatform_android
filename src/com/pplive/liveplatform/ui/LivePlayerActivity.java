@@ -16,9 +16,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -164,11 +162,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentWrapper = findViewById(R.id.wrapper_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
+        mChatBox.setOnSingleTapListener(onSingleTapListener);
         mLoadingImage = findViewById(R.id.layout_player_loading);
-        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mLoadingButton = (LoadingButton) findViewById(R.id.btn_player_loading);
+        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
-        mChatBox.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -308,6 +306,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
+    private ChatBox.OnSingleTapListener onSingleTapListener = new ChatBox.OnSingleTapListener() {
+
+        @Override
+        public void onSingleTap() {
+            pauseWriting();
+        }
+    };
+
     @Override
     public void setRequestedOrientation(int requestedOrientation) {
         if (mCurrentOrient != requestedOrientation && mRotatable) {
@@ -437,7 +443,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onTouch() {
+    public void onTouchPlayer() {
         pauseWriting();
     }
 
@@ -599,29 +605,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
         }
     };
-
-    private View.OnTouchListener onDialogTouchListener = new View.OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            onChatGestureDetector.onTouchEvent(event);
-            return false;
-        }
-    };
-
-    private GestureDetector onChatGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            pauseWriting();
-            return true;
-        }
-    });
 
     public void showLoading() {
         mRotatable = false;
