@@ -19,6 +19,7 @@ import android.widget.BaseAdapter;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
@@ -76,7 +77,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
     
     public void onEvent(EventProgramDeleted event) {
         final Program program = event.getObject();
-
         for (int i = 0, len = mLiveListAdapter.getCount(); i < len; ++i) {
             Program p = mLiveListAdapter.getItem(i);
             if (p.getId() == program.getId()) {
@@ -84,6 +84,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 break;
             }
         }
+        AlarmCenter.getInstance(getContext()).deletePrelive(program.getId());
 
         AsyncTask<Void, Void, Boolean> delTask = new AsyncTask<Void, Void, Boolean>() {
 
@@ -91,7 +92,6 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             protected Boolean doInBackground(Void... params) {
                 String token = UserManager.getInstance(getContext()).getToken();
                 try {
-                    
                     return ProgramService.getInstance().deleteProgramById(token, program.getId());
                 } catch (LiveHttpException e) {
                     
@@ -106,7 +106,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
 
     public void onEvent(EventProgramAdded event) {
         final Program program = event.getObject();
-
+        AlarmCenter.getInstance(getContext()).addPrelive(program);
         if (null != program) {
             mLiveListAdapter.addItem(0 /* position */ , program);
         }

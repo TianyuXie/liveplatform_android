@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 
 import com.pplive.liveplatform.util.ImageUtil;
 
@@ -33,10 +34,16 @@ public class CircularImageView extends AsyncImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         Drawable drawable = getDrawable();
+        if (null == drawable) {
+            Log.d(TAG, "drawable == null");
+        } else {
+            Log.d(TAG, "mRounded == false");
+        }
         if (null != drawable && mRounded) {
             if (mBitmap != null && !mBitmap.isRecycled()) {
                 mBitmap.recycle();
             }
+            Log.d(TAG, "draw CircleBitmap");
             mBitmap = ImageUtil.getCircleBitmap(ImageUtil.getScaledBitmap(drawable, getWidth()));
             Rect rect = getRect(mBitmap);
             canvas.drawBitmap(mBitmap, rect, rect, mPaint);

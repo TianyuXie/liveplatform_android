@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
@@ -251,9 +250,6 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             protected void onPostExecute(Program program) {
                 if (program != null) {
                     EventBus.getDefault().post(new EventProgramAdded(program));
-
-                    //TODO Add alarm (event bus?)
-                    AlarmCenter.getInstance(mAttachedActivity).addPreliveAlarm(program);
                 } else {
                     Toast.makeText(mAttachedActivity, "创建预播失败", Toast.LENGTH_SHORT).show();
                 }

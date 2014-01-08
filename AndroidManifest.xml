@@ -49,6 +49,7 @@
             android:name=".ui.LiveRecordActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape" >
         </activity>
         <activity
@@ -98,10 +99,6 @@
             android:name=".ui.UserpageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".ui.AlarmActivity"
-            android:theme="@style/no_title_dialog" >
         </activity>
         <activity
             android:name=".ui.UpdateProgressActivity"
@@ -157,7 +154,7 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.pplive.liveplatform.core.alarm.PreliveAlarmReceiver"
+            android:name="com.pplive.liveplatform.core.alarm.PreliveReceiver"
             android:exported="false" >
             <intent-filter>
                 <action android:name="com.pplive.liveplatform.START_PRELIVE" />

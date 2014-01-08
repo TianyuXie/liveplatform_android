@@ -26,6 +26,7 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
@@ -64,7 +65,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     static final String TAG = "_LiveRecordActivity";
 
-    static final String EXTRA_PROGRAM = "extra_program";
+    public static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
 
@@ -834,6 +835,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             startRecording();
 
             mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
+            AlarmCenter.getInstance(getApplicationContext()).startPrelive(mLivingProgram.getId());
         }
     }
 

@@ -90,17 +90,16 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         if (UserManager.getInstance(getContext()).isLogin()) {
             mNicknameText.setText(UserManager.getInstance(getContext()).getNickname());
             String iconUrl = UserManager.getInstance(getContext()).getIcon();
-            Log.d(TAG, iconUrl);
             mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
-                mUserIcon.setImageResource(R.drawable.user_icon_default);
+                mUserIcon.setLocalImage(R.drawable.user_icon_default);
             }
         } else {
             mNicknameText.setText("");
-            mUserIcon.setImageResource(R.drawable.user_icon_login);
             mUserIcon.setRounded(false);
+            mUserIcon.setLocalImage(R.drawable.user_icon_login);
         }
     }
 

@@ -16,9 +16,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -164,11 +162,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mCommentWrapper = findViewById(R.id.wrapper_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
+        mChatBox.setOnSingleTapListener(onSingleTapListener);
         mLoadingImage = findViewById(R.id.layout_player_loading);
-        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mLoadingButton = (LoadingButton) findViewById(R.id.btn_player_loading);
+        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
         mWriteBtn.setOnClickListener(onWriteBtnClickListener);
-        mChatBox.setOnTouchListener(onDialogTouchListener);
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -192,29 +190,32 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setProgram(mProgram);
         mLivePlayerFragment.setLayout(mIsFull);
-        long pid = mProgram.getId();
+
         if (TextUtils.isEmpty(mUrl)) {
-            String username = UserManager.getInstance(this).getUsernamePlain();
-            String token = UserManager.getInstance(this).getToken();
-            if (pid > 0) {
-                showLoading();
-                mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
-                GetMediaTask mediaTask = new GetMediaTask();
-                mediaTask.addTaskListener(onGetMediaListener);
-                TaskContext taskContext = new TaskContext();
-                taskContext.set(Task.KEY_PID, pid);
-                taskContext.set(Task.KEY_USERNAME, username);
-                taskContext.set(Task.KEY_TOKEN, token);
-                mediaTask.execute(taskContext);
-            }
+            showLoading();
+            mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
+            startGetMedia();
         } else {
             mLivePlayerFragment.setupPlayer(mUrl);
         }
+        mChatBox.start(mProgram.getId());
+        if (mProgram.isLiving()) {
+            keepAliveDelay(0);
+        }
+    }
+
+    private void startGetMedia() {
+        long pid = mProgram.getId();
         if (pid > 0) {
-            mChatBox.start(pid);
-            if (mProgram.isLiving()) {
-                keepAliveDelay(0);
-            }
+            String username = UserManager.getInstance(this).getUsernamePlain();
+            String token = UserManager.getInstance(this).getToken();
+            GetMediaTask mediaTask = new GetMediaTask();
+            mediaTask.addTaskListener(onGetMediaListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(Task.KEY_PID, pid);
+            taskContext.set(Task.KEY_USERNAME, username);
+            taskContext.set(Task.KEY_TOKEN, token);
+            mediaTask.execute(taskContext);
         }
     }
 
@@ -302,6 +303,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 Intent intent = new Intent(mContext, LoginActivity.class);
                 startActivity(intent);
             }
+        }
+    };
+
+    private ChatBox.OnSingleTapListener onSingleTapListener = new ChatBox.OnSingleTapListener() {
+
+        @Override
+        public void onSingleTap() {
+            pauseWriting();
         }
     };
 
@@ -434,7 +443,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onTouch() {
+    public void onTouchPlayer() {
         pauseWriting();
     }
 
@@ -522,7 +531,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case SYS_DELETED:
                 Log.d(TAG, "Stopped!");
                 DialogManager.playendDialog(LivePlayerActivity.this).show();
-                //Toast.makeText(mContext, R.string.toast_player_complete, Toast.LENGTH_LONG).show();
                 break;
             case LIVING:
                 if (mInterrupted) {
@@ -532,7 +540,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     if (!TextUtils.isEmpty(mUrl)) {
                         mLivePlayerFragment.setupPlayerDirect(mUrl);
                     }
-                    keepAliveDelay(10000);
+                    keepAliveDelay(6000);
                 } else {
                     keepAliveDelay(delay * 1000);
                 }
@@ -598,29 +606,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
-    private View.OnTouchListener onDialogTouchListener = new View.OnTouchListener() {
-
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            onChatGestureDetector.onTouchEvent(event);
-            return false;
-        }
-    };
-
-    private GestureDetector onChatGestureDetector = new GestureDetector(mContext, new GestureDetector.SimpleOnGestureListener() {
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            pauseWriting();
-            return true;
-        }
-    });
-
     public void showLoading() {
         mRotatable = false;
         mFirstLoadFinish = false;
@@ -656,7 +641,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case MSG_LOADING_DELAY:
                 mLoadDelayed = true;
                 checkFirstLoading();
-                checkSecondLoading(false);
                 break;
             case MSG_MEDIA_FINISH:
                 mFirstLoadFinish = true;
@@ -664,7 +648,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 break;
             case MSG_START_PLAY:
                 mSecondLoadFinish = true;
-                checkSecondLoading(false);
+                checkSecondLoading();
                 break;
             case MSG_KEEP_ALIVE:
                 keepAlive();
@@ -678,7 +662,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             hideFirstLoading();
             if (mProgram.isPrelive()) {
                 mSecondLoadFinish = true;
-                checkSecondLoading(true);
+                checkSecondLoading();
             } else {
                 mLivePlayerFragment.stopTimer();
                 if (!TextUtils.isEmpty(mUrl)) {
@@ -690,10 +674,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     }
 
-    private void checkSecondLoading(boolean isPrelive) {
-        if (mSecondLoadFinish && mLoadDelayed && !isFinishing() && mSecondLoading) {
+    private void checkSecondLoading() {
+        if (mSecondLoadFinish && !isFinishing() && mSecondLoading) {
             hideSecondLoading();
-            if (isPrelive) {
+            if (mProgram.isPrelive()) {
                 mLivePlayerFragment.onStartPrelive();
                 mLivePlayerFragment.startTimer();
             } else {

@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import android.text.TextUtils;
 
+import com.google.gson.Gson;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
@@ -242,6 +243,12 @@ public class Program implements Serializable {
 
     public long getLength() {
         return real_endtime - real_starttime;
+    }
+
+    @Override
+    public String toString() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
 }
