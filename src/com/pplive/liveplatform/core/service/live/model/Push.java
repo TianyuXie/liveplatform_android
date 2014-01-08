@@ -2,6 +2,8 @@ package com.pplive.liveplatform.core.service.live.model;
 
 import java.util.ArrayList;
 
+import android.text.TextUtils;
+
 public class Push {
 
     long pid;
@@ -13,6 +15,8 @@ public class Push {
     String path;
     
     String name;
+    
+    long now;
     
     public long getProgramId() {
         return pid;
@@ -34,6 +38,10 @@ public class Push {
         return name;
     }
     
+    public long getNowTime() {
+        return now;
+    }
+    
     public java.util.List<String> getPushUrlList() {
         if (null == addr || 0 == addr.length) {
             return null;
@@ -46,5 +54,19 @@ public class Push {
         }
         
         return list;
+    }
+    
+    public String getPushUrl() {
+        java.util.List<String> list = getPushUrlList();
+        
+        if (null != list) {
+            for (String url : list) {
+                if (!TextUtils.isEmpty(url)) {
+                    return url;
+                }
+            }
+        }
+        
+        return null;
     }
 }

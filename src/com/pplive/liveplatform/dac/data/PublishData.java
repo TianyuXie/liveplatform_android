@@ -1,6 +1,6 @@
 package com.pplive.liveplatform.dac.data;
 
-public interface PublishData extends PublishWatchData {
+public interface PublishData extends MediaData {
 
     static final String KEY_BIT_RATE = "BR";
     
@@ -17,6 +17,8 @@ public interface PublishData extends PublishWatchData {
     static final String KEY_PAUSE_TIME = "IT";
     
     static final String KEY_PREVIEW_TIME = "PRT";
+    
+    static final int PUBHLISH_STYLE_UNKNOWN = -1;
     
     static final int PUBLISH_STYLE_PRE = 0;
     

@@ -340,6 +340,8 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
             return;
         }
         LocationInfo.updateData(location);
+        
+        Log.d(TAG, "location: " + location.toString());
     }
 
     @Override

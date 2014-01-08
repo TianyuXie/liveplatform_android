@@ -33,4 +33,8 @@ public interface CommonData {
     static final int LOG_KIND_WATCH = 1;
     
     static final int LOG_KIND_PUBLISH = 2;
+    
+    static final String UNKNOWN_STRING = "unknown";
+    
+    static final int UNKNOWN_INT = -1;
 }

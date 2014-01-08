@@ -42,6 +42,8 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
 import com.pplive.liveplatform.core.task.player.LiveStatusTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
+import com.pplive.liveplatform.dac.DacSender;
+import com.pplive.liveplatform.dac.stat.WatchDacStat;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
@@ -51,6 +53,7 @@ import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
@@ -130,6 +133,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private String mUrl;
 
     private Context mContext;
+    
+    private WatchDacStat mWatchDacStat;
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -191,6 +196,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setProgram(mProgram);
         mLivePlayerFragment.setLayout(mIsFull);
 
+        initDac();
+        mWatchDacStat.setProgramInfo(mProgram);
+        
         if (TextUtils.isEmpty(mUrl)) {
             showLoading();
             mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
@@ -202,6 +210,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mProgram.isLiving()) {
             keepAliveDelay(0);
         }
+        
     }
 
     private void startGetMedia() {
@@ -249,6 +258,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mHandler.removeMessages(MSG_KEEP_ALIVE);
         mLivePlayerFragment.setCallbackListener(null);
         super.onStop();
+        
+        sendDac();
     }
 
     private void setLayout(boolean isFull, boolean init) {
@@ -587,6 +598,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
+            
+            mWatchDacStat.onMediaServerResponse();
+            mWatchDacStat.setPlayProtocol(protocol);
+            mWatchDacStat.setServerAddress(mUrl);
+            
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
@@ -594,6 +610,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "MediaTask onTaskFailed: " + event.getMessage());
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
+            
+            mWatchDacStat.onMediaServerResponse();
         }
 
         @Override
@@ -742,6 +760,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mInterrupted = false;
         mHandler.sendEmptyMessage(MSG_START_PLAY);
         mLivePlayerFragment.setBreakVisibility(View.GONE);
+        
+        mWatchDacStat.setIsSuccess(true);
+        mWatchDacStat.onPlayReleayStart();
     }
 
     @Override
@@ -775,4 +796,17 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         return super.onKeyUp(keyCode, event);
     }
 
+    private void initDac() {
+        mWatchDacStat = new WatchDacStat();
+        mWatchDacStat.onPlayStart();
+        mWatchDacStat.setSDKRunning(PPBoxUtil.isSDKRuning());
+    }
+    
+    private void sendDac() {
+        if (null != mWatchDacStat) {
+            mWatchDacStat.onPlayStop();
+            DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
+            mWatchDacStat = null;
+        }
+    }
 }

@@ -15,6 +15,7 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.pplive.liveplatform.dac.info.AppInfo;
 import com.pplive.liveplatform.dac.info.DeviceInfo;
 import com.pplive.liveplatform.dac.info.SessionInfo;
+import com.pplive.liveplatform.dac.info.UserInfo;
 import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.util.FileUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
@@ -36,6 +37,7 @@ public class LiveApplication extends Application {
         
         AppInfo.init(getApplicationContext());
         DeviceInfo.init(getApplicationContext());
+        UserInfo.init(getApplicationContext());
         SessionInfo.init();
 
         NetworkManager.init(getApplicationContext());

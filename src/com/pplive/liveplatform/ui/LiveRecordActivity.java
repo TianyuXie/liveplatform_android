@@ -1,10 +1,12 @@
 package com.pplive.liveplatform.ui;
 
+import java.security.PublicKey;
 import java.util.List;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +37,10 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.dac.DacSender;
+import com.pplive.liveplatform.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.net.NetworkManager;
+import com.pplive.liveplatform.net.NetworkManager.NetworkState;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
@@ -45,12 +50,14 @@ import com.pplive.liveplatform.ui.live.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
+import com.pplive.liveplatform.ui.live.record.MediaManager;
 import com.pplive.liveplatform.ui.live.record.MediaRecorderView;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
@@ -63,9 +70,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     public static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
-    
+
     private static final int WHAT_RECORD_END = 9002;
-    
+
     private static final int WHAT_RECORD_UPDATE = 9003;
 
     private static final int WHAT_LIVE_COMING_UPDATE = 9005;
@@ -84,15 +91,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private Handler mInnerHandler = new Handler(this);
 
-    private boolean mChating = false;
     private View mChatContainer;
+
     private ChatBox mChatBox;
+
+    private boolean mChating = false;
+
     private ImageButton mChatButton;
 
     private MediaRecorderView mMediaRecorderView;
 
     private ImageButton mBtnLiveRecord;
+
     private ImageButton mBtnCameraChange;
+
     private ToggleButton mBtnFlashLight;
 
     private FooterBarFragment mFooterBarFragment;
@@ -100,8 +112,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private ShareDialog mShareDialog;
 
     private TextView mTextLive;
+
     private TextView mTextRecordDuration;
+
     private TextView mTextLiveComing;
+
     private TextView mTextLivingTitle;
 
     private ImageButton mBtnLivingShare;
@@ -109,11 +124,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private boolean mCountDown = false;
 
     private AnimDoor mAnimDoor;
+
     private LoadingButton mStatusButton;
+
     private View mStatusButtonWrapper;
+
     private View mLiveButtonWrapper;
 
     private boolean mOpened;
+
     private boolean mAttached;
 
     private boolean mFirstPopped;
@@ -153,11 +172,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     };
 
     private GetPushUrlTask mGetPushUrlOneStepTask;
+
     private GetUserLivingTask mGetUserLivingTask;
+
     private KeepLiveAliveTask mKeepLiveAliveTask;
 
     private Program mLivingProgram;
+
     private String mLivingUrl;
+
+    private PublishDacStat mPublishDacStat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -336,7 +360,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case THIRD_GENERATION:
             DialogManager.alertMobileDialog(this, null).show();
             break;
-
         default:
             break;
         }
@@ -491,7 +514,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mMediaRecorderView.stopRecording();
-                
+
                 onClickBtnLiveRecord();
             }
         }, new DialogInterface.OnClickListener() {
@@ -499,7 +522,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 stopLiving(mLivingProgram);
-                
+
                 performOnClickStopRecording();
             }
         }).show();
@@ -562,12 +585,26 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mMediaRecorderView.setOutputPath(mLivingUrl);
         mMediaRecorderView.startRecording();
+        
+        mPublishDacStat.setIsSuccess(true);
+        mPublishDacStat.onPlayReleayStart();
+        obtainCodecParams();
 
         mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
 
         mChatBox.setDelay(CHAT_LONG_DELAY, CHAT_LONG_DELAY);
         mChatBox.start(mLivingProgram.getId());
+    }
+    
+    private void obtainCodecParams() {
+        Camera.Size size = mMediaRecorderView.getPreviewSize();
+        if (null != size) {
+            mPublishDacStat.setVideoResolution(size.height, size.width);
+        }
+        
+        mPublishDacStat.setBitrate((MediaManager.VIDEO_BIT_RATE + MediaManager.AUDIO_BIT_RATE) / 1000);
+        mPublishDacStat.setVideoFPS(MediaManager.FRAME_RATE);
     }
 
     private void stopRecording(boolean stopLive) {
@@ -584,6 +621,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
+        
+        sendDac();
     }
 
     private void stopLiving(Program program) {
@@ -594,8 +633,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void performOnClickStartRecording() {
+        
         mTextLiveComing.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
+        
+        initDac();
+        
         if (null == mGetPushUrlOneStepTask) {
             mGetPushUrlOneStepTask = new GetPushUrlTask();
             mGetPushUrlOneStepTask.execute(mLivingProgram);
@@ -610,6 +653,25 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
         mFooterBarFragment.reset();
+        
+        sendDac();
+    }
+    
+    private void initDac() {
+        if (null == mPublishDacStat) {
+            mPublishDacStat = new PublishDacStat();
+            mPublishDacStat.onPlayStart();
+            mPublishDacStat.setSDKRunning(PPBoxUtil.isSDKRuning());
+            mPublishDacStat.setAccessType(NetworkManager.getCurrentNetworkState());
+        }
+    }
+    
+    private void sendDac() {
+        if (null != mPublishDacStat) {
+            mPublishDacStat.onPlayStop();
+            DacSender.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
+            mPublishDacStat = null;
+        }
     }
 
     @Override
@@ -640,6 +702,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onClickBtnLiveRecord() {
+        checkNetworkState();
+
+        if (!mMediaRecorderView.isRecording()) {
+            performOnClickStartRecording();
+        } else {
+            performOnClickStopRecording();
+        }
+    }
+
+    private void checkNetworkState() {
         switch (NetworkManager.getCurrentNetworkState()) {
         case WIFI:
         case UNKNOWN:
@@ -653,12 +725,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             break;
         default:
             break;
-        }
-
-        if (!mMediaRecorderView.isRecording()) {
-            performOnClickStartRecording();
-        } else {
-            performOnClickStopRecording();
         }
     }
 
@@ -699,6 +765,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             Program program = params[0];
+            
+            mPublishDacStat.setPublishStyle(null != program);
+            
             if (null == program) {
                 Log.d(TAG, "create program");
 
@@ -711,13 +780,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
             } else {
                 Log.d(TAG, "has program");
-
             }
 
             if (null == program) {
-
                 return null;
             }
+            
+            mPublishDacStat.setProgramInfo(program);
+            
 
             try {
                 String liveToken = program.getLiveToken();
@@ -726,29 +796,28 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
                 }
 
-                if (LiveStatusEnum.LIVING == program.getLiveStatus()) {
-
-                } else {
+                if (LiveStatusEnum.NOT_START == program.getLiveStatus()) {
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.INIT);
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.PREVIEW);
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.LIVING);
-
-                    Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
                 }
+
+                if (LiveStatusEnum.INIT == program.getLiveStatus()) {
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.PREVIEW);
+                }
+
+                if (LiveStatusEnum.PREVIEW == program.getLiveStatus()) {
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.LIVING);
+                }
+
+                Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
-
-                String url = null;
-                for (int i = 0, len = push.getPushUrlList().size(); i < len; ++i) {
-                    url = push.getPushUrlList().get(i);
-                    if (!TextUtils.isEmpty(url)) {
-                        break;
-                    }
-                }
-
-                return url;
+                
+                mPublishDacStat.setPlayStartTime(push.getNowTime());
+                mPublishDacStat.onMediaServerResponse();
+                
+                return push.getPushUrl();
             } catch (LiveHttpException e) {
-
+                Log.w(TAG, e.toString());
             }
 
             return null;
@@ -764,6 +833,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             mLivingUrl = url;
+            
+            mPublishDacStat.setServerAddress(url);
+            
             startRecording();
 
             mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
@@ -785,7 +857,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     return programs.get(0);
                 }
             } catch (LiveHttpException e) {
-
+                Log.w(TAG, e.toString());
             }
 
             return null;
@@ -801,7 +873,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (!mMediaRecorderView.isRecording()) {
 
-                // TODO: 
                 DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
 
                     @Override
