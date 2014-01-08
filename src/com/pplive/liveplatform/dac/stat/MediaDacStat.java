@@ -9,7 +9,7 @@ import com.pplive.liveplatform.net.NetworkManager;
 public abstract class MediaDacStat extends BaseDacStat implements MediaData {
 
     private static final long serialVersionUID = -7272971189395559240L;
-
+    
     private long mStartTime = -1;
 
     public MediaDacStat() {
@@ -31,7 +31,7 @@ public abstract class MediaDacStat extends BaseDacStat implements MediaData {
         addValueItem(KEY_ACCESS_TYPE, ACCESS_TYPE_UNKNOWN);
         addValueItem(KEY_SERVER_ADDRESS, ACCESS_TYPE_UNKNOWN);
     }
-
+    
     public void setProgramInfo(Program program) {
         addValueItem(KEY_PROGRAM_ID, program.getId());
         addValueItem(KEY_PROGRAM_TITLE, program.getTitle());
@@ -65,27 +65,29 @@ public abstract class MediaDacStat extends BaseDacStat implements MediaData {
     public void setServerAddress(String address) {
         addValueItem(KEY_SERVER_ADDRESS, address);
     }
-
+    
     public void setPlayStartTime(long start_time) {
         addValueItem(KEY_PLAY_START_TIME, start_time);
     }
-
+    
     public void onPlayStart() {
-        mStartTime = System.currentTimeMillis();
+        if (-1 == mStartTime) {
+            mStartTime = System.currentTimeMillis();
+        }
     }
-
+    
     public void onPlayReleayStart() {
         if (mStartTime > 0) {
             addValueItem(KEY_PLAY_START_DELAY, System.currentTimeMillis() - mStartTime);
         }
     }
-
+    
     public void onMediaServerResponse() {
         if (mStartTime > 0) {
             addValueItem(KEY_MEDIA_SVC_DELAY, System.currentTimeMillis() - mStartTime);
         }
     }
-
+    
     public void onPlayStop() {
         if (mStartTime > 0) {
             addValueItem(KEY_PLAY_TIME, System.currentTimeMillis() - mStartTime);

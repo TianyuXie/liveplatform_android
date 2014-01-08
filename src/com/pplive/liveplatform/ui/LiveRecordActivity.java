@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import java.security.PublicKey;
 import java.util.List;
 
 import android.content.DialogInterface;
@@ -39,6 +40,7 @@ import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.net.NetworkManager;
+import com.pplive.liveplatform.net.NetworkManager.NetworkState;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
@@ -651,6 +653,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
         mFooterBarFragment.reset();
+        
+        sendDac();
     }
     
     private void initDac() {
