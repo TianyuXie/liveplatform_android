@@ -147,7 +147,7 @@ public class UserpageActivity extends Activity {
         if (!TextUtils.isEmpty(iconUrl)) {
             mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
         } else {
-            mUserIcon.setImageResource(R.drawable.user_icon_default);
+            mUserIcon.setLocalImage(R.drawable.user_icon_default);
         }
     }
 
@@ -297,7 +297,7 @@ public class UserpageActivity extends Activity {
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
-                mUserIcon.setImageResource(R.drawable.user_icon_default);
+                mUserIcon.setLocalImage(R.drawable.user_icon_default);
             }
         }
 

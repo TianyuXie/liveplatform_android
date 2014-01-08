@@ -59,7 +59,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     static final String TAG = "_LiveRecordActivity";
 
-    static final String EXTRA_PROGRAM = "extra_program";
+    public static final String EXTRA_PROGRAM = "extra_program";
 
     private static final int WHAT_RECORD_START = 9001;
     private static final int WHAT_RECORD_END = 9002;

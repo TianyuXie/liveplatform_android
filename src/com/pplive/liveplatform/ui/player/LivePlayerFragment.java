@@ -107,6 +107,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private long mStartTime;
 
+    private int mSavedPostion;
+
     private Program mProgram;
 
     private Timer mTimer;
@@ -116,6 +118,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
         mStartTime = -1;
+        mSavedPostion = 0;
         mShowBar = true;
         mLoading = true;
         mFlagMask = 0xffffffff;
@@ -310,11 +313,20 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onResume();
         Log.d(TAG, "onResume");
         mVideoView.resume();
+        if (mSavedPostion > 0) {
+            mVideoView.seekTo(mSavedPostion);
+            mSavedPostion = 0;
+        }
     }
 
     @Override
     public void onPause() {
         Log.d(TAG, "onPause");
+        if (mVideoView.isPlaying()) {
+            mSavedPostion = mVideoView.getCurrentPosition();
+        } else {
+            mSavedPostion = 0;
+        }
         mVideoView.pause();
         super.onPause();
     }
@@ -581,7 +593,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void onStartPlay() {
         mUserIcon.setRounded(false);
-        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
+        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_finish);
         mRoot.findViewById(R.id.image_player_loading).setVisibility(View.GONE);
@@ -590,7 +602,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void onStartPrelive() {
         mUserIcon.setRounded(false);
-        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
+        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_prelive);
         rotateIcon();
@@ -600,7 +612,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mIconWrapper.clearAnimation();
         mIconWrapper.setVisibility(View.INVISIBLE);
         mUserIcon.setRounded(false);
-        mUserIcon.setLoadingImage(R.drawable.home_status_btn_loading);
+        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
         showBars(0);
     }
 
