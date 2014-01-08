@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.ui.LiveRecordActivity;
 
@@ -20,21 +21,26 @@ public class PreliveAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
         if (SettingsProvider.getInstance(context).getAppPrefs().isPreliveNotify()) {
-            Intent newIntent = new Intent(context, LiveRecordActivity.class);
-            newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            newIntent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, intent.getSerializableExtra(AlarmCenter.EXTRA_PROGRAM));
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_ONE_SHOT);
+            Log.d(TAG, "isPreliveNotify");
+            Program program = (Program) intent.getSerializableExtra(AlarmCenter.EXTRA_PROGRAM);
+            if (AlarmCenter.getInstance(context).isPreliveAvailable(program.getId(), program.getOwner())) {
+                Log.d(TAG, "isPreliveAvailable");
+                Intent newIntent = new Intent(context, LiveRecordActivity.class);
+                newIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                newIntent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, newIntent, PendingIntent.FLAG_ONE_SHOT);
 
-            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            Notification notification = new Notification();
-            notification.icon = R.drawable.ic_launcher;
-            notification.tickerText = context.getString(R.string.prelive_default_message);
-            notification.defaults = Notification.DEFAULT_SOUND;
-            notification.audioStreamType = android.media.AudioManager.ADJUST_LOWER;
-            notification.flags |= Notification.FLAG_AUTO_CANCEL;
-            notification.setLatestEventInfo(context, context.getString(R.string.prelive_title), context.getString(R.string.prelive_default_message),
-                    pendingIntent);
-            manager.notify(1, notification);
+                NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                Notification notification = new Notification();
+                notification.icon = R.drawable.ic_launcher;
+                notification.tickerText = context.getString(R.string.prelive_default_message);
+                notification.defaults = Notification.DEFAULT_SOUND;
+                notification.audioStreamType = android.media.AudioManager.ADJUST_LOWER;
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                notification.setLatestEventInfo(context, context.getString(R.string.prelive_title), context.getString(R.string.prelive_default_message),
+                        pendingIntent);
+                manager.notify(1, notification);
+            }
         }
     }
 }

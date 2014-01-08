@@ -251,9 +251,6 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             protected void onPostExecute(Program program) {
                 if (program != null) {
                     EventBus.getDefault().post(new EventProgramAdded(program));
-
-                    //TODO Add alarm (event bus?)
-                    AlarmCenter.getInstance(mAttachedActivity).addPreliveAlarm(program);
                 } else {
                     Toast.makeText(mAttachedActivity, "创建预播失败", Toast.LENGTH_SHORT).show();
                 }

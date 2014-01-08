@@ -19,7 +19,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.db.CacheManager;
+import com.pplive.liveplatform.core.cache.CacheManager;
 
 public class SearchBar extends LinearLayout {
     final static String TAG = "_SearchBar";
