@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -70,6 +71,7 @@ public class ChatBox extends RelativeLayout {
         mTextView = (TextView) root.findViewById(R.id.text_chatbox);
         mNoContentInfo = (TextView) root.findViewById(R.id.text_chatbox_nocontent);
         View scrollView = root.findViewById(R.id.scroll_chatbox);
+        scrollView.setOnTouchListener(onTouchListener);
 
         // init values
         int paddingLeft = 0;
@@ -236,14 +238,34 @@ public class ChatBox extends RelativeLayout {
     public interface INewMessageListener {
         public void notifyMessage();
     }
-    
 
     public void setNewMessageListener(INewMessageListener l) {
         this.mNewMessageListener = l;
     }
 
-
     public boolean isEmpty() {
         return TextUtils.isEmpty(mTextView.getText().toString());
     }
+
+    public interface OnSingleTapListener {
+        public void onSingleTap();
+    }
+
+    private OnSingleTapListener mSingleTapListener;
+
+    public void setOnSingleTapListener(OnSingleTapListener listener) {
+        this.mSingleTapListener = listener;
+    }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mSingleTapListener != null) {
+                    mSingleTapListener.onSingleTap();
+                }
+            }
+            return false;
+        }
+    };
 }

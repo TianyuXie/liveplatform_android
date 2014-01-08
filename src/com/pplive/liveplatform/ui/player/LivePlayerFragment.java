@@ -454,7 +454,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         if (mCallbackListener != null) {
-            mCallbackListener.onTouch();
+            mCallbackListener.onTouchPlayer();
         }
         if (mGestureDetector.onTouchEvent(event)) {
             return true;
@@ -542,8 +542,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     });
 
     public interface Callback {
-        public void onTouch();
-
         public void onModeClick();
 
         public void onBackClick();
@@ -553,6 +551,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onReplay();
 
         public void onPrepare();
+
+        public void onTouchPlayer();
 
         public void onCompletion();
 
