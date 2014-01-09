@@ -33,6 +33,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.other.LoadImageTask;
+import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.SysUtil;
@@ -183,7 +184,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     private void sinaShareDirect(Bitmap bitmap) {
         try {
-            String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
+            String tmpfile = String.format("%s/%s.png", DirManager.getShareCachePath(), StringUtil.newGuid());
             ImageUtil.bitmap2File(bitmap, tmpfile);
             Intent intent = new Intent(Intent.ACTION_SEND);
             Context context = getContext().createPackageContext("com.sina.weibo", Context.CONTEXT_IGNORE_SECURITY);
@@ -206,7 +207,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
 
     private void wechatSNSShareDirect(Bitmap bitmap) {
         try {
-            String tmpfile = String.format("%s/%s.png", SysUtil.getShareCachePath(getContext()), StringUtil.newGuid());
+            String tmpfile = String.format("%s/%s.png", DirManager.getShareCachePath(), StringUtil.newGuid());
             Intent intent = new Intent(Intent.ACTION_SEND);
             Context context = getContext().createPackageContext("com.tencent.mm", Context.CONTEXT_IGNORE_SECURITY);
             intent.setClassName(context, "com.tencent.mm.ui.tools.ShareToTimeLineUI");
