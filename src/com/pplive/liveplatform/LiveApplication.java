@@ -17,10 +17,10 @@ import com.pplive.liveplatform.dac.info.DeviceInfo;
 import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.dac.info.UserInfo;
 import com.pplive.liveplatform.net.NetworkManager;
+import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.FileUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringManager;
-import com.pplive.liveplatform.util.SysUtil;
 
 public class LiveApplication extends Application {
 
@@ -29,39 +29,40 @@ public class LiveApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        
+
         Log.d(TAG, "onCreate");
 
-        initPaths(getApplicationContext());
+        DirManager.init(getApplicationContext());
+        StringManager.init(getApplicationContext());
+        initPaths();
         initImageLoader(getApplicationContext());
-        
+
         AppInfo.init(getApplicationContext());
         DeviceInfo.init(getApplicationContext());
         UserInfo.init(getApplicationContext());
         SessionInfo.init();
 
         NetworkManager.init(getApplicationContext());
-        StringManager.initContext(getApplicationContext());
-        
+
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
-        
     }
-    
+
     private void initImageLoader(Context context) {
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(4)
                 .denyCacheImageMultipleSizesInMemory().discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
                 .memoryCacheExtraOptions(160, 120).discCacheExtraOptions(160, 120, CompressFormat.JPEG, 75, null)
-                .discCache(new FileCountLimitedDiscCache(new File(SysUtil.getImageCachePath(context)), 200)).build();
+                .discCache(new FileCountLimitedDiscCache(new File(DirManager.getImageCachePath()), 200)).build();
         ImageLoader.getInstance().init(config);
     }
 
-    private void initPaths(Context context) {
-        FileUtil.checkPath(SysUtil.getAppPath(context));
-        FileUtil.checkPath(SysUtil.getCachePath(context));
-        FileUtil.checkPath(SysUtil.getFilesPath(context));
-        FileUtil.checkPath(SysUtil.getPrivateCachePath(context));
-        FileUtil.checkPath(SysUtil.getPrivateFilesPath(context));
-        FileUtil.checkPath(SysUtil.getShareCachePath(context));
+    private void initPaths() {
+        FileUtil.checkPath(DirManager.getPrivateCachePath());
+        FileUtil.checkPath(DirManager.getPrivateFilesPath());
+        FileUtil.checkPath(DirManager.getCachePath());
+        FileUtil.checkPath(DirManager.getFilesPath());
+        FileUtil.checkPath(DirManager.getAppPath());
+        FileUtil.checkPath(DirManager.getShareCachePath());
+        FileUtil.checkPath(DirManager.getDownloadPath());
     }
 }

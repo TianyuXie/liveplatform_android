@@ -604,7 +604,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     };
 
     public void onStartPlay() {
-        mUserIcon.setRounded(false);
         mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_finish);
@@ -613,7 +612,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     public void onStartPrelive() {
-        mUserIcon.setRounded(false);
         mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_prelive);
@@ -621,25 +619,24 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     public void initIcon() {
-        mIconWrapper.clearAnimation();
         mIconWrapper.setVisibility(View.INVISIBLE);
-        mUserIcon.setRounded(false);
+        mUserIcon.clearAnimation();
         mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
         showBars(0);
     }
 
     public void rotateIcon() {
-        final float centerX = mIconWrapper.getWidth() / 2.0f;
-        final float centerY = mIconWrapper.getHeight() / 2.0f;
+        final float centerX = mUserIcon.getWidth() / 2.0f;
+        final float centerY = mUserIcon.getHeight() / 2.0f;
 
-        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
+        final Rotate3dAnimation rotation = new Rotate3dAnimation(180, 360, centerX, centerY, 1.0f, true);
         rotation.setStartOffset(1500);
         rotation.setDuration(350);
         rotation.setFillAfter(true);
         rotation.setInterpolator(new LinearInterpolator());
         rotation.setRotateListener(rotateButtonListener);
         rotation.setAnimationListener(animationListener);
-        mIconWrapper.startAnimation(rotation);
+        mUserIcon.startAnimation(rotation);
     }
 
     private RotateListener rotateButtonListener = new RotateListener() {
