@@ -52,7 +52,7 @@ public abstract class MediaDacStat extends BaseDacStat implements MediaData {
         case WIFI:
             access_type = ACCESS_TYPE_WIFI;
             break;
-        case THIRD_GENERATION:
+        case FAST_MOBILE:
             access_type = ACCESS_TYPE_3G;
             break;
         default:

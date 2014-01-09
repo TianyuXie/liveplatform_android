@@ -599,6 +599,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 }
             }
 
+            mWatchDacStat.setPlayStartTime(watchList.getNowTime());
             mWatchDacStat.onMediaServerResponse();
             mWatchDacStat.setPlayProtocol(protocol);
             mWatchDacStat.setServerAddress(mUrl);
@@ -710,7 +711,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "state: " + event.getNetworkState());
         switch (event.getNetworkState()) {
         case MOBILE:
-        case THIRD_GENERATION:
+        case FAST_MOBILE:
             DialogManager.alertMobileDialog(this, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {

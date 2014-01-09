@@ -5,8 +5,8 @@ public class WatchList {
     Recommend recommend;
 
     java.util.List<Watch> medias;
-    
-    public java.util.List<Watch> getMedias(){
+
+    public java.util.List<Watch> getMedias() {
         return medias;
     }
 
@@ -18,17 +18,25 @@ public class WatchList {
                 }
             }
         }
-
         return null;
     }
-    
+
+    public long getNowTime() {
+        Watch watch = getRecommendedWatch();
+        if (watch == null) {
+            return -1;
+        } else {
+            return watch.getNowTime();
+        }
+    }
+
     public Watch.Protocol getRecommendProtocol() {
-        
+
         if (null != recommend) {
-            
+
             return recommend.protocol;
         }
-        
+
         return null;
     }
 
@@ -61,7 +69,7 @@ public class WatchList {
 
         return null;
     }
-    
+
     class Recommend {
 
         Watch.Protocol protocol;

@@ -164,7 +164,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             case UNKNOWN:
                 setupVideoView(url);
                 break;
-            case THIRD_GENERATION:
+            case FAST_MOBILE:
             case MOBILE:
                 DialogManager.alertMobileDialog(getActivity(), new DialogInterface.OnClickListener() {
                     @Override
