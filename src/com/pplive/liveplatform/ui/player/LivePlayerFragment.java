@@ -476,7 +476,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mFlagMask |= FLAG_TIME_BAR;
             }
         } else {
-            mFlagMask = FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_VOLUME_BAR;
+            mFlagMask = FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW;
         }
         setVisibilityByFlags();
         showBars(SHOW_DELAY);
