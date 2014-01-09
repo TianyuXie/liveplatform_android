@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.dac.info.LocationInfo;
 import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.location.Locator.LocationData;
@@ -98,8 +97,6 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
         Update.doUpdateAPP(this);
-
-        DacSender.sendAppStartDac(getApplicationContext());
     }
 
     @Override

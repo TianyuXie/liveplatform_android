@@ -5,6 +5,8 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.util.Log;
 
+import com.pplive.liveplatform.core.settings.SettingsProvider;
+
 public class AppInfo {
 
     private static final String TAG = AppInfo.class.getSimpleName();
@@ -14,6 +16,8 @@ public class AppInfo {
     private static String sAppVersionName = "unknown";
 
     private static String sChannel = "0";
+
+    private static boolean sFirstLaunch = false;
 
     public static void init(Context context) {
         try {
@@ -42,6 +46,14 @@ public class AppInfo {
 
     public static String getPlatform() {
         return "android_ibo";
+    }
+
+    public static void launch(Context context) {
+        sFirstLaunch = SettingsProvider.getInstance(context).isFirstLaunch();
+    }
+
+    public static boolean isFirstLaunch() {
+        return sFirstLaunch;
     }
 
     private AppInfo() {

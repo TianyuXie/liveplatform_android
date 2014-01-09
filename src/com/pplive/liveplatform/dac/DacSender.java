@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.stat.DacStat;
 import com.pplive.liveplatform.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.dac.stat.StartDacStat;
@@ -14,11 +13,11 @@ public class DacSender {
 
     private static final String TAG = DacSender.class.getCanonicalName();
 
-    public static void sendAppStartDac(Context context) {
+    public static void sendAppStartDac(Context context, boolean firstlaunch) {
 
         StartDacStat stat = new StartDacStat();
 
-        stat.setIsFirstStart(SettingsProvider.getInstance(context).isFirstLaunch());
+        stat.setIsFirstStart(firstlaunch);
 
         sendDac(context, stat);
     }
