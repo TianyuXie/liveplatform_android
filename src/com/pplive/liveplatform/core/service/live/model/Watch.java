@@ -109,7 +109,7 @@ public class Watch {
 
     public String getLive2LiveM3U8PlayURL(long pid, int ft, String name, String addr, long now, long delay, long interval, String path) {
         String playLink = String.format(Locale.US,
-                "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=0&sdkmode=0&livepath=%s", pid, ft, name, addr, now, delay,
+                "%d?ft=%d&name=%s&svrhost=%s&svrtime=%d&delaytime=%d&bitrate=400&interval=%d&bwtype=0&sdkmode=0&livepath=%s&onair=true", pid, ft, name, addr, now, delay,
                 interval, path);
         return PPBoxUtil.getLive2M3U8PlayURL(playLink).toString();
     }
