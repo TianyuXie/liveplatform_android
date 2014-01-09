@@ -49,7 +49,7 @@ public class WatchDacStat extends MediaDacStat implements WatchData {
     public void onSeek() {
         mLastSeekTime = System.currentTimeMillis();
         
-        addValueItem(KEY_DRAGGING_COUNT, mDraggingCount);
+        addValueItem(KEY_DRAGGING_COUNT, ++mDraggingCount);
     }
     
     public void onBufferStart() {
