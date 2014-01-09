@@ -44,6 +44,7 @@ import com.pplive.liveplatform.core.task.player.LiveStatusTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
 import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.dac.stat.WatchDacStat;
+import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
@@ -133,7 +134,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private String mUrl;
 
     private Context mContext;
-    
+
     private WatchDacStat mWatchDacStat;
 
     @Override
@@ -198,7 +199,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         initDac();
         mWatchDacStat.setProgramInfo(mProgram);
-        
+
         if (TextUtils.isEmpty(mUrl)) {
             showLoading();
             mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
@@ -210,7 +211,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mProgram.isLiving()) {
             keepAliveDelay(0);
         }
-        
+
     }
 
     private void startGetMedia() {
@@ -257,9 +258,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mChatBox.stop();
         mHandler.removeMessages(MSG_KEEP_ALIVE);
         mLivePlayerFragment.setCallbackListener(null);
-        super.onStop();
-        
         sendDac();
+        super.onStop();
     }
 
     private void setLayout(boolean isFull, boolean init) {
@@ -598,11 +598,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
-            
+
+            mWatchDacStat.setPlayStartTime(watchList.getNowTime());
             mWatchDacStat.onMediaServerResponse();
             mWatchDacStat.setPlayProtocol(protocol);
             mWatchDacStat.setServerAddress(mUrl);
-            
+
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
@@ -610,7 +611,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "MediaTask onTaskFailed: " + event.getMessage());
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
-            
+
             mWatchDacStat.onMediaServerResponse();
         }
 
@@ -710,7 +711,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "state: " + event.getNetworkState());
         switch (event.getNetworkState()) {
         case MOBILE:
-        case THIRD_GENERATION:
+        case FAST_MOBILE:
             DialogManager.alertMobileDialog(this, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -760,7 +761,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mInterrupted = false;
         mHandler.sendEmptyMessage(MSG_START_PLAY);
         mLivePlayerFragment.setBreakVisibility(View.GONE);
-        
+
         mWatchDacStat.setIsSuccess(true);
         mWatchDacStat.onPlayReleayStart();
     }
@@ -799,14 +800,30 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void initDac() {
         mWatchDacStat = new WatchDacStat();
         mWatchDacStat.onPlayStart();
+        mWatchDacStat.setAccessType(NetworkManager.getCurrentNetworkState());
         mWatchDacStat.setSDKRunning(PPBoxUtil.isSDKRuning());
     }
-    
+
     private void sendDac() {
         if (null != mWatchDacStat) {
             mWatchDacStat.onPlayStop();
             DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
             mWatchDacStat = null;
         }
+    }
+
+    @Override
+    public void onSeek() {
+        mWatchDacStat.onSeek();
+    }
+
+    @Override
+    public void onBufferStart() {
+        mWatchDacStat.onBufferStart();
+    }
+
+    @Override
+    public void onBufferEnd() {
+        mWatchDacStat.onBufferEnd();
     }
 }

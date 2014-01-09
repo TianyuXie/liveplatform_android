@@ -36,6 +36,7 @@ import com.pplive.liveplatform.ui.widget.SideBar;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.update.Update;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.NetworkUtil;
 
 public class HomeActivity extends LocatorActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
 
@@ -100,6 +101,8 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         Update.doUpdateAPP(this);
 
         DacSender.sendAppStartDac(getApplicationContext());
+        
+        Log.d(TAG, NetworkUtil.isFastMobileNetwork(this) + "");
     }
 
     @Override

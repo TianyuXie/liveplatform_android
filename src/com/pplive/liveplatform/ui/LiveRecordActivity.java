@@ -357,7 +357,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         switch (event.getNetworkState()) {
         case MOBILE:
-        case THIRD_GENERATION:
+        case FAST_MOBILE:
             DialogManager.alertMobileDialog(this, null).show();
             break;
         default:
@@ -716,7 +716,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WIFI:
         case UNKNOWN:
             break;
-        case THIRD_GENERATION:
+        case FAST_MOBILE:
         case MOBILE:
             DialogManager.alertMobileDialog(this, null).show();
             break;

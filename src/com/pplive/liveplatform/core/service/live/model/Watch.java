@@ -78,9 +78,7 @@ public class Watch {
             if (!TextUtils.isEmpty(url)) {
                 list.add(url);
             }
-
         }
-
         return list;
     }
 
@@ -132,5 +130,9 @@ public class Watch {
 
     public String getRtmpPlayURL(String addr, String path, String name) {
         return String.format(Locale.US, "rtmp://%s%s/%s", addr, path, name);
+    }
+    
+    public long getNowTime() {
+        return now;
     }
 }
