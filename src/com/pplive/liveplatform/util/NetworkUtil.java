@@ -42,7 +42,8 @@ public class NetworkUtil {
     public static boolean isFastMobileNetwork(Context context) {
         TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-        switch (telephonyManager.getNetworkType()) {
+        int type = telephonyManager.getNetworkType();
+        switch (type) {
         case TelephonyManager.NETWORK_TYPE_1xRTT:
             return false; // ~ 50-100 kbps
         case TelephonyManager.NETWORK_TYPE_CDMA:
@@ -68,7 +69,7 @@ public class NetworkUtil {
         case TelephonyManager.NETWORK_TYPE_HSUPA:
             return true; // ~ 1-23 Mbps
         case TelephonyManager.NETWORK_TYPE_IDEN:
-            return false; // ~25 kbps
+            return false; // ~ 25 kbps
         case TelephonyManager.NETWORK_TYPE_UMTS:
             return true; // ~ 400-7000 kbps
         case TelephonyManager.NETWORK_TYPE_LTE:
