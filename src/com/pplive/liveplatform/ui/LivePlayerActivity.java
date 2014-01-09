@@ -198,6 +198,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setLayout(mIsFull);
 
         initDac();
+        mWatchDacStat.setWatchType(mProgram.isVOD());
         mWatchDacStat.setProgramInfo(mProgram);
 
         if (TextUtils.isEmpty(mUrl)) {
@@ -588,7 +589,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mUrl = null;
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
-            Watch.Protocol protocol = watchList.getRecommendProtocol();
+            Watch.Protocol protocol = watchList.getRecommendedProtocol();
             if (protocol == Watch.Protocol.RTMP) {
                 mUrl = watchList.getRtmpPlayURL();
             } else if (protocol == Watch.Protocol.LIVE2) {
@@ -599,10 +600,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 }
             }
 
-            mWatchDacStat.setPlayStartTime(watchList.getNowTime());
             mWatchDacStat.onMediaServerResponse();
+            mWatchDacStat.setPlayStartTime(watchList.getNowTime());
             mWatchDacStat.setPlayProtocol(protocol);
-            mWatchDacStat.setServerAddress(mUrl);
+            mWatchDacStat.setServerAddress(watchList.getRecommendedWatchAddress());
 
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }

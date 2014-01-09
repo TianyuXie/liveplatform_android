@@ -41,7 +41,7 @@ public class AppInfo {
     }
 
     public static String getPlatform() {
-        return "android_phone";
+        return "android_ibo";
     }
 
     private AppInfo() {
