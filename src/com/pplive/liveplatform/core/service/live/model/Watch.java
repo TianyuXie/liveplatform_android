@@ -11,10 +11,10 @@ import com.pplive.liveplatform.util.PPBoxUtil;
 public class Watch {
 
     public enum Protocol {
-        
+
         @SerializedName("live2")
-        LIVE2, 
-        
+        LIVE2,
+
         @SerializedName("rtmp")
         RTMP;
     }
@@ -45,6 +45,20 @@ public class Watch {
 
     public Channel[] getChannels() {
         return channels;
+    }
+
+    public long getNowTime() {
+        return now;
+    }
+    
+    public String getAddress(final int ft) {
+        for (Channel channel : getChannels()) {
+            if (ft == channel.getFt()) {
+                return channel.getAddrs()[0];
+            }
+        }
+        
+        return null;
     }
 
     public Channel getChannel(final int ft) {
@@ -130,9 +144,5 @@ public class Watch {
 
     public String getRtmpPlayURL(String addr, String path, String name) {
         return String.format(Locale.US, "rtmp://%s%s/%s", addr, path, name);
-    }
-    
-    public long getNowTime() {
-        return now;
     }
 }

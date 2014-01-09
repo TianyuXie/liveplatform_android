@@ -1,6 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.security.PublicKey;
 import java.util.List;
 
 import android.content.DialogInterface;
@@ -40,7 +39,6 @@ import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.net.NetworkManager;
-import com.pplive.liveplatform.net.NetworkManager.NetworkState;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
@@ -813,6 +811,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
                 
                 mPublishDacStat.setPlayStartTime(push.getNowTime());
+                mPublishDacStat.setServerAddress(push.getAddress());
                 mPublishDacStat.onMediaServerResponse();
                 
                 return push.getPushUrl();
@@ -833,8 +832,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             mLivingUrl = url;
-            
-            mPublishDacStat.setServerAddress(url);
             
             startRecording();
 

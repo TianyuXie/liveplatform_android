@@ -20,7 +20,7 @@ public class WatchList {
         }
         return null;
     }
-
+    
     public long getNowTime() {
         Watch watch = getRecommendedWatch();
         if (watch == null) {
@@ -29,8 +29,14 @@ public class WatchList {
             return watch.getNowTime();
         }
     }
+    
+    public String getRecommendedWatchAddress() {
+        Watch watch = getRecommendedWatch();
+        
+        return null != watch ? watch.getAddress(recommend.ft) : null;
+    }
 
-    public Watch.Protocol getRecommendProtocol() {
+    public Watch.Protocol getRecommendedProtocol() {
 
         if (null != recommend) {
 

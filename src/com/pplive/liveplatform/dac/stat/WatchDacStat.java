@@ -26,8 +26,8 @@ public class WatchDacStat extends MediaDacStat implements WatchData {
         addValueItem(KEY_WATCH_TYPE, WATCH_TYPE_UNKNOWN);
     }
 
-    public void setWatchType(int watch_type) {
-        addValueItem(KEY_WATCH_TYPE, watch_type);
+    public void setWatchType(boolean isVOD) {
+        addValueItem(KEY_WATCH_TYPE, isVOD ? WATCH_TYPE_LIVE_VOD : WATCH_TYPE_LIVE);
     }
 
     public void setPlayProtocol(Watch.Protocol protocol) {
