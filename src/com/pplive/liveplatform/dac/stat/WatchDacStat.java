@@ -52,7 +52,7 @@ public class WatchDacStat extends MediaDacStat implements WatchData {
         addValueItem(KEY_DRAGGING_COUNT, mDraggingCount);
     }
     
-    public void onBufferingStart() {
+    public void onBufferStart() {
         long current_time = System.currentTimeMillis();
         
         if (mLastBufferingStartTime == -1) {
@@ -66,7 +66,7 @@ public class WatchDacStat extends MediaDacStat implements WatchData {
         }
     }
     
-    public void onBufferingEnd() {
+    public void onBufferEnd() {
         if (mLastBufferingStartTime > 0) {
             long current_time = System.currentTimeMillis();
             
@@ -87,6 +87,6 @@ public class WatchDacStat extends MediaDacStat implements WatchData {
     public void onPlayStop() {
         super.onPlayStop();
         
-        onBufferingEnd();
+        onBufferEnd();
     }
 }

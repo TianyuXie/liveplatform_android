@@ -393,9 +393,15 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             if (mProgram.isVOD()) {
                 if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
                     mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.VISIBLE);
+                    if (mCallbackListener != null) {
+                        mCallbackListener.onBufferStart();
+                    }
                     return true;
                 } else if (what == MeetVideoView.MEDIA_INFO_BUFFERING_END) {
                     mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.GONE);
+                    if (mCallbackListener != null) {
+                        mCallbackListener.onBufferEnd();
+                    }
                     return true;
                 }
             }
@@ -556,6 +562,12 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         public void onCompletion();
 
+        public void onSeek();
+
+        public void onBufferStart();
+
+        public void onBufferEnd();
+
         public boolean onError(int what, int extra);
     }
 
@@ -699,6 +711,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     @Override
     public void onShow(int timeout) {
         showBars(timeout);
+    }
+
+    @Override
+    public void onSeek() {
+        if (mCallbackListener != null) {
+            mCallbackListener.onSeek();
+        }
     }
 
 }

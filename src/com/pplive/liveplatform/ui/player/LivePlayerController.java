@@ -286,6 +286,9 @@ public class LivePlayerController extends MediaController {
                 long duration = mPlayer.getDuration();
                 long newposition = duration * bar.getProgress() / 1000L;
                 mPlayer.seekTo((int) newposition);
+                if (mCallbackListener != null){
+                    mCallbackListener.onSeek();
+                }
                 mCurrentTime.setText(TimeUtil.stringForTimeMin((int) newposition));
             }
             setProgress();
@@ -300,6 +303,8 @@ public class LivePlayerController extends MediaController {
     };
 
     public interface Callback {
+        public void onSeek();
+        
         public void onReplay();
 
         public void onShow(int timeout);
