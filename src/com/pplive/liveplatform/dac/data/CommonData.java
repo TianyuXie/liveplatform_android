@@ -28,6 +28,10 @@ public interface CommonData {
     
     static final String KEY_SESSION_ID = "SID";
     
+    static final String KEY_GPS_X = "GX";
+    
+    static final String KEY_GPS_Y = "GY";
+    
     static final int LOG_KIND_START = 0;
     
     static final int LOG_KIND_WATCH = 1;

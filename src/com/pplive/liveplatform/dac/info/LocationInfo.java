@@ -20,11 +20,11 @@ public class LocationInfo {
     }
 
     public static double getLongitude() {
-        return sData == null ? 0.0 : sData.getLongitude();
+        return sData == null ? -1.0 : sData.getLongitude();
     }
 
     public static double getLatitude() {
-        return sData == null ? 0.0 : sData.getLatitude();
+        return sData == null ? -1.0 : sData.getLatitude();
     }
 
     public static String getProvince() {

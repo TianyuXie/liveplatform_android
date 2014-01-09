@@ -9,6 +9,7 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.dac.data.CommonData;
 import com.pplive.liveplatform.dac.info.AppInfo;
 import com.pplive.liveplatform.dac.info.DeviceInfo;
+import com.pplive.liveplatform.dac.info.LocationInfo;
 import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.dac.info.UserInfo;
 import com.pplive.sdk.MediaSDK;
@@ -30,5 +31,7 @@ public abstract class BaseDacStat extends DacStat implements CommonData {
         addValueItem(KEY_SDK_VERSION, MediaSDK.getPPBoxVersion());
         addValueItem(KEY_PLAYER_VERSION, MeetSDK.getVersion());
         addValueItem(KEY_SESSION_ID, SessionInfo.getSessionId());
+        addValueItem(KEY_GPS_X, LocationInfo.getLongitude());
+        addValueItem(KEY_GPS_Y, LocationInfo.getLatitude());
     }
 }
