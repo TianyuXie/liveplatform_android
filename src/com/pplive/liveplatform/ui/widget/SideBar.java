@@ -90,7 +90,6 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         if (UserManager.getInstance(getContext()).isLogin()) {
             mNicknameText.setText(UserManager.getInstance(getContext()).getNickname());
             String iconUrl = UserManager.getInstance(getContext()).getIcon();
-            mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
@@ -98,7 +97,6 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             }
         } else {
             mNicknameText.setText("");
-            mUserIcon.setRounded(false);
             mUserIcon.setLocalImage(R.drawable.user_icon_login);
         }
     }

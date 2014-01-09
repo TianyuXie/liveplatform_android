@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import com.pplive.liveplatform.util.ImageUtil;
 
@@ -55,12 +54,6 @@ public class CircularImageView extends AsyncImageView {
     }
 
     public void setRounded(boolean rounded) {
-        try {
-            throw new Exception();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG, "setRounded:" + rounded);
         this.mRounded = rounded;
     }
 
@@ -68,5 +61,11 @@ public class CircularImageView extends AsyncImageView {
         if (mBitmap != null && !mBitmap.isRecycled()) {
             mBitmap.recycle();
         }
+    }
+    
+    @Override
+    public void setLocalImage(int resid) {
+        setRounded(false);
+        super.setLocalImage(resid);
     }
 }
