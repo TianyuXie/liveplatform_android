@@ -23,7 +23,7 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/text_record_duration"
+        android:id="@+id/text_living_duration"
         style="@style/Widget.TextView.Shadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/text_live_coming"
+        android:id="@+id/text_prelive_count_down"
         style="@style/Widget.TextView.Shadow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

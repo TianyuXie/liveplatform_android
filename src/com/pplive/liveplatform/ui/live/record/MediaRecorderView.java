@@ -33,8 +33,6 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
     private MediaRecorderListener mMediaRecorderListener;
 
-    private boolean mRecording = false;
-
     public MediaRecorderView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
@@ -181,7 +179,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     }
 
     public boolean isRecording() {
-        return mRecording;
+        return null == mMediaRecoder ? false : mMediaRecoder.isRecording();
     }
 
     public void startRecording() {
@@ -199,17 +197,13 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
             mMediaRecoder.setOutputPath(mOutputPath);
 
             mMediaRecoder.start();
-
-            mRecording = true;
         }
     }
 
     public void stopRecording() {
-        Log.d(TAG, "stopRecording 1");
+        Log.d(TAG, "stopRecording");
 
         if (isRecording()) {
-            mRecording = false;
-
             mMediaRecoder.stop();
             mMediaRecoder = null;
         }

@@ -2,6 +2,7 @@ package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -23,7 +24,6 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
@@ -73,9 +73,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int WHAT_RECORD_END = 9002;
 
-    private static final int WHAT_RECORD_UPDATE = 9003;
+    private static final int WHAT_LIVING_DURATION_UPDATE = 9003;
 
-    private static final int WHAT_LIVE_COMING_UPDATE = 9005;
+    private static final int WHAT_PRELIVE_COUNT_DOWN_UPDATE = 9005;
 
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
@@ -89,21 +89,25 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int DLEAY_CHAT_LONG = 10000;
 
+    private static final int MAX_REPLAY_COUNT = 2;
+
     private Handler mInnerHandler = new Handler(this);
 
+    // Chat
     private View mChatContainer;
 
     private ChatBox mChatBox;
 
-    private boolean mChating = false;
-
     private ImageButton mChatButton;
+
+    private boolean mChating = false;
 
     private MediaRecorderView mMediaRecorderView;
 
+    // Media Recorder
     private ImageButton mBtnLiveRecord;
 
-    private ImageButton mBtnCameraChange;
+    //    private ImageButton mBtnCameraChange;
 
     private ToggleButton mBtnFlashLight;
 
@@ -113,14 +117,17 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private TextView mTextLive;
 
-    private TextView mTextRecordDuration;
+    private TextView mTextLivingDuration;
 
-    private TextView mTextLiveComing;
+    private int mLivingDuration;
 
-    private Button mBtnLivingShare;
+    private TextView mTextPreLiveCountDown;
 
     private boolean mCountDown = false;
 
+    private Button mBtnLivingShare;
+
+    // Anim Door
     private AnimDoor mAnimDoor;
 
     private LoadingButton mStatusButton;
@@ -176,9 +183,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     };
 
-    private GetPushUrlTask mGetPushUrlOneStepTask;
+    private GetPushUrlTask mGetPushUrlTask;
 
-    private GetUserLivingTask mGetUserLivingTask;
+    private GetPausedProgramTask mGetPausedProgramTask;
 
     private KeepLiveAliveTask mKeepLiveAliveTask;
 
@@ -186,7 +193,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private String mLivingUrl;
 
+    private int mReplayCount = 0;
+
     private PublishDacStat mPublishDacStat;
+
+    private Dialog mLivingPausedAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,14 +216,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             public void onSuccess() {
                 Log.d(TAG, "onSuccess");
 
-                if (null != mLivingProgram && LiveStatusEnum.PREVIEW == mLivingProgram.getLiveStatus()) {
-                    LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram);
-                }
+                mReplayCount = 0;
+                
+                mPublishDacStat.setIsSuccess(true);
 
-                if (null != mPublishDacStat) {
-                    mPublishDacStat.setIsSuccess(true);
-                    mPublishDacStat.onPlayReleayStart();
-                    obtainCodecParams();
+                if (null != mLivingProgram) {
+                    if (LiveStatusEnum.PREVIEW == mLivingProgram.getLiveStatus()) {
+                        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram);
+                    } else if (LiveStatusEnum.LIVING == mLivingProgram.getLiveStatus()) {
+                        mPublishDacStat.onPauseEnd();
+                    }
                 }
             }
 
@@ -220,22 +233,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             public void onError() {
                 Log.d(TAG, "onError");
 
-                if (mMediaRecorderView.isRecording()) {
-                    mInnerHandler.sendEmptyMessage(WHAT_LIVE_FAILED);
-                }
+                mInnerHandler.sendEmptyMessage(WHAT_LIVE_FAILED);
             }
         });
 
         mChatButton = (ImageButton) findViewById(R.id.btn_record_chat);
         mBtnLiveRecord = (ImageButton) findViewById(R.id.btn_live_record);
-        mBtnCameraChange = (ImageButton) findViewById(R.id.btn_camera_change);
+        //        mBtnCameraChange = (ImageButton) findViewById(R.id.btn_camera_change);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
 
         mTextLive = (TextView) findViewById(R.id.text_live);
-        mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
-        mTextLiveComing = (TextView) findViewById(R.id.text_live_coming);
+        mTextLivingDuration = (TextView) findViewById(R.id.text_living_duration);
+        mTextPreLiveCountDown = (TextView) findViewById(R.id.text_prelive_count_down);
         mBtnLivingShare = (Button) findViewById(R.id.btn_living_share);
         mBtnLivingShare.setOnClickListener(mOnShareClickListener);
 
@@ -246,11 +257,25 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mLiveButtonWrapper = findViewById(R.id.wrapper_live_status_right);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_live_status);
         mChatBox = (ChatBox) findViewById(R.id.layout_record_chatbox);
-        mChatBox.setNewMessageListener(newMessageListener);
+        mChatBox.setNewMessageListener(mNewMessageListener);
         mChatContainer = findViewById(R.id.layout_record_chat);
 
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
+
+        mLivingPausedAlertDialog = DialogManager.alertLivingPaused(this, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onClickBtnLiveRecord();
+            }
+        }, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                performStopRecording(true);
+            }
+        });
     }
 
     @Override
@@ -288,21 +313,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             startCountDown();
         }
 
-        if (null == mGetUserLivingTask) {
-            mGetUserLivingTask = new GetUserLivingTask();
-            mGetUserLivingTask.execute();
+        if (null == mGetPausedProgramTask) {
+            mGetPausedProgramTask = new GetPausedProgramTask();
+            mGetPausedProgramTask.execute();
         }
     }
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop");
-
         super.onStop();
+
+        Log.d(TAG, "onStop");
 
         stopCountDown();
 
-        stopRecording(false);
+        performStopRecording(false);
 
         stopPreview();
 
@@ -366,7 +391,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     public void onBackPressed() {
-        if (!mFooterBarFragment.isHidden()) {
+        if (!mMediaRecorderView.isRecording()) {
             mFooterBarFragment.onBackPressed();
         }
     }
@@ -398,10 +423,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     public void onEvent(EventNetworkChanged event) {
         Log.d(TAG, "state: " + event.getNetworkState());
 
-        switch (event.getNetworkState()) {
+        switch (NetworkManager.getCurrentNetworkState()) {
         case MOBILE:
+            DialogManager.alertMobile2GLive(this, null, null).show();
+            break;
         case FAST_MOBILE:
-            DialogManager.alertMobileDialog(this, null).show();
+            DialogManager.alertMobile3GPlay(this, null, null).show();
             break;
         default:
             break;
@@ -417,11 +444,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_RECORD_END:
             onRecordEnd();
             break;
-        case WHAT_RECORD_UPDATE:
-            onRecordUpdate(msg.arg1);
+        case WHAT_LIVING_DURATION_UPDATE:
+            onLivingDurationUpdate();
             break;
-        case WHAT_LIVE_COMING_UPDATE:
-            onLiveComingUpdate();
+        case WHAT_PRELIVE_COUNT_DOWN_UPDATE:
+            onPreLiveCountDownUpdate();
             break;
         case WHAT_LIVE_KEEP_ALIVE:
             onKeepLiveAlive();
@@ -429,11 +456,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case WHAT_OPEN_DOOR:
             onOpenDoor();
             break;
+        case WHAT_INVALIDATE_DOOR:
+            onInvalidateDoor();
+            break;
         case WHAT_LIVE_FAILED:
             onLiveFailed();
             break;
-        case WHAT_INVALIDATE_DOOR:
-            onInvalidateDoor();
         default:
             break;
         }
@@ -444,7 +472,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onRecordStart() {
         if (null != mLivingProgram) {
             mTextLive.setVisibility(View.VISIBLE);
-            mTextRecordDuration.setVisibility(View.VISIBLE);
+            mTextLivingDuration.setVisibility(View.VISIBLE);
 
             mChatContainer.setVisibility(View.VISIBLE);
 
@@ -458,7 +486,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             //            mTextLivingTitle.append("\n");
             //            mTextLivingTitle.append(mLivingUrl);
 
-            Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
+            Message msg = mInnerHandler.obtainMessage(WHAT_LIVING_DURATION_UPDATE);
             mInnerHandler.sendMessage(msg);
         }
     }
@@ -468,20 +496,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mChatContainer.setVisibility(View.GONE);
 
         mTextLive.setVisibility(View.GONE);
-        mTextRecordDuration.setVisibility(View.GONE);
+        mTextLivingDuration.setVisibility(View.GONE);
     }
 
-    private void onRecordUpdate(int duration) {
+    private void onLivingDurationUpdate() {
 
         if (mMediaRecorderView.isRecording()) {
-            mTextRecordDuration.setText(TimeUtil.stringForTimeHour(duration * 1000));
+            mTextLivingDuration.setText(TimeUtil.stringForTimeHour(mLivingDuration++ * 1000));
 
-            Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE, duration + 1 /* arg1 */, 0 /* arg2 */);
+            Message msg = mInnerHandler.obtainMessage(WHAT_LIVING_DURATION_UPDATE);
             mInnerHandler.sendMessageDelayed(msg, 1000 /* milliseconds */);
         }
     }
 
-    private void onLiveComingUpdate() {
+    private void onPreLiveCountDownUpdate() {
         if (null != mLivingProgram) {
             long now = System.currentTimeMillis();
             long start = mLivingProgram.getStartTime();
@@ -493,14 +521,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 coming = TimeUtil.stringForTimeHour(start - now);
 
                 if (mCountDown) {
-                    mInnerHandler.sendEmptyMessageDelayed(WHAT_LIVE_COMING_UPDATE, 1000 /* milliseconds */);
+                    mInnerHandler.sendEmptyMessageDelayed(WHAT_PRELIVE_COUNT_DOWN_UPDATE, 1000 /* milliseconds */);
                 }
 
             } else {
                 coming = TimeUtil.stringForTimeHour(0);
             }
 
-            mTextLiveComing.setText(coming);
+            mTextPreLiveCountDown.setText(coming);
         }
     }
 
@@ -520,28 +548,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onLiveFailed() {
-        DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
+        Log.d(TAG, "onLiveFailed");
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                mMediaRecorderView.stopRecording();
+        if (++mReplayCount > MAX_REPLAY_COUNT) {
+            mLivingPausedAlertDialog.show();
 
-                onClickBtnLiveRecord();
+            mReplayCount = 0;
+        } else {
+
+            if (null != mPublishDacStat) {
+                mPublishDacStat.addReplayCount();
             }
-        }, new DialogInterface.OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                stopLivingProgram(mLivingProgram);
-
-                performOnClickStopRecording();
-            }
-        }).show();
-    }
-    
-    private void onError() {
-        Log.d(TAG, "onError");
-        Toast.makeText(getApplication(), "节目创建失败", Toast.LENGTH_LONG).show();
+            onClickBtnLiveRecord();
+        }
     }
 
     private void onInvalidateDoor() {
@@ -579,15 +599,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void startCountDown() {
         mCountDown = true;
 
-        mTextLiveComing.setVisibility(View.VISIBLE);
-        mInnerHandler.sendEmptyMessage(WHAT_LIVE_COMING_UPDATE);
+        mTextPreLiveCountDown.setVisibility(View.VISIBLE);
+        mInnerHandler.sendEmptyMessage(WHAT_PRELIVE_COUNT_DOWN_UPDATE);
     }
 
     private void stopCountDown() {
         mCountDown = false;
 
-        mTextLiveComing.setVisibility(View.GONE);
-        mInnerHandler.removeMessages(WHAT_LIVE_COMING_UPDATE);
+        mTextPreLiveCountDown.setVisibility(View.GONE);
+        mInnerHandler.removeMessages(WHAT_PRELIVE_COUNT_DOWN_UPDATE);
     }
 
     private void startRecording() {
@@ -601,6 +621,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mMediaRecorderView.setOutputPath(mLivingUrl);
         mMediaRecorderView.startRecording();
+
+        if (null != mPublishDacStat) {
+            mPublishDacStat.onPlayRealStart();
+            obtainCodecParams();
+        }
 
         mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
@@ -619,22 +644,32 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mPublishDacStat.setVideoFPS(MediaManager.FRAME_RATE);
     }
 
-    private void stopRecording(boolean stopLive) {
-        if (mMediaRecorderView.isRecording()) {
+    private void stopRecording(boolean stopLiving) {
 
-            mMediaRecorderView.stopRecording();
+        mMediaRecorderView.stopRecording();
 
-            if (stopLive) {
-                stopLivingProgram(mLivingProgram);
+        if (stopLiving) {
+            stopLivingProgram();
+            mLivingDuration = 0;
+
+            sendDac();
+        } else {
+
+            if (null != mPublishDacStat) {
+                mPublishDacStat.onPauseStart();
             }
-
-            mLivingUrl = null;
-            mLivingProgram = null;
-            mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
-            mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
 
-        sendDac();
+        mLivingUrl = null;
+        mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
+        mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
+    }
+
+    private void stopLivingProgram() {
+        if (null != mLivingProgram) {
+            stopLivingProgram(mLivingProgram);
+            mLivingProgram = null;
+        }
     }
 
     private void stopLivingProgram(final Program program) {
@@ -643,37 +678,38 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void performOnClickStartRecording() {
+    private void performStartRecording() {
 
-        mTextLiveComing.setVisibility(View.GONE);
-        getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
+        checkNetworkState();
+
+        stopCountDown();
+        mFooterBarFragment.onLivingStart();
 
         initDac();
 
-        if (null == mGetPushUrlOneStepTask) {
-            mGetPushUrlOneStepTask = new GetPushUrlTask();
-            mGetPushUrlOneStepTask.execute(mLivingProgram);
+        if (null == mGetPushUrlTask) {
+            mGetPushUrlTask = new GetPushUrlTask();
+            mGetPushUrlTask.execute(mLivingProgram);
         }
     }
 
-    private void performOnClickStopRecording() {
-        mBtnLivingShare.setVisibility(View.GONE);
-
-        stopRecording(true);
+    private void performStopRecording(boolean stopLiving) {
+        Log.d(TAG, "performStopRecording: " + stopLiving);
+        stopRecording(stopLiving);
         stopChating();
-        getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
-        mFooterBarFragment.reset();
 
-        sendDac();
+        mBtnLivingShare.setVisibility(View.GONE);
+        mFooterBarFragment.onLivingStop();
     }
 
     private void initDac() {
         if (null == mPublishDacStat) {
             mPublishDacStat = new PublishDacStat();
-            mPublishDacStat.onPlayStart();
-            mPublishDacStat.setSDKRunning(PPBoxUtil.isSDKRuning());
-            mPublishDacStat.setAccessType(NetworkManager.getCurrentNetworkState());
         }
+
+        mPublishDacStat.onPlayStart();
+        mPublishDacStat.setSDKRunning(PPBoxUtil.isSDKRuning());
+        mPublishDacStat.setAccessType(NetworkManager.getCurrentNetworkState());
     }
 
     private void sendDac() {
@@ -712,12 +748,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void onClickBtnLiveRecord() {
-        checkNetworkState();
-
         if (!mMediaRecorderView.isRecording()) {
-            performOnClickStartRecording();
+            performStartRecording();
         } else {
-            performOnClickStopRecording();
+            performStopRecording(true);
         }
     }
 
@@ -834,14 +868,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         @Override
         protected void onPostExecute(String url) {
-            mGetPushUrlOneStepTask = null;
+            mGetPushUrlTask = null;
 
             if (StringUtil.isNullOrEmpty(url)) {
-                Log.d(TAG, "url is null");
-                performOnClickStopRecording();
-                
-                onError();
-                
+                performStopRecording(true);
                 return;
             }
 
@@ -854,7 +884,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    class GetUserLivingTask extends AsyncTask<Void, Void, Program> {
+    class GetPausedProgramTask extends AsyncTask<Void, Void, Program> {
 
         @Override
         protected Program doInBackground(Void... arg0) {
@@ -876,29 +906,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         @Override
         protected void onPostExecute(final Program program) {
-            mGetUserLivingTask = null;
+            mGetPausedProgramTask = null;
 
             if (null == program) {
                 return;
             }
 
             if (!mMediaRecorderView.isRecording()) {
-
-                DialogManager.alertLivingTerminated(LiveRecordActivity.this, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mLivingProgram = program;
-                        onClickBtnLiveRecord();
-                    }
-                }, new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        stopLivingProgram(program);
-                        performOnClickStopRecording();
-                    }
-                }).show();
+                mLivingProgram = program;
+                mLivingPausedAlertDialog.show();
             }
         }
     }
@@ -940,7 +956,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private ChatBox.INewMessageListener newMessageListener = new ChatBox.INewMessageListener() {
+    private ChatBox.INewMessageListener mNewMessageListener = new ChatBox.INewMessageListener() {
 
         @Override
         public void notifyMessage() {

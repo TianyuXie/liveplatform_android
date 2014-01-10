@@ -38,6 +38,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     private Activity mAttachedActivity;
 
+    private View mParentLayout;
+    
     private ImageButton mBtnLiveHome;
     private ImageButton mBtnLiveBack;
 
@@ -84,6 +86,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         super.onCreateView(inflater, container, savedInstanceState);
 
         View layout = inflater.inflate(R.layout.layout_footerbar_fragment, container, false);
+        
+        mParentLayout = layout;
 
         mBtnLiveHome = (ImageButton) layout.findViewById(R.id.btn_live_home);
         mBtnLiveBack = (ImageButton) layout.findViewById(R.id.btn_live_back);
@@ -342,8 +346,8 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             mEditLiveTitle.setText(liveTitle);
         }
     }
-
-    public void reset() {
+    
+    void reset() {
         Log.d(TAG, "reset");
 
         setMode(Mode.INITIAL);
@@ -360,17 +364,27 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         init();
     }
-
+    
+    public void onLivingStart() {
+        setMode(Mode.LIVING);
+    }
+    
+    public void onLivingStop() {
+        reset();
+    }
+    
     public void setMode(Mode mode) {
         mStatus = mode;
 
         setVisibilityByFlags();
     }
-
+    
     private void setVisibilityByFlags() {
         int flags = mStatus.flags();
 
         Log.d(TAG, "flags: " + flags);
+        
+        ViewUtil.setVisibility(mParentLayout, flags);
 
         ViewUtil.setVisibility(mBtnLiveHome, flags & Mode.FLAG_BTN_LIVE_HOME);
         ViewUtil.setVisibility(mBtnLiveBack, flags & Mode.FLAG_BTN_LIVE_BACK);

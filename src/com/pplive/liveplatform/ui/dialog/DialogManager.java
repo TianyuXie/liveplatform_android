@@ -9,7 +9,7 @@ import android.content.DialogInterface;
 import com.pplive.liveplatform.R;
 
 public class DialogManager {
-    public static Dialog playendDialog(final Activity activity) {
+    public static Dialog alertPlayEndDialog(final Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setCancelable(true);
         builder.setIcon(R.drawable.ic_launcher);
@@ -25,7 +25,7 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog logoutAlertDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
+    public static Dialog alertLogoutDialog(final Activity playerActivity, DialogInterface.OnClickListener startListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(true);
         builder.setIcon(R.drawable.ic_launcher);
@@ -68,7 +68,7 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog alertLivingTerminated(final Context context, DialogInterface.OnClickListener positiveListener,
+    public static Dialog alertLivingPaused(final Context context, DialogInterface.OnClickListener positiveListener,
             DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
