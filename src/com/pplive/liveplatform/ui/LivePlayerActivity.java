@@ -480,7 +480,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         data.putString(ShareDialog.PARAM_TITLE, title);
         data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
         data.putString(ShareDialog.PARAM_SUMMARY, String.format(getString(R.string.share_watch_format), title));
-        data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? getString(R.string.default_share_image_url) : imageUrl);
+        data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? "" : imageUrl);
         mShareDialog.setData(data);
     }
 
@@ -806,11 +806,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void sendDac() {
-        if (null != mWatchDacStat) {
-            mWatchDacStat.onPlayStop();
-            DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
-            mWatchDacStat = null;
-        }
+        mWatchDacStat.onPlayStop();
+        DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
     }
 
     @Override

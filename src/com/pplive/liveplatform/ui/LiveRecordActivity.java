@@ -981,11 +981,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 data.putString(ShareDialog.PARAM_TITLE, title);
                 data.putString(ShareDialog.PARAM_TARGET_URL, TextUtils.isEmpty(shareUrl) ? getString(R.string.default_share_target_url) : shareUrl);
                 data.putString(ShareDialog.PARAM_SUMMARY, summary);
-                data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? getString(R.string.default_share_image_url) : imageUrl);
+                data.putString(ShareDialog.PARAM_IMAGE_URL, TextUtils.isEmpty(imageUrl) ? "" : imageUrl);
             } else {
                 String title = getString(R.string.share_record_default_title);
                 String shareUrl = getString(R.string.default_share_target_url);
-                String imageUrl = getString(R.string.default_share_image_url);
+                String imageUrl = "";
                 String summary = getString(R.string.share_record_default_text);
                 data.putString(ShareDialog.PARAM_TITLE, title);
                 data.putString(ShareDialog.PARAM_TARGET_URL, shareUrl);

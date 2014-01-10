@@ -80,10 +80,12 @@ public class SettingsActivity extends Activity {
         View userView = findViewById(R.id.layout_settings_user);
         View logoutBtn = findViewById(R.id.btn_settings_logout);
         View loginBtn = findViewById(R.id.btn_settings_login);
+        View preliveView = findViewById(R.id.layout_settings_prelive);
         if (UserManager.getInstance(this).isLogin()) {
             nickView.setVisibility(View.VISIBLE);
             userView.setVisibility(View.VISIBLE);
             logoutBtn.setVisibility(View.VISIBLE);
+            preliveView.setVisibility(View.VISIBLE);
             loginBtn.setVisibility(View.GONE);
             if (UserManager.getInstance(this).isThirdPartyLogin()) {
                 mPPTVUserView.setVisibility(View.GONE);
@@ -99,6 +101,7 @@ public class SettingsActivity extends Activity {
             }
         } else {
             logoutBtn.setVisibility(View.GONE);
+            preliveView.setVisibility(View.GONE);
             loginBtn.setVisibility(View.VISIBLE);
             nickView.setVisibility(View.GONE);
             userView.setVisibility(View.GONE);

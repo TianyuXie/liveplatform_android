@@ -18,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.util.TimeUtil;
 
 public class RefreshListView extends ListView implements OnScrollListener {
     static final String TAG = "_RefreshListView";
@@ -38,11 +37,11 @@ public class RefreshListView extends ListView implements OnScrollListener {
     private final static int POPUP_TIME = 500;
 
     private TextView mInfoText;
-    private TextView mTimeText;
+    //private TextView mTimeText;
     private LinearLayout mPullView;
     private ProgressBar mProgressBar;
 
-    private long mLastUpdateTime;
+    //private long mLastUpdateTime;
 
     private int mStatus;
     private int mHeaderHeight;
@@ -80,7 +79,7 @@ public class RefreshListView extends ListView implements OnScrollListener {
         mPullView = (LinearLayout) inflater.inflate(R.layout.layout_home_pull_header, null);
         mProgressBar = (ProgressBar) mPullView.findViewById(R.id.progress_header);
         mInfoText = (TextView) mPullView.findViewById(R.id.text_header_pullinfo);
-        mTimeText = (TextView) mPullView.findViewById(R.id.text_header_refreshtime);
+        //mTimeText = (TextView) mPullView.findViewById(R.id.text_header_refreshtime);
         measureView(mPullView);
         mHeaderHeight = mPullView.getMeasuredHeight();
         updatePadding(-mHeaderHeight);
@@ -273,21 +272,21 @@ public class RefreshListView extends ListView implements OnScrollListener {
             Log.d(TAG, "STATUS_PULL_TO_REFRESH");
             mProgressBar.setVisibility(View.INVISIBLE);
             mInfoText.setVisibility(View.VISIBLE);
-            mTimeText.setVisibility(View.VISIBLE);
             mInfoText.setText(R.string.refresh_pull);
-            mTimeText.setText(String.format(getContext().getString(R.string.refresh_last_update), TimeUtil.stamp2String(mLastUpdateTime)));
+            //mTimeText.setVisibility(View.VISIBLE);
+            //mTimeText.setText(String.format(getContext().getString(R.string.refresh_last_update), TimeUtil.stamp2String(mLastUpdateTime)));
             break;
         case STATUS_REFRESHING:
             Log.d(TAG, "STATUS_REFRESHING");
             mProgressBar.setVisibility(View.VISIBLE);
             mInfoText.setVisibility(View.GONE);
-            mTimeText.setVisibility(View.GONE);
+            //mTimeText.setVisibility(View.GONE);
             break;
         case STATUS_DONE:
             Log.v(TAG, "STATUS_DONE");
             mProgressBar.setVisibility(View.INVISIBLE);
             mInfoText.setVisibility(View.GONE);
-            mTimeText.setVisibility(View.GONE);
+            //mTimeText.setVisibility(View.GONE);
             break;
         }
     }
@@ -422,7 +421,7 @@ public class RefreshListView extends ListView implements OnScrollListener {
     }
 
     public void setLastUpdateTime(long time) {
-        this.mLastUpdateTime = time;
+        //this.mLastUpdateTime = time;
     }
 
 }

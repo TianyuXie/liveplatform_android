@@ -41,6 +41,14 @@
         android:textSize="18sp"
         android:visibility="gone" />
 
+    <RelativeLayout
+        android:id="@+id/layout_search_shadow"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/searchbar_body_bg"
+        android:clickable="true"
+        android:visibility="gone" />
+
     <com.pplive.liveplatform.ui.widget.SearchBar
         android:id="@+id/searchbar_search"
         android:layout_width="fill_parent"

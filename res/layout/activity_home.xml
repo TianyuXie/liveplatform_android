@@ -60,4 +60,39 @@
             live:textSize="12sp" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:id="@+id/layout_home_help"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/home_help_bg" >
+
+        <ImageView
+            android:layout_width="210dp"
+            android:layout_height="150dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="40dp"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/home_help_top"
+            android:contentDescription="@null" />
+
+        <ImageView
+            android:layout_width="225dp"
+            android:layout_height="140dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="103dp"
+            android:background="@drawable/home_help_bottom"
+            android:contentDescription="@null" />
+
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="23dp"
+            android:background="@drawable/home_help_circle"
+            android:contentDescription="@null" />
+    </RelativeLayout>
+
 </RelativeLayout>

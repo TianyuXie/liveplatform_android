@@ -103,12 +103,12 @@ public class Program implements Serializable {
     }
 
     public String getStartTimeLong() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy.MM.dd", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy-MM-dd", Locale.US);
         return format.format(new Date(starttime));
     }
 
     public String getStartTimeShort() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         return format.format(new Date(starttime));
     }
 

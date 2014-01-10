@@ -19,11 +19,11 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.UpdateService;
 import com.pplive.liveplatform.core.service.live.model.Packet;
 import com.pplive.liveplatform.dac.info.AppInfo;
-import com.pplive.liveplatform.util.SysUtil;
+import com.pplive.liveplatform.util.DirManager;
 
 public class Update {
 
-    public static final File DOWNLAOD_DIR = new File(SysUtil.SD_APP_PATH);
+    public static final File DOWNLAOD_DIR = new File(DirManager.getDownloadPath());
 
     public static final String PREF_UPDATE_URL = "update_url";
 
@@ -370,7 +370,7 @@ public class Update {
 
         String fileName = updateInfo.url.substring(updateInfo.url.lastIndexOf("/") + 1, updateInfo.url.lastIndexOf("."));
 
-        String filePath = SysUtil.SD_APP_PATH + File.separator + fileName + ".apk";
+        String filePath = DirManager.SD_APP_PATH + File.separator + fileName + ".apk";
         File file = new File(filePath);
         if (file.exists()) {
             DownManager.openFile(activity, file);
