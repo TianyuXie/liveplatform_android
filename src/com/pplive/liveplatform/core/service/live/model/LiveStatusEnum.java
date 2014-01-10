@@ -9,6 +9,11 @@ public enum LiveStatusEnum {
     
     @SerializedName("living")
     LIVING {
+        
+        @Override
+        public LiveStatusEnum nextStatus() {
+            return STOPPED;
+        }
 
         @Override
         public String toString() {
