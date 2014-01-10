@@ -142,7 +142,6 @@ public class UserpageActivity extends Activity {
 
     private void initUserinfo() {
         mNicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
-        mUserIcon.setRounded(false);
         String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
         if (!TextUtils.isEmpty(iconUrl)) {
             mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
@@ -293,7 +292,6 @@ public class UserpageActivity extends Activity {
             Toast.makeText(mContext, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
             UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mContext).getIcon();
-            mUserIcon.setRounded(false);
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {

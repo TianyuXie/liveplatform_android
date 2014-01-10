@@ -3,15 +3,15 @@ package com.pplive.liveplatform.util;
 import android.content.Context;
 
 public class StringManager {
-    private static Context mContext;
+    private static Context mAppContext;
 
-    public static void initContext(Context context) {
-        mContext = context.getApplicationContext();
+    public static void init(Context context) {
+        mAppContext = context.getApplicationContext();
     }
 
     public static String getRes(int resid) {
-        if (mContext != null) {
-            return mContext.getString(resid);
+        if (mAppContext != null) {
+            return mAppContext.getString(resid);
         } else {
             return "";
         }

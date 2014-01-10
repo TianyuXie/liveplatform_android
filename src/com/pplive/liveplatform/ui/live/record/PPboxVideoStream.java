@@ -154,4 +154,14 @@ public class PPboxVideoStream extends PPboxStream {
         camera.addCallbackBuffer(video_buffer);
         camera.setPreviewCallbackWithBuffer(mPreviewCallback);
     }
+    
+    void convertNV21toNV12(byte[] data) {
+        if (null != data) {
+            for (int i = data.length / 2 + 1; i + 2 < data.length; i+=2) {
+                byte tmp = data[i];
+                data[i] = data[i+1];
+                data[i+1] = tmp;
+            }
+        }
+    }
 }
