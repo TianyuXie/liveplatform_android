@@ -11,6 +11,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
 import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
@@ -147,7 +148,7 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
             switch (type) {
             case REFRESH:
                 if (status == mLiveStatus) {
-                    mContainer.refreshData(fallList.getList());
+                    mContainer.refreshData(fallList.getList(), false);
                     if (fallList.count() != 0) {
                         mRetryLayout.setVisibility(View.GONE);
                     } else {
@@ -231,6 +232,12 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         } else {
             findViewById(R.id.layout_search_shadow).setVisibility(View.GONE);
         }
+    }
+    
+    @Override
+    protected void onStop() {
+        ImageLoader.getInstance().clearMemoryCache();
+        super.onStop();
     }
 
 }

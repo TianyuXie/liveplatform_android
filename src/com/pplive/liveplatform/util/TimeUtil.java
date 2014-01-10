@@ -44,7 +44,7 @@ public class TimeUtil {
         long hours = (totalSeconds / SECONDS_OF_HOUR) % 24;
         long days = totalSeconds / SECONDS_OF_DAY;
         if (days > 0) {
-            return String.format(Locale.US, "%d天%d时%d分", days, hours, minutes);
+            return String.format(Locale.US, "%d天%d时", days, hours);
         } else {
             return String.format(Locale.US, "%d时%d分", hours, minutes);
         }
@@ -56,7 +56,7 @@ public class TimeUtil {
     }
 
     public static String stamp2StringShort(long time) {
-        SimpleDateFormat format = new SimpleDateFormat("yy/M/d HH:mm", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yy-M-d", Locale.US);
         return format.format(new Date(time));
     }
 

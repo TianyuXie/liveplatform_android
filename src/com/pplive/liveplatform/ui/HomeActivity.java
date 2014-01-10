@@ -20,6 +20,7 @@ import android.view.animation.TranslateAnimation;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
@@ -160,6 +161,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
+        ImageLoader.getInstance().clearMemoryCache();
         super.onStop();
     }
 
