@@ -169,6 +169,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     };
 
+    private RotateListener mRotateButtonListener = new RotateListener() {
+        @Override
+        public void onRotateMiddle() {
+            mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
+        }
+    };
+
     private GetPushUrlTask mGetPushUrlOneStepTask;
 
     private GetUserLivingTask mGetUserLivingTask;
@@ -313,6 +320,30 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
+    private void moveButton() {
+        Animation moveAnimation = new TranslateAnimation(0.0f, DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 47.5f), 0.0f, 0.0f);
+        moveAnimation.setFillAfter(false);
+        moveAnimation.setDuration(mAnimDoor.getDuration());
+        moveAnimation.setInterpolator(new LinearInterpolator());
+        moveAnimation.setAnimationListener(moveAnimationListener);
+        mStatusButtonWrapper.startAnimation(moveAnimation);
+    }
+
+    private void rotateButton() {
+        // Find the center of the container
+        final float centerX = mLiveButtonWrapper.getWidth() / 2.0f;
+        final float centerY = mLiveButtonWrapper.getHeight() / 2.0f;
+
+        // Create a new 3D rotation with the supplied parameter
+        // The animation listener is used to trigger the next animation
+        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
+        rotation.setDuration(350);
+        rotation.setFillAfter(true);
+        rotation.setInterpolator(new LinearInterpolator());
+        rotation.setRotateListener(mRotateButtonListener);
+        mLiveButtonWrapper.startAnimation(rotation);
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -395,37 +426,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         return false;
     }
-
-    private void moveButton() {
-        Animation moveAnimation = new TranslateAnimation(0.0f, DisplayUtil.getHeightPx(this) / 2.0f - DisplayUtil.dp2px(this, 47.5f), 0.0f, 0.0f);
-        moveAnimation.setFillAfter(false);
-        moveAnimation.setDuration(mAnimDoor.getDuration());
-        moveAnimation.setInterpolator(new LinearInterpolator());
-        moveAnimation.setAnimationListener(moveAnimationListener);
-        mStatusButtonWrapper.startAnimation(moveAnimation);
-    }
-
-    private void rotateButton() {
-        // Find the center of the container
-        final float centerX = mLiveButtonWrapper.getWidth() / 2.0f;
-        final float centerY = mLiveButtonWrapper.getHeight() / 2.0f;
-
-        // Create a new 3D rotation with the supplied parameter
-        // The animation listener is used to trigger the next animation
-        final Rotate3dAnimation rotation = new Rotate3dAnimation(0, 180, centerX, centerY, 1.0f, true);
-        rotation.setDuration(350);
-        rotation.setFillAfter(true);
-        rotation.setInterpolator(new LinearInterpolator());
-        rotation.setRotateListener(rotateButtonListener);
-        mLiveButtonWrapper.startAnimation(rotation);
-    }
-
-    private RotateListener rotateButtonListener = new RotateListener() {
-        @Override
-        public void onRotateMiddle() {
-            mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
-        }
-    };
 
     private void onRecordStart() {
         if (null != mLivingProgram) {
@@ -583,7 +583,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mMediaRecorderView.setOutputPath(mLivingUrl);
         mMediaRecorderView.startRecording();
-        
+
         mPublishDacStat.setIsSuccess(true);
         mPublishDacStat.onPlayReleayStart();
         obtainCodecParams();
@@ -594,13 +594,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mChatBox.setDelay(CHAT_LONG_DELAY, CHAT_LONG_DELAY);
         mChatBox.start(mLivingProgram.getId());
     }
-    
+
     private void obtainCodecParams() {
         Camera.Size size = mMediaRecorderView.getPreviewSize();
         if (null != size) {
             mPublishDacStat.setVideoResolution(size.height, size.width);
         }
-        
+
         mPublishDacStat.setBitrate((MediaManager.VIDEO_BIT_RATE + MediaManager.AUDIO_BIT_RATE) / 1000);
         mPublishDacStat.setVideoFPS(MediaManager.FRAME_RATE);
     }
@@ -619,7 +619,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
             mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
         }
-        
+
         sendDac();
     }
 
@@ -631,12 +631,12 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void performOnClickStartRecording() {
-        
+
         mTextLiveComing.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction().hide(mFooterBarFragment).commit();
-        
+
         initDac();
-        
+
         if (null == mGetPushUrlOneStepTask) {
             mGetPushUrlOneStepTask = new GetPushUrlTask();
             mGetPushUrlOneStepTask.execute(mLivingProgram);
@@ -651,10 +651,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopChating();
         getSupportFragmentManager().beginTransaction().show(mFooterBarFragment).commit();
         mFooterBarFragment.reset();
-        
+
         sendDac();
     }
-    
+
     private void initDac() {
         if (null == mPublishDacStat) {
             mPublishDacStat = new PublishDacStat();
@@ -663,7 +663,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mPublishDacStat.setAccessType(NetworkManager.getCurrentNetworkState());
         }
     }
-    
+
     private void sendDac() {
         if (null != mPublishDacStat) {
             mPublishDacStat.onPlayStop();
@@ -712,11 +712,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void checkNetworkState() {
         switch (NetworkManager.getCurrentNetworkState()) {
         case WIFI:
+            break;
         case UNKNOWN:
             break;
         case FAST_MOBILE:
+            DialogManager.alertMobile3GLive(this, null, null).show();
+            break;
         case MOBILE:
-            DialogManager.alertMobileDialog(this, null).show();
+            DialogManager.alertMobile2GLive(this, null, null).show();
             break;
         case DISCONNECTED:
             DialogManager.alertNoNetworkDialog(this, null).show();
@@ -763,9 +766,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             Program program = params[0];
-            
+
             mPublishDacStat.setPublishStyle(null != program);
-            
+
             if (null == program) {
                 Log.d(TAG, "create program");
 
@@ -783,9 +786,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (null == program) {
                 return null;
             }
-            
+
             mPublishDacStat.setProgramInfo(program);
-            
 
             try {
                 String liveToken = program.getLiveToken();
@@ -809,11 +811,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
 
                 Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
-                
+
                 mPublishDacStat.setPlayStartTime(push.getNowTime());
                 mPublishDacStat.setServerAddress(push.getAddress());
                 mPublishDacStat.onMediaServerResponse();
-                
+
                 return push.getPushUrl();
             } catch (LiveHttpException e) {
                 Log.w(TAG, e.toString());
@@ -832,7 +834,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             mLivingUrl = url;
-            
+
             startRecording();
 
             mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());

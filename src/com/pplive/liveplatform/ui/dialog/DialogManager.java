@@ -40,7 +40,7 @@ public class DialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_title);
+        builder.setTitle(R.string.mobile_alert_network_title);
         builder.setMessage(R.string.mobile_not_unicom);
         builder.setPositiveButton(R.string.mobile_play_start, startListener);
         builder.setNegativeButton(R.string.mobile_play_stop, new DialogInterface.OnClickListener() {
@@ -56,7 +56,7 @@ public class DialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_title);
+        builder.setTitle(R.string.mobile_alert_network_title);
         builder.setMessage(R.string.mobile_not_unicom);
         builder.setPositiveButton(R.string.mobile_play_start, startListener);
         builder.setNegativeButton(R.string.mobile_play_stop, new DialogInterface.OnClickListener() {
@@ -89,6 +89,60 @@ public class DialogManager {
         builder.setMessage(R.string.alert_message_prelive);
         builder.setPositiveButton(R.string.alert_positive_prelive, positiveListener);
         builder.setNegativeButton(R.string.alert_negative, negativeListener);
+
+        return builder.create();
+    }
+
+    // Alert Mobile 2G
+    public static Dialog alertMobile2GLive(final Context context, DialogInterface.OnClickListener positiveListener,
+            DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.alert_mobile_title);
+        builder.setMessage(R.string.alert_mobile_2g_live_message);
+        builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_2g_negative, positiveListener);
+
+        return builder.create();
+    }
+
+    public static Dialog alertMobile2GPlay(final Context context, DialogInterface.OnClickListener positiveListener,
+            DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.alert_mobile_title);
+        builder.setMessage(R.string.alert_mobile_2g_play_message);
+        builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_2g_negative, positiveListener);
+
+        return builder.create();
+    }
+
+    // Alert Mobile 3G
+    public static Dialog alertMobile3GLive(final Context context, DialogInterface.OnClickListener positiveListener,
+            DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.alert_mobile_title);
+        builder.setMessage(R.string.alert_mobile_3g_live_message);
+        builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_3g_live_negative, positiveListener);
+
+        return builder.create();
+    }
+
+    public static Dialog alertMobile3GPlay(final Context context, DialogInterface.OnClickListener positiveListener,
+            DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.alert_mobile_title);
+        builder.setMessage(R.string.alert_mobile_3g_play_message);
+        builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_3g_play_negative, positiveListener);
 
         return builder.create();
     }
