@@ -18,8 +18,8 @@ import android.widget.ImageView.ScaleType;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.DacSender;
-import com.pplive.liveplatform.dac.info.AppInfo;
 import com.pplive.liveplatform.ui.widget.viewpager.CustomerViewPager;
 
 public class IntroActivity extends Activity {
@@ -30,6 +30,8 @@ public class IntroActivity extends Activity {
     private static final int MSG_GO_INTRO = 4001;
 
     private boolean mStarted;
+    
+    private boolean mFirstTime;
 
     private RadioGroup mRadioGroup;
 
@@ -62,15 +64,15 @@ public class IntroActivity extends Activity {
         mViewPager.setOnPageChangeListener(onPageChangeListener);
         mViewPager.setCurrentItem(1);
 
-        AppInfo.launch(getApplicationContext());
-        DacSender.sendAppStartDac(getApplicationContext(), AppInfo.isFirstLaunch());
+        mFirstTime = SettingsProvider.getInstance(this).isFirstLaunch();
+        DacSender.sendAppStartDac(getApplicationContext(), mFirstTime);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         findViewById(R.id.image_intro_welcome).setVisibility(View.VISIBLE);
-        if (!AppInfo.isFirstLaunch()) {
+        if (!mFirstTime) {
             mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 3000);
         } else {
             mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 3000);

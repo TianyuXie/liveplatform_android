@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.info.LocationInfo;
 import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.location.Locator.LocationData;
@@ -62,6 +63,8 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     private HomeFragment mHomeFragment;
 
+    private View mHelpView;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
@@ -73,6 +76,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         mSideBar.setOnTypeChangeListener(onTypeChangeListener);
         mAnimDoor = (AnimDoor) findViewById(R.id.home_animdoor);
         mAnimDoor.setShutDoorListener(shutAnimationListener);
+        mHelpView = findViewById(R.id.layout_home_help);
 
         mStatusButtonWrapper = findViewById(R.id.wrapper_home_status);
         mStatusButton = (LoadingButton) findViewById(R.id.btn_home_status);
@@ -96,6 +100,12 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         mStatusUpAnimation.setFillAfter(true);
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
+
+        if (SettingsProvider.getInstance(this).isFirstHome()) {
+            mHelpView.setVisibility(View.VISIBLE);
+        } else {
+            mHelpView.setVisibility(View.GONE);
+        }
         Update.doUpdateAPP(this);
     }
 
@@ -162,9 +172,20 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     }
 
     private GestureDetector.OnGestureListener onGestureListener = new GestureDetector.SimpleOnGestureListener() {
+
+        public boolean onDown(MotionEvent e) {
+            if (mHelpView.getVisibility() == View.VISIBLE) {
+                mHelpView.setVisibility(View.GONE);
+                return true;
+            } else {
+                return false;
+            }
+        };
+
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             Log.d(TAG, "onScroll");
+
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
 
