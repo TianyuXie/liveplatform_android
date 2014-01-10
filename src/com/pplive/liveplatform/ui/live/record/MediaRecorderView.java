@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.pplive.liveplatform.ui.live.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.live.LiveMediaRecorder;
 
 public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -28,7 +28,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     private boolean mConfigured = false;
     private boolean mFlashOn = false;
 
-    private LiveMediaRecoder mMediaRecoder;
+    private LiveMediaRecorder mMediaRecoder;
     private String mOutputPath;
 
     private MediaRecorderListener mMediaRecorderListener;
@@ -194,7 +194,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         if (!isRecording()) {
             Log.d(TAG, "startRecording 2");
 
-            mMediaRecoder = new LiveMediaRecoder(getContext(), mCamera);
+            mMediaRecoder = new LiveMediaRecorder(getContext(), mCamera);
             mMediaRecoder.setMediaRecorderListener(mMediaRecorderListener);
             mMediaRecoder.setOutputPath(mOutputPath);
 

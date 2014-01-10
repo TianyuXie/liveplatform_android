@@ -20,8 +20,10 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.TranslateAnimation;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
@@ -115,9 +117,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private TextView mTextLiveComing;
 
-    private TextView mTextLivingTitle;
-
-    private ImageButton mBtnLivingShare;
+    private Button mBtnLivingShare;
 
     private boolean mCountDown = false;
 
@@ -236,8 +236,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mTextLive = (TextView) findViewById(R.id.text_live);
         mTextRecordDuration = (TextView) findViewById(R.id.text_record_duration);
         mTextLiveComing = (TextView) findViewById(R.id.text_live_coming);
-        mTextLivingTitle = (TextView) findViewById(R.id.text_living_title);
-        mBtnLivingShare = (ImageButton) findViewById(R.id.btn_living_share);
+        mBtnLivingShare = (Button) findViewById(R.id.btn_living_share);
         mBtnLivingShare.setOnClickListener(mOnShareClickListener);
 
         mAnimDoor = (AnimDoor) findViewById(R.id.live_animdoor);
@@ -451,14 +450,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mBtnLivingShare.setVisibility(View.VISIBLE);
 
-            mTextLivingTitle.setVisibility(View.VISIBLE);
-            mTextLivingTitle.setText(mLivingProgram.getTitle());
+            mBtnLivingShare.setText(mLivingProgram.getTitle());
 
             // TODO: Debug Code
-            mTextLivingTitle.append("\n");
-            mTextLivingTitle.append("pid: " + mLivingProgram.getId());
-            mTextLivingTitle.append("\n");
-            mTextLivingTitle.append(mLivingUrl);
+            //            mTextLivingTitle.append("\n");
+            //            mTextLivingTitle.append("pid: " + mLivingProgram.getId());
+            //            mTextLivingTitle.append("\n");
+            //            mTextLivingTitle.append(mLivingUrl);
 
             Message msg = mInnerHandler.obtainMessage(WHAT_RECORD_UPDATE);
             mInnerHandler.sendMessage(msg);
@@ -534,11 +532,16 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                stopLiving(mLivingProgram);
+                stopLivingProgram(mLivingProgram);
 
                 performOnClickStopRecording();
             }
         }).show();
+    }
+    
+    private void onError() {
+        Log.d(TAG, "onError");
+        Toast.makeText(getApplication(), "节目创建失败", Toast.LENGTH_LONG).show();
     }
 
     private void onInvalidateDoor() {
@@ -622,7 +625,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mMediaRecorderView.stopRecording();
 
             if (stopLive) {
-                stopLiving(mLivingProgram);
+                stopLivingProgram(mLivingProgram);
             }
 
             mLivingUrl = null;
@@ -634,7 +637,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         sendDac();
     }
 
-    private void stopLiving(final Program program) {
+    private void stopLivingProgram(final Program program) {
         if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus()) {
             LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program);
         }
@@ -654,7 +657,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void performOnClickStopRecording() {
-        mTextLivingTitle.setVisibility(View.GONE);
         mBtnLivingShare.setVisibility(View.GONE);
 
         stopRecording(true);
@@ -835,7 +837,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetPushUrlOneStepTask = null;
 
             if (StringUtil.isNullOrEmpty(url)) {
+                Log.d(TAG, "url is null");
                 performOnClickStopRecording();
+                
+                onError();
+                
                 return;
             }
 
@@ -889,7 +895,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        stopLiving(program);
+                        stopLivingProgram(program);
                         performOnClickStopRecording();
                     }
                 }).show();

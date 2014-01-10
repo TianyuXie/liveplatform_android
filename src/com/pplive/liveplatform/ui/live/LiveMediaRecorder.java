@@ -12,9 +12,9 @@ import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 import com.pplive.sdk.MediaSDK.Upload_Statistic;
 
-public class LiveMediaRecoder implements Handler.Callback {
+public class LiveMediaRecorder implements Handler.Callback {
 
-    private static final String TAG = LiveMediaRecoder.class.getSimpleName();
+    private static final String TAG = LiveMediaRecorder.class.getSimpleName();
 
     private static final int WHAT_CHECK_UPLOAD_INFO = 9001;
 
@@ -40,7 +40,7 @@ public class LiveMediaRecoder implements Handler.Callback {
         }
     };
 
-    public LiveMediaRecoder(Context ctx, Camera camera) {
+    public LiveMediaRecorder(Context ctx, Camera camera) {
 
         PPboxSink.init(ctx.getApplicationContext());
         mCapture = new PPboxSink(camera);
@@ -101,12 +101,20 @@ public class LiveMediaRecoder implements Handler.Callback {
     }
     
     private void onCheckUploadInfo() {
+        
+        Log.d(TAG, "onCheckUploadInfo");
+        
         if (null != mCapture) {
             mUploadStatistic.time = 0;
             long ret = MediaSDK.CaptureStatInfo(mCapture.getCaptureId(), mUploadStatistic);
             
+            Log.d(TAG, "ret: " + ret);
+            
             if (0 == ret) {
                 if (mUploadStatistic.time > 0) {
+                    
+                    Log.d(TAG, "mUploadStatistic.time: " + mUploadStatistic.time);
+                    
                     onSuccess();
                 } else {
                     mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_UPLOAD_INFO, DELAY_CHECK_UPLOAD_INFO);

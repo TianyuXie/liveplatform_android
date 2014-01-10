@@ -90,31 +90,20 @@
             android:onClick="onClick" />
     </RelativeLayout>
 
-    <ImageButton
+    <Button
         android:id="@+id/btn_living_share"
-        style="@style/Widget.Button.Transparent"
+        style="@style/Widget.ToggleButton.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="20dp"
-        android:contentDescription="@null"
-        android:src="@drawable/live_record_btn_live_share"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/text_living_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/btn_living_share"
-        android:layout_marginRight="20dp"
-        android:layout_toRightOf="@+id/btn_living_share"
         android:background="@drawable/live_record_fillet_bg"
-        android:paddingBottom="10dp"
-        android:paddingLeft="20dp"
+        android:drawableLeft="@drawable/live_record_btn_live_share"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="5dp"
         android:paddingRight="20dp"
-        android:paddingTop="10dp"
         android:textColor="@color/white"
         android:textSize="18sp"
         android:visibility="gone" />
@@ -158,7 +147,6 @@
 
     <fragment
         android:id="@+id/footer_bar"
-        
         android:name="com.pplive.liveplatform.ui.live.FooterBarFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
