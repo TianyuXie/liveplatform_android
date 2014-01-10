@@ -26,8 +26,6 @@ public class SearchBar extends LinearLayout {
 
     private final static String LIST_ITEM_KEY = "ItemTitle";
 
-    private ListView mRecordListView;
-
     private Button mCloseButton;
 
     private Button mSearchButton;
@@ -41,6 +39,8 @@ public class SearchBar extends LinearLayout {
     private List<Map<String, Object>> mRecordItems;
 
     private SimpleAdapter mRecordItemAdapter;
+
+    private ListView mRecordListView;
 
     public SearchBar(Context context) {
         this(context, null);
@@ -76,8 +76,8 @@ public class SearchBar extends LinearLayout {
             return true;
         }
     };
-    
-    public void forcusEditText(){
+
+    public void forcusEditText() {
         mSearchEditText.requestFocus();
     }
 
@@ -104,12 +104,18 @@ public class SearchBar extends LinearLayout {
                 }
                 mRecordItemAdapter.notifyDataSetChanged();
                 mRecordListView.setVisibility(VISIBLE);
+                if (mCallbackListener != null) {
+                    mCallbackListener.onShowRecord(true);
+                }
             }
         }
     };
 
     public void hideRecordList() {
         mRecordListView.setVisibility(GONE);
+        if (mCallbackListener != null) {
+            mCallbackListener.onShowRecord(false);
+        }
         mSearchEditText.clearFocus();
     }
 
@@ -144,5 +150,15 @@ public class SearchBar extends LinearLayout {
         Log.d(TAG, "clearFocus");
         super.clearFocus();
         mSearchEditText.clearFocus();
+    }
+
+    public interface Callback {
+        public void onShowRecord(boolean status);
+    }
+
+    private Callback mCallbackListener;
+
+    public void setCallbackListener(Callback listener) {
+        this.mCallbackListener = listener;
     }
 }

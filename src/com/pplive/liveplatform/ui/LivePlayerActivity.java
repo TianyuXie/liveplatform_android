@@ -806,11 +806,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void sendDac() {
-        if (null != mWatchDacStat) {
-            mWatchDacStat.onPlayStop();
-            DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
-            mWatchDacStat = null;
-        }
+        mWatchDacStat.onPlayStop();
+        DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
     }
 
     @Override

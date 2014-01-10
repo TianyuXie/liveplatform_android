@@ -28,7 +28,7 @@ import com.pplive.liveplatform.ui.home.ProgramContainer;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends Activity implements SearchBar.Callback {
     static final String TAG = "_SearchActivity";
 
     private final static int REFRESH = 1000;
@@ -59,6 +59,7 @@ public class SearchActivity extends Activity {
 
         mSearchBar = (SearchBar) findViewById(R.id.searchbar_search);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
+        mSearchBar.setCallbackListener(this);
 
         mContainer = (ProgramContainer) findViewById(R.id.layout_search_body);
         mContainer.setOnUpdateListener(onUpdateListener);
@@ -222,5 +223,14 @@ public class SearchActivity extends Activity {
         public void onScrollDown(boolean isDown) {
         }
     };
+
+    @Override
+    public void onShowRecord(boolean show) {
+        if (show) {
+            findViewById(R.id.layout_search_shadow).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.layout_search_shadow).setVisibility(View.GONE);
+        }
+    }
 
 }
