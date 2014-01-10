@@ -23,7 +23,7 @@
 
     <!-- color -->
     <color name="home_fragment_body_bg">#FF1A1A1A</color>
-    <color name="home_livestate_btn_checked">#FF666666</color>
+    <color name="home_livestate_btn_checked">#FF272727</color>
     <color name="home_livestate_text_checked">#FFAAAAAA</color>
     <color name="home_pull_header_bg">#FFAAAAAA</color>
     <color name="home_help_bg">#AA000000</color>

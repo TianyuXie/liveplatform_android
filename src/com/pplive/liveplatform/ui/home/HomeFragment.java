@@ -34,6 +34,7 @@ import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
+import com.pplive.liveplatform.util.ViewUtil;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
     static final String TAG = "_HomeFragment";
@@ -255,7 +256,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 case PULL:
                     mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
                     if (subject == mSubjectId && status == mLiveStatus) {
-                        mContainer.refreshData(fallList.getList());
+                        mContainer.refreshData(fallList.getList(), false);
                     } else {
                         Log.d(TAG, "retry");
                         startRefreshTask();
@@ -263,7 +264,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                     break;
                 case REFRESH:
                     if (subject == mSubjectId && status == mLiveStatus) {
-                        mContainer.refreshData(fallList.getList());
+                        mContainer.refreshData(fallList.getList(), true);
                         if (event.getContext().get(SearchTask.KEY_LIVE_STATUS) == LiveStatusKeyword.COMING) {
                             mContainer.startTimer();
                         } else {
@@ -276,7 +277,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                             } else {
                                 mCallbackListener.doLoadResult(getString(R.string.home_nodata_button));
                                 mRetryText.setText(R.string.home_nodata_text);
-                                mRetryLayout.setVisibility(View.VISIBLE);
+                                ViewUtil.showLayoutDelay(mRetryLayout, 150);
                             }
                         }
                     } else {
@@ -302,9 +303,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             if (getActivity() != null) {
+                mContainer.clearData();
                 mBusy = false;
                 mRetryText.setText(R.string.home_fail_text);
-                mRetryLayout.setVisibility(View.VISIBLE);
+                ViewUtil.showLayoutDelay(mRetryLayout, 150);
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }
@@ -319,9 +321,10 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "SearchTask onTimeout");
             if (getActivity() != null) {
+                mContainer.clearData();
                 mBusy = false;
-                mRetryLayout.setVisibility(View.VISIBLE);
                 mRetryText.setText(R.string.home_fail_text);
+                ViewUtil.showLayoutDelay(mRetryLayout, 150);
                 if (mCallbackListener != null) {
                     mCallbackListener.doLoadFinish();
                 }

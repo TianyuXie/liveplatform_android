@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
@@ -30,7 +31,7 @@ public class IntroActivity extends Activity {
     private static final int MSG_GO_INTRO = 4001;
 
     private boolean mStarted;
-    
+
     private boolean mFirstTime;
 
     private RadioGroup mRadioGroup;
@@ -71,7 +72,13 @@ public class IntroActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        findViewById(R.id.image_intro_welcome).setVisibility(View.VISIBLE);
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
         if (!mFirstTime) {
             mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 3000);
         } else {
@@ -81,6 +88,7 @@ public class IntroActivity extends Activity {
 
     @Override
     protected void onPause() {
+        Log.d(TAG, "onPause");
         mHandler.removeMessages(MSG_GO_HOME);
         mHandler.removeMessages(MSG_GO_INTRO);
         super.onPause();

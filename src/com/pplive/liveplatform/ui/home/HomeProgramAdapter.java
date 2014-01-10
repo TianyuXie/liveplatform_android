@@ -77,10 +77,12 @@ public class HomeProgramAdapter extends BaseAdapter {
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
         if (data.isPrelive()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
+            holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.program_coming_icon, 0, 0, 0);
             holder.timedownTextView.setText(TimeUtil.stringForCountdown(data.getStartTime() - System.currentTimeMillis()));
         } else if (data.isVOD()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
-            holder.timedownTextView.setText(String.format("%s (%s)", TimeUtil.stamp2StringShort(data.getRealStartTime()),
+            holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            holder.timedownTextView.setText(String.format("%s %s", TimeUtil.stamp2StringShort(data.getRealStartTime()),
                     TimeUtil.stringForTimeMin(data.getLength())));
         } else {
             holder.timedownTextView.setVisibility(View.GONE);
