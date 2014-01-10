@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.pplive.liveplatform.ui.widget.viewpager.CustomerViewPager
+        android:id="@+id/viewpager_intro"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </com.pplive.liveplatform.ui.widget.viewpager.CustomerViewPager>
+
+    <RadioGroup
+        android:id="@+id/radiogroup_intro"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:clickable="false"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/btn_intro1"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:background="@drawable/intro_radio_bg"
+            android:button="@null"
+            android:checked="true"
+            android:clickable="false" />
+
+        <RadioButton
+            android:id="@+id/btn_intro2"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/intro_radio_bg"
+            android:button="@null"
+            android:clickable="false" />
+
+        <RadioButton
+            android:id="@+id/btn_intro3"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:background="@drawable/intro_radio_bg"
+            android:button="@null"
+            android:clickable="false" />
+    </RadioGroup>
+
+    <ImageView
+        android:id="@+id/image_intro_welcome"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        android:contentDescription="@null"
+        android:scaleType="centerCrop"
+        android:src="@drawable/intro_welcome" >
+    </ImageView>
+
+</RelativeLayout>

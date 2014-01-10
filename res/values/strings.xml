@@ -26,9 +26,9 @@
     <string name="test_player_share">分享</string>
     <string name="test_player_back">返回</string>
     <string name="test_player_name">sevengram</string>
-    <string name="refresh_pull">下拉刷新</string>
-    <string name="refresh_release">松手后刷新</string>
-    <string name="refresh_last_update">上次更新时间: %s</string>
+    <string name="refresh_pull">下拉刷新&#8230;</string>
+    <string name="refresh_release">松开立即刷新&#8230;</string>
+    <string name="refresh_last_update">上次刷新: %s</string>
 
     <!-- For network -->
     <string name="mobile_alert_title">爱播提醒您</string>
@@ -46,7 +46,7 @@
     <string name="update_cancel">取消</string>
     <string name="update_download_error">下载失败</string>
     <string name="update_title">软件更新</string>
-    <string name="update_ing">正在下载...</string>
+    <string name="update_ing">正在下载&#8230;</string>
     <string name="update_no_update_information">没有升级信息</string>
 
 </resources>

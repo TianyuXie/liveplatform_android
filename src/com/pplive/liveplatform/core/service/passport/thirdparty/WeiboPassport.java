@@ -39,10 +39,10 @@ import com.sina.weibo.sdk.utils.Utility;
 public class WeiboPassport {
     static final String TAG = "_WeiboPassport";
 
-    //    private static final String CONSUMER_KEY = "3353159992";
+    //    private static final String CONSUMER_KEY = "3624985585";
     //    private static final String CONSUMER_SECRET = "";
 
-    public static final String APP_KEY = "3353159992";
+    public static final String APP_KEY = "3624985585";
 
     public static final String REDIRECT_URL = "http://open.weibo.com/";
 

@@ -51,7 +51,7 @@ public class TimeUtil {
     }
 
     public static String stamp2String(long time) {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy/MM/dd", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss", Locale.US);
         return format.format(new Date(time));
     }
 

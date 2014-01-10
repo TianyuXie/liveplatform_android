@@ -14,6 +14,7 @@ public class SettingsProvider {
     private static final String KEY_ICON = "icon";
     private static final String KEY_THIRDPARTY = "thirdparty";
     private static final String KEY_FIRST_LAUNCH = "first_launch";
+    private static final String KEY_FIRST_HOME = "first_home";
 
     private SharedPreferences sharedPreferences;
 
@@ -67,6 +68,14 @@ public class SettingsProvider {
         boolean result = sharedPreferences.getBoolean(KEY_FIRST_LAUNCH, true);
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putBoolean(KEY_FIRST_LAUNCH, false);
+        editor.commit();
+        return result;
+    }
+
+    public boolean isFirstHome() {
+        boolean result = sharedPreferences.getBoolean(KEY_FIRST_HOME, true);
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putBoolean(KEY_FIRST_HOME, false);
         editor.commit();
         return result;
     }
