@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.ui.live.record;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
 import android.annotation.TargetApi;
