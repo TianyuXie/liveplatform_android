@@ -16,6 +16,7 @@ import com.pplive.sdk.MediaSDK;
 public class PPboxVideoStream extends PPboxStream {
     
     private Camera mCamera;
+    private boolean mNV21Change = false;
 
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 
@@ -36,14 +37,16 @@ public class PPboxVideoStream extends PPboxStream {
             long time_stamp = System.nanoTime() - mStartTime;
 
             Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
-
+            data.toString();
             if (cur_time - last_put_preview_time > put_preview_interval) {
                 PPboxStream.InBuffer buffer = pop();
                 if (buffer == null) {
                     ++num_drop;
                 } else {
                     Log.d(TAG, "image size: " + data.length);
-
+                    if(mNV21Change){
+                        convertNV21toNV12(data);
+                    }
                     buffer.byte_buffer().put(data);
                     put(time_stamp / 1000, buffer);
                     last_put_preview_time = cur_time;
@@ -77,6 +80,9 @@ public class PPboxVideoStream extends PPboxStream {
         Camera.Size size = p.getPreviewSize();
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             MediaFormat format = MediaManager.getInstance().getSupportedEncodingVideoFormat(MediaManager.MIME_TYPE_VIDEO_AVC, size);
+            if(MediaManager.getInstance().needNV21ToNV12()){
+                mNV21Change = true;
+            }
             mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_VIDEO_AVC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
