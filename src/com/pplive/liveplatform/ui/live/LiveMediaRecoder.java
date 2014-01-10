@@ -2,20 +2,43 @@ package com.pplive.liveplatform.ui.live;
 
 import android.content.Context;
 import android.hardware.Camera;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
+import com.pplive.liveplatform.ui.live.record.MediaRecorderListener;
 import com.pplive.liveplatform.ui.live.record.PPboxSink;
+import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
+import com.pplive.sdk.MediaSDK.Upload_Statistic;
 
-public class LiveMediaRecoder {
+public class LiveMediaRecoder implements Handler.Callback {
 
     private static final String TAG = LiveMediaRecoder.class.getSimpleName();
+
+    private static final int WHAT_CHECK_UPLOAD_INFO = 9001;
+
+    private static final int DELAY_CHECK_UPLOAD_INFO = 500; // millisecond
 
     private PPboxSink mCapture;
 
     private String mOutputPath;
 
-    private OnPreparedListener mOnPreparedListener;
+    private Handler mInnerHandler = new Handler(this);
+    
+    private MediaRecorderListener mMediaRecorderListener;
+    
+    private Upload_Statistic mUploadStatistic = new Upload_Statistic();
+    
+    private Download_Callback mDownloaCallback = new Download_Callback() {
+        
+        @Override
+        public void invoke(long err) {
+            Log.d(TAG, "error: " + err);
+
+            onError();
+        }
+    };
 
     public LiveMediaRecoder(Context ctx, Camera camera) {
 
@@ -29,37 +52,29 @@ public class LiveMediaRecoder {
         //        mOutputPath = "/sdcard/test.flv";
     }
 
-    public void setOnErrorListener(final OnErrorListener listener) {
-        mCapture.setDownloadCallback(new Download_Callback() {
+    public void setMediaRecorderListener(MediaRecorderListener listener) {
+        mMediaRecorderListener = listener;
 
-            @Override
-            public void invoke(long err) {
-                Log.d(TAG, "error: " + err);
-                
-                if (null != listener) {
-                    listener.onError();
-                }
-            }
-        });
-    }
-
-    public void setOnPreparedListener(final OnPreparedListener listener) {
-        mOnPreparedListener = listener;
+        mCapture.setDownloadCallback(mDownloaCallback);
     }
 
     public void start() {
-        mCapture.open(mOutputPath);
-        mCapture.start();
-
-        if (null != mOnPreparedListener) {
-            mOnPreparedListener.onPrepared();
+        if (null != mCapture) {
+            mCapture.open(mOutputPath);
+            mCapture.start();
+            
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_UPLOAD_INFO, DELAY_CHECK_UPLOAD_INFO);
         }
     }
 
     public void stop() {
-        mCapture.stop();
-        mCapture.close();
-        mCapture = null;
+        if (null != mCapture) {
+            clearMessage();
+            
+            mCapture.stop();
+            mCapture.close();
+            mCapture = null;
+        }
     }
 
     public void resetCamera(Camera camera) {
@@ -68,11 +83,47 @@ public class LiveMediaRecoder {
         }
     }
 
-    public interface OnErrorListener {
-        void onError();
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+        case WHAT_CHECK_UPLOAD_INFO:
+            onCheckUploadInfo();
+            break;
+        default:
+            break;
+        }
+        
+        return false;
     }
-
-    public interface OnPreparedListener {
-        void onPrepared();
+    
+    private void clearMessage() {
+        mInnerHandler.removeMessages(WHAT_CHECK_UPLOAD_INFO);
+    }
+    
+    private void onCheckUploadInfo() {
+        if (null != mCapture) {
+            mUploadStatistic.time = 0;
+            long ret = MediaSDK.CaptureStatInfo(mCapture.getCaptureId(), mUploadStatistic);
+            
+            if (0 == ret) {
+                if (mUploadStatistic.time > 0) {
+                    onSuccess();
+                } else {
+                    mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_UPLOAD_INFO, DELAY_CHECK_UPLOAD_INFO);
+                }
+            }
+        }
+    }
+    
+    private void onSuccess() {
+        if (null != mMediaRecorderListener) {
+            mMediaRecorderListener.onSuccess();
+        }
+    }
+    
+    private void onError() {
+        if (null != mMediaRecorderListener) {
+            mMediaRecorderListener.onError();
+        }
     }
 }

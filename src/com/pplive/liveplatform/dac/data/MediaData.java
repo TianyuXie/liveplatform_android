@@ -30,7 +30,7 @@ public interface MediaData extends CommonData {
     
     static final String KEY_DRAGGING_COUNT = "DC";
     
-    static final String KEY_SDK_RUNNING = "PK";
+    static final String KEY_SDK_RUNNING = "DKE";
     
     static final String KEY_PLAY_PROTOCOL = "PP";
     

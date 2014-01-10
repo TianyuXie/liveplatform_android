@@ -44,11 +44,11 @@ import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.live.FooterBarFragment;
-import com.pplive.liveplatform.ui.live.LiveMediaRecoder;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
 import com.pplive.liveplatform.ui.live.record.MediaManager;
+import com.pplive.liveplatform.ui.live.record.MediaRecorderListener;
 import com.pplive.liveplatform.ui.live.record.MediaRecorderView;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.ChatBox;
@@ -77,15 +77,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private static final int WHAT_LIVE_KEEP_ALIVE = 9006;
 
+    private static final int WHAT_INVALIDATE_DOOR = 9007;
+
     private static final int WHAT_OPEN_DOOR = 9010;
 
     private static final int WHAT_LIVE_FAILED = 9100;
 
-    private static final int CHAT_SHORT_DELAY = 5000;
+    private static final int DELAY_CHAT_SHORT = 5000;
 
-    private static final int CHAT_LONG_DELAY = 10000;
-
-    private static final int WHAT_INVALIDATE_DOOR = 9007;
+    private static final int DLEAY_CHAT_LONG = 10000;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -199,7 +199,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         setContentView(R.layout.activity_live_record);
 
         mMediaRecorderView = (MediaRecorderView) findViewById(R.id.media_recorder_view);
-        mMediaRecorderView.setOnErrorListener(new LiveMediaRecoder.OnErrorListener() {
+        mMediaRecorderView.setMediaRecorderListener(new MediaRecorderListener() {
+
+            @Override
+            public void onSuccess() {
+                Log.d(TAG, "onSuccess");
+
+                if (null != mLivingProgram && LiveStatusEnum.PREVIEW == mLivingProgram.getLiveStatus()) {
+                    LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram);
+                }
+
+                if (null != mPublishDacStat) {
+                    mPublishDacStat.setIsSuccess(true);
+                    mPublishDacStat.onPlayReleayStart();
+                    obtainCodecParams();
+                }
+            }
 
             @Override
             public void onError() {
@@ -547,14 +562,14 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mChating = true;
         mChatButton.setSelected(true);
         mChatBox.setVisibility(View.VISIBLE);
-        mChatBox.setDelay(CHAT_SHORT_DELAY, CHAT_SHORT_DELAY);
+        mChatBox.setDelay(DELAY_CHAT_SHORT, DELAY_CHAT_SHORT);
         mChatBox.refresh(0);
     }
 
     private void stopChating() {
         mChating = false;
         mChatBox.setVisibility(View.GONE);
-        mChatBox.setDelay(CHAT_LONG_DELAY, CHAT_LONG_DELAY);
+        mChatBox.setDelay(DLEAY_CHAT_LONG, DLEAY_CHAT_LONG);
         mChatButton.setSelected(false);
     }
 
@@ -584,14 +599,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mMediaRecorderView.setOutputPath(mLivingUrl);
         mMediaRecorderView.startRecording();
 
-        mPublishDacStat.setIsSuccess(true);
-        mPublishDacStat.onPlayReleayStart();
-        obtainCodecParams();
-
         mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
 
-        mChatBox.setDelay(CHAT_LONG_DELAY, CHAT_LONG_DELAY);
+        mChatBox.setDelay(DLEAY_CHAT_LONG, DLEAY_CHAT_LONG);
         mChatBox.start(mLivingProgram.getId());
     }
 
@@ -623,11 +634,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         sendDac();
     }
 
-    private void stopLiving(Program program) {
-        String username = UserManager.getInstance(getApplicationContext()).getUsernamePlain();
-        String coToken = UserManager.getInstance(getApplicationContext()).getToken();
-
-        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(coToken, program, LiveStatusEnum.STOPPED, username);
+    private void stopLiving(final Program program) {
+        if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus()) {
+            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program);
+        }
     }
 
     private void performOnClickStartRecording() {
@@ -797,15 +807,11 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 }
 
                 if (LiveStatusEnum.NOT_START == program.getLiveStatus()) {
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.INIT);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program);
                 }
 
                 if (LiveStatusEnum.INIT == program.getLiveStatus()) {
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.PREVIEW);
-                }
-
-                if (LiveStatusEnum.PREVIEW == program.getLiveStatus()) {
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program, LiveStatusEnum.LIVING);
+                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program);
                 }
 
                 Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());

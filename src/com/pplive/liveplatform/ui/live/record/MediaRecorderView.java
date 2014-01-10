@@ -31,7 +31,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     private LiveMediaRecoder mMediaRecoder;
     private String mOutputPath;
 
-    private LiveMediaRecoder.OnErrorListener mOnErrorListener;
+    private MediaRecorderListener mMediaRecorderListener;
 
     private boolean mRecording = false;
 
@@ -76,8 +76,8 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         mOutputPath = path;
     }
 
-    public void setOnErrorListener(LiveMediaRecoder.OnErrorListener listener) {
-        mOnErrorListener = listener;
+    public void setMediaRecorderListener(MediaRecorderListener listener) {
+        mMediaRecorderListener = listener;
     }
 
     public boolean isPreviewing() {
@@ -195,7 +195,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
             Log.d(TAG, "startRecording 2");
 
             mMediaRecoder = new LiveMediaRecoder(getContext(), mCamera);
-            mMediaRecoder.setOnErrorListener(mOnErrorListener);
+            mMediaRecoder.setMediaRecorderListener(mMediaRecorderListener);
             mMediaRecoder.setOutputPath(mOutputPath);
 
             mMediaRecoder.start();
