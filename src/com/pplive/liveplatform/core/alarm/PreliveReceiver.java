@@ -34,11 +34,11 @@ public class PreliveReceiver extends BroadcastReceiver {
                 NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
                 Notification notification = new Notification();
                 notification.icon = R.drawable.ic_launcher;
-                notification.tickerText = context.getString(R.string.prelive_default_message);
+                notification.tickerText = context.getString(R.string.alert_prelive_default_message);
                 notification.defaults = Notification.DEFAULT_SOUND;
                 notification.audioStreamType = android.media.AudioManager.ADJUST_LOWER;
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
-                notification.setLatestEventInfo(context, context.getString(R.string.prelive_title), context.getString(R.string.prelive_default_message),
+                notification.setLatestEventInfo(context, context.getString(R.string.alert_prelive_title), context.getString(R.string.alert_prelive_default_message),
                         pendingIntent);
                 manager.notify(1, notification);
             }

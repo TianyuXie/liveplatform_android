@@ -542,7 +542,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case DELETED:
             case SYS_DELETED:
                 Log.d(TAG, "Stopped!");
-                DialogManager.playendDialog(LivePlayerActivity.this).show();
+                DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
                 break;
             case LIVING:
                 if (mInterrupted) {
@@ -764,7 +764,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.setBreakVisibility(View.GONE);
 
         mWatchDacStat.setIsSuccess(true);
-        mWatchDacStat.onPlayReleayStart();
+        mWatchDacStat.onPlayRealStart();
     }
 
     @Override

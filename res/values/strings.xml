@@ -31,6 +31,7 @@
 
     <!-- For network -->
     <string name="mobile_alert_title">爱播提醒您</string>
+    <string name="mobile_alert_network_title">流量提醒</string>
     <string name="mobile_go_settings">去设置</string>
     <string name="mobile_i_know">知道了</string>
     <string name="mobile_next_time">下次再说</string>
@@ -45,7 +46,7 @@
     <string name="update_cancel">取消</string>
     <string name="update_download_error">下载失败</string>
     <string name="update_title">软件更新</string>
-    <string name="update_ing">正在下载&#8230;</string>
+    <string name="update_ing"><![CDATA[正在下载...]]></string>
     <string name="update_no_update_information">没有升级信息</string>
 
 </resources>

@@ -126,7 +126,7 @@ public class SettingsActivity extends Activity {
     private View.OnClickListener onLogoutBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Dialog dialog = DialogManager.logoutAlertDialog(SettingsActivity.this, new DialogInterface.OnClickListener() {
+            Dialog dialog = DialogManager.alertLogoutDialog(SettingsActivity.this, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     UserManager.getInstance(SettingsActivity.this).logout();

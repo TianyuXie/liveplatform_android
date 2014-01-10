@@ -10,7 +10,7 @@ public abstract class DacStat implements Serializable {
 
     private static final long serialVersionUID = -2416309042028184210L;
 
-    private static final String TAG = DacStat.class.getSimpleName();
+    static final String TAG = DacStat.class.getSimpleName();
 
     private Map<String, String> mMetaItems = new LinkedHashMap<String, String>();
 

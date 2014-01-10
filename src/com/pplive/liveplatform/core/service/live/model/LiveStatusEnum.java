@@ -9,6 +9,11 @@ public enum LiveStatusEnum {
     
     @SerializedName("living")
     LIVING {
+        
+        @Override
+        public LiveStatusEnum nextStatus() {
+            return STOPPED;
+        }
 
         @Override
         public String toString() {
@@ -23,6 +28,12 @@ public enum LiveStatusEnum {
     
     @SerializedName("notstart")
     NOT_START {
+        
+        @Override
+        public LiveStatusEnum nextStatus() {
+            
+            return INIT;
+        }
 
         @Override
         public String toString() {
@@ -37,6 +48,11 @@ public enum LiveStatusEnum {
 
     @SerializedName("init")
     INIT {
+        
+        @Override
+        public LiveStatusEnum nextStatus() {
+            return PREVIEW;
+        }
 
         @Override
         public String toString() {
@@ -51,6 +67,12 @@ public enum LiveStatusEnum {
 
     @SerializedName("preview")
     PREVIEW {
+        
+        @Override
+        public LiveStatusEnum nextStatus() {
+            
+            return LIVING;
+        }
 
         @Override
         public String toString() {
@@ -93,7 +115,7 @@ public enum LiveStatusEnum {
 
     @SerializedName("sysdeleted")
     SYS_DELETED {
-
+        
         @Override
         public String toString() {
             return "sysdeleted";
@@ -106,5 +128,9 @@ public enum LiveStatusEnum {
     };
     
     public abstract String toFriendlyString(Context context);
+    
+    public LiveStatusEnum nextStatus() {
+        return null;
+    }
 
 }
