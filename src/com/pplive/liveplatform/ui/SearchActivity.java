@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.RadioGroup;
@@ -50,6 +51,8 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
 
     private View mRetryLayout;
 
+    private View mShadowView;
+
     private TextView mResultText;
 
     @Override
@@ -70,6 +73,9 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         mResultText = (TextView) findViewById(R.id.text_search_result);
 
         mLiveStatus = LiveStatusKeyword.LIVING;
+
+        mShadowView = findViewById(R.id.layout_search_shadow);
+        mShadowView.setOnTouchListener(onTouchListener);
     }
 
     @Override
@@ -86,7 +92,7 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
                 finish();
                 break;
             case R.id.btn_searchbar_search:
-                mSearchBar.hideRecordList();
+                mSearchBar.clearFocus();
                 startSearchTask(mSearchBar.getText().toString());
                 break;
             }
@@ -228,16 +234,27 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
     @Override
     public void onShowRecord(boolean show) {
         if (show) {
-            findViewById(R.id.layout_search_shadow).setVisibility(View.VISIBLE);
+            mShadowView.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.layout_search_shadow).setVisibility(View.GONE);
+            mShadowView.setVisibility(View.GONE);
         }
     }
-    
+
     @Override
     protected void onStop() {
         ImageLoader.getInstance().clearMemoryCache();
         super.onStop();
     }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.d(TAG, "onTouch");
+                mSearchBar.clearFocus();
+            }
+            return false;
+        }
+    };
 
 }

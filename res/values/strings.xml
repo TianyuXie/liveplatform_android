@@ -19,7 +19,6 @@
     <string name="program_status_living">正在直播</string>
     <string name="program_status_stopped">直播录像</string>
     <string name="default_share_target_url">http://i.pptv.com</string>
-    <string name="default_share_image_url">http://static9.pplive.cn/liveplatform/v_20131231224246/css/pub/sprite_logo.png</string>
 
     <!-- For Test -->
     <string name="test_player_live">Live</string>

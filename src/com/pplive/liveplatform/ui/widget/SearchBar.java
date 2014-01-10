@@ -107,16 +107,17 @@ public class SearchBar extends LinearLayout {
                 if (mCallbackListener != null) {
                     mCallbackListener.onShowRecord(true);
                 }
+            } else {
+                hideRecordList();
             }
         }
     };
 
-    public void hideRecordList() {
+    private void hideRecordList() {
         mRecordListView.setVisibility(GONE);
         if (mCallbackListener != null) {
             mCallbackListener.onShowRecord(false);
         }
-        mSearchEditText.clearFocus();
     }
 
     private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {

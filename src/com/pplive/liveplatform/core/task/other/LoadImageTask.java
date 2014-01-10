@@ -3,6 +3,7 @@ package com.pplive.liveplatform.core.task.other;
 import java.io.IOException;
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -55,8 +56,14 @@ public class LoadImageTask extends Task {
         }
         TaskContext context = params[0];
         String url = context.getString(KEY_URL);
-        Bitmap bitmap = null;
         TaskResult result = new TaskResult(TaskStatus.Finished);
+        if (TextUtils.isEmpty(url)) {
+            result.setStatus(TaskStatus.Failed);
+            result.setMessage("url is empty");
+            result.setContext(context);
+            return result;
+        }
+        Bitmap bitmap = null;
         try {
             bitmap = ImageUtil.loadImageFromUrl(url, 120.0f, 90.0f);
         } catch (IOException e) {
