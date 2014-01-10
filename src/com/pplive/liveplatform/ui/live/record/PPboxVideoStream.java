@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.live.record;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
 import android.annotation.TargetApi;
@@ -36,14 +38,15 @@ public class PPboxVideoStream extends PPboxStream {
             long time_stamp = System.nanoTime() - mStartTime;
 
             Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
-
+            data.toString();
             if (cur_time - last_put_preview_time > put_preview_interval) {
                 PPboxStream.InBuffer buffer = pop();
                 if (buffer == null) {
                     ++num_drop;
                 } else {
                     Log.d(TAG, "image size: " + data.length);
-
+                    String str = new String(data);
+                    Log.d("zhangxianjia", str);
                     buffer.byte_buffer().put(data);
                     put(time_stamp / 1000, buffer);
                     last_put_preview_time = cur_time;
@@ -59,6 +62,31 @@ public class PPboxVideoStream extends PPboxStream {
             camera.addCallbackBuffer(data);
         }
     };
+    
+/*    public void outputFileTest(Byte[] data) {
+        File myTempFile = new File("/mnt/sdcard/videopreview");
+        FileOutputStream fos = new FileOutputStream(myTempFile);
+
+        byte buf[] = new byte[128];
+        int len = data.length;
+        do {
+
+            fos.write(buf, 0, numread);
+            cLen += numread;
+            // Log.e("----------update-----------",cLen+"/"+len);
+        } while (true);
+        try {
+            is.close();
+        } catch (Exception e) {
+
+        }
+
+        try {
+            fos.close();
+        } catch (Exception e) {
+
+        }
+    }*/
 
     public PPboxVideoStream(long capture, int itrack, long startTime, Camera camera) {
         super(capture, startTime);
