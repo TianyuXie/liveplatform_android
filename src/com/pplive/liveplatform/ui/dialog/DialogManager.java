@@ -61,6 +61,7 @@ public class DialogManager {
         builder.setMessage(R.string.no_network_message);
         builder.setPositiveButton(R.string.no_network_confirm, positiveListener);
         builder.setNegativeButton(R.string.no_network_cancel, negativeListener);
+        
         return builder.create();
     }
 
