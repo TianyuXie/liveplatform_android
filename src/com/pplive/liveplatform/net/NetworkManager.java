@@ -57,6 +57,7 @@ public class NetworkManager extends BroadcastReceiver {
     }
 
     public static NetworkState getCurrentNetworkState() {
+        Log.d(TAG, "Current Network State: " + sCurrentNetworkState);
         return sCurrentNetworkState;
     }
 
