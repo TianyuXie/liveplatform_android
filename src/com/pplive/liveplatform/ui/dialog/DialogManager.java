@@ -52,15 +52,15 @@ public class DialogManager {
         return builder.create();
     }
 
-    public static Dialog alertNoNetworkDialog(final Activity playerActivity, DialogInterface.OnClickListener positiveListener,
+    public static Dialog alertNoNetworkDialog(final Context context, DialogInterface.OnClickListener positiveListener,
             DialogInterface.OnClickListener negativeListener) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_network_title);
-        builder.setMessage(R.string.mobile_not_unicom);
-        builder.setPositiveButton(R.string.mobile_play_start, positiveListener);
-        builder.setNegativeButton(R.string.mobile_play_stop, negativeListener);
+        builder.setTitle(R.string.mobile_alert_title);
+        builder.setMessage(R.string.no_network_message);
+        builder.setPositiveButton(R.string.no_network_confirm, positiveListener);
+        builder.setNegativeButton(R.string.no_network_cancel, negativeListener);
         return builder.create();
     }
 

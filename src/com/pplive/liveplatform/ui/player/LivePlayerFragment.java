@@ -4,7 +4,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import android.app.Service;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
@@ -27,19 +26,16 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.widget.VerticalSeekBar;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
@@ -91,6 +87,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private TextView mFinishText;
 
+    private TextView mBreakView;
+
     private View mRoot;
 
     private CircularImageView mUserIcon;
@@ -132,6 +130,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mVideoView = (MeetVideoView) mRoot.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) mRoot.findViewById(R.id.btn_player_mode);
         mCountTextView = (TextView) mRoot.findViewById(R.id.text_player_countdown);
+        mBreakView = (TextView) mRoot.findViewById(R.id.text_player_break);
 
         mController = (LivePlayerController) mRoot.findViewById(R.id.live_player_controller);
         mController.setCallbackListener(this);
@@ -159,37 +158,31 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void setupPlayer(final String url) {
         if (getActivity() != null) {
-            switch (NetworkManager.getCurrentNetworkState()) {
-            case WIFI:
-            case UNKNOWN:
-                setupVideoView(url);
-                break;
-            case FAST_MOBILE:
-            case MOBILE:
-                DialogManager.alertMobileDialog(getActivity(), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        setupVideoView(url);
-                    }
-                }).show();
-                break;
-            case DISCONNECTED:
-                DialogManager.alertNoNetworkDialog(getActivity(), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        setupVideoView(url);
-                    }
-                }, new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        getActivity().finish();
-                    }
-                }).show();
-                break;
-            default:
-                break;
-            }
+            //            switch (NetworkManager.getCurrentNetworkState()) {
+            //            case WIFI:
+            //            case UNKNOWN:
+            setupVideoView(url);
+            //                break;
+            //            case FAST_MOBILE:
+            //            case MOBILE:
+            //                DialogManager.alertMobileDialog(getActivity(), new DialogInterface.OnClickListener() {
+            //                    @Override
+            //                    public void onClick(DialogInterface dialog, int which) {
+            //                        setupVideoView(url);
+            //                    }
+            //                }).show();
+            //                break;
+            //            case DISCONNECTED:
+            //                DialogManager.alertNoNetworkDialog(getActivity(), new DialogInterface.OnClickListener() {
+            //                    @Override
+            //                    public void onClick(DialogInterface dialog, int which) {
+            //                        setupVideoView(url);
+            //                    }
+            //                }).show();
+            //                break;
+            //            default:
+            //                break;
+            //            }
         }
     }
 
@@ -319,7 +312,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onResume();
         Log.d(TAG, "onResume");
         mVideoView.resume();
-        if (mSavedPostion > 0) {
+        if (mSavedPostion > 0 && mProgram.isVOD()) {
             mVideoView.seekTo(mSavedPostion);
             mSavedPostion = 0;
         }
@@ -328,7 +321,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     @Override
     public void onPause() {
         Log.d(TAG, "onPause");
-        if (mVideoView.isPlaying()) {
+        if (mVideoView.isPlaying() && mProgram.isVOD()) {
             mSavedPostion = mVideoView.getCurrentPosition();
         } else {
             mSavedPostion = 0;
@@ -366,9 +359,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 hideBars();
                 break;
             case TIMEOUT:
-                if (getActivity() != null) {
-                    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
-                }
+                //if (getActivity() != null) {
+                //    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
+                //}
                 break;
             default:
                 break;
@@ -492,7 +485,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         int flags = mViewFlags & mFlagMask;
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_titlebar), flags & FLAG_TITLE_BAR);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_bottombar), flags & FLAG_BOTTOM_BAR);
-        ViewUtil.setVisibility(mUserIcon, flags & FLAG_USER_VIEW);
+        ViewUtil.setVisibility(mIconWrapper, flags & FLAG_USER_VIEW);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.wrapper_player_controller), flags & FLAG_TIME_BAR);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_volume), flags & FLAG_VOLUME_BAR);
     }
@@ -707,8 +700,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     }
 
-    public void setBreakVisibility(int visibility) {
-        mRoot.findViewById(R.id.text_player_break).setVisibility(visibility);
+    public void hideBreakInfo() {
+        mBreakView.setVisibility(View.GONE);
+    }
+
+    public void showBreakInfo(String message) {
+        mBreakView.setVisibility(View.VISIBLE);
+        mBreakView.setText(message);
     }
 
     @Override
