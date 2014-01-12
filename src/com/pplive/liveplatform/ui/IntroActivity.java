@@ -66,6 +66,7 @@ public class IntroActivity extends Activity {
         mViewPager.setCurrentItem(1);
 
         mFirstTime = SettingsProvider.getInstance(this).isFirstLaunch();
+        SettingsProvider.getInstance(getApplicationContext()).setTokenChecked(false);
         DacSender.sendAppStartDac(getApplicationContext(), mFirstTime);
     }
 

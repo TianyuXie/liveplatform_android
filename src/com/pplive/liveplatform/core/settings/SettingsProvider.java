@@ -13,6 +13,7 @@ public class SettingsProvider {
     private static final String KEY_TOKEN = "token";
     private static final String KEY_ICON = "icon";
     private static final String KEY_THIRDPARTY = "thirdparty";
+    private static final String KEY_TOKENCHECKED = "token_checked";
     private static final String KEY_FIRST_LAUNCH = "first_launch";
     private static final String KEY_FIRST_HOME = "first_home";
 
@@ -80,6 +81,10 @@ public class SettingsProvider {
         return result;
     }
 
+    public boolean isTokenChecked() {
+        return sharedPreferences.getBoolean(KEY_TOKENCHECKED, false);
+    }
+
     public void clearUser() {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(KEY_PRIVATE, "");
@@ -107,6 +112,12 @@ public class SettingsProvider {
     public void setThirdparty(int thirdparty) {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putInt(KEY_THIRDPARTY, thirdparty);
+        editor.commit();
+    }
+
+    public void setTokenChecked(boolean checked) {
+        SharedPreferences.Editor editor = this.sharedPreferences.edit();
+        editor.putBoolean(KEY_TOKENCHECKED, checked);
         editor.commit();
     }
 }

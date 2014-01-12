@@ -24,6 +24,14 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.TaskCancelEvent;
+import com.pplive.liveplatform.core.task.TaskContext;
+import com.pplive.liveplatform.core.task.TaskFailedEvent;
+import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.core.task.user.TokenTask;
 import com.pplive.liveplatform.dac.info.LocationInfo;
 import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.location.Locator.LocationData;
@@ -108,6 +116,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
             mHelpView.setVisibility(View.GONE);
         }
         Update.doUpdateAPP(this);
+        checkToken();
     }
 
     @Override
@@ -366,4 +375,40 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     public void onLocationError(String message) {
     }
 
+    private void checkToken() {
+        TokenTask task = new TokenTask();
+        task.addTaskListener(onTokenTaskListener);
+        TaskContext taskContext = new TaskContext();
+        taskContext.set(TokenTask.KEY_USERNAME, UserManager.getInstance(this).getUsernamePlain());
+        taskContext.set(TokenTask.KEY_PASSWORD, UserManager.getInstance(this).getPasswordPlain());
+        taskContext.set(TokenTask.KEY_TOKEN, UserManager.getInstance(this).getToken());
+        taskContext.set(TokenTask.KEY_THIRDPARTY, UserManager.getInstance(this).isThirdPartyLogin());
+        task.execute(taskContext);
+    }
+
+    private Task.OnTaskListener onTokenTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            SettingsProvider.getInstance(HomeActivity.this).setTokenChecked(true);
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            UserManager.getInstance(HomeActivity.this).resetToken();
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        }
+
+    };
 }

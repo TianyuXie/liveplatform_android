@@ -25,6 +25,8 @@ public class UserManager {
 
     private String mUsernamePlain;
 
+    private String mPasswordPlain;
+
     private String mToken;
 
     private String mNickname;
@@ -32,8 +34,6 @@ public class UserManager {
     private String mIcon;
 
     private Context mContext;
-
-    private boolean mThirdPartyLogin;
 
     private int mThirdPartySource;
 
@@ -46,7 +46,13 @@ public class UserManager {
             mNickname = SettingsProvider.getInstance(context).getNickname();
             mIcon = SettingsProvider.getInstance(context).getIcon();
             mThirdPartySource = SettingsProvider.getInstance(context).getThirdParty();
-            mUsernamePlain = EncryptUtil.decrypt(mUserPrivate, mImei).split(String.valueOf((char) 0x01))[0];
+            String[] infos = EncryptUtil.decrypt(mUserPrivate, mImei).split(String.valueOf((char) 0x01));
+            mUsernamePlain = infos[0];
+            if (infos.length > 1) {
+                mPasswordPlain = infos[1];
+            } else {
+                mPasswordPlain = "";
+            }
         }
     }
 
@@ -57,11 +63,11 @@ public class UserManager {
     }
 
     public boolean isLogin() {
-        return !TextUtils.isEmpty(mUserPrivate);
+        return !TextUtils.isEmpty(mUserPrivate) && !TextUtils.isEmpty(mToken);
     }
 
     public boolean isLogin(String username) {
-        return !TextUtils.isEmpty(mUserPrivate) && !TextUtils.isEmpty(mUsernamePlain) && mUsernamePlain.equals(username);
+        return isLogin() && !TextUtils.isEmpty(mUsernamePlain) && mUsernamePlain.equals(username);
     }
 
     public boolean isPPTVLogin() {
@@ -78,10 +84,6 @@ public class UserManager {
 
     public boolean isTencentLogin() {
         return isThirdPartyLogin() && mThirdPartySource == LoginResult.FROM_TENCENT;
-    }
-
-    public boolean isThirdPartyLoginCurrent() {
-        return isLogin() && mThirdPartyLogin && mThirdPartySource > 0;
     }
 
     public void login(String usrPlain, String pwdPlain, String token) {
@@ -102,11 +104,9 @@ public class UserManager {
             if (isSinaLogin()) {
                 Log.d(TAG, "Sina logout");
                 WeiboPassport.getInstance().logout(mContext);
-                mThirdPartyLogin = false;
             } else if (isTencentLogin()) {
                 Log.d(TAG, "Tencent logout");
                 TencentPassport.getInstance().logout(mContext);
-                mThirdPartyLogin = false;
             }
             SettingsProvider.getInstance(mContext).clearUser();
             mThirdPartySource = 0;
@@ -137,7 +137,6 @@ public class UserManager {
 
     public void setThirdParty(int thirdParty) {
         if (isLogin()) {
-            mThirdPartyLogin = true;
             mThirdPartySource = thirdParty;
             SettingsProvider.getInstance(mContext).setThirdparty(thirdParty);
         }
@@ -171,11 +170,23 @@ public class UserManager {
         }
     }
 
+    public String getPasswordPlain() {
+        if (isLogin()) {
+            return mPasswordPlain;
+        } else {
+            return "";
+        }
+    }
+
     public String getToken() {
         if (isLogin()) {
             return mToken;
         } else {
             return "";
         }
+    }
+
+    public void resetToken() {
+        mToken = "";
     }
 }
