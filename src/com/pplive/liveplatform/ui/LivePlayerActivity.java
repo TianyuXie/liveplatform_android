@@ -209,10 +209,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             mLivePlayerFragment.setupPlayer(mUrl);
         }
         mChatBox.start(mProgram.getId());
-        if (mProgram.isLiving()) {
-            keepAliveDelay(0);
-        }
-
+        keepAliveDelay(0);
     }
 
     private void startGetMedia() {
@@ -546,7 +543,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 break;
             case LIVING:
                 if (mInterrupted) {
-                    //TODO
+                    //TODO should get new url
                     Log.d(TAG, "Interrupted, Retry...");
                     mLivePlayerFragment.setBreakVisibility(View.VISIBLE);
                     if (!TextUtils.isEmpty(mUrl)) {
@@ -612,7 +609,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "MediaTask onTaskFailed: " + event.getMessage());
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
-
             mWatchDacStat.onMediaServerResponse();
         }
 
@@ -625,34 +621,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
         }
     };
-
-    public void showLoading() {
-        mRotatable = false;
-        mFirstLoadFinish = false;
-        mSecondLoadFinish = false;
-        mLoadDelayed = false;
-        mFirstLoading = true;
-        mSecondLoading = true;
-        mLivePlayerFragment.initIcon();
-        mLoadingImage.setVisibility(View.VISIBLE);
-        mLoadingButton.startLoading(R.string.player_loading);
-        mCommentWrapper.setVisibility(View.GONE);
-        mChatBox.setVisibility(View.GONE);
-        mWriteBtn.setVisibility(View.GONE);
-    }
-
-    public void hideFirstLoading() {
-        mFirstLoading = false;
-        mLoadingImage.setVisibility(View.GONE);
-        mChatBox.setVisibility(View.VISIBLE);
-        mCommentWrapper.setVisibility(View.VISIBLE);
-        mWriteBtn.setVisibility(View.VISIBLE);
-    }
-
-    public void hideSecondLoading() {
-        mSecondLoading = false;
-        mLoadingButton.hide(true);
-    }
 
     private Handler mHandler = new Handler() {
         @Override
@@ -677,14 +645,30 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
+    public void showLoading() {
+        mRotatable = false;
+        mLoadDelayed = false;
+        mFirstLoadFinish = false;
+        mSecondLoadFinish = false;
+        mFirstLoading = true;
+        mSecondLoading = true;
+        mLivePlayerFragment.initIcon();
+        mLoadingImage.setVisibility(View.VISIBLE);
+        mLoadingButton.startLoading(R.string.player_loading);
+        mCommentWrapper.setVisibility(View.GONE);
+        mChatBox.setVisibility(View.GONE);
+        mWriteBtn.setVisibility(View.GONE);
+    }
+
     private void checkFirstLoading() {
         if (mFirstLoadFinish && mLoadDelayed && !isFinishing() && mFirstLoading) {
             hideFirstLoading();
             if (mProgram.isPrelive()) {
                 mSecondLoadFinish = true;
-                checkSecondLoading();
+                hideSecondLoading();
+                mLivePlayerFragment.onStartPrelive();
+                mLivePlayerFragment.startTimer();
             } else {
-                mLivePlayerFragment.stopTimer();
                 if (!TextUtils.isEmpty(mUrl)) {
                     mLivePlayerFragment.setupPlayer(mUrl);
                 } else {
@@ -697,36 +681,25 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void checkSecondLoading() {
         if (mSecondLoadFinish && !isFinishing() && mSecondLoading) {
             hideSecondLoading();
-            if (mProgram.isPrelive()) {
-                mLivePlayerFragment.onStartPrelive();
-                mLivePlayerFragment.startTimer();
-            } else {
-                mLivePlayerFragment.onStartPlay();
-                mLivePlayerFragment.stopTimer();
-                mRotatable = true;
-            }
+            mLivePlayerFragment.onStartPlay();
+            mRotatable = true;
         }
     }
 
-    public void onEvent(EventNetworkChanged event) {
-        Log.d(TAG, "state: " + event.getNetworkState());
-        switch (event.getNetworkState()) {
-        case MOBILE:
-        case FAST_MOBILE:
-            DialogManager.alertMobileDialog(this, new OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (!TextUtils.isEmpty(mUrl)) {
-                        mLivePlayerFragment.setupPlayerDirect(mUrl);
-                    }
-                }
-            }).show();
-            break;
-        default:
-            break;
-        }
+    public void hideFirstLoading() {
+        mFirstLoading = false;
+        mLoadingImage.setVisibility(View.GONE);
+        mCommentWrapper.setVisibility(View.VISIBLE);
+        mChatBox.setVisibility(View.VISIBLE);
+        mWriteBtn.setVisibility(View.VISIBLE);
     }
 
+    public void hideSecondLoading() {
+        mSecondLoading = false;
+        mLoadingButton.hide(true);
+    }
+
+    // Keep Alive
     private void keepAlive() {
         long pid = mProgram.getId();
         if (pid > 0) {
@@ -739,8 +712,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     private void keepAliveDelay(long delay) {
-        mHandler.removeMessages(MSG_KEEP_ALIVE);
-        mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
+        if (mProgram.isLiving()) {
+            mHandler.removeMessages(MSG_KEEP_ALIVE);
+            mHandler.sendEmptyMessageDelayed(MSG_KEEP_ALIVE, delay);
+        }
+    }
+
+    // Fragment callback
+    @Override
+    public void onPrepare() {
+        mInterrupted = false;
+        mHandler.sendEmptyMessage(MSG_START_PLAY);
+        mLivePlayerFragment.setBreakVisibility(View.GONE);
+
+        mWatchDacStat.setIsSuccess(true);
+        mWatchDacStat.onPlayRealStart();
     }
 
     @Override
@@ -758,22 +744,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    public void onPrepare() {
-        mInterrupted = false;
-        mHandler.sendEmptyMessage(MSG_START_PLAY);
-        mLivePlayerFragment.setBreakVisibility(View.GONE);
-
-        mWatchDacStat.setIsSuccess(true);
-        mWatchDacStat.onPlayRealStart();
-    }
-
-    @Override
     public void onReplay() {
         if (!TextUtils.isEmpty(mUrl)) {
             mLivePlayerFragment.setupPlayer(mUrl);
         }
     }
 
+    // Volume key
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
@@ -798,6 +775,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         return super.onKeyUp(keyCode, event);
     }
 
+    // Dac
     private void initDac() {
         mWatchDacStat = new WatchDacStat();
         mWatchDacStat.onPlayStart();
@@ -823,5 +801,25 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onBufferEnd() {
         mWatchDacStat.onBufferEnd();
+    }
+
+    //Network
+    public void onEvent(EventNetworkChanged event) {
+        Log.d(TAG, "state: " + event.getNetworkState());
+        switch (event.getNetworkState()) {
+        case MOBILE:
+        case FAST_MOBILE:
+            DialogManager.alertMobileDialog(this, new OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (!TextUtils.isEmpty(mUrl)) {
+                        mLivePlayerFragment.setupPlayerDirect(mUrl);
+                    }
+                }
+            }).show();
+            break;
+        default:
+            break;
+        }
     }
 }

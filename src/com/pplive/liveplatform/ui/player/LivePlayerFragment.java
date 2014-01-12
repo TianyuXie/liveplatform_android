@@ -27,7 +27,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -313,7 +312,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onResume();
         Log.d(TAG, "onResume");
         mVideoView.resume();
-        if (mSavedPostion > 0) {
+        if (mSavedPostion > 0 && mProgram.isVOD()) {
             mVideoView.seekTo(mSavedPostion);
             mSavedPostion = 0;
         }
@@ -322,7 +321,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     @Override
     public void onPause() {
         Log.d(TAG, "onPause");
-        if (mVideoView.isPlaying()) {
+        if (mVideoView.isPlaying() && mProgram.isVOD()) {
             mSavedPostion = mVideoView.getCurrentPosition();
         } else {
             mSavedPostion = 0;
@@ -360,9 +359,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 hideBars();
                 break;
             case TIMEOUT:
-                if (getActivity() != null) {
-                    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
-                }
+                //if (getActivity() != null) {
+                //    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
+                //}
                 break;
             default:
                 break;
@@ -486,7 +485,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         int flags = mViewFlags & mFlagMask;
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_titlebar), flags & FLAG_TITLE_BAR);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_bottombar), flags & FLAG_BOTTOM_BAR);
-        ViewUtil.setVisibility(mUserIcon, flags & FLAG_USER_VIEW);
+        ViewUtil.setVisibility(mIconWrapper, flags & FLAG_USER_VIEW);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.wrapper_player_controller), flags & FLAG_TIME_BAR);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_volume), flags & FLAG_VOLUME_BAR);
     }
