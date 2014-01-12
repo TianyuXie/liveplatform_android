@@ -56,10 +56,10 @@ public class DialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_network_title);
-        builder.setMessage(R.string.mobile_not_unicom);
-        builder.setPositiveButton(R.string.mobile_play_start, startListener);
-        builder.setNegativeButton(R.string.mobile_play_stop, new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.mobile_alert_title);
+        builder.setMessage(R.string.no_network_message);
+        builder.setPositiveButton(R.string.no_network_confirm, startListener);
+        builder.setNegativeButton(R.string.no_network_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 playerActivity.finish();

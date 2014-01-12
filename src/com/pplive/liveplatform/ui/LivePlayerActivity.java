@@ -127,6 +127,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mInterrupted;
 
+    private boolean mNetworkDown;
+
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -224,6 +226,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             taskContext.set(Task.KEY_USERNAME, username);
             taskContext.set(Task.KEY_TOKEN, token);
             mediaTask.execute(taskContext);
+            Log.d(TAG, "Start Get media");
         }
     }
 
@@ -542,13 +545,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
                 break;
             case LIVING:
-                if (mInterrupted) {
-                    //TODO should get new url
+                if (mInterrupted && !mNetworkDown) {
                     Log.d(TAG, "Interrupted, Retry...");
-                    mLivePlayerFragment.setBreakVisibility(View.VISIBLE);
-                    if (!TextUtils.isEmpty(mUrl)) {
-                        mLivePlayerFragment.setupPlayerDirect(mUrl);
-                    }
+                    mLivePlayerFragment.showBreakInfo(getString(R.string.player_signal_break));
+                    showWaiting();
+                    startGetMedia();
                     keepAliveDelay(6000);
                 } else {
                     keepAliveDelay(delay * 1000);
@@ -584,6 +585,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Log.d(TAG, "MediaTask onTaskFinished");
             mUrl = null;
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
             Watch.Protocol protocol = watchList.getRecommendedProtocol();
@@ -596,6 +598,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mUrl = watchList.getLive2VODM3U8PlayURL();
                 }
             }
+            Log.d(TAG, "mUrl:" + mUrl);
 
             mWatchDacStat.onMediaServerResponse();
             mWatchDacStat.setPlayStartTime(watchList.getNowTime());
@@ -660,6 +663,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mWriteBtn.setVisibility(View.GONE);
     }
 
+    public void showWaiting() {
+        mLoadDelayed = true;
+        mFirstLoadFinish = false;
+        mSecondLoadFinish = false;
+        mFirstLoading = true;
+        mSecondLoading = true;
+        mLivePlayerFragment.initIcon();
+        mLoadingImage.setVisibility(View.GONE);
+        mLoadingButton.startLoading(R.string.player_waiting);
+        mCommentWrapper.setVisibility(View.VISIBLE);
+        mChatBox.setVisibility(View.VISIBLE);
+        mWriteBtn.setVisibility(View.VISIBLE);
+    }
+
     private void checkFirstLoading() {
         if (mFirstLoadFinish && mLoadDelayed && !isFinishing() && mFirstLoading) {
             hideFirstLoading();
@@ -703,6 +720,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private void keepAlive() {
         long pid = mProgram.getId();
         if (pid > 0) {
+            Log.d(TAG, "keep alive:" + System.currentTimeMillis());
             LiveStatusTask task = new LiveStatusTask();
             task.addTaskListener(onLiveStatusTaskListener);
             TaskContext taskContext = new TaskContext();
@@ -723,8 +741,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     public void onPrepare() {
         mInterrupted = false;
         mHandler.sendEmptyMessage(MSG_START_PLAY);
-        mLivePlayerFragment.setBreakVisibility(View.GONE);
-
+        mLivePlayerFragment.hideBreakInfo();
+        keepAliveDelay(0);
         mWatchDacStat.setIsSuccess(true);
         mWatchDacStat.onPlayRealStart();
     }
@@ -807,16 +825,32 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     public void onEvent(EventNetworkChanged event) {
         Log.d(TAG, "state: " + event.getNetworkState());
         switch (event.getNetworkState()) {
+        case WIFI:
+        case UNKNOWN:
+            mInterrupted = false;
+            mNetworkDown = false;
+            mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
+            showWaiting();
+            startGetMedia();
+            keepAliveDelay(0);
+            break;
         case MOBILE:
         case FAST_MOBILE:
             DialogManager.alertMobileDialog(this, new OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if (!TextUtils.isEmpty(mUrl)) {
-                        mLivePlayerFragment.setupPlayerDirect(mUrl);
-                    }
+                    mInterrupted = false;
+                    mNetworkDown = false;
+                    mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
+                    showWaiting();
+                    startGetMedia();
+                    keepAliveDelay(0);
                 }
             }).show();
+            break;
+        case DISCONNECTED:
+            mNetworkDown = true;
+            mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_break));
             break;
         default:
             break;
