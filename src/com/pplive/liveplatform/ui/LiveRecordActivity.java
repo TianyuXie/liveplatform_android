@@ -217,7 +217,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Log.d(TAG, "onSuccess");
 
                 mReplayCount = 0;
-                
+
                 mPublishDacStat.setIsSuccess(true);
 
                 if (null != mLivingProgram) {
@@ -290,7 +290,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     @Override
     protected void onStart() {
         super.onStart();
-        
+
         Log.d(TAG, "onStart");
 
         EventBus.getDefault().register(this);
@@ -425,10 +425,31 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         switch (NetworkManager.getCurrentNetworkState()) {
         case MOBILE:
-            DialogManager.alertMobile2GLive(this, null, null).show();
+            DialogManager.alertMobile2GLive(this, null, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         case FAST_MOBILE:
-            DialogManager.alertMobile3GPlay(this, null, null).show();
+            DialogManager.alertMobile3GPlay(this, null, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
+            break;
+        case DISCONNECTED:
+            DialogManager.alertNoNetworkDialog(this, null, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         default:
             break;
@@ -762,13 +783,31 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         case UNKNOWN:
             break;
         case FAST_MOBILE:
-            DialogManager.alertMobile3GLive(this, null, null).show();
+            DialogManager.alertMobile3GLive(this, null, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         case MOBILE:
-            DialogManager.alertMobile2GLive(this, null, null).show();
+            DialogManager.alertMobile2GLive(this, null, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         case DISCONNECTED:
-            DialogManager.alertNoNetworkDialog(this, null).show();
+            DialogManager.alertNoNetworkDialog(this, null, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         default:
             break;

@@ -179,6 +179,12 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                     public void onClick(DialogInterface dialog, int which) {
                         setupVideoView(url);
                     }
+                }, new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getActivity().finish();
+                    }
                 }).show();
                 break;
             default:
