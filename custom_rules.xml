@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules" >
+
+    <property
+        name="ship.dir"
+        value="dist" />
+
+    <property
+        name="ship.absolute.dir"
+        location="${ship.dir}" />
+
+    <target
+        name="ship"
+        depends="release" >
+
+        <mkdir dir="${ship.absolute.dir}" />
+
+        <xpath
+            expression="/manifest/@android:versionName"
+            input="${manifest.abs.file}"
+            output="ant.project.version" />
+
+        <copy
+            file="${out.final.file}"
+            tofile="${ship.absolute.dir}/${ant.project.name}-${ant.project.version}.apk" />
+    </target>
+
+    <target
+        name="ship-clean"
+        depends="clean" >
+
+        <delete
+            dir="${ship.absolute.dir}"
+            verbose="${verbose}" />
+    </target>
+
+</project>

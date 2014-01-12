@@ -273,7 +273,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                performStopRecording(true);
+                stopLiving(true);
             }
         });
     }
@@ -289,9 +289,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "onStart");
-
         super.onStart();
+        
+        Log.d(TAG, "onStart");
 
         EventBus.getDefault().register(this);
 
@@ -327,7 +327,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         stopCountDown();
 
-        performStopRecording(false);
+        stopLiving(false);
 
         stopPreview();
 
@@ -678,7 +678,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void performStartRecording() {
+    private void startLiving() {
 
         checkNetworkState();
 
@@ -693,8 +693,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void performStopRecording(boolean stopLiving) {
-        Log.d(TAG, "performStopRecording: " + stopLiving);
+    private void stopLiving(boolean stopLiving) {
+        Log.d(TAG, "stopLiving: " + stopLiving);
         stopRecording(stopLiving);
         stopChating();
 
@@ -749,9 +749,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void onClickBtnLiveRecord() {
         if (!mMediaRecorderView.isRecording()) {
-            performStartRecording();
+            startLiving();
         } else {
-            performStopRecording(true);
+            stopLiving(true);
         }
     }
 
@@ -871,7 +871,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetPushUrlTask = null;
 
             if (StringUtil.isNullOrEmpty(url)) {
-                performStopRecording(true);
+                stopLiving(true);
                 return;
             }
 
