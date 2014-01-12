@@ -38,6 +38,9 @@
     <string name="mobile_play_start">继续播放</string>
     <string name="mobile_play_stop">停止播放</string>
     <string name="mobile_not_unicom">"您正在使用移动数据网络，会产生流量费用，建议使用Wifi网络。"</string>
+    <string name="no_network_confirm">留在此页</string>
+    <string name="no_network_cancel">退出播放</string>
+    <string name="no_network_message">"网络已断开，是否留在播放页面?"</string>
 
     <!-- For update -->
     <string name="update_latest_update">当前版本为V%1$s,已是最新版本</string>
