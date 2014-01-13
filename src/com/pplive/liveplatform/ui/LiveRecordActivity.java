@@ -2,6 +2,7 @@ package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -217,7 +218,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 Log.d(TAG, "onSuccess");
 
                 mReplayCount = 0;
-                
+
                 mPublishDacStat.setIsSuccess(true);
 
                 if (null != mLivingProgram) {
@@ -273,7 +274,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                performStopRecording(true);
+                stopLiving(true);
             }
         });
     }
@@ -289,15 +290,21 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "onStart");
-
         super.onStart();
+
+        Log.d(TAG, "onStart");
 
         EventBus.getDefault().register(this);
 
         mFooterBarFragment.setOnShareBtnClickListener(mOnShareClickListener);
 
         startPreview();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     @Override
@@ -327,7 +334,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         stopCountDown();
 
-        performStopRecording(false);
+        stopLiving(false);
 
         stopPreview();
 
@@ -425,10 +432,50 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         switch (NetworkManager.getCurrentNetworkState()) {
         case MOBILE:
-            DialogManager.alertMobile2GLive(this, null, null).show();
+            DialogManager.alertMobile2GLive(this, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         case FAST_MOBILE:
-            DialogManager.alertMobile3GPlay(this, null, null).show();
+            DialogManager.alertMobile3GPlay(this, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
+            break;
+        case DISCONNECTED:
+            DialogManager.alertNoNetworkDialog(this, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    // TODO Auto-generated method stub
+
+                }
+            }, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
             break;
         default:
             break;
@@ -678,9 +725,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void performStartRecording() {
-
-        checkNetworkState();
+    private void startLiving() {
 
         stopCountDown();
         mFooterBarFragment.onLivingStart();
@@ -693,8 +738,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    private void performStopRecording(boolean stopLiving) {
-        Log.d(TAG, "performStopRecording: " + stopLiving);
+    private void stopLiving(boolean stopLiving) {
+        Log.d(TAG, "stopLiving: " + stopLiving);
         stopRecording(stopLiving);
         stopChating();
 
@@ -749,30 +794,79 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void onClickBtnLiveRecord() {
         if (!mMediaRecorderView.isRecording()) {
-            performStartRecording();
+            if (checkNetworkState()) {
+                return;
+            }
+            
+            startLiving();
         } else {
-            performStopRecording(true);
+            stopLiving(true);
         }
     }
 
-    private void checkNetworkState() {
+    private boolean checkNetworkState() {
+        Log.d(TAG, "checkNetworkState");
         switch (NetworkManager.getCurrentNetworkState()) {
         case WIFI:
             break;
         case UNKNOWN:
             break;
         case FAST_MOBILE:
-            DialogManager.alertMobile3GLive(this, null, null).show();
-            break;
+            DialogManager.alertMobile3GLive(this, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    startLiving();
+                }
+            }, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
+
+            return true;
         case MOBILE:
-            DialogManager.alertMobile2GLive(this, null, null).show();
-            break;
+            DialogManager.alertMobile2GLive(this, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+
+                    startLiving();
+                }
+            }, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
+
+            return true;
         case DISCONNECTED:
-            DialogManager.alertNoNetworkDialog(this, null).show();
-            break;
+            DialogManager.alertNoNetworkDialog(this, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            }, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    finish();
+                }
+            }).show();
+
+            return true;
         default:
             break;
         }
+
+        return false;
     }
 
     private void onClickBtnFlashLight() {
@@ -871,7 +965,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetPushUrlTask = null;
 
             if (StringUtil.isNullOrEmpty(url)) {
-                performStopRecording(true);
+                stopLiving(true);
                 return;
             }
 

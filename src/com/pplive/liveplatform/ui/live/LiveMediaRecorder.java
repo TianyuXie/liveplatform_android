@@ -79,8 +79,6 @@ public class LiveMediaRecorder implements Handler.Callback {
         if (null != mCapture) {
             mRecording = false;
 
-            clearMessage();
-
             mCapture.stop();
             mCapture.close();
             mCapture = null;
@@ -111,10 +109,6 @@ public class LiveMediaRecorder implements Handler.Callback {
         }
 
         return false;
-    }
-
-    private void clearMessage() {
-        mInnerHandler.removeMessages(WHAT_CHECK_UPLOAD_INFO);
     }
 
     private void onCheckUploadInfo() {

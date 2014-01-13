@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules" >
+
+    <property
+        name="ship.dir"
+        value="dist" />
+
+    <property
+        name="ship.absolute.dir"
+        location="${ship.dir}" />
+
+    <property
+        name="app.channel"
+        value="test" />
+
+    <path id="xmltask.antlib" >
+
+        <pathelement path="ant/lib/xmltask.jar" />
+    </path>
+
+    <taskdef
+        name="xmltask"
+        classname="com.oopsconsultancy.xmltask.ant.XmlTask"
+        classpathref="xmltask.antlib" />
+
+    <target
+        name="ship"
+        depends="release" >
+
+        <mkdir dir="${ship.absolute.dir}" />
+
+        <xpath
+            expression="/manifest/@android:versionName"
+            input="${manifest.abs.file}"
+            output="app.version" />
+
+        <copy
+            file="${out.final.file}"
+            tofile="${ship.absolute.dir}/${ant.project.name}-${ant.project.version}.apk" />
+    </target>
+
+    <target
+        name="ship-clean"
+        depends="clean" >
+
+        <delete
+            dir="${ship.absolute.dir}"
+            verbose="${verbose}" />
+    </target>
+
+    <target name="replace-manifest" >
+
+        <xmltask
+            dest="${manifest.abs.file}"
+            source="${manifest.abs.file}" >
+
+            <attr
+                attr="android:value"
+                path="//manifest/application/meta-data[@android:name=&apos;INSTALL_CHANNEL&apos;]"
+                value="${app.channel}" />
+        </xmltask>
+    </target>
+
+</project>

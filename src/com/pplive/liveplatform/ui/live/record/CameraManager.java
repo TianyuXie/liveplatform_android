@@ -106,7 +106,7 @@ public class CameraManager {
         for (Camera.Size s : sizes) {
             Log.d(TAG, "s width: " + s.width + "; height: " + s.height);
             
-            if (s.width >= 352 && (ms.width < 352 || s.width < ms.width || s.height < ms.height)) {
+            if (s.width >= 320 && (ms.width < 320 || s.width < ms.width || s.height < ms.height)) {
                 ms = s;
             }
         }

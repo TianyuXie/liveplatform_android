@@ -16,7 +16,8 @@ import com.pplive.sdk.MediaSDK;
 public class PPboxVideoStream extends PPboxStream {
     
     private Camera mCamera;
-    private boolean mNV21Change = false;
+    
+    private int mDataChange = 0;
 
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 
@@ -29,6 +30,7 @@ public class PPboxVideoStream extends PPboxStream {
 
         private long last_put_preview_time = System.currentTimeMillis();
 
+
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
             ++num_total;
@@ -37,17 +39,35 @@ public class PPboxVideoStream extends PPboxStream {
             long time_stamp = System.nanoTime() - mStartTime;
 
             Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
-            data.toString();
+            Camera.Size size = camera.getParameters().getPreviewSize();
             if (cur_time - last_put_preview_time > put_preview_interval) {
                 PPboxStream.InBuffer buffer = pop();
                 if (buffer == null) {
                     ++num_drop;
                 } else {
                     Log.d(TAG, "image size: " + data.length);
-                    if(mNV21Change){
-                        convertNV21toNV12(data);
+                    byte[] dataChange = new byte[data.length];
+                    switch(mDataChange){
+                    case DevicesChoose.NV12TONV21:
+                        ColorFormat.convertNV21toNV12(data);
+                        dataChange = data;
+                        break;
+                    case DevicesChoose.YV12TOYUV420:
+                        ColorFormat.YV12toYUV420PackedSemiPlanar(data, dataChange, size.width, size.height);
+                        break;
+                    case DevicesChoose.YV12TOYUV420NV21:
+                        ColorFormat.YV12toYUV420PackedSemiPlanar(data, dataChange, size.width, size.height);
+                        ColorFormat.convertNV21toNV12(dataChange);
+                        break;
+                    case DevicesChoose.YV12TOI420:
+                        ColorFormat.YV12toYUV420Planar(data, dataChange, size.width, size.height);
+                        //convertNV21toNV12(dataChange);
+                        break;
+                    case DevicesChoose.NOCHANGE:
+                        dataChange = data;
                     }
-                    buffer.byte_buffer().put(data);
+
+                    buffer.byte_buffer().put(dataChange);
                     put(time_stamp / 1000, buffer);
                     last_put_preview_time = cur_time;
                 }
@@ -80,12 +100,10 @@ public class PPboxVideoStream extends PPboxStream {
         Camera.Size size = p.getPreviewSize();
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             MediaFormat format = MediaManager.getInstance().getSupportedEncodingVideoFormat(MediaManager.MIME_TYPE_VIDEO_AVC, size);
-            if(MediaManager.getInstance().needNV21ToNV12()){
-                mNV21Change = true;
-            }
             mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_VIDEO_AVC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
+        mDataChange = DevicesChoose.getYUV420Switch();
 
         mInSize = pic_size(p);
 
@@ -132,14 +150,5 @@ public class PPboxVideoStream extends PPboxStream {
         camera.addCallbackBuffer(video_buffer);
         camera.setPreviewCallbackWithBuffer(mPreviewCallback);
     }
-    
-    void convertNV21toNV12(byte[] data) {
-        if (null != data) {
-            for (int i = data.length / 2 + 1; i + 2 < data.length; i+=2) {
-                byte tmp = data[i];
-                data[i] = data[i+1];
-                data[i+1] = tmp;
-            }
-        }
-    }
+
 }
