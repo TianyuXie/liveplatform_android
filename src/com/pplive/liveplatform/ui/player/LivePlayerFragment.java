@@ -49,7 +49,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private static final int SHOW_DELAY = 6000;
 
-    private static final int PLAYER_TIMEOUT = 10000;
+    private static final int PLAYER_TIMEOUT = 15000;
 
     private static final int HIDE = 301;
 
@@ -152,40 +152,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         return mRoot;
     }
 
-    public void setupPlayerDirect(String url) {
-        setupVideoView(url);
-    }
-
-    public void setupPlayer(final String url) {
-        if (getActivity() != null) {
-            //            switch (NetworkManager.getCurrentNetworkState()) {
-            //            case WIFI:
-            //            case UNKNOWN:
-            setupVideoView(url);
-            //                break;
-            //            case FAST_MOBILE:
-            //            case MOBILE:
-            //                DialogManager.alertMobileDialog(getActivity(), new DialogInterface.OnClickListener() {
-            //                    @Override
-            //                    public void onClick(DialogInterface dialog, int which) {
-            //                        setupVideoView(url);
-            //                    }
-            //                }).show();
-            //                break;
-            //            case DISCONNECTED:
-            //                DialogManager.alertNoNetworkDialog(getActivity(), new DialogInterface.OnClickListener() {
-            //                    @Override
-            //                    public void onClick(DialogInterface dialog, int which) {
-            //                        setupVideoView(url);
-            //                    }
-            //                }).show();
-            //                break;
-            //            default:
-            //                break;
-            //            }
-        }
-    }
-
     public void syncVolume() {
         int volume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -252,7 +218,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     }
 
-    private void setupVideoView(String url) {
+    public void setupVideoView(String url) {
         Log.d(TAG, "setupVideoView:" + url);
         Uri uri = Uri.parse(url);
         mVideoView.setDecodeMode(DecodeMode.SW);
@@ -359,9 +325,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 hideBars();
                 break;
             case TIMEOUT:
-                //if (getActivity() != null) {
-                //    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
-                //}
+                if (mCallbackListener != null) {
+                    mCallbackListener.onTimeout();
+                }
                 break;
             default:
                 break;
@@ -389,6 +355,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
         @Override
         public boolean onInfo(int what, int extra) {
+            Log.d(TAG, "MeetVideoView: onInfo");
             if (mProgram.isVOD()) {
                 if (what == MeetVideoView.MEDIA_INFO_BUFFERING_START) {
                     mRoot.findViewById(R.id.layout_player_buffering).setVisibility(View.VISIBLE);
@@ -568,6 +535,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onBufferEnd();
 
         public boolean onError(int what, int extra);
+
+        public void onTimeout();
     }
 
     private Callback mCallbackListener;
