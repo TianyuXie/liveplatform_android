@@ -3,10 +3,10 @@
 
     <!-- Network String -->
     <string name="alert_mobile_title">流量提醒</string>
-    <string name="alert_mobile_2g_live_message"><![CDATA[您当前时2G网络哦，\n要现在开始直播吗？]]></string>
-    <string name="alert_mobile_2g_play_message"><![CDATA[您当前时2G网络哦，\n找到wifi在看精彩节目吧？]]></string>
-    <string name="alert_mobile_3g_live_message"><![CDATA[您当前时3G网络哦，\n要现在开始直播吗？]]></string>
-    <string name="alert_mobile_3g_play_message"><![CDATA[您当前时3G网络哦，\n找到wifi在看精彩节目吧？]]></string>
+    <string name="alert_mobile_2g_live_message"><![CDATA[您当前是2G网络哦，\n要现在开始直播吗？]]></string>
+    <string name="alert_mobile_2g_play_message"><![CDATA[您当前是2G网络哦，\n找到wifi再看精彩节目吧？]]></string>
+    <string name="alert_mobile_3g_live_message"><![CDATA[您当前是3G网络哦，\n要现在开始直播吗？]]></string>
+    <string name="alert_mobile_3g_play_message"><![CDATA[您当前是3G网络哦，\n找到wifi再看精彩节目吧？]]></string>
     <string name="alert_mobile_2g_negative">回广场</string>
     <string name="alert_mobile_positive">找找wifi</string>
     <string name="alert_mobile_3g_live_negative">去直播</string>

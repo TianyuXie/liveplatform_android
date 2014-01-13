@@ -11,7 +11,7 @@
 
     <property
         name="app.channel"
-        value="test" />
+        value="dev" />
 
     <path id="xmltask.antlib" >
 
@@ -22,6 +22,23 @@
         name="xmltask"
         classname="com.oopsconsultancy.xmltask.ant.XmlTask"
         classpathref="xmltask.antlib" />
+
+    <target
+        name="-pre-compile"
+        depends="-replace-manifest" />
+
+    <target name="-replace-manifest" >
+
+        <xmltask
+            dest="${out.manifest.abs.file}"
+            source="${out.manifest.abs.file}" >
+
+            <attr
+                attr="android:value"
+                path="//manifest/application/meta-data[@android:name=&apos;INSTALL_CHANNEL&apos;]"
+                value="${app.channel}" />
+        </xmltask>
+    </target>
 
     <target
         name="ship"
@@ -36,29 +53,16 @@
 
         <copy
             file="${out.final.file}"
-            tofile="${ship.absolute.dir}/${ant.project.name}-${ant.project.version}.apk" />
+            tofile="${ship.absolute.dir}/${ant.project.name}-${app.version}.apk" />
     </target>
 
     <target
-        name="ship-clean"
+        name="clean-ship"
         depends="clean" >
 
         <delete
             dir="${ship.absolute.dir}"
             verbose="${verbose}" />
-    </target>
-
-    <target name="replace-manifest" >
-
-        <xmltask
-            dest="${manifest.abs.file}"
-            source="${manifest.abs.file}" >
-
-            <attr
-                attr="android:value"
-                path="//manifest/application/meta-data[@android:name=&apos;INSTALL_CHANNEL&apos;]"
-                value="${app.channel}" />
-        </xmltask>
     </target>
 
 </project>
