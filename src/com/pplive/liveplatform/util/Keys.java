@@ -6,6 +6,4 @@ package com.pplive.liveplatform.util;
  */
 public class Keys {
 
-    public final static String HTTP_USER_AGENT = "http.user_agent";
-
 }

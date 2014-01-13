@@ -352,6 +352,7 @@ public class UserpageActivity extends Activity {
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "onTaskFailed");
             mRefreshDialog.dismiss();
             mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             mPrograms.clear();

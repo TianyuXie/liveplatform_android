@@ -32,8 +32,6 @@ import com.tencent.tauth.UiError;
 public class TencentPassport {
     static final String TAG = "_TencentPassport";
 
-    //    private final static String mAppid = "100570681";
-
     private final static String mAppid = "100585339";
 
     private static TencentPassport sInstance;
@@ -66,7 +64,7 @@ public class TencentPassport {
 
     public void login(Activity activity) {
         mLoginResult = new LoginResult();
-        if (mTencent != null && !mTencent.isSessionValid()) {
+        if (mTencent != null) {
             mTencent.login(activity, "all", loginUiListener);
         } else {
             if (mLoginListener != null) {

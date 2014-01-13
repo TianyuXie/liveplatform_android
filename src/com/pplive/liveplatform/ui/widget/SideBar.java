@@ -176,7 +176,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (UserManager.getInstance(getContext()).isLogin()) {
+            if (UserManager.getInstance(getContext()).isLoginSafely()) {
                 Intent intent = new Intent(getContext(), UserpageActivity.class);
                 intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(getContext()).getUsernamePlain());
                 intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(getContext()).getIcon());
