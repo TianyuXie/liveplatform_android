@@ -2,7 +2,6 @@ package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;

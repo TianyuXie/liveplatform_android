@@ -19,8 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
-        android:paddingBottom="8dp"
-        android:paddingTop="8dp" >
+        android:paddingBottom="12dp"
+        android:paddingTop="3dp" >
 
         <RadioButton
             android:id="@+id/btn_status_living"

@@ -22,7 +22,8 @@
     <string name="home_livestate_replay">直播回看</string>
 
     <!-- color -->
-    <color name="home_fragment_body_bg">#FF1A1A1A</color>
+    <color name="home_fragment_body_bg">#FF121212</color>
+    <color name="home_program_item_bg">#FF272727</color>
     <color name="home_livestate_btn_checked">#FF272727</color>
     <color name="home_livestate_text_checked">#FFAAAAAA</color>
     <color name="home_pull_header_bg">#FFAAAAAA</color>

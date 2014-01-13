@@ -93,7 +93,7 @@ public class Program implements Serializable {
     }
 
     public String getOwnerNickname() {
-        return user != null ? user.getNickname() : owner;
+        return user != null ? user.getNickname().split("\\(")[0] : owner;
     }
 
     public String getOwnerIcon() {

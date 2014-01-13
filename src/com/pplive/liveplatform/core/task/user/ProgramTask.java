@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.task.user;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import android.text.TextUtils;
@@ -68,11 +70,13 @@ public class ProgramTask extends Task {
         if (data == null) {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
+        Collection<Program> removePrograms = new ArrayList<Program>();
         for (Program program : data) {
             if (program.isDeleted() || program.isExpiredPrelive()) {
-                data.remove(program);
+                removePrograms.add(program);
             }
         }
+        data.removeAll(removePrograms);
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
