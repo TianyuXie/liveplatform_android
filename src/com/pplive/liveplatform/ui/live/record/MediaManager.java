@@ -44,15 +44,12 @@ public class MediaManager {
     public static MediaManager getInstance() {
         return sInstance;
     }
-    
-    private boolean mNeedNV21ToNV12 = false;
 
     private MediaManager() {
     };
 
     public MediaFormat getSupportedEncodingVideoFormat(final String mime, final Camera.Size size) {
         int codecCount = MediaCodecList.getCodecCount();
-        mNeedNV21ToNV12 = false;
         for (int i = 0; i < codecCount; ++i) {
             MediaCodecInfo info = MediaCodecList.getCodecInfoAt(i);
 
@@ -69,9 +66,6 @@ public class MediaManager {
                         Log.d(TAG, "color: " + colorFormats[k]);
                         if (colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
                             colorFormat = colorFormats[k];
-                            if(QCOM_ENCODER.equals(info.getName()) || TI_ENCODER.equals(info.getName())){
-                                mNeedNV21ToNV12 = true;
-                            }
                         }
                     }
 
@@ -89,10 +83,6 @@ public class MediaManager {
         }
 
         return null;
-    }
-    
-    public boolean needNV21ToNV12(){
-        return mNeedNV21ToNV12;
     }
 
     public MediaFormat getSupportedEncodingAudioFormat(final String mime, int sampleRate, int channelCount) {

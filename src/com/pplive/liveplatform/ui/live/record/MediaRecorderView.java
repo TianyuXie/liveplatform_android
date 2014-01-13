@@ -163,8 +163,8 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
                 Camera.Size size = CameraManager.getInstance().getMinSize(params);
 
                 params.setPreviewSize(size.width, size.height);
-                params.setPreviewFormat(ImageFormat.NV21);
 
+                params.setPreviewFormat(DevicesChoose.getPreviewImageFormat());
                 mCamera.setParameters(params);
 
                 mConfigured = true;
