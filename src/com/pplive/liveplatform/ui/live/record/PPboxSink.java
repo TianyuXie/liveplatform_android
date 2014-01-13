@@ -45,11 +45,15 @@ public class PPboxSink {
     public PPboxSink(Camera camera) {
         this.mCamera = camera;
     }
+    
+    public long getCaptureId() {
+        return mCaptureId;
+    }
 
     public void setDownloadCallback(Download_Callback callback) {
         mDownloadCallback = callback;
     }
-
+    
     public void open(String url) {
         Log.d(TAG, "url: " + url);
 
@@ -80,7 +84,6 @@ public class PPboxSink {
 
     public void start() {
         mVideoStream.start();
-
         mAudioStream.start();
     }
 

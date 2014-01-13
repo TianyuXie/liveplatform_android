@@ -35,6 +35,7 @@
                 android:visibility="gone" >
             </TextView>
 
+            <!--
             <TextView
                 android:id="@+id/text_header_refreshtime"
                 android:layout_width="wrap_content"
@@ -44,6 +45,7 @@
                 android:textSize="12sp"
                 android:visibility="gone" >
             </TextView>
+            -->
         </LinearLayout>
     </RelativeLayout>
 

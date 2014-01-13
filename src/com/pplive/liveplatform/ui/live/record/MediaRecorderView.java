@@ -12,7 +12,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.pplive.liveplatform.ui.live.LiveMediaRecoder;
+import com.pplive.liveplatform.ui.live.LiveMediaRecorder;
 
 public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -28,12 +28,10 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     private boolean mConfigured = false;
     private boolean mFlashOn = false;
 
-    private LiveMediaRecoder mMediaRecoder;
+    private LiveMediaRecorder mMediaRecoder;
     private String mOutputPath;
 
-    private LiveMediaRecoder.OnErrorListener mOnErrorListener;
-
-    private boolean mRecording = false;
+    private MediaRecorderListener mMediaRecorderListener;
 
     public MediaRecorderView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -76,8 +74,8 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         mOutputPath = path;
     }
 
-    public void setOnErrorListener(LiveMediaRecoder.OnErrorListener listener) {
-        mOnErrorListener = listener;
+    public void setMediaRecorderListener(MediaRecorderListener listener) {
+        mMediaRecorderListener = listener;
     }
 
     public boolean isPreviewing() {
@@ -181,7 +179,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     }
 
     public boolean isRecording() {
-        return mRecording;
+        return null == mMediaRecoder ? false : mMediaRecoder.isRecording();
     }
 
     public void startRecording() {
@@ -194,22 +192,18 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         if (!isRecording()) {
             Log.d(TAG, "startRecording 2");
 
-            mMediaRecoder = new LiveMediaRecoder(getContext(), mCamera);
-            mMediaRecoder.setOnErrorListener(mOnErrorListener);
+            mMediaRecoder = new LiveMediaRecorder(getContext(), mCamera);
+            mMediaRecoder.setMediaRecorderListener(mMediaRecorderListener);
             mMediaRecoder.setOutputPath(mOutputPath);
 
             mMediaRecoder.start();
-
-            mRecording = true;
         }
     }
 
     public void stopRecording() {
-        Log.d(TAG, "stopRecording 1");
+        Log.d(TAG, "stopRecording");
 
         if (isRecording()) {
-            mRecording = false;
-
             mMediaRecoder.stop();
             mMediaRecoder = null;
         }

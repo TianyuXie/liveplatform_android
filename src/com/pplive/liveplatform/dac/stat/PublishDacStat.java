@@ -2,11 +2,19 @@ package com.pplive.liveplatform.dac.stat;
 
 import java.text.MessageFormat;
 
+import android.util.Log;
+
 import com.pplive.liveplatform.dac.data.PublishData;
 
 public class PublishDacStat extends MediaDacStat implements PublishData {
 
     private static final long serialVersionUID = 7102952405135080314L;
+    
+    private long mLastPauseStartTime = -1;
+    
+    private long mPauseTime = 0;
+    
+    private int mPauseCount = 0;
     
     public PublishDacStat() {
         addMetaItem(KEY_LOG_KIND, LOG_KIND_PUBLISH);
@@ -35,4 +43,33 @@ public class PublishDacStat extends MediaDacStat implements PublishData {
     public void setPublishStyle(boolean isPreLive) {
         addValueItem(KEY_PUBLISH_STYLE, isPreLive ? PUBLISH_STYLE_PRE : PUBLISH_STYLE_DIRECT);
     }
+    
+    public void onPauseStart() {
+        Log.d(TAG, "onPauseStart");
+        
+        if (mLastPauseStartTime == -1) {
+            mLastPauseStartTime = System.currentTimeMillis();
+        }
+        
+        addValueItem(KEY_PAUSE_COUNT, ++mPauseCount);
+    }
+    
+    public void onPauseEnd() {
+        Log.d(TAG, "onPauseEnd");
+        
+        if (mLastPauseStartTime > 0) {
+            mPauseTime += (System.currentTimeMillis() - mLastPauseStartTime);
+            addValueItem(KEY_PAUSE_TIME, mPauseTime);
+        }
+        
+        mLastPauseStartTime = -1;
+    }
+    
+    @Override
+    public void onPlayStop() {
+        super.onPlayStop();
+        
+        onPauseEnd();
+    }
+    
 }

@@ -34,7 +34,6 @@ enum Mode {
     LIVING {
         @Override
         public int flags() {
-            // TODO Auto-generated method stub
             return 0;
         }
     };

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="3dp" >
+    android:padding="4dp" >
 
     <com.pplive.liveplatform.ui.widget.image.AsyncImageView
         android:id="@+id/image_program_preview"
@@ -19,7 +19,6 @@
         android:layout_alignTop="@id/image_program_preview"
         android:layout_marginTop="10dp"
         android:background="@drawable/program_tag_bg"
-        android:drawableLeft="@drawable/program_coming_icon"
         android:drawablePadding="3dp"
         android:gravity="center_vertical"
         android:paddingBottom="3dp"
@@ -29,6 +28,7 @@
         android:text="@string/program_live"
         android:textSize="12sp" />
 
+    <!--
     <LinearLayout
         android:id="@+id/divider_program_below_image"
         android:layout_width="fill_parent"
@@ -36,12 +36,13 @@
         android:layout_below="@id/image_program_preview"
         android:background="@color/program_below_image_bg"
         android:orientation="horizontal" />
+    -->
 
     <RelativeLayout
         android:id="@+id/layout_program_info"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/divider_program_below_image"
+        android:layout_below="@id/image_program_preview"
         android:background="@color/black"
         android:padding="6dp" >
 

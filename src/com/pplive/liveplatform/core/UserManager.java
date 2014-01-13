@@ -10,6 +10,7 @@ import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.dac.info.UserInfo;
 import com.pplive.liveplatform.util.EncryptUtil;
 import com.pplive.liveplatform.util.StringUtil;
 
@@ -92,6 +93,7 @@ public class UserManager {
             mUserPrivate = userPrivate;
             mUsernamePlain = usrPlain;
             mToken = token;
+            UserInfo.reset(mContext);
         }
     }
 
@@ -113,6 +115,7 @@ public class UserManager {
             mToken = null;
             mNickname = null;
             mIcon = null;
+            UserInfo.reset(mContext);
         }
     }
 

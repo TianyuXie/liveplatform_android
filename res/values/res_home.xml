@@ -18,14 +18,15 @@
     <string name="home_catalog_finance">财经</string>
     <string name="home_catalog_game">游戏</string>
     <string name="home_livestate_live">正在直播</string>
-    <string name="home_livestate_tolive">即将播出</string>
+    <string name="home_livestate_tolive">即将直播</string>
     <string name="home_livestate_replay">直播回看</string>
 
     <!-- color -->
     <color name="home_fragment_body_bg">#FF1A1A1A</color>
-    <color name="home_livestate_btn_checked">#FF666666</color>
+    <color name="home_livestate_btn_checked">#FF272727</color>
     <color name="home_livestate_text_checked">#FFAAAAAA</color>
     <color name="home_pull_header_bg">#FFAAAAAA</color>
+    <color name="home_help_bg">#AA000000</color>
 
     <style name="home_retry_button">
         <item name="android:layout_width">wrap_content</item>

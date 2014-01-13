@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
 import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
@@ -28,7 +30,7 @@ import com.pplive.liveplatform.ui.home.ProgramContainer;
 import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
 
-public class SearchActivity extends Activity {
+public class SearchActivity extends Activity implements SearchBar.Callback {
     static final String TAG = "_SearchActivity";
 
     private final static int REFRESH = 1000;
@@ -49,6 +51,8 @@ public class SearchActivity extends Activity {
 
     private View mRetryLayout;
 
+    private View mShadowView;
+
     private TextView mResultText;
 
     @Override
@@ -59,6 +63,7 @@ public class SearchActivity extends Activity {
 
         mSearchBar = (SearchBar) findViewById(R.id.searchbar_search);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
+        mSearchBar.setCallbackListener(this);
 
         mContainer = (ProgramContainer) findViewById(R.id.layout_search_body);
         mContainer.setOnUpdateListener(onUpdateListener);
@@ -68,6 +73,9 @@ public class SearchActivity extends Activity {
         mResultText = (TextView) findViewById(R.id.text_search_result);
 
         mLiveStatus = LiveStatusKeyword.LIVING;
+
+        mShadowView = findViewById(R.id.layout_search_shadow);
+        mShadowView.setOnTouchListener(onTouchListener);
     }
 
     @Override
@@ -84,7 +92,7 @@ public class SearchActivity extends Activity {
                 finish();
                 break;
             case R.id.btn_searchbar_search:
-                mSearchBar.hideRecordList();
+                mSearchBar.clearFocus();
                 startSearchTask(mSearchBar.getText().toString());
                 break;
             }
@@ -146,7 +154,7 @@ public class SearchActivity extends Activity {
             switch (type) {
             case REFRESH:
                 if (status == mLiveStatus) {
-                    mContainer.refreshData(fallList.getList());
+                    mContainer.refreshData(fallList.getList(), false);
                     if (fallList.count() != 0) {
                         mRetryLayout.setVisibility(View.GONE);
                     } else {
@@ -220,6 +228,32 @@ public class SearchActivity extends Activity {
 
         @Override
         public void onScrollDown(boolean isDown) {
+        }
+    };
+
+    @Override
+    public void onShowRecord(boolean show) {
+        if (show) {
+            mShadowView.setVisibility(View.VISIBLE);
+        } else {
+            mShadowView.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        ImageLoader.getInstance().clearMemoryCache();
+        super.onStop();
+    }
+
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                Log.d(TAG, "onTouch");
+                mSearchBar.clearFocus();
+            }
+            return false;
         }
     };
 

@@ -18,6 +18,7 @@
     <color name="orange">#FFA500</color>
     <color name="nav_bg">#FF19A0FF</color>
     <color name="nav_text_bg">#FF191919</color>
+    <color name="intro_bg">#FF1a1a1a</color>
 
     <!-- Program -->
     <color name="program_below_image_bg">#FF19A0FF</color>

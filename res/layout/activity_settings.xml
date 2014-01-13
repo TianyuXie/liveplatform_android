@@ -97,7 +97,9 @@
 
             <TableLayout style="@style/settings_tablelayout" >
 
-                <TableRow style="@style/settings_tablerow_switcher" >
+                <TableRow
+                    android:id="@+id/layout_settings_prelive"
+                    style="@style/settings_tablerow_switcher" >
 
                     <TextView
                         style="@style/settings_text"

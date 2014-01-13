@@ -19,7 +19,7 @@ public class Program implements Serializable {
 
     private static final int SUBJECT_ID_ORIGIN = 1;
 
-    long pid;
+    Long pid;
 
     String title;
 
@@ -29,23 +29,23 @@ public class Program implements Serializable {
 
     LiveModeEnum mode;
 
-    long real_starttime;
+    Long real_starttime;
 
-    long real_endtime;
+    Long real_endtime;
 
-    long starttime;
+    Long starttime;
 
-    long insert_time;
+    Long insert_time;
 
     LiveStatusEnum livestatus;
 
-    int subject_id = SUBJECT_ID_ORIGIN;
+    Integer subject_id;
 
     String cover_url;
 
     String screenshot_url;
 
-    String coname = Constants.DEFAULT_CONAME_PPTV;
+    String coname;
 
     Record record;
 
@@ -64,6 +64,8 @@ public class Program implements Serializable {
         this.mode = mode;
         this.title = title;
         this.starttime = starttime;
+        this.subject_id = SUBJECT_ID_ORIGIN;
+        this.coname = Constants.DEFAULT_CONAME_PPTV;
     }
 
     public void setTitle(String title) {
@@ -103,12 +105,12 @@ public class Program implements Serializable {
     }
 
     public String getStartTimeLong() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy.MM.dd", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy-MM-dd", Locale.US);
         return format.format(new Date(starttime));
     }
 
     public String getStartTimeShort() {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy.MM.dd", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
         return format.format(new Date(starttime));
     }
 

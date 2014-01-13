@@ -2,7 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="6dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
 
     <LinearLayout
         android:id="@+id/layout_pull_header"
@@ -16,8 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp" >
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp" >
 
         <RadioButton
             android:id="@+id/btn_status_living"

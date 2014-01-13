@@ -118,7 +118,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         bundle.putString(WeiboPassport.PARAM_TARGET_URL, mTargetUrl);
         bundle.putString(WeiboPassport.PARAM_TITLE, mTitle);
         bundle.putString(WeiboPassport.PARAM_SUMMARY, mSummary);
-        bundle.putParcelable(WeiboPassport.PARAM_BITMAP, ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png"));
+        bundle.putParcelable(WeiboPassport.PARAM_BITMAP, ImageUtil.getBitmapFromAssets(getContext(), "default_share.png"));
         return bundle;
     }
 
@@ -306,7 +306,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             int target = (Integer) event.getContext().get(LoadImageTask.KEY_TARGET);
-            Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
+            Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "default_share.png");
             shareImage(target, bitmap);
         }
 
@@ -320,7 +320,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             int target = (Integer) event.getContext().get(LoadImageTask.KEY_TARGET);
-            Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "ic_launcher.png");
+            Bitmap bitmap = ImageUtil.getBitmapFromAssets(getContext(), "default_share.png");
             shareImage(target, bitmap);
         }
 

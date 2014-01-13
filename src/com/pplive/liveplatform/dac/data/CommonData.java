@@ -22,7 +22,7 @@ public interface CommonData {
     
     static final String KEY_TERMINAL_VERSION = "E";
     
-    static final String KEY_SDK_VERSION = "PD";
+    static final String KEY_SDK_VERSION = "DKV";
     
     static final String KEY_PLAYER_VERSION = "PV";
     

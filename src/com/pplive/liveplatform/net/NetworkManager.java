@@ -57,6 +57,7 @@ public class NetworkManager extends BroadcastReceiver {
     }
 
     public static NetworkState getCurrentNetworkState() {
+        Log.d(TAG, "Current Network State: " + sCurrentNetworkState);
         return sCurrentNetworkState;
     }
 
@@ -68,9 +69,8 @@ public class NetworkManager extends BroadcastReceiver {
         if (ConnectivityManager.CONNECTIVITY_ACTION == intent.getAction()) {
             NetworkState state = getNetworkState(context);
 
-            if (sCurrentNetworkState != state && NetworkState.WIFI != state) {
+            if (sCurrentNetworkState != state) {
                 Log.d(TAG, "Network Type Changed!!!");
-
                 EventBus.getDefault().post(new EventNetworkChanged(state));
             }
 
