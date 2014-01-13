@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,7 +55,11 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     private static final int TIME_BUTTON_SHOW_RESULT = 3000;
 
+    private final static int MSG_RETRY_TOKEN = 2001;
+
     private long mExitTime;
+
+    private Context mContext;
 
     private AnimDoor mAnimDoor;
 
@@ -79,6 +84,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         super.onCreate(bundle);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_home);
+        mContext = this;
 
         mFragmentContainer = (SlidableContainer) findViewById(R.id.layout_home_fragment_container);
         mSideBar = (SideBar) findViewById(R.id.home_sidebar);
@@ -116,7 +122,9 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
             mHelpView.setVisibility(View.GONE);
         }
         Update.doUpdateAPP(this);
-        checkToken();
+        if (UserManager.getInstance(mContext).isLogin()) {
+            checkToken();
+        }
     }
 
     @Override
@@ -195,7 +203,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            Log.d(TAG, "onScroll");
+            //            Log.d(TAG, "onScroll");
 
             float absDistanceX = Math.abs(distanceX);
             float absDistanceY = Math.abs(distanceY);
@@ -218,12 +226,12 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     private View.OnClickListener onStatusClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (UserManager.getInstance(HomeActivity.this).isLogin()) {
+            if (UserManager.getInstance(mContext).isLoginSafely()) {
                 mStatusButton.setClickable(false);
                 rotateButton();
                 mAnimDoor.shut();
             } else {
-                Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+                Intent intent = new Intent(mContext, LoginActivity.class);
                 intent.putExtra(LoginActivity.EXTRA_TAGET, LiveRecordActivity.class.getName());
                 startActivity(intent);
             }
@@ -239,7 +247,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
         @Override
         public void onAnimationEnd(Animation animation) {
-            Intent intent = new Intent(HomeActivity.this, LiveRecordActivity.class);
+            Intent intent = new Intent(mContext, LiveRecordActivity.class);
             startActivity(intent);
         }
 
@@ -376,26 +384,39 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     }
 
     private void checkToken() {
-        TokenTask task = new TokenTask();
-        task.addTaskListener(onTokenTaskListener);
-        TaskContext taskContext = new TaskContext();
-        taskContext.set(TokenTask.KEY_USERNAME, UserManager.getInstance(this).getUsernamePlain());
-        taskContext.set(TokenTask.KEY_PASSWORD, UserManager.getInstance(this).getPasswordPlain());
-        taskContext.set(TokenTask.KEY_TOKEN, UserManager.getInstance(this).getToken());
-        taskContext.set(TokenTask.KEY_THIRDPARTY, UserManager.getInstance(this).isThirdPartyLogin());
-        task.execute(taskContext);
+        if (!isFinishing()) {
+            Log.d(TAG, "start to checkToken...");
+            TokenTask task = new TokenTask();
+            task.addTaskListener(onTokenTaskListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(TokenTask.KEY_USERNAME, UserManager.getInstance(this).getUsernamePlain());
+            taskContext.set(TokenTask.KEY_PASSWORD, UserManager.getInstance(this).getPasswordPlain());
+            taskContext.set(TokenTask.KEY_TOKEN, UserManager.getInstance(this).getToken());
+            taskContext.set(TokenTask.KEY_THIRDPARTY, UserManager.getInstance(this).isThirdPartyLogin());
+            taskContext.set(TokenTask.KEY_NEED_UPDATE, UserManager.getInstance(this).shouldUpdateToken());
+            task.execute(taskContext);
+        }
     }
 
     private Task.OnTaskListener onTokenTaskListener = new Task.OnTaskListener() {
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            SettingsProvider.getInstance(HomeActivity.this).setTokenChecked(true);
+            Log.d(TAG, "checkToken: finished!!");
+            String usrPlain = event.getContext().getString(TokenTask.KEY_USERNAME);
+            String pwdPlain = event.getContext().getString(TokenTask.KEY_PASSWORD);
+            String token = event.getContext().getString(TokenTask.KEY_TOKEN);
+            UserManager.getInstance(mContext).login(usrPlain, pwdPlain, token);
+            if ((Boolean) event.getContext().get(TokenTask.KEY_NEED_UPDATE, true)) {
+                mHandler.removeMessages(MSG_RETRY_TOKEN);
+                mHandler.sendEmptyMessageDelayed(MSG_RETRY_TOKEN, 10000);
+            }
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            UserManager.getInstance(HomeActivity.this).resetToken();
+            Log.d(TAG, "checkToken: failed!!");
+            UserManager.getInstance(mContext).resetToken();
         }
 
         @Override
@@ -404,11 +425,27 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Log.d(TAG, "checkToken: timeout... Will retry immediately!");
+            mHandler.removeMessages(MSG_RETRY_TOKEN);
+            mHandler.sendEmptyMessage(MSG_RETRY_TOKEN);
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "checkToken: canceled!! Will retry after 30s...");
+            mHandler.removeMessages(MSG_RETRY_TOKEN);
+            mHandler.sendEmptyMessageDelayed(MSG_RETRY_TOKEN, 30000);
         }
+    };
 
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+            case MSG_RETRY_TOKEN:
+                checkToken();
+                break;
+            }
+        }
     };
 }

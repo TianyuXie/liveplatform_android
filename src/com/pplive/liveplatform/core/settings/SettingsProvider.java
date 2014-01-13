@@ -13,9 +13,9 @@ public class SettingsProvider {
     private static final String KEY_TOKEN = "token";
     private static final String KEY_ICON = "icon";
     private static final String KEY_THIRDPARTY = "thirdparty";
-    private static final String KEY_TOKENCHECKED = "token_checked";
     private static final String KEY_FIRST_LAUNCH = "first_launch";
     private static final String KEY_FIRST_HOME = "first_home";
+    private static final String KEY_LOGIN_LOCAL_TIME = "login_local_time";
 
     private SharedPreferences sharedPreferences;
 
@@ -65,6 +65,10 @@ public class SettingsProvider {
         return sharedPreferences.getInt(KEY_THIRDPARTY, -1);
     }
 
+    public long getLoginTime() {
+        return sharedPreferences.getLong(KEY_LOGIN_LOCAL_TIME, 0L);
+    }
+
     public boolean isFirstLaunch() {
         boolean result = sharedPreferences.getBoolean(KEY_FIRST_LAUNCH, true);
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
@@ -81,24 +85,25 @@ public class SettingsProvider {
         return result;
     }
 
-    public boolean isTokenChecked() {
-        return sharedPreferences.getBoolean(KEY_TOKENCHECKED, false);
-    }
-
     public void clearUser() {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(KEY_PRIVATE, "");
         editor.putString(KEY_TOKEN, "");
         editor.putString(KEY_NICKNAME, "");
         editor.putString(KEY_ICON, "");
+        editor.putLong(KEY_LOGIN_LOCAL_TIME, 0L);
         editor.putInt(KEY_THIRDPARTY, -1);
         editor.commit();
     }
 
     public void setUserPrivate(String userPrivate, String token) {
+        String oldToken = getToken();
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putString(KEY_PRIVATE, userPrivate);
         editor.putString(KEY_TOKEN, token);
+        if (!oldToken.equals(token)) {
+            editor.putLong(KEY_LOGIN_LOCAL_TIME, System.currentTimeMillis());
+        }
         editor.commit();
     }
 
@@ -112,12 +117,6 @@ public class SettingsProvider {
     public void setThirdparty(int thirdparty) {
         SharedPreferences.Editor editor = this.sharedPreferences.edit();
         editor.putInt(KEY_THIRDPARTY, thirdparty);
-        editor.commit();
-    }
-
-    public void setTokenChecked(boolean checked) {
-        SharedPreferences.Editor editor = this.sharedPreferences.edit();
-        editor.putBoolean(KEY_TOKENCHECKED, checked);
         editor.commit();
     }
 }

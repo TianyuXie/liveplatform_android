@@ -17,6 +17,8 @@ import com.pplive.liveplatform.util.StringUtil;
 public class UserManager {
     final static String TAG = "_UserManager";
 
+    private final static long TEN_DAYS = 10 * 24 * 3600 * 1000;
+
     private static UserManager instance;
 
     private String mImei;
@@ -33,14 +35,17 @@ public class UserManager {
 
     private String mIcon;
 
-    private Context mContext;
+    private Context mAppContext;
 
     private int mThirdPartySource;
 
+    private boolean mTokenChecked;
+
     private UserManager(Context context) {
-        mContext = context;
+        mAppContext = context;
         mImei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
         mUserPrivate = SettingsProvider.getInstance(context).getUserPrivate();
+        mTokenChecked = false;
         if (!TextUtils.isEmpty(mUserPrivate)) {
             mToken = SettingsProvider.getInstance(context).getToken();
             mNickname = SettingsProvider.getInstance(context).getNickname();
@@ -62,12 +67,22 @@ public class UserManager {
         return instance;
     }
 
+    public boolean isLoginSafely() {
+        return isLogin() && (mTokenChecked || !shouldUpdateToken());
+    }
+
     public boolean isLogin() {
         return !TextUtils.isEmpty(mUserPrivate) && !TextUtils.isEmpty(mToken);
     }
 
     public boolean isLogin(String username) {
         return isLogin() && !TextUtils.isEmpty(mUsernamePlain) && mUsernamePlain.equals(username);
+    }
+
+    public boolean shouldUpdateToken() {
+        long currentTime = System.currentTimeMillis();
+        long loginTime = SettingsProvider.getInstance(mAppContext).getLoginTime();
+        return currentTime < loginTime || currentTime - loginTime > TEN_DAYS;
     }
 
     public boolean isPPTVLogin() {
@@ -87,35 +102,35 @@ public class UserManager {
     }
 
     public void login(String usrPlain, String pwdPlain, String token) {
-        if (!isLogin()) {
-            StringBuffer sb = new StringBuffer();
-            sb.append(usrPlain).append((char) 0x01).append(pwdPlain);
-            String userPrivate = EncryptUtil.encrypt(sb.toString(), mImei);
-            SettingsProvider.getInstance(mContext).setUserPrivate(userPrivate, token);
-            mUserPrivate = userPrivate;
-            mUsernamePlain = usrPlain;
-            mToken = token;
-            UserInfo.reset(mContext);
-        }
+        StringBuffer sb = new StringBuffer();
+        sb.append(usrPlain).append((char) 0x01).append(pwdPlain);
+        String userPrivate = EncryptUtil.encrypt(sb.toString(), mImei);
+        SettingsProvider.getInstance(mAppContext).setUserPrivate(userPrivate, token);
+        mUserPrivate = userPrivate;
+        mUsernamePlain = usrPlain;
+        mPasswordPlain = pwdPlain;
+        mToken = token;
+        mTokenChecked = true;
+        UserInfo.reset(mAppContext);
     }
 
     public void logout() {
         if (isLogin()) {
             if (isSinaLogin()) {
                 Log.d(TAG, "Sina logout");
-                WeiboPassport.getInstance().logout(mContext);
+                WeiboPassport.getInstance().logout(mAppContext);
             } else if (isTencentLogin()) {
                 Log.d(TAG, "Tencent logout");
-                TencentPassport.getInstance().logout(mContext);
+                TencentPassport.getInstance().logout(mAppContext);
             }
-            SettingsProvider.getInstance(mContext).clearUser();
+            SettingsProvider.getInstance(mAppContext).clearUser();
             mThirdPartySource = 0;
             mUserPrivate = null;
             mUsernamePlain = null;
             mToken = null;
             mNickname = null;
             mIcon = null;
-            UserInfo.reset(mContext);
+            UserInfo.reset(mAppContext);
         }
     }
 
@@ -123,7 +138,7 @@ public class UserManager {
         if (isLogin() && userinfo != null) {
             mNickname = userinfo.getNickname();
             mIcon = userinfo.getIcon();
-            SettingsProvider.getInstance(mContext).setUserInfo(mNickname, mIcon);
+            SettingsProvider.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
         }
     }
 
@@ -131,14 +146,14 @@ public class UserManager {
         if (isLogin()) {
             mNickname = nickname;
             mIcon = icon;
-            SettingsProvider.getInstance(mContext).setUserInfo(mNickname, mIcon);
+            SettingsProvider.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
         }
     }
 
     public void setThirdParty(int thirdParty) {
         if (isLogin()) {
             mThirdPartySource = thirdParty;
-            SettingsProvider.getInstance(mContext).setThirdparty(thirdParty);
+            SettingsProvider.getInstance(mAppContext).setThirdparty(thirdParty);
         }
     }
 
@@ -188,5 +203,12 @@ public class UserManager {
 
     public void resetToken() {
         mToken = "";
+        if (isSinaLogin()) {
+            Log.d(TAG, "Sina logout");
+            WeiboPassport.getInstance().logout(mAppContext);
+        } else if (isTencentLogin()) {
+            Log.d(TAG, "Tencent logout");
+            TencentPassport.getInstance().logout(mAppContext);
+        }
     }
 }
