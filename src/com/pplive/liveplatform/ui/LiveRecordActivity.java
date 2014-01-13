@@ -2,11 +2,12 @@ package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.StateListDrawable;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -180,7 +181,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private RotateListener mRotateButtonListener = new RotateListener() {
         @Override
         public void onRotateMiddle() {
-            mBtnLiveRecord.setBackgroundResource(R.drawable.live_record_btn_live_record);
+            mBtnLiveRecord.setImageResource(R.drawable.live_record_btn_live_record);
         }
     };
 
@@ -299,12 +300,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         mFooterBarFragment.setOnShareBtnClickListener(mOnShareClickListener);
 
         startPreview();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
     }
 
     @Override
@@ -673,12 +668,17 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mPublishDacStat.onPlayRealStart();
             obtainCodecParams();
         }
-
+        
+        mChatBox.setDelay(DLEAY_CHAT_LONG, DLEAY_CHAT_LONG);
+        mChatBox.start(mLivingProgram.getId());
+        
         mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
 
-        mChatBox.setDelay(DLEAY_CHAT_LONG, DLEAY_CHAT_LONG);
-        mChatBox.start(mLivingProgram.getId());
+        mBtnLiveRecord.setSelected(true);
+        StateListDrawable drawable = (StateListDrawable) mBtnLiveRecord.getDrawable();
+        AnimationDrawable animate = (AnimationDrawable) drawable.getCurrent();
+        animate.start();
     }
 
     private void obtainCodecParams() {
@@ -708,7 +708,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
 
         mLivingUrl = null;
-        mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
+        mBtnLiveRecord.setSelected(false);
         mInnerHandler.sendEmptyMessage(WHAT_RECORD_END);
     }
 
@@ -797,7 +797,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (checkNetworkState()) {
                 return;
             }
-            
+
             startLiving();
         } else {
             stopLiving(true);
@@ -852,6 +852,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
                 }
             }, new DialogInterface.OnClickListener() {
 
@@ -973,7 +974,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             startRecording();
 
-            mBtnLiveRecord.setSelected(mMediaRecorderView.isRecording());
             AlarmCenter.getInstance(getApplicationContext()).startPrelive(mLivingProgram.getId());
         }
     }
