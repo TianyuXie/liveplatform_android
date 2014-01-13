@@ -15,11 +15,11 @@ import android.util.Log;
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class MediaManager {
 
-    private static final String TAG = MediaManager.class.getSimpleName();
-    
-    private static final String QCOM_ENCODER = "OMX.qcom.video.encoder.avc";
-    
-    private static final String TI_ENCODER = "OMX.TI.DUCATI1.VIDEO.H264E";
+    static final String TAG = MediaManager.class.getSimpleName();
+
+    static final String QCOM_ENCODER = "OMX.qcom.video.encoder.avc";
+
+    static final String TI_ENCODER = "OMX.TI.DUCATI1.VIDEO.H264E";
 
     public static final String MIME_TYPE_VIDEO_AVC = "video/avc";
 
