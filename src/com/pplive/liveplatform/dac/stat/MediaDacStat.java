@@ -38,9 +38,11 @@ public abstract class MediaDacStat extends BaseDacStat implements MediaData {
     }
 
     public void setProgramInfo(Program program) {
-        addValueItem(KEY_PROGRAM_ID, program.getId());
-        addValueItem(KEY_PROGRAM_TITLE, program.getTitle());
-        addValueItem(KEY_PROGRAM_SUBJECT_ID, program.getSubjectId());
+        if (null != program) {
+            addValueItem(KEY_PROGRAM_ID, program.getId());
+            addValueItem(KEY_PROGRAM_TITLE, program.getTitle());
+            addValueItem(KEY_PROGRAM_SUBJECT_ID, program.getSubjectId());
+        }
     }
 
     public void setIsSuccess(boolean success) {

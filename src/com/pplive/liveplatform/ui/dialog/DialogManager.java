@@ -3,6 +3,7 @@ package com.pplive.liveplatform.ui.dialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 
@@ -135,6 +136,19 @@ public class DialogManager {
             DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.alert_mobile_title);
+        builder.setMessage(R.string.alert_mobile_3g_play_message);
+        builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_3g_play_negative, negativeListener);
+
+        return builder.create();
+    }
+    
+    public static Dialog alertNoNetworkLive(final Context context, DialogInterface.OnClickListener positiveListener, 
+            DialogInterface.OnClickListener negativeListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        
         builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle(R.string.alert_mobile_title);
         builder.setMessage(R.string.alert_mobile_3g_play_message);

@@ -44,6 +44,7 @@ import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.dac.DacSender;
 import com.pplive.liveplatform.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.net.NetworkManager;
+import com.pplive.liveplatform.net.NetworkManager.NetworkState;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
@@ -201,6 +202,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private PublishDacStat mPublishDacStat;
 
     private Dialog mLivingPausedAlertDialog;
+    
+    private Dialog mAlertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -428,14 +431,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     public void onEvent(EventNetworkChanged event) {
         Log.d(TAG, "state: " + event.getNetworkState());
+        
+        if (null != mAlertDialog) {
+            mAlertDialog.dismiss();
+            mAlertDialog = null;
+        }
 
-        switch (NetworkManager.getCurrentNetworkState()) {
+        NetworkState state = event.getNetworkState();
+        switch (state) {
         case MOBILE:
-            DialogManager.alertMobile2GLive(this, new DialogInterface.OnClickListener() {
+            mAlertDialog = DialogManager.alertMobile2GLive(this, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
+                    
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
 
@@ -443,30 +454,32 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
                 }
-            }).show();
+            });
             break;
         case FAST_MOBILE:
-            DialogManager.alertMobile3GPlay(this, new DialogInterface.OnClickListener() {
+            mAlertDialog = DialogManager.alertMobile3GPlay(this, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
+                    
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    startLiving();
                 }
-            }).show();
+            });
             break;
         case DISCONNECTED:
-            DialogManager.alertNoNetworkDialog(this, new DialogInterface.OnClickListener() {
+            mAlertDialog = DialogManager.alertNoNetworkDialog(this, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    // TODO Auto-generated method stub
-
+                    dialog.dismiss();
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
 
@@ -474,11 +487,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 public void onClick(DialogInterface dialog, int which) {
                     finish();
                 }
-            }).show();
+            });
             break;
         default:
             break;
         }
+        
+        mAlertDialog.show();
     }
 
     @Override
@@ -597,7 +612,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         Log.d(TAG, "onLiveFailed");
 
         if (++mReplayCount > MAX_REPLAY_COUNT) {
-            mLivingPausedAlertDialog.show();
+            mAlertDialog = mLivingPausedAlertDialog;
+            mAlertDialog.show();
 
             mReplayCount = 0;
         } else {
@@ -606,7 +622,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 mPublishDacStat.addReplayCount();
             }
 
-            onClickBtnLiveRecord();
+            if (NetworkManager.isNetworkAvailable(getApplicationContext())) {
+                onClickBtnLiveRecord();
+            }
         }
     }
 
@@ -1012,7 +1030,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (!mMediaRecorderView.isRecording()) {
                 mLivingProgram = program;
-                mLivingPausedAlertDialog.show();
+                
+                mAlertDialog = mLivingPausedAlertDialog;
+                mAlertDialog.show();
             }
         }
     }
