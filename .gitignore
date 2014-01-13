@@ -11,6 +11,9 @@ local.properties
 .project
 .externalToolBuilders/
 
+# Ship
+dist/
+
 # Temp
 *.tmp
 *~
