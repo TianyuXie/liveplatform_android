@@ -60,10 +60,11 @@
     <ListView
         android:id="@+id/list_searchbar_records"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:divider="@color/searchbar_list_divider"
         android:dividerHeight="1dp"
         android:fadingEdge="none"
         android:visibility="gone" />
+
 
 </LinearLayout>

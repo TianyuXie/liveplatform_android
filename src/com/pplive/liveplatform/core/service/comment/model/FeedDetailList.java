@@ -72,9 +72,10 @@ public class FeedDetailList {
         String nickname = mapUser.get(username).getNickname();
         if (TextUtils.isEmpty(nickname)) {
             nickname = username;
+        } else {
+            nickname = nickname.split("\\(")[0];
         }
-        return String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor,
-                content);
+        return String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor, content);
     }
 
 }

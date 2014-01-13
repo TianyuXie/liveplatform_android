@@ -163,7 +163,7 @@ public class UserManager {
 
     public String getNickname() {
         if (isLogin()) {
-            return StringUtil.isNullOrEmpty(mNickname) ? getUsernamePlain() : mNickname;
+            return StringUtil.isNullOrEmpty(mNickname) ? getUsernamePlain() : mNickname.split("\\(")[0];
         } else {
             return "";
         }

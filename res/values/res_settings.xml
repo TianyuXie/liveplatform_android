@@ -27,7 +27,7 @@
     <color name="settings_table_bg">#FF0E0E0E</color>
     <color name="settings_text">#FF919191</color>
     <color name="settings_logout_bg">#FFD92B2B</color>
-    <color name="settings_version">#FF272727</color>
+    <color name="settings_version">#FF676767</color>
     <color name="settings_user">#FF1A1A1A</color>
 
     <style name="settings_text">

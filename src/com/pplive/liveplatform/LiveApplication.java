@@ -5,7 +5,6 @@ import java.io.File;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap.CompressFormat;
-import android.util.Log;
 
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -24,13 +23,11 @@ import com.pplive.liveplatform.util.StringManager;
 
 public class LiveApplication extends Application {
 
-    private static final String TAG = LiveApplication.class.getSimpleName();
+    static final String TAG = LiveApplication.class.getSimpleName();
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        Log.d(TAG, "onCreate");
 
         DirManager.init(getApplicationContext());
         StringManager.init(getApplicationContext());

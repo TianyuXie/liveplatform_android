@@ -749,16 +749,24 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public boolean onError(int what, int extra) {
-        //TODO onError
-        mInterrupted = true;
-        keepAliveDelay(0);
-        return true;
+        if (mProgram.isLiving()) {
+            mInterrupted = true;
+            keepAliveDelay(0);
+            return true;
+        } else if (mProgram.isVOD()) {
+            return true;
+        }
+        return false;
     }
 
     @Override
     public void onCompletion() {
-        mInterrupted = true;
-        keepAliveDelay(0);
+        if (mProgram.isLiving()) {
+            mInterrupted = true;
+            keepAliveDelay(0);
+        } else if (mProgram.isVOD()) {
+            DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
+        }
     }
 
     @Override

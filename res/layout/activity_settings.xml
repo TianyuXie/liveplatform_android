@@ -131,6 +131,9 @@
                         style="@style/settings_text"
                         android:text="@string/settings_update" />
                 </TableRow>
+            </TableLayout>
+
+            <TableLayout style="@style/settings_tablelayout" >
 
                 <TableRow
                     android:id="@+id/layout_settings_about"
