@@ -309,7 +309,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (UserManager.getInstance(mContext).isLogin()) {
+            if (UserManager.getInstance(mContext).isLoginSafely()) {
                 startWriting();
             } else {
                 Intent intent = new Intent(mContext, LoginActivity.class);
