@@ -126,7 +126,7 @@ public class DialogManager {
         builder.setTitle(R.string.alert_mobile_title);
         builder.setMessage(R.string.alert_mobile_3g_live_message);
         builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
-        builder.setNegativeButton(R.string.alert_mobile_3g_live_negative, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_3g_live_negative, negativeListener);
 
         return builder.create();
     }
@@ -139,7 +139,7 @@ public class DialogManager {
         builder.setTitle(R.string.alert_mobile_title);
         builder.setMessage(R.string.alert_mobile_3g_play_message);
         builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
-        builder.setNegativeButton(R.string.alert_mobile_3g_play_negative, positiveListener);
+        builder.setNegativeButton(R.string.alert_mobile_3g_play_negative, negativeListener);
 
         return builder.create();
     }

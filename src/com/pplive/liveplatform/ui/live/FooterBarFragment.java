@@ -16,6 +16,7 @@ import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
@@ -43,7 +44,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private ImageButton mBtnLiveHome;
     private ImageButton mBtnLiveBack;
 
-    private EditText mEditLiveSchedule;
+    private TextView mEditLiveSchedule;
     private EditText mEditLiveTitle;
 
     private ImageButton mBtnLiveShare;
@@ -92,7 +93,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         mBtnLiveHome = (ImageButton) layout.findViewById(R.id.btn_live_home);
         mBtnLiveBack = (ImageButton) layout.findViewById(R.id.btn_live_back);
 
-        mEditLiveSchedule = (EditText) layout.findViewById(R.id.edit_live_schedule);
+        mEditLiveSchedule = (TextView) layout.findViewById(R.id.edit_live_schedule);
         mEditLiveTitle = (EditText) layout.findViewById(R.id.edit_live_title);
 
         mBtnLiveShare = (ImageButton) layout.findViewById(R.id.btn_live_share);
@@ -290,6 +291,10 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             return true;
         }
 
+        if (!v.hasFocus()) {
+            v.requestFocusFromTouch();
+        }
+        
         ViewUtil.showOrHide(mDateTimePicker);
 
         return true;
@@ -297,10 +302,12 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
-
+        Log.d(TAG, "onFocusChange: " + v.getId());
+        
         int color;
         switch (v.getId()) {
         case R.id.edit_live_schedule:
+            Log.d(TAG, "hasFocus: " + hasFocus);
             color = getResources().getColor(hasFocus ? R.color.edit_focused : R.color.edit_normal);
             mEditLiveSchedule.setTextColor(color);
             break;

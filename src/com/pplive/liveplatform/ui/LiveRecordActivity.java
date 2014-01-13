@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -308,7 +309,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         Log.d(TAG, "onResume");
 
-        mLivingProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
+        Program program = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
+        if (null != program) {
+            mLivingProgram = program;
+        }
 
         if (null != mLivingProgram && LiveStatusEnum.NOT_START == mLivingProgram.getLiveStatus()) {
             mFooterBarFragment.setPreLiveProgram(mLivingProgram);
@@ -668,10 +672,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mPublishDacStat.onPlayRealStart();
             obtainCodecParams();
         }
-        
+
         mChatBox.setDelay(DLEAY_CHAT_LONG, DLEAY_CHAT_LONG);
         mChatBox.start(mLivingProgram.getId());
-        
+
         mInnerHandler.sendEmptyMessage(WHAT_RECORD_START);
         mInnerHandler.sendEmptyMessage(WHAT_LIVE_KEEP_ALIVE);
 
@@ -816,15 +820,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-
-                    startLiving();
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    dialog.dismiss();
+
+                    startLiving();
                 }
             }).show();
 
@@ -834,15 +838,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-
-                    startLiving();
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    dialog.dismiss();
+
+                    startLiving();
                 }
             }).show();
 
@@ -852,13 +856,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
+                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    finish();
+                    dialog.dismiss();
                 }
             }).show();
 
