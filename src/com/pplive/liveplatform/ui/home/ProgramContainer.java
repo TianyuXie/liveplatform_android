@@ -22,7 +22,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
-import com.pplive.liveplatform.ui.widget.RefreshGridView;
+import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 
 public class ProgramContainer extends RelativeLayout {
     static final String TAG = "_ProgramContainer";

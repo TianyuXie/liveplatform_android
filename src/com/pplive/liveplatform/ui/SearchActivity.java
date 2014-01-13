@@ -27,8 +27,8 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
-import com.pplive.liveplatform.ui.widget.RefreshGridView;
 import com.pplive.liveplatform.ui.widget.SearchBar;
+import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 
 public class SearchActivity extends Activity implements SearchBar.Callback {
     static final String TAG = "_SearchActivity";

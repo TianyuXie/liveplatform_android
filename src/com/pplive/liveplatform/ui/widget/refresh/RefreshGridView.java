@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.widget;
+package com.pplive.liveplatform.ui.widget.refresh;
 
 import android.content.Context;
 import android.util.AttributeSet;

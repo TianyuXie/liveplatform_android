@@ -45,9 +45,9 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.ProgramTask;
 import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
-import com.pplive.liveplatform.ui.widget.RefreshListView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
+import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
 
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";

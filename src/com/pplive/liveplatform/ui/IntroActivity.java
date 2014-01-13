@@ -21,7 +21,7 @@ import android.widget.RadioGroup;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.DacSender;
-import com.pplive.liveplatform.ui.widget.viewpager.CustomerViewPager;
+import com.pplive.liveplatform.ui.widget.viewpager.AdvancedViewPager;
 
 public class IntroActivity extends Activity {
     static final String TAG = "_IntroActivity";
@@ -36,7 +36,7 @@ public class IntroActivity extends Activity {
 
     private RadioGroup mRadioGroup;
 
-    private CustomerViewPager mViewPager;
+    private AdvancedViewPager mViewPager;
 
     private List<View> mImageViewList;
 
@@ -44,7 +44,7 @@ public class IntroActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        mViewPager = (CustomerViewPager) findViewById(R.id.viewpager_intro);
+        mViewPager = (AdvancedViewPager) findViewById(R.id.viewpager_intro);
         mRadioGroup = (RadioGroup) findViewById(R.id.radiogroup_intro);
 
         mImageViewList = new ArrayList<View>();
