@@ -1,12 +1,12 @@
 package com.pplive.liveplatform.ui.live.record;
 
-import com.pplive.liveplatform.dac.info.DeviceInfo;
-
+import android.annotation.TargetApi;
 import android.graphics.ImageFormat;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
-import android.util.Log;
+import android.os.Build;
 
+@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class DevicesChoose {
     
     public static String K3_ENCODER = "OMX.k3.video.encoder.avc";

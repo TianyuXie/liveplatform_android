@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.text.TextUtils;
 import android.util.AttributeSet;

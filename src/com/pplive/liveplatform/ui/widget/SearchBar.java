@@ -40,8 +40,6 @@ public class SearchBar extends LinearLayout {
 
     private SimpleAdapter mRecordItemAdapter;
 
-    private ListView mRecordListView;
-
     public SearchBar(Context context) {
         this(context, null);
     }
@@ -61,11 +59,13 @@ public class SearchBar extends LinearLayout {
         mSearchEditText.setOnEnterListener(onEnterListener);
         mSearchEditText.setOnFocusChangeListener(onFocusChangeListener);
 
-        mRecordListView = (ListView) root.findViewById(R.id.list_searchbar_records);
+        ListView mRecordListView = (ListView) root.findViewById(R.id.list_searchbar_records);
         mRecordItemAdapter = new SimpleAdapter(context, mRecordItems, R.layout.layout_searchbar_item, new String[] { LIST_ITEM_KEY },
                 new int[] { R.id.text_searchbar_item });
         mRecordListView.setAdapter(mRecordItemAdapter);
         mRecordListView.setOnItemClickListener(onItemClickListener);
+
+        findViewById(R.id.btn_searchbar_clear).setOnClickListener(onClearBtnClickListener);
     }
 
     private EnterSendEditText.OnEnterListener onEnterListener = new EnterSendEditText.OnEnterListener() {
@@ -102,8 +102,8 @@ public class SearchBar extends LinearLayout {
                     map.put(LIST_ITEM_KEY, record);
                     mRecordItems.add(map);
                 }
-                mRecordItemAdapter.notifyDataSetChanged();
-                mRecordListView.setVisibility(VISIBLE);
+                updateRecordList();
+                findViewById(R.id.layout_searchbar_records).setVisibility(VISIBLE);
                 if (mCallbackListener != null) {
                     mCallbackListener.onShowRecord(true);
                 }
@@ -114,7 +114,7 @@ public class SearchBar extends LinearLayout {
     };
 
     private void hideRecordList() {
-        mRecordListView.setVisibility(GONE);
+        findViewById(R.id.layout_searchbar_records).setVisibility(GONE);
         if (mCallbackListener != null) {
             mCallbackListener.onShowRecord(false);
         }
@@ -131,6 +131,25 @@ public class SearchBar extends LinearLayout {
             }
         }
     };
+
+    private View.OnClickListener onClearBtnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCacheManager.clearSearchCache();
+            mRecordItems.clear();
+            mRecords.clear();
+            updateRecordList();
+        }
+    };
+
+    private void updateRecordList() {
+        if (mRecordItems.isEmpty()) {
+            findViewById(R.id.btn_searchbar_clear).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.btn_searchbar_clear).setVisibility(View.VISIBLE);
+        }
+        mRecordItemAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void setOnClickListener(OnClickListener l) {
