@@ -129,6 +129,9 @@ public class ChatBox extends RelativeLayout {
                 float mult = a.getFloat(attr, 1.0f);
                 mTextView.setLineSpacing(0.0f, mult);
                 break;
+            case R.styleable.ChatBox_defaultText:
+                mNoContentInfo.setText(a.getString(attr));
+                break;
             }
         }
         a.recycle();

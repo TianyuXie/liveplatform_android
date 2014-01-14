@@ -47,6 +47,7 @@
         <attr name="paddingTop" format="dimension" />
         <attr name="refreshDelay" format="integer" />
         <attr name="retryDelay" format="integer" />
+        <attr name="defaultText" format="string" />
         <attr name="lineSpacingMultiplier" format="float" />
         <attr name="background" format="reference" />
     </declare-styleable>

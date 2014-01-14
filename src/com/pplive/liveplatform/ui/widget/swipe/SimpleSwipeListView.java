@@ -244,8 +244,12 @@ public class SimpleSwipeListView extends ListView {
 
         mIsShown = true;
     }
+    
+    public void hiddenRight() {
+        hiddenRight(mPreItemView);
+    }
 
-    private void hiddenRight(View view) {
+    public void hiddenRight(View view) {
         Log.d(TAG, "=========hiddenRight");
         if (mCurrentItemView == null) {
             return;
