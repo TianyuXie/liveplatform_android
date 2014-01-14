@@ -22,6 +22,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
@@ -147,6 +148,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         Log.d(TAG, "onDestroy");
         mSideBar.release();
         mFragmentContainer.clearOnSlideListeners();
+        mHandler.removeMessages(MSG_RETRY_TOKEN);
         super.onDestroy();
     }
 
@@ -226,14 +228,18 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     private View.OnClickListener onStatusClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (UserManager.getInstance(mContext).isLoginSafely()) {
-                mStatusButton.setClickable(false);
-                rotateButton();
-                mAnimDoor.shut();
+            if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
+                if (UserManager.getInstance(mContext).isLoginSafely()) {
+                    mStatusButton.setClickable(false);
+                    rotateButton();
+                    mAnimDoor.shut();
+                } else {
+                    Intent intent = new Intent(mContext, LoginActivity.class);
+                    intent.putExtra(LoginActivity.EXTRA_TAGET, LiveRecordActivity.class.getName());
+                    startActivity(intent);
+                }
             } else {
-                Intent intent = new Intent(mContext, LoginActivity.class);
-                intent.putExtra(LoginActivity.EXTRA_TAGET, LiveRecordActivity.class.getName());
-                startActivity(intent);
+                Toast.makeText(mContext, R.string.toast_version_low, Toast.LENGTH_LONG).show();
             }
         }
     };
