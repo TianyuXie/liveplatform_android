@@ -85,9 +85,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:src="@drawable/home_status_btn_rotate"
             android:contentDescription="@null"
-            android:onClick="onClick" />
+            android:onClick="onClick"
+            android:src="@drawable/home_status_btn_rotate" />
     </RelativeLayout>
 
     <Button
@@ -124,6 +124,7 @@
             android:visibility="gone"
             live:background="@drawable/live_record_dialog_bg"
             live:contentColor="@color/record_dialog_content"
+            live:defaultText="@string/record_no_comment"
             live:lineSpacingMultiplier="1.2"
             live:paddingBottom="10dp"
             live:paddingLeft="12dp"

@@ -256,6 +256,7 @@ public class UserpageActivity extends Activity {
                 });
                 dialog.show();
             }
+            mListView.hiddenRight();
         }
     };
 

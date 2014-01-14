@@ -52,6 +52,7 @@
         live:paddingTop="8dp"
         live:textColor="@color/white"
         live:textSize="18sp"
+        live:defaultText="@string/player_no_comment"
         live:userColor="@color/player_chat_nickname" />
 
     <LinearLayout
