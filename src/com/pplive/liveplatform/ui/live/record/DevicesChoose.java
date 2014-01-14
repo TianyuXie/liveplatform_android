@@ -16,6 +16,8 @@ public class DevicesChoose {
     public static String GOOGLE_ENCODER = "OMX.google.h264.encoder";
     public static String MTK_ENCODER = "OMX.MTK.VIDEO.ENCODER.AVC";
     public static String TI_ENCODER = "OMX.TI.DUCATI1.VIDEO.H264E";
+    public static String SEC_ENCODER = "OMX.SEC.AVC.Encoder";
+    public static String SEC2_ENCODER = "OMX.SEC.avc.enc";
 
     public static String XIAOMI = "";
 
@@ -27,13 +29,13 @@ public class DevicesChoose {
 
     public static int getPreviewImageFormat() {
         String encoder = getEncodeInfoName();
-        if (encoder.equals(K3_ENCODER)) {
+        if (encoder.equalsIgnoreCase(K3_ENCODER)) {
             return ImageFormat.NV21;
-        } else if ((encoder.equals(NEXUS_ENCODER) || encoder.equals(TI_ENCODER))) {
+        } else if ((encoder.equalsIgnoreCase(NEXUS_ENCODER) || encoder.equalsIgnoreCase(TI_ENCODER))) {
             return ImageFormat.NV21;
-        } else if (encoder.equals(GOOGLE_ENCODER)) {
+        } else if (encoder.equalsIgnoreCase(GOOGLE_ENCODER)) {
             return ImageFormat.YV12;
-        } else if (encoder.equals(MTK_ENCODER)) {
+        } else if (encoder.equalsIgnoreCase(MTK_ENCODER)) {
             return ImageFormat.YV12;
         } else {
             return ImageFormat.NV21;
@@ -43,11 +45,14 @@ public class DevicesChoose {
 
     public static int getYUV420Switch() {
         String encoder = getEncodeInfoName();
-        if (encoder.equals(NEXUS_ENCODER) || encoder.equals(TI_ENCODER)) {
+        if (encoder.equalsIgnoreCase(NEXUS_ENCODER) 
+                || encoder.equalsIgnoreCase(TI_ENCODER)
+                || encoder.equalsIgnoreCase(SEC_ENCODER)
+                || encoder.equalsIgnoreCase(SEC2_ENCODER)) {
             return NV12TONV21;
-        } else if (encoder.equals(GOOGLE_ENCODER)) {
+        } else if (encoder.equalsIgnoreCase(GOOGLE_ENCODER)) {
             return YV12TOYUV420;
-        } else if (encoder.equals(MTK_ENCODER)) {
+        } else if (encoder.equalsIgnoreCase(MTK_ENCODER)) {
             return YV12TOI420;
         } else {
             return NOCHANGE;
