@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
@@ -32,6 +33,7 @@ import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.alarm.AlarmCenter;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
@@ -41,14 +43,14 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.user.ProgramTask;
+import com.pplive.liveplatform.core.task.user.GetProgramTask;
+import com.pplive.liveplatform.core.task.user.RemoveProgramTask;
 import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
+import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
-import com.pplive.liveplatform.ui.widget.refresh.RefreshSwipeListView;
-import com.pplive.liveplatform.ui.widget.swipe.BaseSwipeListViewListener;
-import com.pplive.liveplatform.ui.widget.swipe.SwipeListViewListener;
+import com.pplive.liveplatform.ui.widget.refresh.SimpleRefreshListView;
 
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";
@@ -84,7 +86,7 @@ public class UserpageActivity extends Activity {
     private String mUsername;
 
     private TextView mNicknameText;
-    private RefreshSwipeListView mListView;
+    private SimpleRefreshListView mListView;
     private TextView mNodataText;
     private Button mNodataButton;
     private CircularImageView mUserIcon;
@@ -104,6 +106,7 @@ public class UserpageActivity extends Activity {
 
         mPrograms = new ArrayList<Program>();
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
+        mAdapter.setRightClickListener(onItemRightClickListener);
         mRefreshDialog = new RefreshDialog(this);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
@@ -112,12 +115,12 @@ public class UserpageActivity extends Activity {
         Button settingsButton = (Button) findViewById(R.id.btn_userpage_settings);
         settingsButton.setOnClickListener(onSettingsBtnClickListener);
 
-        mListView = (RefreshSwipeListView) findViewById(R.id.list_userpage_program);
+        mListView = (SimpleRefreshListView) findViewById(R.id.list_userpage_program);
         LinearLayout pullHeader = (LinearLayout) findViewById(R.id.layout_userpage_pull_header);
         pullHeader.addView(mListView.getPullView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mListView.setAdapter(mAdapter);
+        mListView.setOnItemClickListener(onItemClickListener);
         mListView.setOnUpdateListener(onUpdateListener);
-        mListView.setSwipeListViewListener(swipeListViewListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
         mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
@@ -132,10 +135,12 @@ public class UserpageActivity extends Activity {
             title.setText(R.string.userpage_my_title);
             settingsButton.setVisibility(View.VISIBLE);
             cameraIcon.setVisibility(View.VISIBLE);
+            mListView.setSlidable(true);
         } else {
             title.setText(R.string.userpage_others_title);
             settingsButton.setVisibility(View.GONE);
             cameraIcon.setVisibility(View.GONE);
+            mListView.setSlidable(false);
         }
         initUserinfo();
         refreshData(false);
@@ -152,18 +157,18 @@ public class UserpageActivity extends Activity {
     }
 
     private void refreshData(boolean isPull) {
-        ProgramTask task = new ProgramTask();
-        task.addTaskListener(onProgramTaskListener);
+        GetProgramTask task = new GetProgramTask();
+        task.addTaskListener(onGetTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(ProgramTask.KEY_USERNAME, mUsername);
+        taskContext.set(GetProgramTask.KEY_USERNAME, mUsername);
         if (isLogin(mUsername)) {
-            taskContext.set(ProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+            taskContext.set(GetProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
         }
         if (isPull) {
-            taskContext.set(ProgramTask.KEY_TYPE, PULL);
+            taskContext.set(GetProgramTask.KEY_TYPE, PULL);
         } else {
             mRefreshDialog.show();
-            taskContext.set(ProgramTask.KEY_TYPE, REFRESH);
+            taskContext.set(GetProgramTask.KEY_TYPE, REFRESH);
         }
         task.execute(taskContext);
     }
@@ -173,60 +178,6 @@ public class UserpageActivity extends Activity {
         mUserIcon.release();
         super.onDestroy();
     }
-
-    private SwipeListViewListener swipeListViewListener = new BaseSwipeListViewListener() {
-        @Override
-        public void onStartOpen(int position, int action, boolean right) {
-            Log.d(TAG, "onStartOpen");
-        }
-
-        @Override
-        public void onStartClose(int position, boolean right) {
-            Log.d(TAG, "onStartClose");
-        }
-
-        @Override
-        public void onClickFrontView(int position) {
-            Log.d(TAG, "onClickFrontView");
-            Program program = mPrograms.get(position);
-            if (program != null && mListView.canClick()) {
-                Intent intent = new Intent();
-                switch (program.getLiveStatus()) {
-                case LIVING:
-                case STOPPED:
-                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
-                    intent.setClass(mContext, LivePlayerActivity.class);
-                    startActivity(intent);
-                    break;
-                case NOT_START:
-                case PREVIEW:
-                case INIT:
-                    if (isLogin(mUsername)) {
-                        intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
-                        intent.setClass(mContext, LiveRecordActivity.class);
-                        startActivityForResult(intent, REQUEST_RECORD);
-                    } else {
-                        intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
-                        intent.setClass(mContext, LivePlayerActivity.class);
-                        startActivity(intent);
-                    }
-                    break;
-                default:
-                    break;
-                }
-            }
-        }
-
-        @Override
-        public void onClickBackView(int position) {
-            Log.d(TAG, "onClickBackView");
-        }
-
-        @Override
-        public void onDismiss(int[] reverseSortedPositions) {
-            Log.d(TAG, "onDismiss");
-        }
-    };
 
     private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
         @Override
@@ -260,6 +211,61 @@ public class UserpageActivity extends Activity {
                     startActivityForResult(intent, REQUEST_PICKPIC);
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    };
+
+    private OnItemRightClickListener onItemRightClickListener = new OnItemRightClickListener() {
+
+        @Override
+        public void onRightClick(View v, int position) {
+            Log.d(TAG, "onRightClick:" + position);
+            if (isLogin(mUsername)) {
+                long pid = mPrograms.get(position).getId();
+                RemoveProgramTask task = new RemoveProgramTask();
+                task.addTaskListener(onRemoveTaskListener);
+                TaskContext taskContext = new TaskContext();
+                taskContext.set(RemoveProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+                taskContext.set(RemoveProgramTask.KEY_PID, pid);
+                task.execute(taskContext);
+                mPrograms.remove(position);
+                mAdapter.notifyDataSetChanged();
+                AlarmCenter.getInstance(mContext).deletePrelive(pid);
+            }
+        }
+    };
+
+    private AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Log.d(TAG, "onItemClick");
+            Program program = mPrograms.get(position);
+            if (program != null && mListView.canClick()) {
+                Intent intent = new Intent();
+                switch (program.getLiveStatus()) {
+                case LIVING:
+                case STOPPED:
+                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                    intent.setClass(mContext, LivePlayerActivity.class);
+                    startActivity(intent);
+                    break;
+                case NOT_START:
+                case PREVIEW:
+                case INIT:
+                    if (isLogin(mUsername)) {
+                        intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
+                        intent.setClass(mContext, LiveRecordActivity.class);
+                        startActivityForResult(intent, REQUEST_RECORD);
+                    } else {
+                        intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                        intent.setClass(mContext, LivePlayerActivity.class);
+                        startActivity(intent);
+                    }
+                    break;
+                default:
+                    break;
                 }
             }
         }
@@ -342,18 +348,45 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private Task.OnTaskListener onProgramTaskListener = new Task.OnTaskListener() {
+    private Task.OnTaskListener onRemoveTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+            Toast.makeText(mContext, R.string.toast_userpage_delete_timeout, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            Toast.makeText(mContext, R.string.toast_userpage_delete_success, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Toast.makeText(mContext, R.string.toast_userpage_delete_fail, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        }
+
+    };
+
+    private Task.OnTaskListener onGetTaskListener = new Task.OnTaskListener() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
             mListView.setLastUpdateTime(System.currentTimeMillis());
-            if ((Integer) event.getContext().get(ProgramTask.KEY_TYPE) == PULL) {
+            if ((Integer) event.getContext().get(GetProgramTask.KEY_TYPE) == PULL) {
                 mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             }
             mPrograms.clear();
-            mPrograms.addAll((Collection<Program>) event.getContext().get(ProgramTask.KEY_RESULT));
+            mPrograms.addAll((Collection<Program>) event.getContext().get(GetProgramTask.KEY_RESULT));
             Collections.sort(mPrograms, comparator);
             mAdapter.notifyDataSetChanged();
             if (mPrograms.isEmpty()) {
@@ -454,7 +487,7 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private RefreshSwipeListView.OnUpdateListener onUpdateListener = new RefreshSwipeListView.OnUpdateListener() {
+    private SimpleRefreshListView.OnUpdateListener onUpdateListener = new SimpleRefreshListView.OnUpdateListener() {
         @Override
         public void onRefresh() {
             mRefreshFinish = false;

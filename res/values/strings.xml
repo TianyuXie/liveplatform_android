@@ -5,6 +5,8 @@
     <string name="number_and_letter">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="btn_confirm">确定</string>
     <string name="btn_cancel">取消</string>
+    <string name="btn_delete">删除</string>
+    
 
     <!-- For debug -->
     <string name="toast_failed">失败</string>
