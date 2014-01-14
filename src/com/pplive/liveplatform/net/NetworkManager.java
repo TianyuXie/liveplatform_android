@@ -34,22 +34,19 @@ public class NetworkManager extends BroadcastReceiver {
     private static NetworkState getNetworkState(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Service.CONNECTIVITY_SERVICE);
 
-        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
-        if (null == networkInfo || !networkInfo.isConnected() || networkInfo.isRoaming()) {
-            return NetworkState.DISCONNECTED;
-        } else {
-            NetworkInfo.State state = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-            if (NetworkInfo.State.CONNECTED == state || NetworkInfo.State.CONNECTING == state) {
-                return NetworkState.WIFI;
-            }
+        NetworkInfo wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        NetworkInfo mobile = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-            state = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState();
-            if (NetworkInfo.State.CONNECTED == state || NetworkInfo.State.CONNECTING == state) {
-                if (NetworkUtil.isFastMobileNetwork(context)) {
-                    return NetworkState.FAST_MOBILE;
-                } else {
-                    return NetworkState.MOBILE;
-                }
+        if (NetworkInfo.State.CONNECTED != wifi.getState() && NetworkInfo.State.CONNECTING != wifi.getState()
+                && NetworkInfo.State.CONNECTED != mobile.getState() && NetworkInfo.State.CONNECTING != mobile.getState()) {
+            return NetworkState.DISCONNECTED;
+        } else if (NetworkInfo.State.CONNECTED == wifi.getState() || NetworkInfo.State.CONNECTING == wifi.getState()) {
+            return NetworkState.WIFI;
+        } else if (NetworkInfo.State.CONNECTED == mobile.getState() || NetworkInfo.State.CONNECTING == mobile.getState()) {
+            if (NetworkUtil.isFastMobileNetwork(context)) {
+                return NetworkState.FAST_MOBILE;
+            } else {
+                return NetworkState.MOBILE;
             }
         }
 
@@ -60,6 +57,14 @@ public class NetworkManager extends BroadcastReceiver {
         Log.d(TAG, "Current Network State: " + sCurrentNetworkState);
         return sCurrentNetworkState;
     }
+    
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Service.CONNECTIVITY_SERVICE);
+        
+        NetworkInfo info = manager.getActiveNetworkInfo();
+        
+        return null != info && info.isConnectedOrConnecting(); 
+    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -69,12 +74,16 @@ public class NetworkManager extends BroadcastReceiver {
         if (ConnectivityManager.CONNECTIVITY_ACTION == intent.getAction()) {
             NetworkState state = getNetworkState(context);
 
+            Log.d(TAG, "state: " + state);
+
             if (sCurrentNetworkState != state) {
                 Log.d(TAG, "Network Type Changed!!!");
                 EventBus.getDefault().post(new EventNetworkChanged(state));
             }
 
-            sCurrentNetworkState = state;
+            if (null != state) {
+                sCurrentNetworkState = state;
+            }
         } else if (WifiManager.WIFI_STATE_CHANGED_ACTION == intent.getAction()) {
 
         }
