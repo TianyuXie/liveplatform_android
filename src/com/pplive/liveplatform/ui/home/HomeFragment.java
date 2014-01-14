@@ -133,6 +133,13 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         super.onStop();
     }
 
+    @Override
+    public void onDestroy() {
+        mPullHandler.removeCallbacksAndMessages(null);
+        mContainer.stopTimer();
+        super.onDestroy();
+    }
+
     public void switchSubject(int id) {
         mSubjectId = id;
         updateCatalogText();

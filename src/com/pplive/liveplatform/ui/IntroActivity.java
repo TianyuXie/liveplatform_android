@@ -80,9 +80,9 @@ public class IntroActivity extends Activity {
         super.onResume();
         Log.d(TAG, "onResume");
         if (!mFirstTime) {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 3000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 2000);
         } else {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 3000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 2000);
         }
     }
 
@@ -94,6 +94,12 @@ public class IntroActivity extends Activity {
         super.onPause();
     }
 
+    @Override
+    protected void onDestroy() {
+        mHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
+
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -103,7 +109,6 @@ public class IntroActivity extends Activity {
                 break;
             case MSG_GO_INTRO:
                 findViewById(R.id.image_intro_welcome).setVisibility(View.GONE);
-            default:
                 break;
             }
         }
