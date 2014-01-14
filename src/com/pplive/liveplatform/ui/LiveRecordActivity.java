@@ -202,7 +202,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private PublishDacStat mPublishDacStat;
 
     private Dialog mLivingPausedAlertDialog;
-    
+
     private Dialog mAlertDialog;
 
     @Override
@@ -431,7 +431,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     public void onEvent(EventNetworkChanged event) {
         Log.d(TAG, "state: " + event.getNetworkState());
-        
+
         if (null != mAlertDialog) {
             mAlertDialog.dismiss();
             mAlertDialog = null;
@@ -445,7 +445,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    
+
                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
@@ -462,7 +462,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
-                    
+
                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
                 }
             }, new DialogInterface.OnClickListener() {
@@ -492,7 +492,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         default:
             break;
         }
-        
+
         mAlertDialog.show();
     }
 
@@ -990,7 +990,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (StringUtil.isNullOrEmpty(url)) {
                 stopLiving(true);
-                
+
                 return;
             }
 
@@ -1032,7 +1032,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (!mMediaRecorderView.isRecording()) {
                 mLivingProgram = program;
-                
+
                 mAlertDialog = mLivingPausedAlertDialog;
                 mAlertDialog.show();
             }

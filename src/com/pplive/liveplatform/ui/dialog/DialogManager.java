@@ -40,10 +40,10 @@ public class DialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(playerActivity);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_network_title);
-        builder.setMessage(R.string.mobile_not_unicom);
-        builder.setPositiveButton(R.string.mobile_play_start, startListener);
-        builder.setNegativeButton(R.string.mobile_play_stop, new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.alert_network_title);
+        builder.setMessage(R.string.alert_mobile_message);
+        builder.setPositiveButton(R.string.alert_play_start, startListener);
+        builder.setNegativeButton(R.string.alert_play_stop, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 playerActivity.finish();
@@ -52,16 +52,27 @@ public class DialogManager {
         return builder.create();
     }
 
+    public static Dialog alertDeleteDialog(final Context context, String programName, DialogInterface.OnClickListener positiveListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setIcon(R.drawable.ic_launcher);
+        builder.setTitle(R.string.alert_title);
+        builder.setMessage(String.format(context.getString(R.string.alert_userpage_delete_message), programName));
+        builder.setPositiveButton(R.string.btn_confirm, positiveListener);
+        builder.setNegativeButton(R.string.btn_cancel, null);
+        builder.setCancelable(true);
+        return builder.create();
+    }
+
     public static Dialog alertNoNetworkDialog(final Context context, DialogInterface.OnClickListener positiveListener,
             DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_title);
-        builder.setMessage(R.string.no_network_message);
-        builder.setPositiveButton(R.string.no_network_confirm, positiveListener);
-        builder.setNegativeButton(R.string.no_network_cancel, negativeListener);
-        
+        builder.setTitle(R.string.alert_title);
+        builder.setMessage(R.string.alert_broken_message);
+        builder.setPositiveButton(R.string.alert_play_stay, positiveListener);
+        builder.setNegativeButton(R.string.alert_play_exit, negativeListener);
+
         return builder.create();
     }
 
@@ -70,7 +81,7 @@ public class DialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setCancelable(false);
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.mobile_alert_title);
+        builder.setTitle(R.string.alert_title);
         builder.setMessage(R.string.alert_message_living_terminated);
         builder.setPositiveButton(R.string.alert_positive_living_terminated, positiveListener);
         builder.setNegativeButton(R.string.alert_negative, negativeListener);
@@ -143,11 +154,11 @@ public class DialogManager {
 
         return builder.create();
     }
-    
-    public static Dialog alertNoNetworkLive(final Context context, DialogInterface.OnClickListener positiveListener, 
+
+    public static Dialog alertNoNetworkLive(final Context context, DialogInterface.OnClickListener positiveListener,
             DialogInterface.OnClickListener negativeListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        
+
         builder.setIcon(R.drawable.ic_launcher);
         builder.setTitle(R.string.alert_mobile_title);
         builder.setMessage(R.string.alert_mobile_3g_play_message);

@@ -303,6 +303,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
         mUserIcon.release();
+        mHandler.removeMessages(MSG_TIMEOUT);
         super.onDestroy();
     }
 

@@ -7,8 +7,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -31,6 +34,7 @@ import android.widget.Toast;
 
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
@@ -46,6 +50,7 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.GetProgramTask;
 import com.pplive.liveplatform.core.task.user.RemoveProgramTask;
 import com.pplive.liveplatform.core.task.user.UploadIconTask;
+import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
@@ -79,8 +84,6 @@ public class UserpageActivity extends Activity {
 
     private final static int REQUEST_SETTINGS = 7802;
 
-    private final static int REQUEST_RECORD = 7803;
-
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
@@ -97,6 +100,8 @@ public class UserpageActivity extends Activity {
 
     private boolean mRefreshDelayed;
 
+    private boolean mNeedUpdate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,6 +109,7 @@ public class UserpageActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_userpage);
 
+        mNeedUpdate = true;
         mPrograms = new ArrayList<Program>();
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
         mAdapter.setRightClickListener(onItemRightClickListener);
@@ -143,7 +149,14 @@ public class UserpageActivity extends Activity {
             mListView.setSlidable(false);
         }
         initUserinfo();
-        refreshData(false);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mNeedUpdate) {
+            refreshData(false);
+        }
     }
 
     private void initUserinfo() {
@@ -197,8 +210,7 @@ public class UserpageActivity extends Activity {
     private View.OnClickListener onNodataBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(mContext, LiveRecordActivity.class);
-            startActivity(intent);
+            goRecorderActivity(null);
         }
     };
 
@@ -219,19 +231,30 @@ public class UserpageActivity extends Activity {
     private OnItemRightClickListener onItemRightClickListener = new OnItemRightClickListener() {
 
         @Override
-        public void onRightClick(View v, int position) {
-            Log.d(TAG, "onRightClick:" + position);
+        public void onRightClick(View v, final int position) {
             if (isLogin(mUsername)) {
-                long pid = mPrograms.get(position).getId();
-                RemoveProgramTask task = new RemoveProgramTask();
-                task.addTaskListener(onRemoveTaskListener);
-                TaskContext taskContext = new TaskContext();
-                taskContext.set(RemoveProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
-                taskContext.set(RemoveProgramTask.KEY_PID, pid);
-                task.execute(taskContext);
-                mPrograms.remove(position);
-                mAdapter.notifyDataSetChanged();
-                AlarmCenter.getInstance(mContext).deletePrelive(pid);
+                String title = mPrograms.get(position).getTitle();
+                Dialog dialog = DialogManager.alertDeleteDialog(mContext, title, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        long pid = mPrograms.get(position).getId();
+                        RemoveProgramTask task = new RemoveProgramTask();
+                        task.addTaskListener(onRemoveTaskListener);
+                        TaskContext taskContext = new TaskContext();
+                        taskContext.set(RemoveProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+                        taskContext.set(RemoveProgramTask.KEY_PID, pid);
+                        task.execute(taskContext);
+                        mPrograms.remove(position);
+                        mAdapter.notifyDataSetChanged();
+                        if (mPrograms.isEmpty()) {
+                            mNodataText.setText(R.string.userpage_user_nodata);
+                            mNodataButton.setEnabled(true);
+                            findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
+                        }
+                        AlarmCenter.getInstance(mContext).deletePrelive(pid);
+                    }
+                });
+                dialog.show();
             }
         }
     };
@@ -243,25 +266,18 @@ public class UserpageActivity extends Activity {
             Log.d(TAG, "onItemClick");
             Program program = mPrograms.get(position);
             if (program != null && mListView.canClick()) {
-                Intent intent = new Intent();
                 switch (program.getLiveStatus()) {
                 case LIVING:
                 case STOPPED:
-                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
-                    intent.setClass(mContext, LivePlayerActivity.class);
-                    startActivity(intent);
+                    goPlayerActivity(program);
                     break;
                 case NOT_START:
                 case PREVIEW:
                 case INIT:
                     if (isLogin(mUsername)) {
-                        intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
-                        intent.setClass(mContext, LiveRecordActivity.class);
-                        startActivityForResult(intent, REQUEST_RECORD);
+                        goRecorderActivity(program);
                     } else {
-                        intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
-                        intent.setClass(mContext, LivePlayerActivity.class);
-                        startActivity(intent);
+                        goPlayerActivity(program);
                     }
                     break;
                 default:
@@ -286,8 +302,6 @@ public class UserpageActivity extends Activity {
             } else if (resultCode == SettingsActivity.RESULT_NICK_CHANGED) {
                 mNicknameText.setText(UserManager.getInstance(mContext).getNickname());
             }
-        } else if (requestCode == REQUEST_RECORD) {
-            refreshData(false);
         } else if (requestCode == REQUEST_PICKPIC && resultCode == Activity.RESULT_OK) {
             if (!UserManager.getInstance(mContext).isLogin(mUsername)) {
                 return;
@@ -380,6 +394,7 @@ public class UserpageActivity extends Activity {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            mNeedUpdate = false;
             mRefreshDialog.dismiss();
             mListView.setLastUpdateTime(System.currentTimeMillis());
             if ((Integer) event.getContext().get(GetProgramTask.KEY_TYPE) == PULL) {
@@ -397,7 +412,6 @@ public class UserpageActivity extends Activity {
                     mNodataText.setText(R.string.userpage_others_nodata);
                     mNodataButton.setEnabled(false);
                 }
-                mNodataButton.setOnClickListener(onNodataBtnClickListener);
                 findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
             } else {
                 findViewById(R.id.layout_userpage_nodata).setVisibility(View.GONE);
@@ -529,6 +543,25 @@ public class UserpageActivity extends Activity {
 
     private boolean isLogin(String username) {
         return UserManager.getInstance(this).isLogin(username);
+    }
+
+    private void goPlayerActivity(Program program) {
+        Intent intent = new Intent(mContext, LivePlayerActivity.class);
+        intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+        startActivity(intent);
+    }
+
+    private void goRecorderActivity(Program program) {
+        if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
+            mNeedUpdate = true;
+            Intent intent = new Intent(mContext, LiveRecordActivity.class);
+            if (program != null) {
+                intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);
+            }
+            startActivity(intent);
+        } else {
+            Toast.makeText(mContext, R.string.toast_version_low, Toast.LENGTH_LONG).show();
+        }
     }
 
 }

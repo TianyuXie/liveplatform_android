@@ -169,15 +169,6 @@
                 android:textSize="17sp"
                 android:visibility="gone" >
             </Button>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="15dp"
-                android:text="@string/test_settings_version"
-                android:textColor="@color/settings_version"
-                android:textSize="16sp" />
         </LinearLayout>
     </ScrollView>
 
