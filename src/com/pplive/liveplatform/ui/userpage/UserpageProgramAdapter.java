@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
+import com.pplive.liveplatform.ui.widget.swipe.SwipeListView;
 
 public class UserpageProgramAdapter extends BaseAdapter {
     private List<Program> mPrograms;
@@ -49,7 +50,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_userpage_item, null);
+            convertView = mInflater.inflate(R.layout.layout_userpage_item, parent, false);
             holder = new ViewHolder();
             holder.statusImageView = (ImageView) convertView.findViewById(R.id.image_userpage_time_circle);
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_userpage_program_preview);
@@ -60,6 +61,9 @@ public class UserpageProgramAdapter extends BaseAdapter {
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
+        }
+        if (parent instanceof SwipeListView) {
+            ((SwipeListView) parent).recycle(convertView, position);
         }
         updateView(holder, mPrograms.get(position));
         return convertView;

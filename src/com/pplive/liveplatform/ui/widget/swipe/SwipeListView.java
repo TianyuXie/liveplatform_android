@@ -26,9 +26,12 @@ import android.database.DataSetObserver;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v4.view.ViewConfigurationCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -37,7 +40,8 @@ import com.pplive.liveplatform.R;
 /**
  * ListView subclass that provides the swipe functionality
  */
-public class SwipeListView extends ListView {
+public class SwipeListView extends ListView implements OnScrollListener {
+    static final String TAG = "_SwipeListView";
 
     /**
      * Used when user want change swipe list mode on some rows
@@ -127,6 +131,8 @@ public class SwipeListView extends ListView {
      * Internal touch listener
      */
     private SwipeListViewTouchListener touchListener;
+
+    private OnScrollListener scrollListener;
 
     /**
      * If you create a View programmatically you need send back and front identifier
@@ -225,7 +231,8 @@ public class SwipeListView extends ListView {
         touchListener.setSwipeDrawableChecked(swipeDrawableChecked);
         touchListener.setSwipeDrawableUnchecked(swipeDrawableUnchecked);
         setOnTouchListener(touchListener);
-        setOnScrollListener(touchListener.makeScrollListener());
+        scrollListener = touchListener.makeScrollListener();
+        setOnScrollListener(this);
     }
 
     /**
@@ -237,6 +244,7 @@ public class SwipeListView extends ListView {
      *            position in list
      */
     public void recycle(View convertView, int position) {
+        Log.d(TAG, "recycle");
         touchListener.reloadChoiceStateInView(convertView.findViewById(swipeFrontView), position);
     }
 
@@ -713,6 +721,20 @@ public class SwipeListView extends ListView {
      */
     public void closeOpenedItems() {
         touchListener.closeOpenedItems();
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        if (scrollListener != null) {
+            scrollListener.onScrollStateChanged(view, scrollState);
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        if (scrollListener != null) {
+            scrollListener.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
+        }
     }
 
 }

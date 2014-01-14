@@ -11,15 +11,14 @@ import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.widget.swipe.SwipeListView;
 
-public class RefreshListView extends ListView implements OnScrollListener {
+public class RefreshSwipeListView extends SwipeListView {
     static final String TAG = "_RefreshListView";
 
     private final static int STATUS_RELEASE_TO_REFRESH = 800;
@@ -65,11 +64,11 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
     private OnUpdateListener mUpdateListener;
 
-    public RefreshListView(Context context) {
+    public RefreshSwipeListView(Context context) {
         this(context, null);
     }
 
-    public RefreshListView(Context context, AttributeSet attrs) {
+    public RefreshSwipeListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mGestureDetector = new GestureDetector(getContext(), onGestureListener);
         mStatus = STATUS_DONE;
@@ -96,6 +95,7 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
     @Override
     public void onScrollStateChanged(AbsListView view, int scrollState) {
+        super.onScrollStateChanged(view, scrollState);
         switch (scrollState) {
         case OnScrollListener.SCROLL_STATE_IDLE:
             Log.d(TAG, "SCROLL_STATE_IDLE");
@@ -106,15 +106,12 @@ public class RefreshListView extends ListView implements OnScrollListener {
                 }
             }
             break;
-        default:
-            break;
         }
-
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.d(TAG, "onScroll");
+        super.onScroll(view, firstVisibleItem, visibleItemCount, totalItemCount);
         if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0) {
             mSeeLast = true;
         } else {
