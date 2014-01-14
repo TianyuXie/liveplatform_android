@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
@@ -18,6 +19,8 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 
 public class DateTimePicker extends LinearLayout {
+    
+    private static final String TAG = DateTimePicker.class.getSimpleName();
 
     private DatePicker mDatePicker;
     private TimePicker mTimePicker;
@@ -51,6 +54,7 @@ public class DateTimePicker extends LinearLayout {
 
             @Override
             public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                Log.d(TAG, "onDateChanged");
                 onDateTimeChanged();
             }
         });
@@ -62,6 +66,7 @@ public class DateTimePicker extends LinearLayout {
 
             @Override
             public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                Log.d(TAG, "onTimeChanged");
                 onDateTimeChanged();
             }
         });
@@ -70,7 +75,7 @@ public class DateTimePicker extends LinearLayout {
     public void setOnDateTimeChanged(OnDateTimeChangedListener listener) {
         mOnDateTimeChangedListener = listener;
 
-        onDateTimeChanged();
+//        onDateTimeChanged();
     }
 
     private void onDateTimeChanged() {
