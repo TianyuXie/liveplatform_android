@@ -12,7 +12,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
 import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
@@ -242,7 +241,7 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
 
     @Override
     protected void onStop() {
-        ImageLoader.getInstance().clearMemoryCache();
+        //ImageLoader.getInstance().clearMemoryCache();
         super.onStop();
     }
 

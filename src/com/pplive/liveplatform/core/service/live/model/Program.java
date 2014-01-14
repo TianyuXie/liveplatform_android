@@ -125,7 +125,7 @@ public class Program implements Serializable {
         } else {
             String shotUrl = getScreenshotUrl();
             if (shotUrl.startsWith("http://live2image")) {
-                return ImageUtil.getScreenshotBySize(shotUrl, 160);
+                return ImageUtil.getScreenshotBySize(shotUrl, 120);
             } else {
                 return shotUrl;
             }
@@ -136,7 +136,7 @@ public class Program implements Serializable {
         String shotUrl = getScreenshotUrl();
         if (!TextUtils.isEmpty(shotUrl)) {
             if (shotUrl.startsWith("http://live2image")) {
-                return ImageUtil.getScreenshotBySize(shotUrl, 160);
+                return ImageUtil.getScreenshotBySize(shotUrl, 120);
             } else {
                 return shotUrl;
             }

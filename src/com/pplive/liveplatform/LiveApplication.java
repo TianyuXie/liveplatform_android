@@ -4,10 +4,15 @@ import java.io.File;
 
 import android.app.Application;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 
+import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
+import com.nostra13.universalimageloader.cache.memory.impl.LimitedAgeMemoryCache;
+import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
@@ -46,10 +51,11 @@ public class LiveApplication extends Application {
     }
 
     private void initImageLoader(Context context) {
+        MemoryCacheAware<String, Bitmap> memoryCache = new LimitedAgeMemoryCache<String, Bitmap>(new LruMemoryCache(2 * 1024 * 1024), 5 * 60);
+        DiscCacheAware discCache = new FileCountLimitedDiscCache(new File(DirManager.getImageCachePath()), new Md5FileNameGenerator(), 200);
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(4)
-                .denyCacheImageMultipleSizesInMemory().discCacheFileNameGenerator(new Md5FileNameGenerator()).tasksProcessingOrder(QueueProcessingType.LIFO)
-                .memoryCacheExtraOptions(160, 120).discCacheExtraOptions(160, 120, CompressFormat.JPEG, 75, null)
-                .discCache(new FileCountLimitedDiscCache(new File(DirManager.getImageCachePath()), 200)).build();
+                .denyCacheImageMultipleSizesInMemory().tasksProcessingOrder(QueueProcessingType.LIFO).memoryCache(memoryCache).memoryCacheExtraOptions(120, 90)
+                .discCache(discCache).discCacheExtraOptions(120, 90, CompressFormat.JPEG, 75, null).build();
         ImageLoader.getInstance().init(config);
     }
 

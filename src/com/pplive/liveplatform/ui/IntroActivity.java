@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.RadioGroup;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.DacSender;
@@ -44,28 +45,31 @@ public class IntroActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
+        ImageLoader.getInstance().clearMemoryCache();
+
         mViewPager = (AdvancedViewPager) findViewById(R.id.viewpager_intro);
         mRadioGroup = (RadioGroup) findViewById(R.id.radiogroup_intro);
-
         mImageViewList = new ArrayList<View>();
-        ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        int images[] = { R.drawable.intro_image0, R.drawable.intro_image1, R.drawable.intro_image2, R.drawable.intro_image3, R.drawable.intro_image0 };
-        for (int image : images) {
-            ImageView imageView = new ImageView(this);
-            imageView.setLayoutParams(lp);
-            imageView.setBackgroundColor(getResources().getColor(R.color.intro_bg));
-            imageView.setScaleType(ScaleType.CENTER_CROP);
-            imageView.setImageResource(image);
-            mImageViewList.add(imageView);
+        mFirstTime = SettingsProvider.getInstance(this).isFirstLaunch();
+
+        if (mFirstTime) {
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            int images[] = { R.drawable.intro_image0, R.drawable.intro_image1, R.drawable.intro_image2, R.drawable.intro_image3, R.drawable.intro_image0 };
+            for (int image : images) {
+                ImageView imageView = new ImageView(this);
+                imageView.setLayoutParams(lp);
+                imageView.setBackgroundColor(getResources().getColor(R.color.intro_bg));
+                imageView.setScaleType(ScaleType.CENTER_CROP);
+                imageView.setImageResource(image);
+                mImageViewList.add(imageView);
+            }
+            mViewPager.setScrollable(true);
+            mViewPager.setSwitchDuration(500);
+            mViewPager.setAdapter(pagerAdapter);
+            mViewPager.setOnPageChangeListener(onPageChangeListener);
+            mViewPager.setCurrentItem(1);
         }
 
-        mViewPager.setScrollable(true);
-        mViewPager.setSwitchDuration(500);
-        mViewPager.setAdapter(pagerAdapter);
-        mViewPager.setOnPageChangeListener(onPageChangeListener);
-        mViewPager.setCurrentItem(1);
-
-        mFirstTime = SettingsProvider.getInstance(this).isFirstLaunch();
         DacSender.sendAppStartDac(getApplicationContext(), mFirstTime);
     }
 
@@ -96,6 +100,7 @@ public class IntroActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }

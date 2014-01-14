@@ -151,6 +151,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         mSideBar.release();
         mFragmentContainer.clearOnSlideListeners();
         mHandler.removeCallbacksAndMessages(null);
+        ImageLoader.getInstance().clearMemoryCache();
         super.onDestroy();
     }
 
@@ -182,7 +183,6 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     @Override
     protected void onStop() {
         Log.d(TAG, "onStop");
-        ImageLoader.getInstance().clearMemoryCache();
         super.onStop();
     }
 
