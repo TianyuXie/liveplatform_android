@@ -13,13 +13,13 @@ import android.view.animation.TranslateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.ui.widget.swipe.SimpleSwipeListView;
 
-public class RefreshListView extends ListView implements OnScrollListener {
+public class SimpleRefreshListView extends SimpleSwipeListView implements OnScrollListener {
     static final String TAG = "_RefreshListView";
 
     private final static int STATUS_RELEASE_TO_REFRESH = 800;
@@ -65,11 +65,11 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
     private OnUpdateListener mUpdateListener;
 
-    public RefreshListView(Context context) {
+    public SimpleRefreshListView(Context context) {
         this(context, null);
     }
 
-    public RefreshListView(Context context, AttributeSet attrs) {
+    public SimpleRefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mGestureDetector = new GestureDetector(getContext(), onGestureListener);
         mStatus = STATUS_DONE;
@@ -106,15 +106,11 @@ public class RefreshListView extends ListView implements OnScrollListener {
                 }
             }
             break;
-        default:
-            break;
         }
-
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        Log.d(TAG, "onScroll");
         if (firstVisibleItem + visibleItemCount == totalItemCount && totalItemCount > 0) {
             mSeeLast = true;
         } else {

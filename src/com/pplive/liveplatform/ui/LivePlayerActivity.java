@@ -505,7 +505,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
-            Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.player_comment_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override

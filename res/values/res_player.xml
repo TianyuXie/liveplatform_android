@@ -8,6 +8,7 @@
     <string name="player_no_comment">快来奋力吐槽吧!</string>
     <string name="player_comment_success">评论成功</string>
     <string name="player_comment_fail">评论失败</string>
+    <string name="player_comment_timeout">请求超时</string>
     <string name="player_default_time">00:00</string>
     <string name="player_end_confirm">退出播放</string>
     <string name="player_end_cancel">留在此页</string>

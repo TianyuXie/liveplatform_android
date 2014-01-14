@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
@@ -18,6 +19,16 @@ public class UserpageProgramAdapter extends BaseAdapter {
     private List<Program> mPrograms;
     private LayoutInflater mInflater;
     private Context mContext;
+
+    private OnItemRightClickListener mRightClickListener;
+
+    public interface OnItemRightClickListener {
+        void onRightClick(View v, int position);
+    }
+
+    public void setRightClickListener(OnItemRightClickListener l) {
+        this.mRightClickListener = l;
+    }
 
     public UserpageProgramAdapter(Context context, List<Program> programs) {
         super();
@@ -46,10 +57,10 @@ public class UserpageProgramAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_userpage_item, null);
+            convertView = mInflater.inflate(R.layout.layout_userpage_item, parent, false);
             holder = new ViewHolder();
             holder.statusImageView = (ImageView) convertView.findViewById(R.id.image_userpage_time_circle);
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_userpage_program_preview);
@@ -57,10 +68,20 @@ public class UserpageProgramAdapter extends BaseAdapter {
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_title);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_vv);
             holder.timeTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_time);
+            holder.deleteBtn = convertView.findViewById(R.id.btn_userpage_delete_item);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        holder.deleteBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mRightClickListener != null) {
+                    mRightClickListener.onRightClick(v, position);
+                }
+            }
+        });
         updateView(holder, mPrograms.get(position));
         return convertView;
     }
@@ -94,6 +115,8 @@ public class UserpageProgramAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
+        View deleteBtn;
+
         AsyncImageView previewImageView;
 
         ImageView statusImageView;

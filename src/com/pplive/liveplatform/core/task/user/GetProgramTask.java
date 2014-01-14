@@ -15,14 +15,14 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class ProgramTask extends Task {
-    static final String TAG = "_ProgramTask";
+public class GetProgramTask extends Task {
+    static final String TAG = "_GetProgramTask";
 
     public final static String KEY_RESULT = "program_result";
     public final static String KEY_TYPE = "search_task_type";
 
     private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "Program";
+    public final static String TYPE = "GetProgramTask";
 
     @Override
     public String getID() {
@@ -71,9 +71,19 @@ public class ProgramTask extends Task {
             return new TaskResult(TaskStatus.Failed, "No data");
         }
         Collection<Program> removePrograms = new ArrayList<Program>();
-        for (Program program : data) {
-            if (program.isDeleted() || program.isExpiredPrelive()) {
-                removePrograms.add(program);
+        if (TextUtils.isEmpty(token)) {
+            // User
+            for (Program program : data) {
+                if (program.isDeleted() || program.isExpiredPrelive()) {
+                    removePrograms.add(program);
+                }
+            }
+        } else {
+            // Owner
+            for (Program program : data) {
+                if (program.isDeleted()) {
+                    removePrograms.add(program);
+                }
             }
         }
         data.removeAll(removePrograms);

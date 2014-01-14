@@ -9,6 +9,9 @@
     <string name="userpage_user_error">更新失败, 请点击上图刷新</string>
     <string name="userpage_default_vv">0</string>
     <string name="toast_userpage_nopic">找不到系统图库</string>
+    <string name="toast_userpage_delete_success">删除成功</string>
+    <string name="toast_userpage_delete_fail">删除失败</string>
+    <string name="toast_userpage_delete_timeout">请求超时</string>
 
     <!-- toast -->
     <string name="toast_icon_changed">修改头像成功</string>
@@ -19,6 +22,8 @@
     <string name="error_nickname_duplicated">duplicate nickname</string>
 
     <color name="userpage_bg">#FF151515</color>
+    <color name="userpage_item_right_bg">#FF202020</color>
+    <color name="userpage_delete_btn_bg">#FF8C1D1D</color>
     <color name="userpage_program_title_bg">#FF919191</color>
 
 </resources>
