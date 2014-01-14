@@ -237,10 +237,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
-        mHandler.removeMessages(MSG_LOADING_DELAY);
-        mHandler.removeMessages(MSG_MEDIA_FINISH);
-        mHandler.removeMessages(MSG_MEDIA_RETRY);
-        mHandler.removeMessages(MSG_START_PLAY);
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 

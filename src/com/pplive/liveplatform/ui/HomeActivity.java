@@ -58,6 +58,8 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     private final static int MSG_RETRY_TOKEN = 2001;
 
+    private final static int MSG_FINISH_LOADING = 2002;
+
     private long mExitTime;
 
     private Context mContext;
@@ -148,7 +150,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         Log.d(TAG, "onDestroy");
         mSideBar.release();
         mFragmentContainer.clearOnSlideListeners();
-        mHandler.removeMessages(MSG_RETRY_TOKEN);
+        mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
 
@@ -304,7 +306,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
     @Override
     public void doLoadResult(String text) {
         mStatusButton.showLoadingResult(text);
-        mStatusButtonHandler.sendEmptyMessageDelayed(0, TIME_BUTTON_SHOW_RESULT);
+        mHandler.sendEmptyMessageDelayed(MSG_FINISH_LOADING, TIME_BUTTON_SHOW_RESULT);
     }
 
     @Override
@@ -332,13 +334,6 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         rotation.setRotateListener(rotateListener);
         mStatusButtonWrapper.startAnimation(rotation);
     }
-
-    private Handler mStatusButtonHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            mStatusButton.finishLoading();
-        }
-    };
 
     private RadioGroup.OnCheckedChangeListener onTypeChangeListener = new RadioGroup.OnCheckedChangeListener() {
         @Override
@@ -450,6 +445,9 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
             switch (msg.what) {
             case MSG_RETRY_TOKEN:
                 checkToken();
+                break;
+            case MSG_FINISH_LOADING:
+                mStatusButton.finishLoading();
                 break;
             }
         }
