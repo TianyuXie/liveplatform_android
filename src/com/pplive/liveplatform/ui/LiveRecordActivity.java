@@ -941,6 +941,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     mLivingProgram = program;
                 } catch (LiveHttpException e) {
                     Log.w(TAG, e.toString());
+                    program = null;
                 }
             } else {
                 Log.d(TAG, "has program");
@@ -989,6 +990,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (StringUtil.isNullOrEmpty(url)) {
                 stopLiving(true);
+                
                 return;
             }
 
