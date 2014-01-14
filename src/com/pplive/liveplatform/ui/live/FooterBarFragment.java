@@ -111,7 +111,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         mDateTimePicker.setMaxDate(maxDate.getTimeInMillis());
 
         Calendar minDate = Calendar.getInstance();
-        mDateTimePicker.setMinDate(minDate.getTimeInMillis() - 1000);
+        mDateTimePicker.setMinDate(minDate.getTimeInMillis() - 60000);
 
         mLiveListView = (LiveListView) layout.findViewById(R.id.live_listview);
 
@@ -168,7 +168,16 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
-        mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d", year, month, day, hour, minute));
+        Log.d(TAG, "onDateTimeChanged");
+        
+        setScheduleDateTimeText(year, month, day, hour, minute);
+        
+        mBtnLiveAddComplete.setImageResource(R.drawable.live_record_btn_live_complete_blue);
+    }
+    
+    private void setScheduleDateTimeText(int year, int month, int day, int hour, int minute) {
+        
+        mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d",  year, month, day, hour, minute));
     }
 
     @Override
@@ -258,7 +267,10 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                 } else {
                     Toast.makeText(mAttachedActivity, "创建预播失败", Toast.LENGTH_SHORT).show();
                 }
-
+                
+                if (null != mBtnLiveAddComplete) {
+                    mBtnLiveAddComplete.setImageResource(R.drawable.live_record_btn_live_complete);
+                }
             }
         };
 
@@ -351,6 +363,14 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             }
 
             mEditLiveTitle.setText(liveTitle);
+        }
+        
+        if (null != mEditLiveSchedule) {
+            setScheduleDateTimeText(mDateTimePicker.getYear(), mDateTimePicker.getMonth(), mDateTimePicker.getDayOfMonth(), mDateTimePicker.getCurrentHour(), mDateTimePicker.getCurrentMinute());
+        }
+        
+        if (null != mBtnLiveAddComplete) {
+            mBtnLiveAddComplete.setImageResource(R.drawable.live_record_btn_live_complete);
         }
     }
     
