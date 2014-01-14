@@ -67,6 +67,7 @@ public class MediaManager {
                         if (colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar
                                 || colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
                             colorFormat = colorFormats[k];
+                            Log.d(TAG, "encoder: " + info.getName());
                         }
                     }
 
