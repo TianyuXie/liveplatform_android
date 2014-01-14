@@ -64,7 +64,8 @@ public class MediaManager {
                     int colorFormat = colorFormats[0];
                     for (int k = 0; k < colorFormats.length; ++k) {
                         Log.d(TAG, "color: " + colorFormats[k]);
-                        if (colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar) {
+                        if (colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420SemiPlanar
+                                || colorFormats[k] == MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Planar) {
                             colorFormat = colorFormats[k];
                         }
                     }
