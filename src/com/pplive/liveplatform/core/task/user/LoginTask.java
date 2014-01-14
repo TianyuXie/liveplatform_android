@@ -8,6 +8,7 @@ import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -72,12 +73,19 @@ public class LoginTask extends Task {
         String usr = context.getString(KEY_USERNAME);
         String pwd = context.getString(KEY_PASSWORD);
         String token = null;
+        LoginResult loginResult = null;
         try {
-            token = PassportService.getInstance().login(usr, pwd).getToken();
+            loginResult = PassportService.getInstance().login(usr, pwd);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
         }
-        if (TextUtils.isEmpty(token)) {
+        if (loginResult == null) {
+            return new TaskResult(TaskStatus.Failed, StringManager.getRes(R.string.register_token_fail));
+        } else {
+            usr = loginResult.getUsername();
+            token = loginResult.getToken();
+        }
+        if (TextUtils.isEmpty(token) || TextUtils.isEmpty(usr)) {
             return new TaskResult(TaskStatus.Failed, StringManager.getRes(R.string.register_token_fail));
         }
         Log.d(TAG, "PassportService OK");
@@ -98,11 +106,11 @@ public class LoginTask extends Task {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskResult result = new TaskResult(TaskStatus.Finished);
+        context.set(KEY_USERNAME, usr);
         context.set(KEY_TOKEN, token);
         if (userinfo != null) {
             Log.d(TAG, "UserService OK");
             context.set(KEY_USERINFO, userinfo);
-            context.set(KEY_USERNAME, userinfo.getUsername());
         } else {
             Log.w(TAG, "userinfo == null");
         }

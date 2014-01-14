@@ -7,19 +7,19 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class CustomerViewPager extends ViewPager {
+public class AdvancedViewPager extends ViewPager {
 
     private boolean isScrollable;
 
     private Context context;
 
-    public CustomerViewPager(Context context) {
+    public AdvancedViewPager(Context context) {
         super(context);
         this.context = context;
         this.isScrollable = true;
     }
 
-    public CustomerViewPager(Context context, AttributeSet attrs) {
+    public AdvancedViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         this.isScrollable = true;

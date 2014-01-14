@@ -1,8 +1,5 @@
 package com.pplive.liveplatform.ui.player;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -49,11 +46,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private static final int SHOW_DELAY = 6000;
 
-    private static final int PLAYER_TIMEOUT = 10000;
+    private static final int PLAYER_TIMEOUT_DELAY = 15000;
 
-    private static final int HIDE = 301;
+    private static final int MSG_HIDE = 301;
 
-    private static final int TIMEOUT = 302;
+    private static final int MSG_TIMEOUT = 302;
 
     private static final int FLAG_TITLE_BAR = 0x1;
 
@@ -109,8 +106,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private Program mProgram;
 
-    private Timer mTimer;
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,40 +145,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mRoot.findViewById(R.id.btn_player_share).setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_back).setOnClickListener(this);
         return mRoot;
-    }
-
-    public void setupPlayerDirect(String url) {
-        setupVideoView(url);
-    }
-
-    public void setupPlayer(final String url) {
-        if (getActivity() != null) {
-            //            switch (NetworkManager.getCurrentNetworkState()) {
-            //            case WIFI:
-            //            case UNKNOWN:
-            setupVideoView(url);
-            //                break;
-            //            case FAST_MOBILE:
-            //            case MOBILE:
-            //                DialogManager.alertMobileDialog(getActivity(), new DialogInterface.OnClickListener() {
-            //                    @Override
-            //                    public void onClick(DialogInterface dialog, int which) {
-            //                        setupVideoView(url);
-            //                    }
-            //                }).show();
-            //                break;
-            //            case DISCONNECTED:
-            //                DialogManager.alertNoNetworkDialog(getActivity(), new DialogInterface.OnClickListener() {
-            //                    @Override
-            //                    public void onClick(DialogInterface dialog, int which) {
-            //                        setupVideoView(url);
-            //                    }
-            //                }).show();
-            //                break;
-            //            default:
-            //                break;
-            //            }
-        }
     }
 
     public void syncVolume() {
@@ -252,7 +213,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     }
 
-    private void setupVideoView(String url) {
+    public void setupVideoView(String url) {
         Log.d(TAG, "setupVideoView:" + url);
         Uri uri = Uri.parse(url);
         mVideoView.setDecodeMode(DecodeMode.SW);
@@ -262,13 +223,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mVideoView.setOnInfoListener(mInfoListener);
         mVideoView.setOnErrorListener(mErrorListener);
         mController.setMediaPlayer(mVideoView);
-        mTimer = new Timer();
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                mHandler.sendEmptyMessage(TIMEOUT);
-            }
-        }, PLAYER_TIMEOUT);
+        mHandler.removeMessages(MSG_TIMEOUT);
+        mHandler.sendEmptyMessageDelayed(MSG_TIMEOUT, PLAYER_TIMEOUT_DELAY);
     }
 
     private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
@@ -337,7 +293,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onStop();
     }
 
-    private void stopPlayback() {
+    public void stopPlayback() {
         PPBoxUtil.closeM3U8();
         mVideoView.stopPlayback();
         mController.stop();
@@ -355,13 +311,13 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void handleMessage(Message msg) {
 
             switch (msg.what) {
-            case HIDE:
+            case MSG_HIDE:
                 hideBars();
                 break;
-            case TIMEOUT:
-                //if (getActivity() != null) {
-                //    Toast.makeText(getActivity(), R.string.toast_player_error, Toast.LENGTH_LONG).show();
-                //}
+            case MSG_TIMEOUT:
+                if (mCallbackListener != null) {
+                    mCallbackListener.onTimeout();
+                }
                 break;
             default:
                 break;
@@ -374,14 +330,12 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onPrepared() {
             Log.d(TAG, "MeetVideoView: onPrepared");
+            mHandler.removeMessages(MSG_TIMEOUT);
             if (mCallbackListener != null) {
                 mCallbackListener.onPrepare();
             }
             mVideoView.start();
             mController.start();
-            if (mTimer != null) {
-                mTimer.cancel();
-            }
         }
     };
 
@@ -497,7 +451,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mShowBar = false;
         clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
         setVisibilityByFlags();
-        mHandler.removeMessages(HIDE);
+        mHandler.removeMessages(MSG_HIDE);
     }
 
     public void showBars(int timeout) {
@@ -507,9 +461,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             setVisibilityByFlags();
             syncVolume();
         }
-        mHandler.removeMessages(HIDE);
+        mHandler.removeMessages(MSG_HIDE);
         if (timeout != 0) {
-            mHandler.sendEmptyMessageDelayed(HIDE, timeout);
+            mHandler.sendEmptyMessageDelayed(MSG_HIDE, timeout);
         }
     }
 
@@ -568,6 +522,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         public void onBufferEnd();
 
         public boolean onError(int what, int extra);
+
+        public void onTimeout();
     }
 
     private Callback mCallbackListener;

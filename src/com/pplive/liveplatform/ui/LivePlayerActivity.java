@@ -73,6 +73,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private final static int MSG_KEEP_ALIVE = 2003;
 
+    private final static int MSG_MEDIA_RETRY = 2004;
+
     private final static int LOADING_DELAY_TIME = 1 * 1000;
 
     private final static int KEEP_ALIVE_DELAY_TIME = 30 * 1000;
@@ -208,15 +210,18 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
             startGetMedia();
         } else {
-            mLivePlayerFragment.setupPlayer(mUrl);
+            mLivePlayerFragment.setupVideoView(mUrl);
         }
         mChatBox.start(mProgram.getId());
         keepAliveDelay(0);
     }
 
     private void startGetMedia() {
+        mUrl = null;
+        mHandler.removeMessages(MSG_MEDIA_RETRY);
         long pid = mProgram.getId();
         if (pid > 0) {
+            Log.d(TAG, "Start to get media url...");
             String username = UserManager.getInstance(this).getUsernamePlain();
             String token = UserManager.getInstance(this).getToken();
             GetMediaTask mediaTask = new GetMediaTask();
@@ -226,7 +231,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             taskContext.set(Task.KEY_USERNAME, username);
             taskContext.set(Task.KEY_TOKEN, token);
             mediaTask.execute(taskContext);
-            Log.d(TAG, "Start Get media");
         }
     }
 
@@ -644,9 +648,23 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case MSG_KEEP_ALIVE:
                 keepAlive();
                 break;
+            case MSG_MEDIA_RETRY:
+                retryPlay();
+                break;
             }
         }
     };
+
+    private void retryPlay() {
+        if (!mNetworkDown) {
+            mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_error));
+            showWaiting();
+            startGetMedia();
+        } else {
+            mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_break));
+        }
+        mHandler.sendEmptyMessageDelayed(MSG_MEDIA_RETRY, 6000);
+    }
 
     public void showLoading() {
         mRotatable = false;
@@ -687,7 +705,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 mLivePlayerFragment.startTimer();
             } else {
                 if (!TextUtils.isEmpty(mUrl)) {
-                    mLivePlayerFragment.setupPlayer(mUrl);
+                    mLivePlayerFragment.setupVideoView(mUrl);
                 } else {
                     Toast.makeText(mContext, R.string.toast_player_error, Toast.LENGTH_LONG).show();
                 }
@@ -739,7 +757,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     // Fragment callback
     @Override
     public void onPrepare() {
+        Log.d(TAG, "onPrepare");
         mInterrupted = false;
+        mHandler.removeMessages(MSG_MEDIA_RETRY);
         mHandler.sendEmptyMessage(MSG_START_PLAY);
         mLivePlayerFragment.hideBreakInfo();
         keepAliveDelay(0);
@@ -750,10 +770,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public boolean onError(int what, int extra) {
         if (mProgram.isLiving()) {
+            Log.d(TAG, "onError: isLiving");
             mInterrupted = true;
             keepAliveDelay(0);
             return true;
         } else if (mProgram.isVOD()) {
+            Log.d(TAG, "onError: isVOD");
+            mInterrupted = true;
+            retryPlay();
             return true;
         }
         return false;
@@ -762,9 +786,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onCompletion() {
         if (mProgram.isLiving()) {
+            Log.d(TAG, "onCompletion: isLiving");
             mInterrupted = true;
             keepAliveDelay(0);
         } else if (mProgram.isVOD()) {
+            Log.d(TAG, "onCompletion: isVOD");
             DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
         }
     }
@@ -772,8 +798,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     public void onReplay() {
         if (!TextUtils.isEmpty(mUrl)) {
-            mLivePlayerFragment.setupPlayer(mUrl);
+            mLivePlayerFragment.setupVideoView(mUrl);
         }
+    }
+
+    @Override
+    public void onTimeout() {
+        Log.d(TAG, "onTimeout");
+        retryPlay();
     }
 
     // Volume key

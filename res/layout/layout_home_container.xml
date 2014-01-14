@@ -44,7 +44,7 @@
             android:text="@string/home_livestate_replay" />
     </RadioGroup>
 
-    <com.pplive.liveplatform.ui.widget.RefreshGridView
+    <com.pplive.liveplatform.ui.widget.refresh.RefreshGridView
         android:id="@+id/grid_home_results"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

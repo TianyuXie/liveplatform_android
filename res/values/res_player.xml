@@ -13,6 +13,7 @@
     <string name="player_end_cancel">留在此页</string>
     <string name="player_end_title">爱播提醒</string>
     <string name="player_signal_break">直播信号中断</string>
+    <string name="player_play_error">播放中断, 正在重试</string>
     <string name="player_network_break">网络连接已断开</string>
     <string name="player_network_retry">直播信号连接中</string>
     <string name="toast_player_loading">Oops! 我们正在奋力的加载哦</string>
