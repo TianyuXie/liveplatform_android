@@ -135,6 +135,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mNetworkDown;
 
+    private boolean mEnded;
+
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -234,6 +236,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private void startGetMedia() {
         mUrl = null;
+        mEnded = false;
         mHandler.removeMessages(MSG_MEDIA_RETRY);
         long pid = mProgram.getId();
         if (pid > 0) {
@@ -563,9 +566,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case DELETED:
             case SYS_DELETED:
                 Log.d(TAG, "Stopped!");
+                mEnded = true;
                 DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
                 break;
             case LIVING:
+                mEnded = false;
                 if (mInterrupted && !mNetworkDown) {
                     Log.d(TAG, "Interrupted, Retry...");
                     mLivePlayerFragment.showBreakInfo(getString(R.string.player_signal_break));
@@ -728,7 +733,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     // Keep Alive
     private void keepAlive() {
         long pid = mProgram.getId();
-        if (pid > 0) {
+        if (pid > 0 && !mEnded) {
             Log.d(TAG, "keep alive:" + System.currentTimeMillis());
             LiveStatusTask task = new LiveStatusTask();
             task.addTaskListener(onLiveStatusTaskListener);

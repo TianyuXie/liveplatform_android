@@ -91,9 +91,9 @@ public class IntroActivity extends Activity {
         super.onResume();
         Log.d(TAG, "onResume");
         if (!mFirstTime) {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 2000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 3000);
         } else {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 2000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 3000);
         }
     }
 
