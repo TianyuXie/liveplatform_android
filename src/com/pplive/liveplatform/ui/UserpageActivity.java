@@ -169,7 +169,7 @@ public class UserpageActivity extends Activity {
         if (!TextUtils.isEmpty(iconUrl)) {
             mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
         } else {
-            mUserIcon.setLocalImage(R.drawable.user_icon_default);
+            mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
         }
     }
 
@@ -342,7 +342,7 @@ public class UserpageActivity extends Activity {
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
             } else {
-                mUserIcon.setLocalImage(R.drawable.user_icon_default);
+                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }
         }
 
@@ -462,19 +462,19 @@ public class UserpageActivity extends Activity {
         @Override
         public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
             Log.d(TAG, "onLoadingFailed");
-            mUserIcon.setRounded(false);
+//            mUserIcon.setRounded(false);
         }
 
         @Override
         public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
             Log.d(TAG, "onLoadingComplete");
-            mUserIcon.setRounded(arg2 != null);
+//            mUserIcon.setRounded(arg2 != null);
         }
 
         @Override
         public void onLoadingCancelled(String arg0, View arg1) {
             Log.d(TAG, "onLoadingCancelled");
-            mUserIcon.setRounded(false);
+//            mUserIcon.setRounded(false);
         }
     };
 
