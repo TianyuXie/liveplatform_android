@@ -107,7 +107,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private int mSavedPostion;
 
     private Program mProgram;
-    
+
     private Handler mHandler;
 
     @Override
@@ -295,6 +295,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void onStop() {
         Log.d(TAG, "onStop");
         stopPlayback();
+        stopTimer();
         super.onStop();
     }
 
@@ -529,19 +530,19 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
             Log.d(TAG, "onLoadingFailed");
-//            mUserIcon.setRounded(false);
+            //            mUserIcon.setRounded(false);
         }
 
         @Override
         public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
             Log.d(TAG, "onLoadingComplete");
-//            mUserIcon.setRounded(arg2 != null);
+            //            mUserIcon.setRounded(arg2 != null);
         }
 
         @Override
         public void onLoadingCancelled(String arg0, View arg1) {
             Log.d(TAG, "onLoadingCancelled");
-//            mUserIcon.setRounded(false);
+            //            mUserIcon.setRounded(false);
         }
     };
 
@@ -607,17 +608,18 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         }
     };
 
-    private Handler mCountHandler = new Handler();
-
     private Runnable runnable = new Runnable() {
         public void run() {
             Log.d(TAG, "Timer update");
-            if (mStartTime - System.currentTimeMillis() > 15 * TimeUtil.MS_OF_MIN) {
+            long delta = mStartTime - System.currentTimeMillis();
+            if (delta > 15 * TimeUtil.MS_OF_MIN) {
                 mCountTextView.setText("节目尚未开始");
-                mCountHandler.postDelayed(this, 20 * TIMER_DELAY);
+                mHandler.postDelayed(this, 20 * TIMER_DELAY);
             } else {
-                mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForTimeHour(mStartTime - System.currentTimeMillis()));
-                mCountHandler.postDelayed(this, TIMER_DELAY);
+                mCountTextView.setText("距离开播还有\n" + TimeUtil.stringForTimeHour(delta));
+                if (delta > 0) {
+                    mHandler.postDelayed(this, TIMER_DELAY);
+                }
             }
         }
     };
@@ -626,14 +628,14 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         Log.d(TAG, "start timer");
         mStartTime = mProgram.getStartTime();
         mCountTextView.setVisibility(View.VISIBLE);
-        mCountHandler.post(runnable);
+        mHandler.post(runnable);
     }
 
     public void stopTimer() {
         Log.d(TAG, "stop timer");
         mStartTime = -1;
         mCountTextView.setVisibility(View.GONE);
-        mCountHandler.removeCallbacks(runnable);
+        mHandler.removeCallbacks(runnable);
     }
 
     @Override
