@@ -529,24 +529,24 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
             Log.d(TAG, "onLoadingFailed");
-            mUserIcon.setRounded(false);
+//            mUserIcon.setRounded(false);
         }
 
         @Override
         public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
             Log.d(TAG, "onLoadingComplete");
-            mUserIcon.setRounded(arg2 != null);
+//            mUserIcon.setRounded(arg2 != null);
         }
 
         @Override
         public void onLoadingCancelled(String arg0, View arg1) {
             Log.d(TAG, "onLoadingCancelled");
-            mUserIcon.setRounded(false);
+//            mUserIcon.setRounded(false);
         }
     };
 
     public void onStartPlay() {
-        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
+        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_finish);
         mRoot.findViewById(R.id.image_player_loading).setVisibility(View.GONE);
@@ -554,7 +554,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     public void onStartPrelive() {
-        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
+        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_prelive);
         rotateIcon();
@@ -563,7 +563,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void initIcon() {
         mIconWrapper.setVisibility(View.INVISIBLE);
         mUserIcon.clearAnimation();
-        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading);
+        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         showBars(0);
     }
 

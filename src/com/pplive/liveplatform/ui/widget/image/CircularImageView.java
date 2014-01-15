@@ -8,6 +8,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.util.ImageUtil;
 
 public class CircularImageView extends AsyncImageView {
@@ -53,8 +55,10 @@ public class CircularImageView extends AsyncImageView {
         return mRect;
     }
 
-    public void setRounded(boolean rounded) {
-        this.mRounded = rounded;
+    @Override
+    public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
+        this.mRounded = true;
+        super.setImageAsync(imageUri, options, listener);
     }
 
     public void release() {
@@ -62,10 +66,15 @@ public class CircularImageView extends AsyncImageView {
             mBitmap.recycle();
         }
     }
-    
+
     @Override
     public void setLocalImage(int resid) {
-        setRounded(false);
+        setLocalImage(resid, true);
+    }
+
+    public void setLocalImage(int resid, boolean rounded) {
+        this.mRounded = rounded;
         super.setLocalImage(resid);
     }
+
 }
