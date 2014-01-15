@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui;
 
+import java.lang.ref.WeakReference;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -64,6 +66,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+        mErrorHandler = new ErrorHandler(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
 
@@ -80,6 +83,12 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
         mUserManager = UserManager.getInstance(this);
         mRefreshDialog = new RefreshDialog(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mErrorHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -258,18 +267,27 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         mErrorHandler.sendMessage(msg);
     }
 
-    private Handler mErrorHandler = new Handler() {
+    private Handler mErrorHandler;
+
+    static class ErrorHandler extends Handler {
+        private WeakReference<LoginActivity> mOuter;
+
+        public ErrorHandler(LoginActivity activity) {
+            mOuter = new WeakReference<LoginActivity>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_THIRDPARTY_ERROR:
-                Toast.makeText(mContext, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                break;
-            default:
-                break;
+            LoginActivity outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_THIRDPARTY_ERROR:
+                    Toast.makeText(outer, msg.obj.toString(), Toast.LENGTH_SHORT).show();
+                    break;
+                }
             }
         }
-    };
+    }
 
     @Override
     public void loginCanceled() {

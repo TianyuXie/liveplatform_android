@@ -64,6 +64,15 @@
         android:background="@drawable/player_pptv_icon"
         android:contentDescription="@null" />
 
+    <ImageView
+        android:id="@+id/image_player_loading"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/player_loading_bg"
+        android:contentDescription="@null"
+        android:scaleType="fitStart"
+        android:src="@drawable/player_loading_bg" />
+
     <TextView
         android:id="@+id/text_player_break"
         android:layout_width="wrap_content"
@@ -76,15 +85,6 @@
         android:textColor="@color/white"
         android:textSize="28sp"
         android:visibility="gone" />
-
-    <ImageView
-        android:id="@+id/image_player_loading"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/player_loading_bg"
-        android:contentDescription="@null"
-        android:scaleType="fitStart"
-        android:src="@drawable/player_loading_bg" />
 
     <TextView
         android:id="@+id/text_player_countdown"

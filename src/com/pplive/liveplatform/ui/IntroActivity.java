@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,10 +42,14 @@ public class IntroActivity extends Activity {
 
     private List<View> mImageViewList;
 
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mHandler = new InnerHandler(this);
         setContentView(R.layout.activity_intro);
+
         ImageLoader.getInstance().clearMemoryCache();
 
         mViewPager = (AdvancedViewPager) findViewById(R.id.viewpager_intro);
@@ -64,7 +69,7 @@ public class IntroActivity extends Activity {
                 mImageViewList.add(imageView);
             }
             mViewPager.setScrollable(true);
-            mViewPager.setSwitchDuration(500);
+            mViewPager.setSwitchDuration(300);
             mViewPager.setAdapter(pagerAdapter);
             mViewPager.setOnPageChangeListener(onPageChangeListener);
             mViewPager.setCurrentItem(1);
@@ -104,20 +109,6 @@ public class IntroActivity extends Activity {
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_GO_HOME:
-                startHomeActivity();
-                break;
-            case MSG_GO_INTRO:
-                findViewById(R.id.image_intro_welcome).setVisibility(View.GONE);
-                break;
-            }
-        }
-    };
 
     private PagerAdapter pagerAdapter = new PagerAdapter() {
 
@@ -186,6 +177,29 @@ public class IntroActivity extends Activity {
             Intent intent = new Intent(IntroActivity.this, HomeActivity.class);
             startActivity(intent);
             finish();
+        }
+    }
+
+    static class InnerHandler extends Handler {
+        private WeakReference<IntroActivity> mOuter;
+
+        public InnerHandler(IntroActivity activity) {
+            mOuter = new WeakReference<IntroActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            IntroActivity outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_GO_HOME:
+                    outer.startHomeActivity();
+                    break;
+                case MSG_GO_INTRO:
+                    outer.findViewById(R.id.image_intro_welcome).setVisibility(View.GONE);
+                    break;
+                }
+            }
         }
     }
 

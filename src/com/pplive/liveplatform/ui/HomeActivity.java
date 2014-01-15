@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui;
 
+import java.lang.ref.WeakReference;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -82,12 +84,15 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     private View mHelpView;
 
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+        mHandler = new InnerHandler(this);
+        mContext = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_home);
-        mContext = this;
 
         mFragmentContainer = (SlidableContainer) findViewById(R.id.layout_home_fragment_container);
         mSideBar = (SideBar) findViewById(R.id.home_sidebar);
@@ -439,17 +444,26 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         }
     };
 
-    private Handler mHandler = new Handler() {
+    static class InnerHandler extends Handler {
+        private WeakReference<HomeActivity> mOuter;
+
+        public InnerHandler(HomeActivity activity) {
+            mOuter = new WeakReference<HomeActivity>(activity);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_RETRY_TOKEN:
-                checkToken();
-                break;
-            case MSG_FINISH_LOADING:
-                mStatusButton.finishLoading();
-                break;
+            HomeActivity outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_RETRY_TOKEN:
+                    outer.checkToken();
+                    break;
+                case MSG_FINISH_LOADING:
+                    outer.mStatusButton.finishLoading();
+                    break;
+                }
             }
         }
-    };
+    }
 }
