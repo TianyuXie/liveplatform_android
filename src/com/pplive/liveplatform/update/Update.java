@@ -9,9 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
 import android.os.Build;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -23,7 +21,7 @@ import com.pplive.liveplatform.util.DirManager;
 
 public class Update {
 
-    public static final File DOWNLAOD_DIR = new File(DirManager.getDownloadPath());
+    public static final File DOWNLOAD_DIR = new File(DirManager.getDownloadPath());
 
     public static final String PREF_UPDATE_URL = "update_url";
 
@@ -50,8 +48,8 @@ public class Update {
     public static final String PREF_GAME_DATE = "game_date";
 
     public static void deleteLastUpdateApk() {
-        if (DOWNLAOD_DIR.exists()) {
-            File[] list = DOWNLAOD_DIR.listFiles(new FilenameFilter() {
+        if (DOWNLOAD_DIR.exists()) {
+            File[] list = DOWNLOAD_DIR.listFiles(new FilenameFilter() {
                 @Override
                 public boolean accept(File dir, String filename) {
                     if (!TextUtils.isEmpty(filename) && filename.endsWith(".apk")) {
@@ -75,7 +73,6 @@ public class Update {
 
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 super.run();
                 ArrayList<UpdateInfo> updateInfos = getUpdateInfos(activity, true);
                 doUpdate(updateInfos, activity);
@@ -155,7 +152,6 @@ public class Update {
 
             @Override
             public void run() {
-                // TODO Auto-generated method stub
                 super.run();
                 update(context);
             }
@@ -225,7 +221,6 @@ public class Update {
                 }
 
                 // 判断更新模式，如果是普通模式，判断是否提示过
-                //
                 if (updateInfo.model == UpdateInfo.MODE_NORMAL) {
                     if (UpdatePref.getPref(activity, updateInfo.distVersionName, false)) {
                         return false;
@@ -298,18 +293,16 @@ public class Update {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //
         return null;
     }
 
     public static void showUpdateDialog(final Activity activity, final UpdateInfo updateInfo) {
         final AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
-        dialog.setTitle("升级");
+        dialog.setTitle("升级提醒");
         dialog.setMessage(activity.getString(R.string.update_content, updateInfo.description)).create();
         dialog.setPositiveButton(R.string.update_confirm, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
                 startUpdate(activity, updateInfo);
                 dialog.dismiss();
             }
@@ -318,7 +311,6 @@ public class Update {
         dialog.setNegativeButton(R.string.update_cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
                 if (updateInfo.model == UpdateInfo.MODE_FORCE) {
                     // 强制升级
                     activity.finish();
@@ -335,42 +327,12 @@ public class Update {
         });
         dialog.setCancelable(false);// 不可以取消
         dialog.show();
-
-    }
-
-    public void showNoSdDialog(Context context) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("alert");
-        builder.setMessage("no sdcard");
-        final AlertDialog dlg = builder.create();
-        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dlg.notify();
-            }
-        });
-
-        builder.setIcon(Color.parseColor("#FF0000"));
-
-        dlg.show();
     }
 
     protected static void startUpdate(final Activity activity, final UpdateInfo updateInfo) {
-
-        // 有更新
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            //UtilMethod.getInstance().showNoSdDialog(activity);
-
-            return;
-        }
-
-        if (!DOWNLAOD_DIR.exists()) {
-            DOWNLAOD_DIR.mkdirs();
-        }
-
         String fileName = updateInfo.url.substring(updateInfo.url.lastIndexOf("/") + 1, updateInfo.url.lastIndexOf("."));
 
-        String filePath = DirManager.SD_APP_PATH + File.separator + fileName + ".apk";
+        String filePath = DirManager.getDownloadPath() + File.separator + fileName + ".apk";
         File file = new File(filePath);
         if (file.exists()) {
             DownManager.openFile(activity, file);
@@ -381,7 +343,7 @@ public class Update {
             @Override
             public void run() {
                 activity.finish();
-                DownManager.down(activity, updateInfo.url, DOWNLAOD_DIR);
+                DownManager.down(activity, updateInfo.url, DOWNLOAD_DIR);
             }
         });
 

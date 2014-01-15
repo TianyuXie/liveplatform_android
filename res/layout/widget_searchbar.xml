@@ -52,10 +52,11 @@
 
         <Button
             android:id="@+id/btn_searchbar_close"
-            android:layout_margin="15dp"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:background="@drawable/searchbar_close_btn_bg" />
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_margin="12dp"
+            android:background="@drawable/searchbar_close_btn_bg"
+            android:gravity="center_vertical" />
     </LinearLayout>
 
     <LinearLayout
