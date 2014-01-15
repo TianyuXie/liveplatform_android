@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- String -->
+    <string name="live"><b>Live</b></string>
+    <string name="alert_prelive_title">爱播提醒</string>
+    <string name="alert_prelive_default_message">您有一个预播即将开始</string>
+    <string name="alert_negative">不要</string>
+    <string name="alert_title_living_terminated">续播提醒</string>
+    <string name="alert_message_living_terminated">哎呀，不小心中断啦，\n你要继续直播吗？</string>
+    <string name="alert_positive_living_terminated">继续直播</string>
+    <string name="alert_title_prelive">预播提醒</string>
+    <string name="alert_message_prelive">你要进入该预播节目吗？</string>
+    <string name="record_no_comment">还没有人来吐槽你哦</string>
+    <string name="alert_positive_prelive">进入预播</string>
+    <string name="default_live_title_fmt"><![CDATA[\"%s\" 的直播]]></string>
+
+    <!-- Color -->
+    <color name="dim_white">#dedede</color>
+    <color name="black_transparent">#80000000</color>
+    <color name="edit_normal">#ffffff</color>
+    <color name="edit_focused">#19a0ff</color>
+    <color name="record_dialog_nickname">#FF00ACFF</color>
+    <color name="record_dialog_content">#FF919191</color>
+    <color name="record_chat_bg">#80000000</color>
+    <color name="bottom_bar_bg">#40000000</color>
+
+    <!-- Style -->
+    <style name="Widget.Button.Transparent" parent="@android:style/Widget.Button">
+        <item name="android:background">@null</item>
+        <item name="android:text">@null</item>
+    </style>
+
+    <style name="Widget.ToggleButton.Transparent" parent="@style/Widget.Button.Transparent">
+        <item name="android:textOff">@null</item>
+        <item name="android:textOn">@null</item>
+    </style>
+
+    <style name="Widget.EditText" parent="@android:style/Widget.TextView">
+        <item name="android:background">@drawable/live_record_fillet_bg</item>
+        <item name="android:paddingLeft">15dp</item>
+        <item name="android:paddingRight">15dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/dim_white</item>
+    </style>
+
+    <style name="Widget.TextView.Shadow" parent="@android:style/Widget.TextView">
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:shadowColor">@color/black</item>
+        <item name="android:shadowRadius">15</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
+
+</resources>

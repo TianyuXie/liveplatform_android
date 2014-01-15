@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- string -->
+    <string name="home_title">爱播</string>
+    <string name="home_loading">正在加载</string>
+    <string name="home_loaded_count">已加载%d条</string>
+    <string name="home_all_loaded">已全部加载</string>
+    <string name="home_nodata_button">没有数据</string>
+    <string name="home_nodata_text">暂无直播\n点击上图尝试刷新</string>
+    <string name="home_fail_text">网络不给力\n点击上图尝试刷新</string>
+    <string name="home_retry">刷新</string>
+    <string name="program_live">Live</string>
+    <string name="default_program_viewcount">0</string>
+    <string name="home_catalog_original">原创</string>
+    <string name="home_catalog_tv">电视</string>
+    <string name="home_catalog_sport">体育</string>
+    <string name="home_catalog_finance">财经</string>
+    <string name="home_catalog_game">游戏</string>
+    <string name="home_livestate_live">正在直播</string>
+    <string name="home_livestate_tolive">即将直播</string>
+    <string name="home_livestate_replay">直播回看</string>
+    <string name="toast_version_low">手机系统版本这么低还想直播, 升成4.1再来试试吧~</string>
+
+    <!-- color -->
+    <color name="home_fragment_body_bg">#FF121212</color>
+    <color name="home_program_item_bg">#FF272727</color>
+    <color name="home_livestate_btn_checked">#FF272727</color>
+    <color name="home_livestate_text_checked">#FFAAAAAA</color>
+    <color name="home_pull_header_bg">#FFAAAAAA</color>
+    <color name="home_help_bg">#AA000000</color>
+
+    <style name="home_retry_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/home_retry_btn_bg</item>
+        <item name="android:padding">5dp</item>
+    </style>
+
+    <style name="home_live_status_button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/home_livestate_text_color</item>
+        <item name="android:background">@drawable/home_livestate_btn_bg</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:drawablePadding">5dp</item>
+        <item name="android:button">@null</item>
+    </style>
+
+</resources>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="textColor" format="color" />
+    <attr name="textSize" format="dimension" />
+    <attr name="text" format="string" />
+    <attr name="duration" format="integer" />
+
+    <declare-styleable name="LoadingButton">
+        <attr name="textSize" />
+        <attr name="text" />
+        <attr name="anim_show" />
+        <attr name="anim_hide" />
+        <attr name="normal_background" format="reference" />
+        <attr name="loading_background" format="reference" />
+        <attr name="anim_background" format="reference" />
+        <attr name="animation" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="AnimDoor">
+        <attr name="duration" />
+        <attr name="left_src" format="reference" />
+        <attr name="right_src" format="reference" />
+        <attr name="factor" format="float" />
+        <attr name="visible" format="boolean" />
+        <attr name="orientation">
+            <enum name="horizontal" value="0" />
+            <enum name="vertical" value="1" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="SideBar">
+        <attr name="anim_show" format="reference" />
+        <attr name="anim_hide" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="SlidableContainer">
+        <attr name="duration" />
+        <attr name="distance" format="dimension" />
+        <attr name="scale_percent" format="float" />
+    </declare-styleable>
+    <declare-styleable name="ChatBox">
+        <attr name="textSize" />
+        <attr name="textColor" />
+        <attr name="userColor" format="color" />
+        <attr name="contentColor" format="color" />
+        <attr name="paddingBottom" format="dimension" />
+        <attr name="paddingLeft" format="dimension" />
+        <attr name="paddingRight" format="dimension" />
+        <attr name="paddingTop" format="dimension" />
+        <attr name="refreshDelay" format="integer" />
+        <attr name="retryDelay" format="integer" />
+        <attr name="defaultText" format="string" />
+        <attr name="lineSpacingMultiplier" format="float" />
+        <attr name="background" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="SwipeListView">
+        <attr name="swipeOpenOnLongPress" format="boolean" />
+        <attr name="swipeAnimationTime" format="integer" />
+        <attr name="swipeOffsetLeft" format="dimension" />
+        <attr name="swipeOffsetRight" format="dimension" />
+        <attr name="swipeCloseAllItemsWhenMoveList" format="boolean" />
+        <attr name="swipeFrontView" format="reference" />
+        <attr name="swipeBackView" format="reference" />
+        <attr name="swipeMode" format="enum">
+            <enum name="none" value="0" />
+            <enum name="both" value="1" />
+            <enum name="right" value="2" />
+            <enum name="left" value="3" />
+        </attr>
+        <attr name="swipeActionLeft" format="enum">
+            <enum name="reveal" value="0" />
+            <enum name="dismiss" value="1" />
+            <enum name="choice" value="2" />
+        </attr>
+        <attr name="swipeActionRight" format="enum">
+            <enum name="reveal" value="0" />
+            <enum name="dismiss" value="1" />
+            <enum name="choice" value="2" />
+        </attr>
+        <attr name="swipeDrawableChecked" format="reference" />
+        <attr name="swipeDrawableUnchecked" format="reference" />
+    </declare-styleable>
+
+</resources>

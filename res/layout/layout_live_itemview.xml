@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pplive.liveplatform.ui.live.LiveListItemView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:gravity="center_vertical"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp" >
+
+    <com.pplive.liveplatform.ui.widget.image.AsyncImageView
+        android:id="@+id/image_prelive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@null"
+        android:minHeight="120dp"
+        android:minWidth="160dp"
+        android:src="@drawable/live_record_default_prelive_image" />
+
+    <TextView
+        android:id="@+id/text_live_title"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image_prelive"
+        android:layout_alignRight="@+id/image_prelive"
+        android:background="@color/black_transparent"
+        android:gravity="center_horizontal"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        android:textColor="@color/dim_white" />
+
+    <TextView
+        android:id="@+id/text_prelive_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/image_prelive"
+        android:layout_alignTop="@+id/image_prelive"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/program_tag_bg"
+        android:drawableLeft="@drawable/program_coming_icon"
+        android:drawablePadding="10dp"
+        android:paddingBottom="3dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:paddingTop="3dp" />
+
+    <View
+        android:id="@+id/view_btn_delete_masking"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignBottom="@+id/image_prelive"
+        android:layout_alignLeft="@+id/image_prelive"
+        android:layout_alignRight="@+id/image_prelive"
+        android:layout_alignTop="@+id/image_prelive"
+        android:background="@color/black_transparent"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/btn_delete"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_prelive_delete"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@null"
+        android:src="@drawable/live_record_btn_delete"
+        android:visibility="invisible" />
+
+    <ImageButton
+        android:id="@+id/btn_prelive_delete"
+        style="@style/Widget.ToggleButton.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/image_prelive"
+        android:layout_alignTop="@+id/image_prelive"
+        android:contentDescription="@null"
+        android:padding="10dp"
+        android:src="@drawable/live_record_btn_prelive_delete" />
+
+</com.pplive.liveplatform.ui.live.LiveListItemView>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.pplive.liveplatform.ui.widget.image.CircularImageView
+        android:id="@+id/btn_sidebar_user_icon"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/user_icon_login" />
+
+    <TextView
+        android:id="@+id/text_sidebar_user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_sidebar_user_icon"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:textColor="@color/white" />
+
+    <RadioGroup
+        android:id="@+id/radiogroup_sidebar_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_sidebar_user"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical" >
+
+        <RadioButton
+            android:id="@+id/btn_sidebar_original"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:button="@drawable/sidebar_original_btn_bg"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/btn_sidebar_tv"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:button="@drawable/sidebar_tv_btn_bg" />
+
+        <RadioButton
+            android:id="@+id/btn_sidebar_game"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:button="@drawable/sidebar_game_btn_bg" />
+
+        <RadioButton
+            android:id="@+id/btn_sidebar_sport"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:button="@drawable/sidebar_sport_btn_bg" />
+
+        <RadioButton
+            android:id="@+id/btn_sidebar_finance"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:button="@drawable/sidebar_finance_btn_bg" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/btn_sidebar_settings"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/sidebar_settings_btn_bg" />
+
+    <LinearLayout
+        android:id="@+id/layout_block_layer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:clickable="true"
+        android:orientation="vertical" />
+
+</RelativeLayout>

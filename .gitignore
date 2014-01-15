@@ -11,7 +11,16 @@ local.properties
 .project
 .externalToolBuilders/
 
+# Ship
+dist/
+
+# Temp
 *.tmp
 *~
 *.orig
 *.swp
+
+# Dev
+# libs/armeabi/
+# libs/android.ppmedia.jar
+# libs/MeetSDK.jar

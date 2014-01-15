@@ -1,4 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MainActivity</string>
+
+    <string name="blank"></string>
+    <string name="number_and_letter">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="btn_confirm">确定</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_delete">删除</string>
+
+    <!-- For debug -->
+    <string name="toast_failed">失败</string>
+    <string name="toast_timeout">超时</string>
+    <string name="toast_cancel">取消</string>
+    <string name="toast_sucess">成功</string>
+    <string name="toast_login_timeout">登录超时</string>
+
+    <!-- For share -->
+    <string name="program_status_deleted">已删除</string>
+    <string name="program_status_notstart">即将播出</string>
+    <string name="program_status_living">正在直播</string>
+    <string name="program_status_stopped">直播回看</string>
+    <string name="default_share_target_url">http://i.pptv.com</string>
+
+    <!-- For Test -->
+    <string name="test_player_live">Live</string>
+    <string name="test_player_share">分享</string>
+    <string name="test_player_back">返回</string>
+    <string name="test_player_name">sevengram</string>
+    <string name="refresh_pull">下拉刷新&#8230;</string>
+    <string name="refresh_release">松开立即刷新&#8230;</string>
+    <string name="refresh_last_update">上次刷新: %s</string>
+
+    <!-- For network -->
+    <string name="alert_title">爱播提醒</string>
+    <string name="alert_network_title">流量提醒</string>
+    <string name="alert_go_settings">去设置</string>
+    <string name="alert_play_start">继续播放</string>
+    <string name="alert_play_stop">停止播放</string>
+    <string name="alert_mobile_message">您正在使用移动数据网络，会产生流量费用，建议使用Wifi网络。</string>
+    <string name="alert_play_stay">留在此页</string>
+    <string name="alert_play_exit">退出播放</string>
+    <string name="alert_broken_message">网络已断开，是否留在播放页面?</string>
+
+    <!-- For update -->
+    <string name="update_latest_update">当前版本为V%1$s,已是最新版本</string>
+    <string name="update_content">更新说明：\n%s"</string>
+    <string name="update_confirm">确认</string>
+    <string name="update_cancel">取消</string>
+    <string name="update_download_error">下载失败</string>
+    <string name="update_title">软件更新</string>
+    <string name="update_ing"><![CDATA[正在下载...]]></string>
+    <string name="update_no_update_information">没有升级信息</string>
+
 </resources>

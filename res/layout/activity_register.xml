@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/titlebar_height" >
+
+        <Button
+            android:id="@+id/btn_register_back"
+            android:layout_width="@dimen/titlebar_back_btn_size"
+            android:layout_height="@dimen/titlebar_back_btn_size"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/titlebar_back_btn_bg" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:text="@string/register_title"
+            android:textColor="@color/white"
+            android:textSize="@dimen/titlebar_text_size" />
+
+        <Button
+            android:id="@+id/btn_register_confirm"
+            android:layout_width="@dimen/titlebar_back_btn_size"
+            android:layout_height="@dimen/titlebar_back_btn_size"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/titlebar_confirm_btn_bg"
+            android:enabled="false" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/navbar_bg"
+        android:orientation="horizontal"
+        android:padding="2dp" >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:text="@string/register_nav"
+            android:textColor="@color/nav_text_bg"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <EditText
+            android:id="@+id/edit_register_username"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/login_input_bg"
+            android:hint="@string/register_username"
+            android:imeOptions="actionNext"
+            android:inputType="textVisiblePassword"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textColor="@color/login_input_text_bg"
+            android:textSize="17sp" />
+
+        <EditText
+            android:id="@+id/edit_register_password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:background="@color/login_input_bg"
+            android:hint="@string/register_password"
+            android:imeOptions="actionNext"
+            android:inputType="textPassword"
+            android:padding="12dp"
+            android:singleLine="true"
+            android:textColor="@color/login_input_text_bg"
+            android:textSize="17sp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/edit_register_checkcode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:background="@color/login_input_bg"
+                android:digits="@string/number_and_letter"
+                android:hint="@string/register_checkcode"
+                android:inputType="textVisiblePassword"
+                android:padding="12dp"
+                android:singleLine="true"
+                android:textColor="@color/login_input_text_bg"
+                android:textSize="17sp" />
+
+            <com.pplive.liveplatform.ui.widget.image.AsyncImageView
+                android:id="@+id/image_register_checkcode"
+                android:layout_width="120dp"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center_vertical"
+                android:contentDescription="@null"
+                android:scaleType="fitXY" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

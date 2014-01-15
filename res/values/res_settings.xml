@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- For settings -->
+    <string name="settings_nickname">昵称</string>
+    <string name="settings_pptv_user">PPTV帐号</string>
+    <string name="settings_thirdparty">第三方登录</string>
+    <string name="settings_login_qq">腾讯QQ</string>
+    <string name="settings_login_weibo">新浪微博</string>
+    <string name="settings_password">修改密码</string>
+    <string name="settings_change_nickname">修改昵称</string>
+    <string name="settings_hint_nickname">昵称</string>
+    <string name="settings_prelive">预播提醒</string>
+    <string name="settings_content">内容提醒</string>
+    <string name="settings_about">关于爱播</string>
+    <string name="settings_update">检查更新</string>
+    <string name="about_app_info">爱播介绍\n产品预留图标及文字</string>
+    <string name="about_copyright">Copyright&#169;产品预留版权声明</string>
+    
+    <string name="settings_logout">退出登录</string>
+    <string name="settings_login">登&#160;&#160;录</string>
+    <string name="settings_title">设置</string>
+    <string name="settings_logout_title">退出登录</string>
+    <string name="settings_logout_text">确定要退出吗?</string>
+
+    <color name="settings_table_bg">#FF0E0E0E</color>
+    <color name="settings_text">#FF919191</color>
+    <color name="settings_logout_bg">#FFD92B2B</color>
+    <color name="settings_version">#FF676767</color>
+    <color name="settings_user">#FF1A1A1A</color>
+
+    <style name="settings_text">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:textColor">@color/settings_text</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="settings_tablelayout">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:shrinkColumns">0</item>
+        <item name="android:stretchColumns">0</item>
+    </style>
+
+    <style name="settings_tablerow">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">@color/settings_table_bg</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:paddingBottom">15dp</item>
+        <item name="android:paddingTop">15dp</item>
+    </style>
+
+    <style name="settings_tablerow_switcher">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:background">@color/settings_table_bg</item>
+        <item name="android:layout_marginBottom">1dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+    </style>
+
+    <style name="settings_togglebutton" parent="togglebutton_notext">
+        <item name="android:layout_width">55dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:layout_height">35dp</item>
+        <item name="android:background">@drawable/settings_btn_switcher</item>
+    </style>
+
+    <style name="settings_right_arrow">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">right</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:src">@drawable/settings_arrow_right</item>
+    </style>
+
+</resources>

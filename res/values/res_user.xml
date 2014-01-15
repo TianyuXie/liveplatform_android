@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="userpage_default_title">个人主页</string>
+    <string name="userpage_my_title">我的主页</string>
+    <string name="userpage_others_title">关于播主</string>
+    <string name="userpage_others_nodata">播主还没有创建过节目噢</string>
+    <string name="userpage_user_nodata">您还没有创建过节目\n点击上图开始直播</string>
+    <string name="userpage_user_error">更新失败, 请点击上图刷新</string>
+    <string name="userpage_default_vv">0</string>
+    <string name="alert_userpage_delete_message">你确定要删除 %s?</string>
+    
+    <string name="toast_userpage_nopic">找不到系统图库</string>
+    <string name="toast_userpage_delete_success">删除成功</string>
+    <string name="toast_userpage_delete_fail">删除失败</string>
+    <string name="toast_userpage_delete_timeout">请求超时</string>
+
+    <!-- toast -->
+    <string name="toast_icon_changed">修改头像成功</string>
+    <string name="toast_icon_failed">修改头像失败</string>
+    <string name="toast_nickname_changed">修改昵称成功</string>
+    <string name="toast_nickname_failed">修改昵称失败</string>
+    <string name="toast_nickname_duplicated">昵称已被使用</string>
+    <string name="error_nickname_duplicated">duplicate nickname</string>
+
+    <color name="userpage_bg">#FF151515</color>
+    <color name="userpage_item_right_bg">#FF202020</color>
+    <color name="userpage_delete_btn_bg">#FF8C1D1D</color>
+    <color name="userpage_program_title_bg">#FF919191</color>
+
+</resources>

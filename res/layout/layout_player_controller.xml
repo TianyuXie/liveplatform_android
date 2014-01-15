@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pplive.liveplatform.ui.player.LivePlayerController xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_player_controlbar"
+        android:background="@color/player_seekbar_black"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp" >
+
+        <TextView
+            android:id="@+id/text_player_current_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:gravity="center_vertical|right"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/player_default_time"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/text_player_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:gravity="center_vertical|left"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/player_default_time"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <SeekBar
+            android:id="@+id/player_seekbar"
+            style="@style/player_progressBarStyleHorizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_toLeftOf="@id/text_player_duration"
+            android:layout_toRightOf="@id/text_player_current_time" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@id/layout_player_controlbar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/player_controlbar_bg"
+        android:clickable="true"
+        android:minHeight="50dp" >
+
+        <ToggleButton
+            android:id="@+id/play_pause_button"
+            android:layout_width="60dp"
+            android:layout_height="36dp"
+            android:layout_centerInParent="true"
+            android:background="@drawable/player_playpause_button"
+            android:text=""
+            android:textOff=""
+            android:textOn="" />
+    </RelativeLayout>
+
+</com.pplive.liveplatform.ui.player.LivePlayerController>
