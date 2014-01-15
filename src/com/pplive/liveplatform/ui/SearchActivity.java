@@ -54,6 +54,8 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
 
     private TextView mResultText;
 
+    private boolean mBusy;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,39 +101,46 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
     };
 
     private void startSearchTask(String keyword) {
-        if (!TextUtils.isEmpty(keyword)) {
-            Log.d(TAG, "SearchTask");
-            mKeyword = keyword;
-            mNextToken = "";
-            startTask(keyword, REFRESH);
+        if (!mBusy) {
+            if (!TextUtils.isEmpty(keyword)) {
+                Log.d(TAG, "SearchTask");
+                mKeyword = keyword;
+                mNextToken = "";
+                startTask(keyword, REFRESH);
+            }
         }
     }
 
     public void startAppendTask() {
-        startTask(mKeyword, APPEND);
+        if (!mBusy) {
+            startTask(mKeyword, APPEND);
+        }
     }
 
     private void startTask(String keyword, int type) {
-        SearchTask task = new SearchTask();
-        task.addTaskListener(onTaskListener);
-        TaskContext taskContext = new TaskContext();
-        taskContext.set(SearchTask.KEY_TYPE, type);
-        taskContext.set(SearchTask.KEY_SUBJECT_ID, -1);
-        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-        taskContext.set(SearchTask.KEY_KEYWORD, keyword);
-        taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
-        switch (mLiveStatus) {
-        case COMING:
-            taskContext.set(SearchTask.KEY_SORT, SortKeyword.START_TIME);
-            break;
-        case VOD:
-        case LIVING:
-        default:
-            taskContext.set(SearchTask.KEY_SORT, SortKeyword.VV);
-            break;
+        if (!mBusy) {
+            mBusy = true;
+            SearchTask task = new SearchTask();
+            task.addTaskListener(onTaskListener);
+            TaskContext taskContext = new TaskContext();
+            taskContext.set(SearchTask.KEY_TYPE, type);
+            taskContext.set(SearchTask.KEY_SUBJECT_ID, -1);
+            taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
+            taskContext.set(SearchTask.KEY_KEYWORD, keyword);
+            taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
+            switch (mLiveStatus) {
+            case COMING:
+                taskContext.set(SearchTask.KEY_SORT, SortKeyword.START_TIME);
+                break;
+            case VOD:
+            case LIVING:
+            default:
+                taskContext.set(SearchTask.KEY_SORT, SortKeyword.VV);
+                break;
+            }
+            taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
+            task.execute(taskContext);
         }
-        taskContext.set(SearchTask.KEY_FALL_COUNT, FALL_COUNT);
-        task.execute(taskContext);
     }
 
     private void switchLiveStatus(LiveStatusKeyword id) {
@@ -143,11 +152,13 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         @Override
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+            mBusy = false;
             mResultText.setVisibility(View.VISIBLE);
             mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>",
                     mKeyword)));
             FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
             mNextToken = fallList.nextToken();
+            Log.d(TAG, mNextToken);
             LiveStatusKeyword status = (LiveStatusKeyword) event.getContext().get(SearchTask.KEY_LIVE_STATUS);
             int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
             switch (type) {
@@ -174,6 +185,7 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
+            mBusy = false;
             Toast.makeText(SearchActivity.this, R.string.toast_failed, Toast.LENGTH_SHORT).show();
         }
 
@@ -184,12 +196,14 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "SearchTask onTimeout");
+            mBusy = false;
             Toast.makeText(SearchActivity.this, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "SearchTask onTaskCancel");
+            mBusy = false;
             Toast.makeText(SearchActivity.this, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
         }
     };

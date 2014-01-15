@@ -10,9 +10,9 @@ public class DirManager {
         mContext = context.getApplicationContext();
     }
 
-    public final static String SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+    private final static String SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
 
-    public final static String SD_APP_PATH = SD_PATH + "/ibo";
+    private final static String SD_APP_PATH = SD_PATH + "/ibo";
 
     public static String getPrivateCachePath() {
         return mContext.getCacheDir().getAbsolutePath();

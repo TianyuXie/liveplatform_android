@@ -14,6 +14,10 @@ public class LocationInfo {
         return sData != null;
     }
 
+    public static void reset() {
+        sData = null;
+    }
+
     public static void updateData(Locator.LocationData data) {
         Log.d(TAG, String.format("%f|%f|%s", data.getLongitude(), data.getLatitude(), data.toString()));
         sData = data;

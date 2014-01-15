@@ -88,6 +88,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     @Override
     protected void onCreate(Bundle bundle) {
+        Log.d(TAG, "onCreate");
         super.onCreate(bundle);
         mHandler = new InnerHandler(this);
         mContext = this;
@@ -108,9 +109,9 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         mHomeFragment = new HomeFragment();
-        mHomeFragment.setCallbackListener(this);
         fragmentTransaction.add(R.id.layout_home_fragment_container, mHomeFragment);
         fragmentTransaction.commit();
+        mHomeFragment.setCallbackListener(this);
 
         mFragmentContainer.attachOnSlideListener(mSideBar);
         mFragmentContainer.attachOnSlideListener(mHomeFragment);
@@ -155,6 +156,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         Log.d(TAG, "onDestroy");
         mSideBar.release();
         mFragmentContainer.clearOnSlideListeners();
+        mHomeFragment.setCallbackListener(null);
         mHandler.removeCallbacksAndMessages(null);
         ImageLoader.getInstance().clearMemoryCache();
         super.onDestroy();
@@ -177,8 +179,8 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     @Override
     protected void onStart() {
-        Log.d(TAG, "onStart");
         super.onStart();
+        Log.d(TAG, "onStart");
         mSideBar.updateUsername();
         if (!LocationInfo.isUpdated()) {
             startLocator();
@@ -187,8 +189,8 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
 
     @Override
     protected void onStop() {
-        Log.d(TAG, "onStop");
         super.onStop();
+        Log.d(TAG, "onStop");
     }
 
     @Override

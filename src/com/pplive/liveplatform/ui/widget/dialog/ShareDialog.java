@@ -285,6 +285,9 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     }
 
     private void shareImage(int target, Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
         switch (target) {
         case MSG_SHARE_SINA_DIRECT:
             sinaShareDirect(bitmap);

@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -133,6 +135,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mNetworkDown;
 
+    private boolean mEnded;
+
     private int mHalfScreenHeight;
 
     private Program mProgram;
@@ -147,8 +151,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     protected void onCreate(Bundle arg0) {
-        Log.d(TAG, "onCreate");
         super.onCreate(arg0);
+        Log.d(TAG, "onCreate");
         mContext = this;
         mHandler = new InnerHandler(this);
 
@@ -158,8 +162,13 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         setContentView(R.layout.activity_live_player);
 
         /* init fragment */
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         mLivePlayerFragment = new LivePlayerFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.layout_player_fragment, mLivePlayerFragment).commit();
+        fragmentTransaction.add(R.id.layout_player_fragment, mLivePlayerFragment);
+        fragmentTransaction.commit();
+        mLivePlayerFragment.setCallbackListener(this);
+
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
 
@@ -202,7 +211,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStart();
         Log.d(TAG, "onStart");
         mProgram = (Program) getIntent().getSerializableExtra(EXTRA_PROGRAM);
-        mLivePlayerFragment.setCallbackListener(this);
         mLivePlayerFragment.setProgram(mProgram);
         mLivePlayerFragment.setLayout(mIsFull);
 
@@ -215,7 +223,12 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             mHandler.sendEmptyMessageDelayed(MSG_LOADING_DELAY, LOADING_DELAY_TIME);
             startGetMedia();
         } else {
-            mLivePlayerFragment.setupVideoView(mUrl);
+            if (mProgram.isVOD()) {
+                mLivePlayerFragment.setupVideoView(mUrl);
+            } else {
+                showWaiting();
+                startGetMedia();
+            }
         }
         mChatBox.start(mProgram.getId());
         keepAliveDelay(0);
@@ -223,6 +236,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private void startGetMedia() {
         mUrl = null;
+        mEnded = false;
         mHandler.removeMessages(MSG_MEDIA_RETRY);
         long pid = mProgram.getId();
         if (pid > 0) {
@@ -242,6 +256,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     @Override
     protected void onDestroy() {
         Log.d(TAG, "onDestroy");
+        mLivePlayerFragment.setCallbackListener(null);
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
@@ -257,8 +272,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "onResume");
         super.onResume();
+        Log.d(TAG, "onResume");
         EventBus.getDefault().register(this);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
     }
@@ -268,7 +283,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         Log.d(TAG, "onStop");
         mChatBox.stop();
         mHandler.removeMessages(MSG_KEEP_ALIVE);
-        mLivePlayerFragment.setCallbackListener(null);
         sendDac();
         super.onStop();
     }
@@ -552,9 +566,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             case DELETED:
             case SYS_DELETED:
                 Log.d(TAG, "Stopped!");
+                mEnded = true;
                 DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
                 break;
             case LIVING:
+                mEnded = false;
                 if (mInterrupted && !mNetworkDown) {
                     Log.d(TAG, "Interrupted, Retry...");
                     mLivePlayerFragment.showBreakInfo(getString(R.string.player_signal_break));
@@ -637,7 +653,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private void retryPlay() {
         if (!mNetworkDown) {
-            mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_error));
+            mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_timeout));
             showWaiting();
             startGetMedia();
         } else {
@@ -717,7 +733,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     // Keep Alive
     private void keepAlive() {
         long pid = mProgram.getId();
-        if (pid > 0) {
+        if (pid > 0 && !mEnded) {
             Log.d(TAG, "keep alive:" + System.currentTimeMillis());
             LiveStatusTask task = new LiveStatusTask();
             task.addTaskListener(onLiveStatusTaskListener);
@@ -757,7 +773,11 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         } else if (mProgram.isVOD()) {
             Log.d(TAG, "onError: isVOD");
             mInterrupted = true;
-            retryPlay();
+            if (!mNetworkDown) {
+                mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_error));
+            } else {
+                mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_break));
+            }
             return true;
         }
         return false;

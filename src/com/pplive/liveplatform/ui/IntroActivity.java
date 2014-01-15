@@ -23,6 +23,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.dac.DacSender;
+import com.pplive.liveplatform.dac.info.LocationInfo;
 import com.pplive.liveplatform.ui.widget.viewpager.AdvancedViewPager;
 
 public class IntroActivity extends Activity {
@@ -50,6 +51,7 @@ public class IntroActivity extends Activity {
         mHandler = new InnerHandler(this);
         setContentView(R.layout.activity_intro);
 
+        LocationInfo.reset();
         ImageLoader.getInstance().clearMemoryCache();
 
         mViewPager = (AdvancedViewPager) findViewById(R.id.viewpager_intro);
@@ -89,9 +91,9 @@ public class IntroActivity extends Activity {
         super.onResume();
         Log.d(TAG, "onResume");
         if (!mFirstTime) {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 2000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 3000);
         } else {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 2000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 3000);
         }
     }
 
