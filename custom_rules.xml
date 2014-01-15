@@ -13,7 +13,7 @@
         name="app.channel"
         value="dev" />
 
-    <path id="xmltask.antlib" >
+    <path id="ant.lib.xmltask" >
 
         <pathelement path="ant/lib/xmltask.jar" />
     </path>
@@ -21,7 +21,7 @@
     <taskdef
         name="xmltask"
         classname="com.oopsconsultancy.xmltask.ant.XmlTask"
-        classpathref="xmltask.antlib" />
+        classpathref="ant.lib.xmltask" />
 
     <target
         name="-pre-compile"
@@ -42,7 +42,7 @@
 
     <target
         name="ship"
-        depends="release" >
+        depends="clean, release" >
 
         <mkdir dir="${ship.absolute.dir}" />
 
@@ -51,9 +51,14 @@
             input="${manifest.abs.file}"
             output="app.version" />
 
+        <echo
+            level="info"
+            message="Ship Package: ${ship.absolute.dir}/${ant.project.name}-${app.version}-${app.channel}.apk" />
+
         <copy
             file="${out.final.file}"
-            tofile="${ship.absolute.dir}/${ant.project.name}-${app.version}.apk" />
+            overwrite="true"
+            tofile="${ship.absolute.dir}/${ant.project.name}-${app.version}-${app.channel}.apk" />
     </target>
 
     <target
