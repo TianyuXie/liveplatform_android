@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.player;
 
+import java.lang.ref.WeakReference;
+
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -105,11 +107,14 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private int mSavedPostion;
 
     private Program mProgram;
+    
+    private Handler mHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        super.onCreate(savedInstanceState);
+        mHandler = new InnerHandler(this);
         mStartTime = -1;
         mSavedPostion = 0;
         mShowBar = true;
@@ -306,24 +311,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_HIDE:
-                hideBars();
-                break;
-            case MSG_TIMEOUT:
-                if (mCallbackListener != null) {
-                    mCallbackListener.onTimeout();
-                }
-                break;
-            default:
-                break;
-            }
-        }
-    };
 
     private MeetVideoView.OnPreparedListener mPreparedListener = new MeetVideoView.OnPreparedListener() {
 
@@ -674,6 +661,31 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void onSeek() {
         if (mCallbackListener != null) {
             mCallbackListener.onSeek();
+        }
+    }
+
+    static class InnerHandler extends Handler {
+        private WeakReference<LivePlayerFragment> mOuter;
+
+        public InnerHandler(LivePlayerFragment outer) {
+            mOuter = new WeakReference<LivePlayerFragment>(outer);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            LivePlayerFragment outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_HIDE:
+                    outer.hideBars();
+                    break;
+                case MSG_TIMEOUT:
+                    if (outer.mCallbackListener != null) {
+                        outer.mCallbackListener.onTimeout();
+                    }
+                    break;
+                }
+            }
         }
     }
 

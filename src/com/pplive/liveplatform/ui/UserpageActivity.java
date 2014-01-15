@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -102,9 +103,12 @@ public class UserpageActivity extends Activity {
 
     private boolean mNeedUpdate;
 
+    private Handler mPullHandler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPullHandler = new PullHandler(this);
         mContext = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_userpage);
@@ -188,6 +192,7 @@ public class UserpageActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        mPullHandler.removeCallbacksAndMessages(null);
         mUserIcon.release();
         super.onDestroy();
     }
@@ -521,27 +526,6 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private Handler mPullHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_PULL_DELAY:
-                mRefreshDelayed = true;
-                break;
-            case MSG_PULL_FINISH:
-                mRefreshFinish = true;
-                break;
-            case MSG_PULL_TIMEOUT:
-                mListView.onRefreshComplete();
-                return;
-            }
-            if (mRefreshDelayed && mRefreshFinish) {
-                mPullHandler.removeMessages(MSG_PULL_TIMEOUT);
-                mListView.onRefreshComplete();
-            }
-        }
-    };
-
     private boolean isLogin(String username) {
         return UserManager.getInstance(this).isLogin(username);
     }
@@ -562,6 +546,36 @@ public class UserpageActivity extends Activity {
             startActivity(intent);
         } else {
             Toast.makeText(mContext, R.string.toast_version_low, Toast.LENGTH_LONG).show();
+        }
+    }
+
+    static class PullHandler extends Handler {
+        private WeakReference<UserpageActivity> mOuter;
+
+        public PullHandler(UserpageActivity outer) {
+            mOuter = new WeakReference<UserpageActivity>(outer);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            UserpageActivity outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_PULL_DELAY:
+                    outer.mRefreshDelayed = true;
+                    break;
+                case MSG_PULL_FINISH:
+                    outer.mRefreshFinish = true;
+                    break;
+                case MSG_PULL_TIMEOUT:
+                    outer.mListView.onRefreshComplete();
+                    return;
+                }
+                if (outer.mRefreshDelayed && outer.mRefreshFinish) {
+                    removeMessages(MSG_PULL_TIMEOUT);
+                    outer.mListView.onRefreshComplete();
+                }
+            }
         }
     }
 

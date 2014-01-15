@@ -18,7 +18,7 @@
     <string name="program_status_deleted">已删除</string>
     <string name="program_status_notstart">即将播出</string>
     <string name="program_status_living">正在直播</string>
-    <string name="program_status_stopped">直播录像</string>
+    <string name="program_status_stopped">直播回看</string>
     <string name="default_share_target_url">http://i.pptv.com</string>
 
     <!-- For Test -->

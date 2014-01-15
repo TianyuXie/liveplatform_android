@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.ui.home;
 
+import java.lang.ref.WeakReference;
 import java.util.Locale;
 
 import android.content.Intent;
@@ -90,11 +91,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private int mSubjectId;
 
     private LiveStatusKeyword mLiveStatus;
+    
+    private Handler mPullHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+        mPullHandler = new PullHandler(this);
         mSubjectId = CATALOG_ORIGIN;
         mLiveStatus = LiveStatusKeyword.LIVING;
     }
@@ -483,25 +487,34 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             startRefreshTask();
         }
     };
+    
+    static class PullHandler extends Handler {
+        private WeakReference<HomeFragment> mOuter;
 
-    private Handler mPullHandler = new Handler() {
+        public PullHandler(HomeFragment outer) {
+            mOuter = new WeakReference<HomeFragment>(outer);
+        }
+
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_PULL_DELAY:
-                mRefreshDelayed = true;
-                break;
-            case MSG_PULL_FINISH:
-                mRefreshFinish = true;
-                break;
-            case MSG_PULL_TIMEOUT:
-                mContainer.onRefreshComplete();
-                return;
-            }
-            if (mRefreshDelayed && mRefreshFinish) {
-                mPullHandler.removeMessages(MSG_PULL_TIMEOUT);
-                mContainer.onRefreshComplete();
+            HomeFragment outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_PULL_DELAY:
+                    outer.mRefreshDelayed = true;
+                    break;
+                case MSG_PULL_FINISH:
+                    outer.mRefreshFinish = true;
+                    break;
+                case MSG_PULL_TIMEOUT:
+                    outer.mContainer.onRefreshComplete();
+                    return;
+                }
+                if (outer.mRefreshDelayed && outer.mRefreshFinish) {
+                    removeMessages(MSG_PULL_TIMEOUT);
+                    outer.mContainer.onRefreshComplete();
+                }
             }
         }
-    };
+    }
 }

@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui;
 
+import java.lang.ref.WeakReference;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -141,11 +143,14 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private WatchDacStat mWatchDacStat;
 
+    private Handler mHandler;
+
     @Override
     protected void onCreate(Bundle arg0) {
-        super.onCreate(arg0);
         Log.d(TAG, "onCreate");
-        this.mContext = this;
+        super.onCreate(arg0);
+        mContext = this;
+        mHandler = new InnerHandler(this);
 
         /* init window */
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -630,32 +635,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         }
     };
 
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case MSG_LOADING_DELAY:
-                mLoadDelayed = true;
-                checkFirstLoading();
-                break;
-            case MSG_MEDIA_FINISH:
-                mFirstLoadFinish = true;
-                checkFirstLoading();
-                break;
-            case MSG_START_PLAY:
-                mSecondLoadFinish = true;
-                checkSecondLoading();
-                break;
-            case MSG_KEEP_ALIVE:
-                keepAlive();
-                break;
-            case MSG_MEDIA_RETRY:
-                retryPlay();
-                break;
-            }
-        }
-    };
-
     private void retryPlay() {
         if (!mNetworkDown) {
             mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_error));
@@ -895,6 +874,41 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             break;
         default:
             break;
+        }
+    }
+
+    static class InnerHandler extends Handler {
+        private WeakReference<LivePlayerActivity> mOuter;
+
+        public InnerHandler(LivePlayerActivity activity) {
+            mOuter = new WeakReference<LivePlayerActivity>(activity);
+        }
+
+        @Override
+        public void handleMessage(Message msg) {
+            LivePlayerActivity outer = mOuter.get();
+            if (outer != null) {
+                switch (msg.what) {
+                case MSG_LOADING_DELAY:
+                    outer.mLoadDelayed = true;
+                    outer.checkFirstLoading();
+                    break;
+                case MSG_MEDIA_FINISH:
+                    outer.mFirstLoadFinish = true;
+                    outer.checkFirstLoading();
+                    break;
+                case MSG_START_PLAY:
+                    outer.mSecondLoadFinish = true;
+                    outer.checkSecondLoading();
+                    break;
+                case MSG_KEEP_ALIVE:
+                    outer.keepAlive();
+                    break;
+                case MSG_MEDIA_RETRY:
+                    outer.retryPlay();
+                    break;
+                }
+            }
         }
     }
 }

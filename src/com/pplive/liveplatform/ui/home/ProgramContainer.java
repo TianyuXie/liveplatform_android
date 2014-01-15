@@ -18,7 +18,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
@@ -85,7 +84,7 @@ public class ProgramContainer extends RelativeLayout {
         mPrograms.addAll(data);
         if (clearImage) {
             Log.d(TAG, "clearMemoryCache");
-            ImageLoader.getInstance().clearMemoryCache();
+            //ImageLoader.getInstance().clearMemoryCache();
         }
         mAdapter.notifyDataSetChanged();
     }

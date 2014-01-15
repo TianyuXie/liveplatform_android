@@ -50,7 +50,6 @@ public class AsyncImageView extends ImageView {
     @Override
     @Deprecated
     public void setImageResource(int resId) {
-        // TODO Auto-generated method stub
         super.setImageResource(resId);
     }
 
