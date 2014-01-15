@@ -16,6 +16,7 @@
     <string name="settings_update">检查更新</string>
     <string name="about_app_info">爱播介绍\n产品预留图标及文字</string>
     <string name="about_copyright">Copyright&#169;产品预留版权声明</string>
+    <string name="about_version">Version 1.0.0</string>
     <string name="settings_logout">退出登录</string>
     <string name="settings_login">登&#160;&#160;录</string>
     <string name="settings_title">设置</string>
@@ -27,6 +28,8 @@
     <color name="settings_logout_bg">#FFD92B2B</color>
     <color name="settings_version">#FF676767</color>
     <color name="settings_user">#FF1A1A1A</color>
+    <color name="about_text">#FF555555</color>
+    <color name="about_bg">#FF1B1B1B</color>
 
     <style name="settings_text">
         <item name="android:layout_width">wrap_content</item>

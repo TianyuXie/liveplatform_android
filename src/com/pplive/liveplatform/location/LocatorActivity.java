@@ -31,6 +31,12 @@ public abstract class LocatorActivity extends FragmentActivity implements OnLoca
         locator.setOnLocationUpdateListener(null);
         super.onPause();
     }
+    
+    @Override
+    protected void onStop() {
+        locator.stop();
+        super.onStop();
+    }
 
     protected void startLocator() {
         Log.d(TAG, "startLocator");
