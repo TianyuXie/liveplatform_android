@@ -24,7 +24,9 @@ public class AppInfo {
             sAppVersionName = packageInfo.versionName;
 
             ApplicationInfo applicationInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            sInstallChannel = applicationInfo.metaData.getString("INSTALL_CHANNEL");
+            if (applicationInfo.metaData.containsKey("INSTALL_CHANNEL")) {
+                sInstallChannel = applicationInfo.metaData.get("INSTALL_CHANNEL").toString();
+            }
 
         } catch (NameNotFoundException e) {
             Log.w(TAG, e.toString());
