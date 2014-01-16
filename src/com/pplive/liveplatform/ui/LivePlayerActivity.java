@@ -686,9 +686,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.initIcon();
         mLoadingImage.setVisibility(View.GONE);
         mLoadingButton.startLoading(R.string.player_waiting);
-        mCommentWrapper.setVisibility(View.VISIBLE);
-        mChatBox.setVisibility(View.VISIBLE);
-        mWriteBtn.setVisibility(View.VISIBLE);
     }
 
     private void checkFirstLoading() {
