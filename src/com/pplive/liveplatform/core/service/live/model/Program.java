@@ -9,7 +9,6 @@ import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
@@ -83,7 +82,7 @@ public class Program implements Serializable {
     public String getTitle() {
         return title;
     }
-    
+
     public int getSubjectId() {
         return subject_id;
     }
@@ -125,7 +124,7 @@ public class Program implements Serializable {
         } else {
             String shotUrl = getScreenshotUrl();
             if (shotUrl.startsWith("http://live2image")) {
-                return ImageUtil.getScreenshotBySize(shotUrl, 120);
+                return getScreenshotBySize(shotUrl, 120);
             } else {
                 return shotUrl;
             }
@@ -136,7 +135,7 @@ public class Program implements Serializable {
         String shotUrl = getScreenshotUrl();
         if (!TextUtils.isEmpty(shotUrl)) {
             if (shotUrl.startsWith("http://live2image")) {
-                return ImageUtil.getScreenshotBySize(shotUrl, 120);
+                return getScreenshotBySize(shotUrl, 120);
             } else {
                 return shotUrl;
             }
@@ -251,6 +250,11 @@ public class Program implements Serializable {
     public String toString() {
         Gson gson = new Gson();
         return gson.toJson(this);
+    }
+
+    private String getScreenshotBySize(String url, int size) {
+        int index = url.lastIndexOf("/");
+        return String.format(Locale.US, "%s/sp%d%s", url.substring(0, index), size, url.substring(index));
     }
 
 }

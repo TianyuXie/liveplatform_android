@@ -1,6 +1,5 @@
 package com.pplive.liveplatform.util;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -8,9 +7,6 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 
 public class NetworkUtil {
-
-    public static final int NETWORK_MOBILE = DownloadManager.Request.NETWORK_MOBILE;
-    public static final int NETWORK_WIFI = DownloadManager.Request.NETWORK_WIFI;
 
     public static boolean isNetworkConnected(Context context) {
         if (context != null) {
