@@ -122,23 +122,14 @@ public class Program implements Serializable {
         if (!TextUtils.isEmpty(coverUrl)) {
             return coverUrl;
         } else {
-            String shotUrl = getScreenshotUrl();
-            if (shotUrl.startsWith("http://live2image")) {
-                return getScreenshotBySize(shotUrl, 120);
-            } else {
-                return shotUrl;
-            }
+            return getShotBySize(getScreenshotUrl(), 120);
         }
     }
 
     private String getShotPre() {
         String shotUrl = getScreenshotUrl();
         if (!TextUtils.isEmpty(shotUrl)) {
-            if (shotUrl.startsWith("http://live2image")) {
-                return getScreenshotBySize(shotUrl, 120);
-            } else {
-                return shotUrl;
-            }
+            return getShotBySize(shotUrl, 120);
         } else {
             return getCoverUrl();
         }
@@ -252,9 +243,13 @@ public class Program implements Serializable {
         return gson.toJson(this);
     }
 
-    private String getScreenshotBySize(String url, int size) {
-        int index = url.lastIndexOf("/");
-        return String.format(Locale.US, "%s/sp%d%s", url.substring(0, index), size, url.substring(index));
+    private String getShotBySize(String url, int size) {
+        if (url.startsWith("http://live2image")) {
+            int index = url.lastIndexOf("/");
+            return String.format(Locale.US, "%s/sp%d%s", url.substring(0, index), size, url.substring(index));
+        } else {
+            return url;
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.widget.swipe;
+package com.pplive.liveplatform.ui.widget;
 
 import android.content.Context;
 import android.os.Handler;
@@ -11,8 +11,8 @@ import android.widget.ListView;
 
 import com.pplive.liveplatform.util.DisplayUtil;
 
-public class SimpleSwipeListView extends ListView {
-    static final String TAG = "_SimpleSwipeListView";
+public class SlideListView extends ListView {
+    static final String TAG = "_SlideListView";
 
     private Boolean mIsHorizontal;
 
@@ -26,19 +26,17 @@ public class SimpleSwipeListView extends ListView {
 
     private int mRightViewWidth;
 
-    private final int mDuration = 100;
-
     private final int mDurationStep = 10;
 
     private boolean mIsShown;
 
     private boolean mSlidable;
 
-    public SimpleSwipeListView(Context context) {
+    public SlideListView(Context context) {
         this(context, null);
     }
 
-    public SimpleSwipeListView(Context context, AttributeSet attrs) {
+    public SlideListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mRightViewWidth = DisplayUtil.dp2px(context, 90);
         mSlidable = false;
@@ -244,17 +242,16 @@ public class SimpleSwipeListView extends ListView {
 
         mIsShown = true;
     }
-    
+
     public void hiddenRight() {
         hiddenRight(mPreItemView);
     }
 
     public void hiddenRight(View view) {
-        Log.d(TAG, "=========hiddenRight");
         if (mCurrentItemView == null) {
             return;
         }
-        Message msg = new MoveHandler().obtainMessage();//
+        Message msg = new MoveHandler().obtainMessage();
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = 0;
@@ -278,7 +275,7 @@ public class SimpleSwipeListView extends ListView {
 
         private boolean mIsInAnimation = false;
 
-        private void animatioOver() {
+        private void animationOver() {
             mIsInAnimation = false;
             stepX = 0;
         }
@@ -294,15 +291,17 @@ public class SimpleSwipeListView extends ListView {
                 view = (View) msg.obj;
                 fromX = msg.arg1;
                 toX = msg.arg2;
-                stepX = (int) ((toX - fromX) * mDurationStep * 1.0 / mDuration);
+                stepX = (int) ((toX - fromX) * mDurationStep * 1.0 / 100);
                 if (stepX < 0 && stepX > -1) {
                     stepX = -1;
                 } else if (stepX > 0 && stepX < 1) {
                     stepX = 1;
                 }
                 if (Math.abs(toX - fromX) < 10) {
-                    view.scrollTo(toX, 0);
-                    animatioOver();
+                    if (view != null) {
+                        view.scrollTo(toX, 0);
+                    }
+                    animationOver();
                     return;
                 }
             }
@@ -312,24 +311,17 @@ public class SimpleSwipeListView extends ListView {
             if (isLastStep) {
                 fromX = toX;
             }
-
-            view.scrollTo(fromX, 0);
+            if (view != null) {
+                view.scrollTo(fromX, 0);
+            }
             invalidate();
 
             if (!isLastStep) {
                 this.sendEmptyMessageDelayed(0, mDurationStep);
             } else {
-                animatioOver();
+                animationOver();
             }
         }
-    }
-
-    public int getRightViewWidth() {
-        return mRightViewWidth;
-    }
-
-    public void setRightViewWidth(int mRightViewWidth) {
-        this.mRightViewWidth = mRightViewWidth;
     }
 
     public void setSlidable(boolean sliable) {
