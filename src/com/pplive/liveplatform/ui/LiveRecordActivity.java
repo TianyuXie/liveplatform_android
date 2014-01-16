@@ -183,7 +183,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private RotateListener mRotateButtonListener = new RotateListener() {
         @Override
         public void onRotateMiddle() {
-            mBtnLiveRecord.setImageResource(R.drawable.live_record_btn_live_record);
+            mBtnLiveRecord.setEnabled(true);
         }
     };
 

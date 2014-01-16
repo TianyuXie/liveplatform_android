@@ -86,8 +86,9 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:contentDescription="@null"
+            android:enabled="false"
             android:onClick="onClick"
-            android:src="@drawable/home_status_btn_rotate" />
+            android:src="@drawable/live_record_btn_live_record" />
     </RelativeLayout>
 
     <Button
