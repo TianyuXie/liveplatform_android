@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.pplive.liveplatform.Constants;
 
 public class AsyncImageView extends ImageView {
     static final String TAG = "_AsyncImageView";
@@ -38,8 +39,8 @@ public class AsyncImageView extends ImageView {
     }
 
     public void setImageAsync(String imageUri, int defaultImage, ImageLoadingListener listener) {
-        boolean cacheOnDisc = imageUri != null && !imageUri.startsWith("http://live2image");
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cacheInMemory(true).bitmapConfig(Bitmap.Config.RGB_565)
+        boolean cacheOnDisc = imageUri != null && !imageUri.startsWith(Constants.LIVE_IMGAE_PREFIX);
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().bitmapConfig(Bitmap.Config.RGB_565).cacheInMemory(true)
                 .cacheOnDisc(cacheOnDisc);
         if (defaultImage > 0) {
             builder.showStubImage(defaultImage).showImageForEmptyUri(defaultImage).showImageOnFail(defaultImage);

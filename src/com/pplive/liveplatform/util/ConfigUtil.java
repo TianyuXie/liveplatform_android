@@ -90,7 +90,7 @@ public class ConfigUtil {
 
         while (allKeys.hasMoreElements()) {
             String key = allKeys.nextElement().toString();
-            if (StringUtil.notNullOrEmpty(prefix)) {
+            if (!StringUtil.isNullOrEmpty(prefix)) {
                 if (key.startsWith(prefix)) {
                     keyList.add(key);
                 }

@@ -12,10 +12,6 @@ public class StringUtil {
         return str == null || str.equals(NULL_STRING) || str.trim().equals(EMPTY_STRING);
     }
 
-    public static boolean notNullOrEmpty(String str) {
-        return !isNullOrEmpty(str);
-    }
-
     public static String safeString(String str) {
         if (str == null) {
             return "";

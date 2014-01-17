@@ -1,17 +1,16 @@
 package com.pplive.liveplatform.ui.widget.intercept;
 
-
-import com.pplive.liveplatform.ui.widget.attr.Interceptable;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.RelativeLayout;
 
+import com.pplive.liveplatform.ui.widget.attr.Interceptable;
+
 public class InterceptableRelativeLayout extends RelativeLayout implements Interceptable {
     static final String TAG = "InterceptableRelativeLayout";
-    
+
     public InterceptableRelativeLayout(Context context) {
         super(context);
     }
@@ -22,6 +21,7 @@ public class InterceptableRelativeLayout extends RelativeLayout implements Inter
 
     private InterceptDetector mInterceptDetector;
 
+    @Override
     public void setInterceptDetector(InterceptDetector detector) {
         this.mInterceptDetector = detector;
     }

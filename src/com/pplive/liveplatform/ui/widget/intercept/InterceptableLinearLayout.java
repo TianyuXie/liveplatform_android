@@ -1,12 +1,12 @@
 package com.pplive.liveplatform.ui.widget.intercept;
 
-import com.pplive.liveplatform.ui.widget.attr.Interceptable;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.LinearLayout;
+
+import com.pplive.liveplatform.ui.widget.attr.Interceptable;
 
 public class InterceptableLinearLayout extends LinearLayout implements Interceptable {
     static final String TAG = "InterceptableLinearLayout";
@@ -21,6 +21,7 @@ public class InterceptableLinearLayout extends LinearLayout implements Intercept
 
     private InterceptDetector mInterceptDetector;
 
+    @Override
     public void setInterceptDetector(InterceptDetector detector) {
         this.mInterceptDetector = detector;
     }
