@@ -17,9 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.widget.swipe.SimpleSwipeListView;
+import com.pplive.liveplatform.ui.widget.SlideListView;
 
-public class SimpleRefreshListView extends SimpleSwipeListView implements OnScrollListener {
+public class RefreshListView extends SlideListView implements OnScrollListener {
     static final String TAG = "_RefreshListView";
 
     private final static int STATUS_RELEASE_TO_REFRESH = 800;
@@ -65,11 +65,11 @@ public class SimpleRefreshListView extends SimpleSwipeListView implements OnScro
 
     private OnUpdateListener mUpdateListener;
 
-    public SimpleRefreshListView(Context context) {
+    public RefreshListView(Context context) {
         this(context, null);
     }
 
-    public SimpleRefreshListView(Context context, AttributeSet attrs) {
+    public RefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mGestureDetector = new GestureDetector(getContext(), onGestureListener);
         mStatus = STATUS_DONE;

@@ -3,10 +3,8 @@ package com.pplive.liveplatform.ui.widget;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,8 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.ui.LoginActivity;
@@ -91,7 +87,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             mNicknameText.setText(UserManager.getInstance(getContext()).getNickname());
             String iconUrl = UserManager.getInstance(getContext()).getIcon();
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
+                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
             } else {
                 mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }
@@ -187,32 +183,6 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
                 intent.putExtra(LoginActivity.EXTRA_TAGET, UserpageActivity.class.getName());
                 getContext().startActivity(intent);
             }
-        }
-    };
-
-    private ImageLoadingListener imageLoadingListener = new ImageLoadingListener() {
-
-        @Override
-        public void onLoadingStarted(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingStarted");
-        }
-
-        @Override
-        public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
-            Log.d(TAG, "onLoadingFailed");
-//            mUserIcon.setRounded(false);
-        }
-
-        @Override
-        public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
-            Log.d(TAG, "onLoadingComplete");
-//            mUserIcon.setRounded(arg2 != null);
-        }
-
-        @Override
-        public void onLoadingCancelled(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingCancelled");
-//            mUserIcon.setRounded(false);
         }
     };
 

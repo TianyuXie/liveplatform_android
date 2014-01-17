@@ -4,7 +4,6 @@ import java.lang.ref.WeakReference;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,8 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
@@ -250,7 +247,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mProgram = program;
         ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
         mIconWrapper.setVisibility(View.INVISIBLE);
-        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
+        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default);
         if (program.isOriginal()) {
             mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.VISIBLE);
         } else {
@@ -520,32 +517,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         this.mCallbackListener = listener;
     }
 
-    private ImageLoadingListener imageLoadingListener = new ImageLoadingListener() {
-
-        @Override
-        public void onLoadingStarted(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingStarted");
-        }
-
-        @Override
-        public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
-            Log.d(TAG, "onLoadingFailed");
-            //            mUserIcon.setRounded(false);
-        }
-
-        @Override
-        public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
-            Log.d(TAG, "onLoadingComplete");
-            //            mUserIcon.setRounded(arg2 != null);
-        }
-
-        @Override
-        public void onLoadingCancelled(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingCancelled");
-            //            mUserIcon.setRounded(false);
-        }
-    };
-
     public void onStartPlay() {
         mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         mIconWrapper.setVisibility(View.VISIBLE);
@@ -586,7 +557,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onRotateMiddle() {
             mFinishText.setText("");
-            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
+            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default);
         }
     };
 

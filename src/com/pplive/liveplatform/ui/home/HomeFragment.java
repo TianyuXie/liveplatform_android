@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
@@ -30,7 +31,6 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.SearchActivity;
-import com.pplive.liveplatform.ui.widget.TitleBar;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
@@ -64,7 +64,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
 
     private final static int CATALOG_FINANCE = 5;
 
-    private TitleBar mTitleBar;
+    //    private TitleBar mTitleBar;
+
+    private ToggleButton mMenuButton;
 
     private ProgramContainer mContainer;
 
@@ -91,7 +93,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private int mSubjectId;
 
     private LiveStatusKeyword mLiveStatus;
-    
+
     private Handler mPullHandler;
 
     @Override
@@ -110,12 +112,16 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mContainer = (ProgramContainer) layout.findViewById(R.id.layout_home_body);
         mContainer.setOnUpdateListener(onUpdateListener);
         mContainer.setOnStatusChangeListener(onStatusChangeListener);
-        mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
-        mTitleBar.setOnClickListener(onTitleBarClickListener);
+        //        mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
+        //        mTitleBar.setOnClickListener(onTitleBarClickListener);
         mCatalogTextView = (TextView) layout.findViewById(R.id.text_home_catalog);
         mRetryText = (TextView) layout.findViewById(R.id.text_home_retry);
         mRetryLayout = layout.findViewById(R.id.layout_home_retry);
+        mMenuButton = (ToggleButton) layout.findViewById(R.id.btn_home_menu);
+        mMenuButton.setOnClickListener(onMenuClickListener);
+        layout.findViewById(R.id.btn_home_search).setOnClickListener(onSearchClickListener);
         layout.findViewById(R.id.btn_home_retry).setOnClickListener(onRetryClickListener);
+
         layout.setInterceptDetector(new InterceptDetector(getActivity(), onGestureListener));
         updateCatalogText();
         return layout;
@@ -357,14 +363,14 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     @Override
     public void onSlide() {
         mSlided = true;
-        mTitleBar.setMenuButtonHighlight(true);
+        mMenuButton.setChecked(true);
         mContainer.setItemClickable(false);
     }
 
     @Override
     public void onSlideBack() {
         mSlided = false;
-        mTitleBar.setMenuButtonHighlight(false);
+        mMenuButton.setChecked(false);
         mContainer.setItemClickable(true);
     }
 
@@ -385,25 +391,6 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     public void setCallbackListener(Callback listener) {
         this.mCallbackListener = listener;
     }
-
-    private View.OnClickListener onTitleBarClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-            case R.id.btn_titlebar_menu:
-                if (mCallbackListener != null) {
-                    mCallbackListener.doSlide();
-                }
-                break;
-            case R.id.btn_titlebar_search:
-                if (getActivity() != null) {
-                    Intent intent = new Intent(getActivity(), SearchActivity.class);
-                    startActivity(intent);
-                }
-                break;
-            }
-        }
-    };
 
     private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
 
@@ -487,7 +474,26 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             startRefreshTask();
         }
     };
-    
+
+    private View.OnClickListener onMenuClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (mCallbackListener != null) {
+                mCallbackListener.doSlide();
+            }
+        }
+    };
+
+    private View.OnClickListener onSearchClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (getActivity() != null) {
+                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                startActivity(intent);
+            }
+        }
+    };
+
     static class PullHandler extends Handler {
         private WeakReference<HomeFragment> mOuter;
 

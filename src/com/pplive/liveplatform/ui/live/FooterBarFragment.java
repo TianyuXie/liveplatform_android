@@ -40,7 +40,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     private Activity mAttachedActivity;
 
     private View mParentLayout;
-    
+
     private ImageButton mBtnLiveHome;
     private ImageButton mBtnLiveBack;
 
@@ -87,7 +87,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         super.onCreateView(inflater, container, savedInstanceState);
 
         View layout = inflater.inflate(R.layout.layout_footerbar_fragment, container, false);
-        
+
         mParentLayout = layout;
 
         mBtnLiveHome = (ImageButton) layout.findViewById(R.id.btn_live_home);
@@ -169,15 +169,15 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     @Override
     public void onDateTimeChanged(int year, int month, int day, int hour, int minute) {
         Log.d(TAG, "onDateTimeChanged");
-        
+
         setScheduleDateTimeText(year, month, day, hour, minute);
-        
+
         mBtnLiveAddComplete.setImageResource(R.drawable.live_record_btn_live_complete_blue);
     }
-    
+
     private void setScheduleDateTimeText(int year, int month, int day, int hour, int minute) {
-        
-        mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d",  year, month, day, hour, minute));
+
+        mEditLiveSchedule.setText(String.format("%d/%02d/%02d %02d:%02d", year, month, day, hour, minute));
     }
 
     @Override
@@ -241,12 +241,12 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
             @Override
             protected Program doInBackground(Void... params) {
-                if (getActivity() != null) {
+                if (mAttachedActivity != null) {
                     Log.d(TAG, "title: " + (null == title ? "null" : title) + "; starttime: " + starttime);
 
                     try {
-                        String username = UserManager.getInstance(getActivity()).getUsernamePlain();
-                        String token = UserManager.getInstance(getActivity()).getToken();
+                        String username = UserManager.getInstance(mAttachedActivity).getUsernamePlain();
+                        String token = UserManager.getInstance(mAttachedActivity).getToken();
                         Program program = new Program(username, title, starttime);
 
                         program = ProgramService.getInstance().createProgram(token, program);
@@ -265,9 +265,11 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                 if (program != null) {
                     EventBus.getDefault().post(new EventProgramAdded(program));
                 } else {
-                    Toast.makeText(mAttachedActivity, "创建预播失败", Toast.LENGTH_SHORT).show();
+                    if (mAttachedActivity != null) {
+                        Toast.makeText(mAttachedActivity, R.string.toast_prelive_fail, Toast.LENGTH_SHORT).show();
+                    }
                 }
-                
+
                 if (null != mBtnLiveAddComplete) {
                     mBtnLiveAddComplete.setImageResource(R.drawable.live_record_btn_live_complete);
                 }
@@ -306,7 +308,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
         if (!v.hasFocus()) {
             v.requestFocusFromTouch();
         }
-        
+
         ViewUtil.showOrHide(mDateTimePicker);
 
         return true;
@@ -315,7 +317,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         Log.d(TAG, "onFocusChange: " + v.getId());
-        
+
         int color;
         switch (v.getId()) {
         case R.id.edit_live_schedule:
@@ -358,22 +360,25 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             if (null != mSelectedProgram) {
                 liveTitle = mSelectedProgram.getTitle();
             } else {
-                String username = UserManager.getInstance(getActivity()).getNickname();
-                liveTitle = getActivity().getResources().getString(R.string.default_live_title_fmt, username);
+                if (mAttachedActivity != null) {
+                    String username = UserManager.getInstance(mAttachedActivity).getNickname();
+                    liveTitle = mAttachedActivity.getResources().getString(R.string.default_live_title_fmt, username);
+                }
             }
 
             mEditLiveTitle.setText(liveTitle);
         }
-        
+
         if (null != mEditLiveSchedule) {
-            setScheduleDateTimeText(mDateTimePicker.getYear(), mDateTimePicker.getMonth(), mDateTimePicker.getDayOfMonth(), mDateTimePicker.getCurrentHour(), mDateTimePicker.getCurrentMinute());
+            setScheduleDateTimeText(mDateTimePicker.getYear(), mDateTimePicker.getMonth(), mDateTimePicker.getDayOfMonth(), mDateTimePicker.getCurrentHour(),
+                    mDateTimePicker.getCurrentMinute());
         }
-        
+
         if (null != mBtnLiveAddComplete) {
             mBtnLiveAddComplete.setImageResource(R.drawable.live_record_btn_live_complete);
         }
     }
-    
+
     void reset() {
         Log.d(TAG, "reset");
 
@@ -391,26 +396,26 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
 
         init();
     }
-    
+
     public void onLivingStart() {
         setMode(Mode.LIVING);
     }
-    
+
     public void onLivingStop() {
         reset();
     }
-    
+
     public void setMode(Mode mode) {
         mStatus = mode;
 
         setVisibilityByFlags();
     }
-    
+
     private void setVisibilityByFlags() {
         int flags = mStatus.flags();
 
         Log.d(TAG, "flags: " + flags);
-        
+
         ViewUtil.setVisibility(mParentLayout, flags);
 
         ViewUtil.setVisibility(mBtnLiveHome, flags & Mode.FLAG_BTN_LIVE_HOME);
