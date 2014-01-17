@@ -1,6 +1,9 @@
 package com.pplive.liveplatform.ui.widget;
 
+import java.lang.ref.WeakReference;
+
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -9,10 +12,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ListView;
 
-import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.R;
 
 public class SlideListView extends ListView {
     static final String TAG = "_SlideListView";
+
+    private final static int DURATION_STEP = 10;
 
     private Boolean mIsHorizontal;
 
@@ -26,8 +31,6 @@ public class SlideListView extends ListView {
 
     private int mRightViewWidth;
 
-    private final int mDurationStep = 10;
-
     private boolean mIsShown;
 
     private boolean mSlidable;
@@ -38,8 +41,20 @@ public class SlideListView extends ListView {
 
     public SlideListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mRightViewWidth = DisplayUtil.dp2px(context, 90);
-        mSlidable = false;
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlideListView);
+        int n = a.getIndexCount();
+        for (int i = 0; i < n; i++) {
+            int attr = a.getIndex(i);
+            switch (attr) {
+            case R.styleable.SlideListView_extra_width:
+                mRightViewWidth = a.getDimensionPixelSize(attr, 0);
+                break;
+            case R.styleable.SlideListView_slidable:
+                mSlidable = a.getBoolean(attr, true);
+                break;
+            }
+        }
+        a.recycle();
     }
 
     /**
@@ -53,7 +68,6 @@ public class SlideListView extends ListView {
             switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 mIsHorizontal = null;
-                Log.d(TAG, "onInterceptTouchEvent----->ACTION_DOWN");
                 mFirstX = lastX;
                 mFirstY = lastY;
                 int motionPosition = pointToPosition((int) mFirstX, (int) mFirstY);
@@ -76,7 +90,6 @@ public class SlideListView extends ListView {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                Log.d(TAG, "onInterceptTouchEvent----->ACTION_UP");
                 if (mIsShown && (mPreItemView != mCurrentItemView || isHitCurItemLeft(lastX))) {
                     Log.d(TAG, "1---> hiddenRight");
                     /**
@@ -86,7 +99,7 @@ public class SlideListView extends ListView {
                      * <p>
                      * 这时候点击任意一个item, 那么那个右边布局显示的item隐藏其右边布局
                      */
-                    hiddenRight(mPreItemView);
+                    hideRight(mPreItemView);
                 }
                 break;
             }
@@ -108,10 +121,8 @@ public class SlideListView extends ListView {
 
         if (Math.abs(dx) > 30 && Math.abs(dx) > 2 * Math.abs(dy)) {
             mIsHorizontal = true;
-            Log.d(TAG, "mIsHorizontal---->" + mIsHorizontal);
         } else if (Math.abs(dy) > 30 && Math.abs(dy) > 2 * Math.abs(dx)) {
             mIsHorizontal = false;
-            Log.d(TAG, "mIsHorizontal---->" + mIsHorizontal);
         } else {
             canJudge = false;
         }
@@ -131,7 +142,6 @@ public class SlideListView extends ListView {
 
             switch (ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d(TAG, "---->ACTION_DOWN");
                 break;
 
             case MotionEvent.ACTION_MOVE:
@@ -157,12 +167,11 @@ public class SlideListView extends ListView {
                          * <p>
                          * 向左滑动只触发该情况，向右滑动还会触发情况五
                          */
-                        hiddenRight(mPreItemView);
+                        hideRight(mPreItemView);
                     }
 
                     if (mIsShown && mPreItemView == mCurrentItemView) {
                         dx = dx - mRightViewWidth;
-                        Log.d(TAG, "======dx " + dx);
                     }
 
                     // can't move beyond boundary
@@ -181,7 +190,7 @@ public class SlideListView extends ListView {
                          * <p>
                          * 这时候上下滚动ListView,那么那个右边布局显示的item隐藏其右边布局
                          */
-                        hiddenRight(mPreItemView);
+                        hideRight(mPreItemView);
                     }
                 }
 
@@ -189,7 +198,6 @@ public class SlideListView extends ListView {
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                Log.d(TAG, "============ACTION_UP");
                 clearPressedState();
                 if (mIsShown) {
                     Log.d(TAG, "4---> hiddenRight");
@@ -200,11 +208,11 @@ public class SlideListView extends ListView {
                      * <p>
                      * 这时候左右滑动当前一个item,那个右边布局显示的item隐藏其右边布局
                      */
-                    hiddenRight(mPreItemView);
+                    hideRight(mPreItemView);
                 }
 
                 if (mIsHorizontal != null && mIsHorizontal) {
-                    if (mFirstX - lastX > mRightViewWidth / 2) {
+                    if (mFirstX - lastX > mRightViewWidth / 4.0) {
                         showRight(mCurrentItemView);
                     } else {
                         Log.d(TAG, "5---> hiddenRight");
@@ -213,7 +221,7 @@ public class SlideListView extends ListView {
                          * <p>
                          * 向右滑动一个item,且滑动的距离超过了右边View的宽度的一半，隐藏之。
                          */
-                        hiddenRight(mCurrentItemView);
+                        hideRight(mCurrentItemView);
                     }
                     return true;
                 }
@@ -224,7 +232,6 @@ public class SlideListView extends ListView {
     }
 
     private void clearPressedState() {
-        // TODO current item is still has background, issue
         mCurrentItemView.setPressed(false);
         setPressed(false);
         refreshDrawableState();
@@ -232,9 +239,11 @@ public class SlideListView extends ListView {
     }
 
     private void showRight(View view) {
-        Log.d(TAG, "=========showRight");
-
-        Message msg = new MoveHandler().obtainMessage();
+        Log.d(TAG, "showRight");
+        if (view == null) {
+            return;
+        }
+        Message msg = new MoveHandler(this).obtainMessage();
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = mRightViewWidth;
@@ -243,15 +252,17 @@ public class SlideListView extends ListView {
         mIsShown = true;
     }
 
-    public void hiddenRight() {
-        hiddenRight(mPreItemView);
+    public void hideRight() {
+        hideRight(mPreItemView);
     }
 
-    public void hiddenRight(View view) {
-        if (mCurrentItemView == null) {
+    public void hideRight(View view) {
+        Log.d(TAG, "hideRight");
+
+        if (mCurrentItemView == null || view == null) {
             return;
         }
-        Message msg = new MoveHandler().obtainMessage();
+        Message msg = new MoveHandler(this).obtainMessage();
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = 0;
@@ -264,7 +275,7 @@ public class SlideListView extends ListView {
     /**
      * show or hide right layout animation
      */
-    class MoveHandler extends Handler {
+    static class MoveHandler extends Handler {
         int stepX = 0;
 
         int fromX;
@@ -273,7 +284,13 @@ public class SlideListView extends ListView {
 
         View view;
 
-        private boolean mIsInAnimation = false;
+        WeakReference<SlideListView> mOuter;
+
+        boolean mIsInAnimation = false;
+
+        public MoveHandler(SlideListView outer) {
+            mOuter = new WeakReference<SlideListView>(outer);
+        }
 
         private void animationOver() {
             mIsInAnimation = false;
@@ -283,6 +300,11 @@ public class SlideListView extends ListView {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+            SlideListView outer = mOuter.get();
+            if (outer == null) {
+                return;
+            }
+
             if (stepX == 0) {
                 if (mIsInAnimation) {
                     return;
@@ -291,7 +313,7 @@ public class SlideListView extends ListView {
                 view = (View) msg.obj;
                 fromX = msg.arg1;
                 toX = msg.arg2;
-                stepX = (int) ((toX - fromX) * mDurationStep * 1.0 / 100);
+                stepX = (int) ((toX - fromX) * DURATION_STEP * 1.0 / 100);
                 if (stepX < 0 && stepX > -1) {
                     stepX = -1;
                 } else if (stepX > 0 && stepX < 1) {
@@ -314,10 +336,10 @@ public class SlideListView extends ListView {
             if (view != null) {
                 view.scrollTo(fromX, 0);
             }
-            invalidate();
+            outer.invalidate();
 
             if (!isLastStep) {
-                this.sendEmptyMessageDelayed(0, mDurationStep);
+                this.sendEmptyMessageDelayed(0, DURATION_STEP);
             } else {
                 animationOver();
             }
