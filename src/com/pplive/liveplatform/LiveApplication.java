@@ -6,6 +6,8 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.pplive.media.MeetSDK;
+import android.pplive.media.util.LogUtils;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -47,6 +49,8 @@ public class LiveApplication extends Application {
 
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
+        MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
+        LogUtils.logDeviceInfo();
     }
 
     private void initImageLoader(Context context) {
@@ -64,6 +68,7 @@ public class LiveApplication extends Application {
         SysUtil.checkPath(DirManager.getCachePath());
         SysUtil.checkPath(DirManager.getFilesPath());
         SysUtil.checkPath(DirManager.getAppPath());
+        SysUtil.checkPath(DirManager.getLogCachePath());
         SysUtil.checkPath(DirManager.getShareCachePath());
         SysUtil.checkPath(DirManager.getDownloadPath());
     }
