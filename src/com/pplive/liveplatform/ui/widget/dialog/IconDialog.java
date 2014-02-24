@@ -9,8 +9,6 @@ import com.pplive.liveplatform.R;
 
 public class IconDialog extends Dialog {
     static final String TAG = "_IconDialog";
-    
-    private OnClickListener mOnCameraClickListener;
 
     public IconDialog(Context context, int theme) {
         super(context, theme);
@@ -32,6 +30,14 @@ public class IconDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_icon);
+    }
+
+    public void setOnCameraClickListener(android.view.View.OnClickListener l) {
+        findViewById(R.id.btn_userpage_icon_camera).setOnClickListener(l);
+    }
+
+    public void setOnGalleryClickListener(android.view.View.OnClickListener l) {
+        findViewById(R.id.btn_userpage_icon_gallery).setOnClickListener(l);
     }
 
 }
