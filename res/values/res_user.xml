@@ -14,6 +14,9 @@
     <string name="toast_userpage_delete_success">删除成功</string>
     <string name="toast_userpage_delete_fail">删除失败</string>
     <string name="toast_userpage_delete_timeout">请求超时</string>
+    
+    <string name="userpage_icon_camera">拍照</string>
+    <string name="userpage_icon_gallery">从本地图库选择</string>
 
     <!-- toast -->
     <string name="toast_icon_changed">修改头像成功</string>
@@ -27,5 +30,7 @@
     <color name="userpage_item_right_bg">#FF202020</color>
     <color name="userpage_delete_btn_bg">#FF8C1D1D</color>
     <color name="userpage_program_title_bg">#FF919191</color>
+    <color name="userpage_icon_choose_normal">#FF333333</color>
+    <color name="userpage_icon_choose_pressed">#FF222222</color>
 
 </resources>
