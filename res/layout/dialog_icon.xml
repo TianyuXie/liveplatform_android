@@ -5,6 +5,7 @@
     android:orientation="vertical" >
 
     <Button
+        android:id="@+id/btn_userpage_icon_camera"
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:background="@drawable/userpage_icon_choose_bg"
@@ -12,7 +13,7 @@
         android:paddingLeft="16dp"
         android:text="@string/userpage_icon_camera"
         android:textColor="@android:color/white"
-        android:textSize="18sp" >
+        android:textSize="17sp" >
     </Button>
 
     <LinearLayout
@@ -22,6 +23,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/btn_userpage_icon_gallery"
         android:layout_width="250dp"
         android:layout_height="50dp"
         android:background="@drawable/userpage_icon_choose_bg"
@@ -29,7 +31,7 @@
         android:paddingLeft="16dp"
         android:text="@string/userpage_icon_gallery"
         android:textColor="@android:color/white"
-        android:textSize="18sp" >
+        android:textSize="17sp" >
     </Button>
 
 </LinearLayout>

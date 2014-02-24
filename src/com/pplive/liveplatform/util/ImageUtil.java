@@ -91,6 +91,18 @@ public class ImageUtil {
         }
     }
 
+    public static Bitmap getScaledBitmapLimit(Bitmap src, float limit) {
+        if (src == null) {
+            return null;
+        }
+        int width = src.getWidth();
+        int height = src.getHeight();
+        float scale = ((float) limit) / Math.max(width, height);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        return Bitmap.createBitmap(src, 0, 0, width, height, matrix, true);
+    }
+
     public static Bitmap getScaledBitmap(Bitmap src, float destSize) {
         if (src == null) {
             return null;
