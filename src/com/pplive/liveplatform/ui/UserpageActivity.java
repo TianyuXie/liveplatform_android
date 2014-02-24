@@ -51,7 +51,9 @@ import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
+import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
 
@@ -93,7 +95,8 @@ public class UserpageActivity extends Activity {
     private CircularImageView mUserIcon;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
-
+    private IconDialog mIconDialog;
+    
     private boolean mRefreshFinish;
 
     private boolean mRefreshDelayed;
@@ -115,6 +118,7 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
         mAdapter.setRightClickListener(onItemRightClickListener);
         mRefreshDialog = new RefreshDialog(this);
+        mIconDialog = new IconDialog(this, R.style.icon_dialog);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
         mNodataButton = (Button) findViewById(R.id.btn_userpage_record);
@@ -227,6 +231,8 @@ public class UserpageActivity extends Activity {
                 } catch (ActivityNotFoundException e) {
                     Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
                 }
+                
+//                mIconDialog.show();
             }
         }
     };
