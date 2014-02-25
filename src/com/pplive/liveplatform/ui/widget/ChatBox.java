@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -49,6 +50,8 @@ public class ChatBox extends RelativeLayout {
     private int mUserColor;
 
     private int mContentColor;
+
+    private int mOwnerColor;
 
     private int mRefreshDelay;
 
@@ -125,6 +128,9 @@ public class ChatBox extends RelativeLayout {
             case R.styleable.ChatBox_contentColor:
                 mContentColor = a.getColor(attr, getResources().getColor(R.color.white));
                 break;
+            case R.styleable.ChatBox_ownerColor:
+                mOwnerColor = a.getColor(attr, getResources().getColor(R.color.white));
+                break;
             case R.styleable.ChatBox_lineSpacingMultiplier:
                 float mult = a.getFloat(attr, 1.0f);
                 mTextView.setLineSpacing(0.0f, mult);
@@ -153,7 +159,8 @@ public class ChatBox extends RelativeLayout {
                 FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
                 if (feeds != null) {
                     mTextView.setText("");
-                    Collection<String> contents = feeds.getFeedStrings(mUserColor, mContentColor);
+                    Collection<String> contents = feeds.getFeedStrings(UserManager.getInstance(getContext()).getUsernamePlain(), mUserColor, mContentColor,
+                            mOwnerColor);
                     if (contents.size() != 0) {
                         mNoContentInfo.setVisibility(View.GONE);
                         for (String content : contents) {

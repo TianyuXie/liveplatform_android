@@ -81,9 +81,9 @@ public class ProgramContainer extends RelativeLayout {
 
     public void refreshData(List<Program> data, boolean clearImage) {
         mPrograms.clear();
-        mPrograms.addAll(data);
         mGridView.requestFocusFromTouch();
         mGridView.setSelection(0);
+        mPrograms.addAll(data);
         if (clearImage) {
             Log.d(TAG, "clearMemoryCache");
             //ImageLoader.getInstance().clearMemoryCache();

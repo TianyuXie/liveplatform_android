@@ -53,20 +53,21 @@ public class FeedDetailList {
     }
 
     public Collection<String> getFeedStrings() {
-        return getFeedStrings(0xffffffff, 0xffffffff);
+        return getFeedStrings("", 0xffffffff, 0xffffffff, 0xffffffff);
     }
 
-    public Collection<String> getFeedStrings(int userColor, int contentColor) {
+    public Collection<String> getFeedStrings(String currentUser, int userColor, int contentColor, int ownerColor) {
         Collection<String> result = new ArrayList<String>();
         for (long id : feedIds) {
-            result.add(formatFeed(mapFeed.get(id), userColor, contentColor));
+            result.add(formatFeed(currentUser, mapFeed.get(id), userColor, contentColor, ownerColor));
         }
         return result;
     }
 
-    private String formatFeed(Feed feed, int userColor, int contentColor) {
+    private String formatFeed(String currentUser, Feed feed, int userColor, int contentColor, int ownerColor) {
         userColor -= 0xff000000;
         contentColor -= 0xff000000;
+        ownerColor -= 0xff000000;
         String username = feed.getUserName();
         String content = feed.getContent();
         String nickname = mapUser.get(username).getNickname();
@@ -74,6 +75,9 @@ public class FeedDetailList {
             nickname = username;
         } else {
             nickname = nickname.split("\\(")[0];
+        }
+        if (currentUser.equals(username)){
+            contentColor = ownerColor;
         }
         return String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor, content);
     }
