@@ -30,6 +30,7 @@
     <color name="player_loading_bg">#FF1A1A1A</color>
     <color name="player_chat_nickname">#FFFFFFFF</color>
     <color name="player_chat_content">#FF919191</color>
+    <color name="player_chat_owner">#19a0ff</color>
     <color name="player_seek_normal">#9c9c9c</color>
 
     <style name="player_progressBarStyleHorizontal">
