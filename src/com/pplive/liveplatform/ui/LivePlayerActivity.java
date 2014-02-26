@@ -115,6 +115,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private int mUserOrient;
 
+    private long mDelay;
+
     private boolean mIsFull;
 
     private boolean mWriting;
@@ -173,6 +175,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.setActivity(this);
 
         /* init values */
+        mDelay = 0;
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
@@ -231,7 +234,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
         }
         mChatBox.start(mProgram.getId());
-        keepAliveDelay(0);
     }
 
     private void startGetMedia() {
@@ -560,7 +562,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
-            long delay = liveStatus.getDelayInSeconds();
+            mDelay = liveStatus.getDelayInSeconds();
             switch (liveStatus.getStatus()) {
             case STOPPED:
             case DELETED:
@@ -576,10 +578,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mLivePlayerFragment.showBreakInfo(getString(R.string.player_signal_break));
                     showWaiting();
                     startGetMedia();
-                    keepAliveDelay(6000);
-                } else {
-                    keepAliveDelay(delay * 1000);
                 }
+                keepAliveDelay(mDelay * 1000);
                 break;
             default:
                 break;
@@ -765,7 +765,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mProgram.isLiving()) {
             Log.d(TAG, "onError: isLiving");
             mInterrupted = true;
-            keepAliveDelay(0);
+            keepAliveDelay(mDelay * 1000);
             return true;
         } else if (mProgram.isVOD()) {
             Log.d(TAG, "onError: isVOD");
@@ -785,7 +785,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mProgram.isLiving()) {
             Log.d(TAG, "onCompletion: isLiving");
             mInterrupted = true;
-            keepAliveDelay(0);
+            keepAliveDelay(mDelay * 1000);
         } else if (mProgram.isVOD()) {
             Log.d(TAG, "onCompletion: isVOD");
             DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
@@ -869,7 +869,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
             showWaiting();
             startGetMedia();
-            keepAliveDelay(0);
+            keepAliveDelay(mDelay * 1000);
             break;
         case MOBILE:
         case FAST_MOBILE:
@@ -881,7 +881,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
                     showWaiting();
                     startGetMedia();
-                    keepAliveDelay(0);
+                    keepAliveDelay(mDelay * 1000);
                 }
             }).show();
             break;
