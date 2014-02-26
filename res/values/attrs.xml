@@ -41,6 +41,7 @@
         <attr name="textColor" />
         <attr name="userColor" format="color" />
         <attr name="contentColor" format="color" />
+        <attr name="ownerColor" format="color" />
         <attr name="paddingBottom" format="dimension" />
         <attr name="paddingLeft" format="dimension" />
         <attr name="paddingRight" format="dimension" />

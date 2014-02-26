@@ -43,7 +43,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private static final int TIMER_DELAY = 1000;
 
-    private static final int SHOW_DELAY = 6000;
+    private static final int SHOW_DELAY = 5000;
 
     private static final int PLAYER_TIMEOUT_DELAY = 15000;
 

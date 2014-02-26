@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,9 +52,12 @@ import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
+import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
+import com.pplive.liveplatform.util.DirManager;
+import com.pplive.liveplatform.util.ImageUtil;
 
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";
@@ -82,6 +86,8 @@ public class UserpageActivity extends Activity {
 
     private final static int REQUEST_SETTINGS = 7802;
 
+    private final static int REQUEST_CAMERA = 7803;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
@@ -93,6 +99,7 @@ public class UserpageActivity extends Activity {
     private CircularImageView mUserIcon;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
+    private IconDialog mIconDialog;
 
     private boolean mRefreshFinish;
 
@@ -115,6 +122,7 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
         mAdapter.setRightClickListener(onItemRightClickListener);
         mRefreshDialog = new RefreshDialog(this);
+        mIconDialog = new IconDialog(this, R.style.icon_dialog);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
         mNodataButton = (Button) findViewById(R.id.btn_userpage_record);
@@ -191,7 +199,7 @@ public class UserpageActivity extends Activity {
     protected void onDestroy() {
         mPullHandler.removeCallbacksAndMessages(null);
         mUserIcon.release();
-//        mListView.release();
+        //        mListView.release();
         super.onDestroy();
     }
 
@@ -217,16 +225,42 @@ public class UserpageActivity extends Activity {
         }
     };
 
+    private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
+            } finally {
+                mIconDialog.dismiss();
+            }
+        }
+    };
+
+    private View.OnClickListener onGalleryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_PICKPIC);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
+            } finally {
+                mIconDialog.dismiss();
+            }
+        }
+
+    };
+
     private View.OnClickListener onIconClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (UserManager.getInstance(mContext).isLogin(mUsername)) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, REQUEST_PICKPIC);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
-                }
+                mIconDialog.show();
+                mIconDialog.setOnCameraClickListener(onCameraClickListener);
+                mIconDialog.setOnGalleryClickListener(onGalleryClickListener);
             }
         }
     };
@@ -298,6 +332,16 @@ public class UserpageActivity extends Activity {
         }
     };
 
+    private void uploadIcon(String imagePath) {
+        UploadIconTask task = new UploadIconTask();
+        task.addTaskListener(onIconTaskListener);
+        TaskContext taskContext = new TaskContext();
+        taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
+        taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
+        taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+        task.execute(taskContext);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SETTINGS) {
@@ -315,16 +359,20 @@ public class UserpageActivity extends Activity {
                 Uri uri = data.getData();
                 Cursor cursor = getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
-                String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                UploadIconTask task = new UploadIconTask();
-                task.addTaskListener(onIconTaskListener);
-                TaskContext taskContext = new TaskContext();
-                taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
-                taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
-                taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
-                task.execute(taskContext);
+                uploadIcon(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)));
+                Toast.makeText(mContext, R.string.toast_icon_processing, Toast.LENGTH_SHORT).show();
             } catch (IllegalArgumentException e) {
                 Log.e(TAG, "Column does not exist");
+                Toast.makeText(mContext, R.string.toast_icon_image_error, Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
+            Bitmap bitmap = ImageUtil.getScaledBitmapLimit((Bitmap) data.getExtras().get("data"), 160);
+            String filename = DirManager.getImageCachePath() + "/upload_icon.tmp";
+            if (ImageUtil.bitmap2File(bitmap, filename)) {
+                uploadIcon(filename);
+                Toast.makeText(mContext, R.string.toast_icon_processing, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, R.string.toast_icon_image_error, Toast.LENGTH_SHORT).show();
             }
         }
     };
