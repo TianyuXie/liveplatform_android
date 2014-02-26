@@ -114,4 +114,9 @@ public class PPboxSink {
         Log.d(TAG, "After destroy capture");
     }
 
+    public void setPreviewInterval(int interval) {
+        if (null != mVideoStream) {
+            mVideoStream.setPreviewInterval(interval);
+        }
+    }
 }
