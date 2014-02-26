@@ -65,6 +65,7 @@ import com.pplive.liveplatform.util.ViewUtil;
 import de.greenrobot.event.EventBus;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
+
     static final String TAG = "_LivePlayerActivity";
 
     private static final int SCREEN_ORIENTATION_INVALID = -1;
