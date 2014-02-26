@@ -14,26 +14,28 @@ import com.pplive.sdk.MediaSDK;
 
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 public class PPboxVideoStream extends PPboxStream {
-    
+
     private Camera mCamera;
-    
+
     private int mDataChange = 0;
-    
+
     private int mVideoWidth = -1;
-    
+
     private int mVideoHeight = -1;
+
+    private int mPreviewInterval = 50; /* millisecond */
 
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 
         private final long time_scale = 1000 * 1000 * 1000;
+
         private int num_total = 0;
+
         private int num_drop = 0;
+
         private long next_time = 5 * time_scale;
 
-        private long put_preview_interval = 50 /* millisecond */;
-
         private long last_put_preview_time = System.currentTimeMillis();
-
 
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
@@ -42,15 +44,16 @@ public class PPboxVideoStream extends PPboxStream {
             long cur_time = System.currentTimeMillis();
             long time_stamp = System.nanoTime() - mStartTime;
 
-            Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
-            if (cur_time - last_put_preview_time > put_preview_interval) {
+            if (cur_time - last_put_preview_time > mPreviewInterval) {
+                Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
+
                 PPboxStream.InBuffer buffer = pop();
                 if (buffer == null) {
                     ++num_drop;
                 } else {
                     Log.d(TAG, "image size: " + data.length);
                     byte[] dataChange = new byte[data.length];
-                    switch(mDataChange){
+                    switch (mDataChange) {
                     case DevicesChoose.NV12TONV21:
                         ColorFormat.convertNV21toNV12(data);
                         dataChange = data;
@@ -92,12 +95,11 @@ public class PPboxVideoStream extends PPboxStream {
         mStreamType = "Video";
 
         mCaptureId = capture;
-        
+
         mCamera = camera;
 
         Camera.Parameters p = camera.getParameters();
 
-        p.getPreviewFormat();
         Log.d(TAG, "Preview Format: " + p.getPreviewFormat());
 
         Camera.Size size = p.getPreviewSize();
@@ -136,10 +138,10 @@ public class PPboxVideoStream extends PPboxStream {
     @Override
     public void start() {
         super.start();
-        
+
         resetCamera(mCamera);
     }
-    
+
     @Override
     public void stop() {
         mCamera.setPreviewCallbackWithBuffer(null);
@@ -148,15 +150,18 @@ public class PPboxVideoStream extends PPboxStream {
 
     public void resetCamera(Camera camera) {
         mCamera = camera;
-        
+
         Camera.Size size = camera.getParameters().getPreviewSize();
         mVideoWidth = size.width;
         mVideoHeight = size.height;
-        
+
         final byte[] video_buffer = new byte[bufferSize()];
 
         camera.addCallbackBuffer(video_buffer);
         camera.setPreviewCallbackWithBuffer(mPreviewCallback);
     }
 
+    public void setPreviewInterval(int interval) {
+        mPreviewInterval = interval;
+    }
 }

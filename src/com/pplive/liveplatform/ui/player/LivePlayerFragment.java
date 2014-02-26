@@ -217,6 +217,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void setupVideoView(String url) {
         Log.d(TAG, "setupVideoView:" + url);
+        //        url = "http://127.0.0.1:9006/record.m3u8?type=pplive3&playlink=8701%3Fft%3D1%26name%3Dec015a2f842143b39beebba913c7e8ff%26svrhost%3D60.55.12.155%3A80%26svrtime%3D1393236209%26delaytime%3D0%26bitrate%3D400%26interval%3D5%26bwtype%3D0%26livepath%3D%2Flive%26begin_time%3D1393235599%26end_time%3D1393235627&mux.M3U8.segment_duration=5&mux.M3U8.back_seek_time=0&realtime=low";
         Uri uri = Uri.parse(url);
         mVideoView.setDecodeMode(DecodeMode.SW);
         mVideoView.setVideoURI(uri);
