@@ -111,13 +111,15 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     // Media Recorder
     private ImageButton mBtnLiveRecord;
 
-    //    private ImageButton mBtnCameraChange;
+    // private ImageButton mBtnCameraChange;
 
     private ToggleButton mBtnFlashLight;
 
     private FooterBarFragment mFooterBarFragment;
 
     private ShareDialog mShareDialog;
+
+    private Dialog mLoadingDialog;
 
     private TextView mTextLive;
 
@@ -245,7 +247,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mChatButton = (ImageButton) findViewById(R.id.btn_record_chat);
         mBtnLiveRecord = (ImageButton) findViewById(R.id.btn_live_record);
-        //        mBtnCameraChange = (ImageButton) findViewById(R.id.btn_camera_change);
+        // mBtnCameraChange = (ImageButton)
+        // findViewById(R.id.btn_camera_change);
         mBtnFlashLight = (ToggleButton) findViewById(R.id.btn_flash_light);
 
         mFooterBarFragment = (FooterBarFragment) getSupportFragmentManager().findFragmentById(R.id.footer_bar);
@@ -268,6 +271,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
         mShareDialog.setActivity(this);
+
+        mLoadingDialog = new Dialog(this, R.style.Theme_LoadingDialog);
+        mLoadingDialog.setContentView(R.layout.layout_live_loading_dialog);
+        mLoadingDialog.setCancelable(false);
 
         mLivingPausedAlertDialog = DialogManager.alertLivingPaused(this, new DialogInterface.OnClickListener() {
 
@@ -326,6 +333,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetPausedProgramTask = new GetPausedProgramTask();
             mGetPausedProgramTask.execute();
         }
+
     }
 
     @Override
@@ -333,6 +341,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onStop();
 
         Log.d(TAG, "onStop");
+        
+        if (mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
 
         stopCountDown();
 
@@ -542,10 +554,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mBtnLivingShare.setText(mLivingProgram.getTitle());
 
             // TODO: Debug Code
-            //            mTextLivingTitle.append("\n");
-            //            mTextLivingTitle.append("pid: " + mLivingProgram.getId());
-            //            mTextLivingTitle.append("\n");
-            //            mTextLivingTitle.append(mLivingUrl);
+            // mTextLivingTitle.append("\n");
+            // mTextLivingTitle.append("pid: " + mLivingProgram.getId());
+            // mTextLivingTitle.append("\n");
+            // mTextLivingTitle.append(mLivingUrl);
 
             Message msg = mInnerHandler.obtainMessage(WHAT_LIVING_DURATION_UPDATE);
             mInnerHandler.sendMessage(msg);
@@ -748,6 +760,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void startLiving() {
+        mLoadingDialog.show();
 
         stopCountDown();
         mFooterBarFragment.onLivingStart();
@@ -986,6 +999,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         @Override
         protected void onPostExecute(String url) {
+            if (mLoadingDialog.isShowing()) {
+                mLoadingDialog.dismiss();
+            }
+
             mGetPushUrlTask = null;
 
             if (StringUtil.isNullOrEmpty(url)) {
