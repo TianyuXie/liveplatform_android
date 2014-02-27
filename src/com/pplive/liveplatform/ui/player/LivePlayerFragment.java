@@ -60,6 +60,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private static final int FLAG_TIME_BAR = 0x8;
 
     private static final int FLAG_VOLUME_BAR = 0x10;
+    
+    private static final int FLAG_FULL_SHARE = 0x20;
 
     private boolean mMuted = false;
 
@@ -145,6 +147,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mRoot.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_share).setOnClickListener(this);
+        mRoot.findViewById(R.id.btn_player_full_share).setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_back).setOnClickListener(this);
         return mRoot;
     }
@@ -382,6 +385,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mCallbackListener.onModeClick();
             }
             break;
+        case R.id.btn_player_full_share:
         case R.id.btn_player_share:
             if (mCallbackListener != null) {
                 mCallbackListener.onShareClick();
@@ -409,7 +413,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void setLayout(boolean isFull) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
-            mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR;
+            mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR | FLAG_FULL_SHARE;
             if (mProgram.isVOD()) {
                 mFlagMask |= FLAG_TIME_BAR;
             }
@@ -426,6 +430,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_bottombar), flags & FLAG_BOTTOM_BAR);
         ViewUtil.setVisibility(mIconWrapper, flags & FLAG_USER_VIEW);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.wrapper_player_controller), flags & FLAG_TIME_BAR);
+        ViewUtil.setVisibility(mRoot.findViewById(R.id.btn_player_full_share), flags & FLAG_FULL_SHARE);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_volume), flags & FLAG_VOLUME_BAR);
     }
 
@@ -434,7 +439,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             return;
         }
         mShowBar = false;
-        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
+        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR | FLAG_FULL_SHARE);
         setVisibilityByFlags();
         mHandler.removeMessages(MSG_HIDE);
     }
@@ -442,7 +447,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void showBars(int timeout) {
         if (!mShowBar) {
             mShowBar = true;
-            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
+            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR | FLAG_FULL_SHARE);
             setVisibilityByFlags();
             syncVolume();
         }

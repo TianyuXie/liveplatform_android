@@ -52,10 +52,10 @@ import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
-import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
+import com.pplive.liveplatform.ui.widget.chat.ChatBox;
 import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
@@ -234,6 +234,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             }
         }
         mChatBox.start(mProgram.getId());
+        keepAliveDelay(0);
     }
 
     private void startGetMedia() {
@@ -755,7 +756,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mHandler.removeMessages(MSG_MEDIA_RETRY);
         mHandler.sendEmptyMessage(MSG_START_PLAY);
         mLivePlayerFragment.hideBreakInfo();
-        keepAliveDelay(0);
         mWatchDacStat.setIsSuccess(true);
         mWatchDacStat.onPlayRealStart();
     }

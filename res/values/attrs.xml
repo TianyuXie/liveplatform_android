@@ -38,7 +38,6 @@
     </declare-styleable>
     <declare-styleable name="ChatBox">
         <attr name="textSize" />
-        <attr name="textColor" />
         <attr name="userColor" format="color" />
         <attr name="contentColor" format="color" />
         <attr name="ownerColor" format="color" />
@@ -49,7 +48,6 @@
         <attr name="refreshDelay" format="integer" />
         <attr name="retryDelay" format="integer" />
         <attr name="defaultText" format="string" />
-        <attr name="lineSpacingMultiplier" format="float" />
         <attr name="background" format="reference" />
     </declare-styleable>
     <declare-styleable name="SlideListView">

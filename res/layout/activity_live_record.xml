@@ -118,7 +118,7 @@
         android:layout_margin="20dp"
         android:visibility="gone" >
 
-        <com.pplive.liveplatform.ui.widget.ChatBox
+        <com.pplive.liveplatform.ui.widget.chat.ChatBox
             android:id="@+id/layout_record_chatbox"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -126,13 +126,11 @@
             live:background="@drawable/live_record_dialog_bg"
             live:contentColor="@color/record_dialog_content"
             live:defaultText="@string/record_no_comment"
-            live:lineSpacingMultiplier="1.2"
             live:ownerColor="@color/player_chat_owner"
             live:paddingBottom="10dp"
             live:paddingLeft="12dp"
             live:paddingRight="12dp"
             live:paddingTop="10dp"
-            live:textColor="@color/white"
             live:textSize="14sp"
             live:userColor="@color/record_dialog_nickname" />
 

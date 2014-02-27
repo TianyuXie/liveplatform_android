@@ -37,7 +37,7 @@
         live:text="@string/blank"
         live:textSize="12sp" />
 
-    <com.pplive.liveplatform.ui.widget.ChatBox
+    <com.pplive.liveplatform.ui.widget.chat.ChatBox
         android:id="@+id/layout_player_chatbox"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -46,13 +46,11 @@
         live:background="@color/player_chatbox_bg"
         live:contentColor="@color/player_chat_content"
         live:defaultText="@string/player_no_comment"
-        live:lineSpacingMultiplier="1.2"
         live:ownerColor="@color/player_chat_owner"
         live:paddingBottom="8dp"
         live:paddingLeft="12dp"
         live:paddingRight="12dp"
         live:paddingTop="8dp"
-        live:textColor="@color/white"
         live:textSize="18sp"
         live:userColor="@color/player_chat_nickname" />
 

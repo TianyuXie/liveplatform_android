@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.service.comment.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import android.text.TextUtils;
@@ -52,19 +52,19 @@ public class FeedDetailList {
         return feedIds.length;
     }
 
-    public Collection<String> getFeedStrings() {
-        return getFeedStrings("", 0xffffffff, 0xffffffff, 0xffffffff);
+    public List<FeedItem> getFeedItems() {
+        return getFeedItems("", 0xffffffff, 0xffffffff, 0xffffffff);
     }
 
-    public Collection<String> getFeedStrings(String currentUser, int userColor, int contentColor, int ownerColor) {
-        Collection<String> result = new ArrayList<String>();
+    public List<FeedItem> getFeedItems(String currentUser, int userColor, int contentColor, int ownerColor) {
+        List<FeedItem> result = new ArrayList<FeedItem>();
         for (long id : feedIds) {
-            result.add(formatFeed(currentUser, mapFeed.get(id), userColor, contentColor, ownerColor));
+            result.add(makeItem(currentUser, mapFeed.get(id), userColor, contentColor, ownerColor));
         }
         return result;
     }
 
-    private String formatFeed(String currentUser, Feed feed, int userColor, int contentColor, int ownerColor) {
+    private FeedItem makeItem(String currentUser, Feed feed, int userColor, int contentColor, int ownerColor) {
         userColor -= 0xff000000;
         contentColor -= 0xff000000;
         ownerColor -= 0xff000000;
@@ -76,10 +76,11 @@ public class FeedDetailList {
         } else {
             nickname = nickname.split("\\(")[0];
         }
-        if (currentUser.equals(username)){
+        if (currentUser.equals(username)) {
             contentColor = ownerColor;
         }
-        return String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b><br>", userColor, nickname, contentColor, content);
+        return new FeedItem(String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b>", userColor, nickname, contentColor,
+                content), feed.createTime);
     }
 
 }
