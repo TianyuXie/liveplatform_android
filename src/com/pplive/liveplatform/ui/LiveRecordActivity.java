@@ -53,6 +53,7 @@ import com.pplive.liveplatform.ui.live.FooterBarFragment;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
+import com.pplive.liveplatform.ui.live.record.CameraManager;
 import com.pplive.liveplatform.ui.live.record.MediaManager;
 import com.pplive.liveplatform.ui.live.record.MediaRecorderListener;
 import com.pplive.liveplatform.ui.live.record.MediaRecorderView;
@@ -825,6 +826,13 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onClickBtnCameraChange() {
 
         mMediaRecorderView.changeCamera();
+        
+        if (CameraManager.CAMERA_FACING_FRONT == mMediaRecorderView.getCurrentCameraId()) {
+            mBtnFlashLight.setVisibility(View.GONE);
+        } else {
+            mBtnFlashLight.setChecked(false);
+            mBtnFlashLight.setVisibility(View.VISIBLE);
+        }
     }
 
     private void onClickBtnLiveRecord() {
