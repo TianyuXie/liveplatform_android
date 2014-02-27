@@ -49,8 +49,8 @@ public class LiveApplication extends Application {
 
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
-//        MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
-//        LogUtils.logDeviceInfo();
+        MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
+        LogUtils.logDeviceInfo();
     }
 
     private void initImageLoader(Context context) {
