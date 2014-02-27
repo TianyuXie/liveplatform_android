@@ -9,6 +9,9 @@ public class TimeUtil {
     public static final int MS_OF_SECOND = 1000;
     public static final int MS_OF_MIN = 60 * MS_OF_SECOND;
     public static final int MS_OF_HOUR = 60 * MS_OF_MIN;
+    public static final int MS_OF_DAY = 24 * MS_OF_HOUR;
+    public static final int MS_OF_MON = 30 * MS_OF_DAY;
+    public static final int MS_OF_YR = 365 * MS_OF_DAY;
     public static final int SECONDS_OF_DAY = 24 * 3600;
     public static final int SECONDS_OF_HOUR = 3600;
 
@@ -80,6 +83,25 @@ public class TimeUtil {
 
         return cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) && cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
                 && cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH) && cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH);
+    }
+    
+    public static String getTimeGap(long time){
+       long gapms = System.currentTimeMillis() - time;
+       if (gapms <= 0){
+           return "0秒前";
+       } else if ( gapms / MS_OF_YR > 0){
+           return String.format("%d年前", gapms / MS_OF_YR);
+       } else if ( gapms / MS_OF_MON > 0){
+           return String.format("%d月前", gapms / MS_OF_MON);
+       }else if ( gapms / MS_OF_DAY > 0){
+           return String.format("%d天前", gapms / MS_OF_DAY);
+       }else if ( gapms / MS_OF_HOUR > 0){
+           return String.format("%d小时前", gapms / MS_OF_HOUR);
+       }else if ( gapms / MS_OF_MIN > 0){
+           return String.format("%d分钟前", gapms / MS_OF_MIN);
+       }else {
+           return String.format("%d秒前", gapms / MS_OF_SECOND);
+       }
     }
 
 }

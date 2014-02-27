@@ -104,25 +104,40 @@
         android:layout_height="50dp"
         android:layout_alignParentTop="true" >
 
-        <TextView
-            android:id="@+id/text_player_title"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:layout_toLeftOf="@+id/btn_player_mode"
-            android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:scrollHorizontally="true"
-            android:singleLine="true"
-            android:textColor="@color/player_title"
-            android:textSize="21sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_player_full_share"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/live_record_btn_live_share" />
+
+            <TextView
+                android:id="@+id/text_player_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="10dp"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/player_title"
+                android:textSize="21sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <ToggleButton
             android:id="@id/btn_player_mode"
