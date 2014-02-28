@@ -416,7 +416,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
 
         startAnimation(bodyAnim);
         mPullView.startAnimation(pullAnim);
-        if (mHeaderView != null) {
+        if (mHeaderView != null && mHeaderView.getVisibility() == VISIBLE) {
             mHeaderView.startAnimation(headAnim);
         }
     }
@@ -427,7 +427,7 @@ public class RefreshGridView extends GridView implements OnScrollListener {
         mAniming = false;
         clearAnimation();
         mPullView.clearAnimation();
-        if (mHeaderView != null) {
+        if (mHeaderView != null && mHeaderView.getVisibility() == VISIBLE) {
             mHeaderView.clearAnimation();
         }
     }

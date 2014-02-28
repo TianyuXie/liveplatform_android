@@ -162,7 +162,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         case CATALOG_FINANCE:
         case CATALOG_GAME:
         case CATALOG_TV:
-            mContainer.setStatusVisibility(View.INVISIBLE);
+            mContainer.setStatusVisibility(View.GONE);
             if (mContainer.getCheckedRadioButtonId() == R.id.btn_status_living) {
                 startRefreshTask();
             } else {
