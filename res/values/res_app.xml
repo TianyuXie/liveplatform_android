@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">爱播</string>
     <string name="app_exit">再按一次退出程序</string>
+    
+    <string name="umeng_app_key">530c3c5656240bbbac2acbfd</string>
 </resources>
