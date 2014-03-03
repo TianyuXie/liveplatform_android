@@ -207,7 +207,7 @@ public class LiveMediaRecorder implements Handler.Callback {
 
             @Override
             int interval() {
-                return 30;
+                return 35;
             }
         },
         Normal {
@@ -242,7 +242,7 @@ public class LiveMediaRecorder implements Handler.Callback {
 
             @Override
             int interval() {
-                return 120;
+                return 125;
             }
         };
 
