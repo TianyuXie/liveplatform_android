@@ -6,13 +6,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
@@ -43,6 +48,8 @@ public class RegisterActivity extends Activity {
 
     private Button mConfirmButton;
 
+    private CheckBox mCheckBox;
+
     private Dialog mRefreshDialog;
 
     private AsyncImageView mCheckCodeImage;
@@ -65,6 +72,7 @@ public class RegisterActivity extends Activity {
         mUsrEditText = (EditText) findViewById(R.id.edit_register_username);
         mPwdEditText = (EditText) findViewById(R.id.edit_register_password);
         mCheckEditText = (EditText) findViewById(R.id.edit_register_checkcode);
+        mCheckBox = (CheckBox) findViewById(R.id.check_register_agreement);
         mCheckEditText.setOnKeyListener(onFinalEnterListener);
         mUsrEditText.addTextChangedListener(textWatcher);
         mPwdEditText.addTextChangedListener(textWatcher);
@@ -73,6 +81,11 @@ public class RegisterActivity extends Activity {
         mConfirmButton = (Button) findViewById(R.id.btn_register_confirm);
         mConfirmButton.setOnClickListener(onConfirmBtnClickListener);
         mRefreshDialog = new RefreshDialog(this);
+
+        TextView agreementText = (TextView) findViewById(R.id.text_register_agreement);
+        agreementText.setText(Html.fromHtml("我已阅读并接受<font color='#19A0FF'>注册协议</font>"));
+        agreementText.setOnClickListener(onAgreeClickListener);
+        mCheckBox.setOnCheckedChangeListener(onAgreeCheckedChangeListener);
     }
 
     @Override
@@ -86,6 +99,28 @@ public class RegisterActivity extends Activity {
         checkCodeTask.addTaskListener(onCheckcodeTaskListener);
         checkCodeTask.execute();
     }
+
+    private View.OnClickListener onAgreeClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(mContext, WebviewActivity.class);
+            intent.putExtra("url", "file:///android_asset/user.html");
+            startActivity(intent);
+        }
+    };
+
+    private OnCheckedChangeListener onAgreeCheckedChangeListener = new OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (isChecked && !TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText())
+                    && !TextUtils.isEmpty(mCheckEditText.getText())) {
+                mConfirmButton.setEnabled(true);
+            } else {
+                mConfirmButton.setEnabled(false);
+            }
+        }
+    };
 
     private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
         @Override
@@ -152,7 +187,8 @@ public class RegisterActivity extends Activity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (!TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText()) && !TextUtils.isEmpty(mCheckEditText.getText())) {
+            if (mCheckBox.isChecked() && !TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText())
+                    && !TextUtils.isEmpty(mCheckEditText.getText())) {
                 mConfirmButton.setEnabled(true);
             } else {
                 mConfirmButton.setEnabled(false);

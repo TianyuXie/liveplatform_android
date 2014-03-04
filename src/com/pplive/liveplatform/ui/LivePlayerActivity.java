@@ -785,7 +785,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mProgram.isLiving()) {
             Log.d(TAG, "onCompletion: isLiving");
             mInterrupted = true;
-            keepAliveDelay(mDelay * 1000);
+            keepAliveDelay(0);
         } else if (mProgram.isVOD()) {
             Log.d(TAG, "onCompletion: isVOD");
             DialogManager.alertPlayEndDialog(LivePlayerActivity.this).show();
