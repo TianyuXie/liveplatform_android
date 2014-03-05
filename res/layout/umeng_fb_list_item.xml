@@ -58,11 +58,10 @@
             android:layout_marginRight="15dp"
             android:background="@drawable/umeng_fb_reply_right_bg"
             android:maxWidth="200dp"
-            android:padding="20dp"
             android:text="@string/umeng_fb_reply_content_default"
             android:textColor="#ffffff"
             android:textIsSelectable="true"
-            android:textSize="18sp" />
+            android:textSize="16sp" />
     </RelativeLayout>
 
 </RelativeLayout>

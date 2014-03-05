@@ -16,6 +16,7 @@
     <color name="umeng_fb_color_btn_normal">#333333</color>
 
     <string name="umeng_fb_powered_by">Powered by</string>
+    <string name="umeng_fb_loading">Loading...</string>
     <string name="umeng_fb_notification_ticker_text">Got new reply</string>
     <string name="umeng_fb_notification_content_formatter_single_msg">New reply: %s</string>
     <string name="umeng_fb_notification_content_formatter_multiple_msg">You received %d new replies from the app developer.</string>
