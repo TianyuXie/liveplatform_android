@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/btn_userpage_icon_camera"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/userpage_icon_choose_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:text="@string/userpage_icon_camera"
+        android:textColor="@android:color/white"
+        android:textSize="17sp" >
+    </Button>
+
+    <LinearLayout
+        android:layout_width="250dp"
+        android:layout_height="1dp"
+        android:background="@color/black" >
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_userpage_icon_gallery"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:background="@drawable/userpage_icon_choose_bg"
+        android:gravity="center_vertical"
+        android:paddingLeft="16dp"
+        android:text="@string/userpage_icon_gallery"
+        android:textColor="@android:color/white"
+        android:textSize="17sp" >
+    </Button>
+
+</LinearLayout>

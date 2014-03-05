@@ -81,12 +81,15 @@ public class ProgramContainer extends RelativeLayout {
 
     public void refreshData(List<Program> data, boolean clearImage) {
         mPrograms.clear();
+        mGridView.requestFocusFromTouch();
+        mGridView.setSelection(0);
         mPrograms.addAll(data);
         if (clearImage) {
             Log.d(TAG, "clearMemoryCache");
             //ImageLoader.getInstance().clearMemoryCache();
         }
         mAdapter.notifyDataSetChanged();
+        mGridView.clearFocus();
     }
 
     public void appendData(List<Program> data) {
@@ -149,8 +152,10 @@ public class ProgramContainer extends RelativeLayout {
     };
 
     public void setStatusVisibility(int visibility) {
-        findViewById(R.id.btn_status_tolive).setVisibility(visibility);
-        findViewById(R.id.btn_status_replay).setVisibility(visibility);
+//        findViewById(R.id.btn_status_tolive).setVisibility(visibility);
+//        findViewById(R.id.btn_status_replay).setVisibility(visibility);
+        
+        findViewById(R.id.layout_grid_header).setVisibility(visibility);
     }
 
     public void setUpdateTime(long time) {

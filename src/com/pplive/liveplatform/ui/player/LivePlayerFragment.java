@@ -4,7 +4,6 @@ import java.lang.ref.WeakReference;
 
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,8 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
@@ -46,7 +43,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     private static final int TIMER_DELAY = 1000;
 
-    private static final int SHOW_DELAY = 6000;
+    private static final int SHOW_DELAY = 5000;
 
     private static final int PLAYER_TIMEOUT_DELAY = 15000;
 
@@ -63,6 +60,8 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private static final int FLAG_TIME_BAR = 0x8;
 
     private static final int FLAG_VOLUME_BAR = 0x10;
+    
+    private static final int FLAG_FULL_SHARE = 0x20;
 
     private boolean mMuted = false;
 
@@ -148,6 +147,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mRoot.setOnTouchListener(this);
         mModeBtn.setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_share).setOnClickListener(this);
+        mRoot.findViewById(R.id.btn_player_full_share).setOnClickListener(this);
         mRoot.findViewById(R.id.btn_player_back).setOnClickListener(this);
         return mRoot;
     }
@@ -220,6 +220,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
 
     public void setupVideoView(String url) {
         Log.d(TAG, "setupVideoView:" + url);
+        //        url = "http://127.0.0.1:9006/record.m3u8?type=pplive3&playlink=8701%3Fft%3D1%26name%3Dec015a2f842143b39beebba913c7e8ff%26svrhost%3D60.55.12.155%3A80%26svrtime%3D1393236209%26delaytime%3D0%26bitrate%3D400%26interval%3D5%26bwtype%3D0%26livepath%3D%2Flive%26begin_time%3D1393235599%26end_time%3D1393235627&mux.M3U8.segment_duration=5&mux.M3U8.back_seek_time=0&realtime=low";
         Uri uri = Uri.parse(url);
         mVideoView.setDecodeMode(DecodeMode.SW);
         mVideoView.setVideoURI(uri);
@@ -250,7 +251,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mProgram = program;
         ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
         mIconWrapper.setVisibility(View.INVISIBLE);
-        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
+        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default);
         if (program.isOriginal()) {
             mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.VISIBLE);
         } else {
@@ -385,6 +386,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
                 mCallbackListener.onModeClick();
             }
             break;
+        case R.id.btn_player_full_share:
         case R.id.btn_player_share:
             if (mCallbackListener != null) {
                 mCallbackListener.onShareClick();
@@ -412,7 +414,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void setLayout(boolean isFull) {
         mModeBtn.setChecked(isFull);
         if (isFull) {
-            mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR;
+            mFlagMask = FLAG_TITLE_BAR | FLAG_VOLUME_BAR | FLAG_FULL_SHARE;
             if (mProgram.isVOD()) {
                 mFlagMask |= FLAG_TIME_BAR;
             }
@@ -429,6 +431,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_bottombar), flags & FLAG_BOTTOM_BAR);
         ViewUtil.setVisibility(mIconWrapper, flags & FLAG_USER_VIEW);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.wrapper_player_controller), flags & FLAG_TIME_BAR);
+        ViewUtil.setVisibility(mRoot.findViewById(R.id.btn_player_full_share), flags & FLAG_FULL_SHARE);
         ViewUtil.setVisibility(mRoot.findViewById(R.id.layout_player_volume), flags & FLAG_VOLUME_BAR);
     }
 
@@ -437,7 +440,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             return;
         }
         mShowBar = false;
-        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
+        clearViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR | FLAG_FULL_SHARE);
         setVisibilityByFlags();
         mHandler.removeMessages(MSG_HIDE);
     }
@@ -445,7 +448,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void showBars(int timeout) {
         if (!mShowBar) {
             mShowBar = true;
-            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR);
+            setViewFlags(FLAG_TITLE_BAR | FLAG_BOTTOM_BAR | FLAG_USER_VIEW | FLAG_TIME_BAR | FLAG_VOLUME_BAR | FLAG_FULL_SHARE);
             setVisibilityByFlags();
             syncVolume();
         }
@@ -520,32 +523,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         this.mCallbackListener = listener;
     }
 
-    private ImageLoadingListener imageLoadingListener = new ImageLoadingListener() {
-
-        @Override
-        public void onLoadingStarted(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingStarted");
-        }
-
-        @Override
-        public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
-            Log.d(TAG, "onLoadingFailed");
-            //            mUserIcon.setRounded(false);
-        }
-
-        @Override
-        public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
-            Log.d(TAG, "onLoadingComplete");
-            //            mUserIcon.setRounded(arg2 != null);
-        }
-
-        @Override
-        public void onLoadingCancelled(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingCancelled");
-            //            mUserIcon.setRounded(false);
-        }
-    };
-
     public void onStartPlay() {
         mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         mIconWrapper.setVisibility(View.VISIBLE);
@@ -586,7 +563,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onRotateMiddle() {
             mFinishText.setText("");
-            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default, imageLoadingListener);
+            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default);
         }
     };
 

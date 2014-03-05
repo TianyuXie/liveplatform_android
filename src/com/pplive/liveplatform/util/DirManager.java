@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.Environment;
 
 public class DirManager {
-    private static Context mContext;
+    private static Context sAppContext;
 
     public static void init(Context context) {
-        mContext = context.getApplicationContext();
+        sAppContext = context.getApplicationContext();
     }
 
     private final static String SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -15,16 +15,16 @@ public class DirManager {
     private final static String SD_APP_PATH = SD_PATH + "/ibo";
 
     public static String getPrivateCachePath() {
-        return mContext.getCacheDir().getAbsolutePath();
+        return sAppContext.getCacheDir().getAbsolutePath();
     }
 
     public static String getPrivateFilesPath() {
-        return mContext.getFilesDir().getAbsolutePath();
+        return sAppContext.getFilesDir().getAbsolutePath();
     }
 
     public static String getCachePath() {
         if (hasExternalStorage()) {
-            return mContext.getExternalCacheDir().getAbsolutePath();
+            return sAppContext.getExternalCacheDir().getAbsolutePath();
         } else {
             return getPrivateCachePath();
         }
@@ -32,7 +32,7 @@ public class DirManager {
 
     public static String getFilesPath() {
         if (hasExternalStorage()) {
-            return mContext.getExternalFilesDir(null).getAbsolutePath();
+            return sAppContext.getExternalFilesDir(null).getAbsolutePath();
         } else {
             return getPrivateFilesPath();
         }
@@ -52,6 +52,10 @@ public class DirManager {
 
     public static String getImageCachePath() {
         return getCachePath() + "/image";
+    }
+    
+    public static String getLogCachePath() {
+        return getCachePath() + "/log";
     }
 
     public static String getDownloadPath() {

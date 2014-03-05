@@ -33,8 +33,6 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nostra13.universalimageloader.core.assist.FailReason;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -54,9 +52,12 @@ import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
+import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
-import com.pplive.liveplatform.ui.widget.refresh.SimpleRefreshListView;
+import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
+import com.pplive.liveplatform.util.DirManager;
+import com.pplive.liveplatform.util.ImageUtil;
 
 public class UserpageActivity extends Activity {
     static final String TAG = "_UserpageActivity";
@@ -85,17 +86,20 @@ public class UserpageActivity extends Activity {
 
     private final static int REQUEST_SETTINGS = 7802;
 
+    private final static int REQUEST_CAMERA = 7803;
+
     private Context mContext;
     private List<Program> mPrograms;
     private String mUsername;
 
     private TextView mNicknameText;
-    private SimpleRefreshListView mListView;
+    private RefreshListView mListView;
     private TextView mNodataText;
     private Button mNodataButton;
     private CircularImageView mUserIcon;
     private UserpageProgramAdapter mAdapter;
     private RefreshDialog mRefreshDialog;
+    private IconDialog mIconDialog;
 
     private boolean mRefreshFinish;
 
@@ -118,6 +122,7 @@ public class UserpageActivity extends Activity {
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
         mAdapter.setRightClickListener(onItemRightClickListener);
         mRefreshDialog = new RefreshDialog(this);
+        mIconDialog = new IconDialog(this, R.style.icon_dialog);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
         mNodataButton = (Button) findViewById(R.id.btn_userpage_record);
@@ -125,7 +130,7 @@ public class UserpageActivity extends Activity {
         Button settingsButton = (Button) findViewById(R.id.btn_userpage_settings);
         settingsButton.setOnClickListener(onSettingsBtnClickListener);
 
-        mListView = (SimpleRefreshListView) findViewById(R.id.list_userpage_program);
+        mListView = (RefreshListView) findViewById(R.id.list_userpage_program);
         LinearLayout pullHeader = (LinearLayout) findViewById(R.id.layout_userpage_pull_header);
         pullHeader.addView(mListView.getPullView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mListView.setAdapter(mAdapter);
@@ -167,7 +172,7 @@ public class UserpageActivity extends Activity {
         mNicknameText.setText(getIntent().getStringExtra(EXTRA_NICKNAME));
         String iconUrl = getIntent().getStringExtra(EXTRA_ICON);
         if (!TextUtils.isEmpty(iconUrl)) {
-            mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
+            mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
         } else {
             mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
         }
@@ -194,6 +199,7 @@ public class UserpageActivity extends Activity {
     protected void onDestroy() {
         mPullHandler.removeCallbacksAndMessages(null);
         mUserIcon.release();
+        //        mListView.release();
         super.onDestroy();
     }
 
@@ -219,16 +225,42 @@ public class UserpageActivity extends Activity {
         }
     };
 
+    private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, REQUEST_CAMERA);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
+            } finally {
+                mIconDialog.dismiss();
+            }
+        }
+    };
+
+    private View.OnClickListener onGalleryClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_PICKPIC);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
+            } finally {
+                mIconDialog.dismiss();
+            }
+        }
+
+    };
+
     private View.OnClickListener onIconClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (UserManager.getInstance(mContext).isLogin(mUsername)) {
-                try {
-                    Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, REQUEST_PICKPIC);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(mContext, R.string.toast_userpage_nopic, Toast.LENGTH_SHORT).show();
-                }
+                mIconDialog.show();
+                mIconDialog.setOnCameraClickListener(onCameraClickListener);
+                mIconDialog.setOnGalleryClickListener(onGalleryClickListener);
             }
         }
     };
@@ -261,7 +293,7 @@ public class UserpageActivity extends Activity {
                 });
                 dialog.show();
             }
-            mListView.hiddenRight();
+            mListView.hideRight();
         }
     };
 
@@ -300,6 +332,16 @@ public class UserpageActivity extends Activity {
         }
     };
 
+    private void uploadIcon(String imagePath) {
+        UploadIconTask task = new UploadIconTask();
+        task.addTaskListener(onIconTaskListener);
+        TaskContext taskContext = new TaskContext();
+        taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
+        taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
+        taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+        task.execute(taskContext);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SETTINGS) {
@@ -317,16 +359,20 @@ public class UserpageActivity extends Activity {
                 Uri uri = data.getData();
                 Cursor cursor = getContentResolver().query(uri, null, null, null, null);
                 cursor.moveToFirst();
-                String imagePath = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-                UploadIconTask task = new UploadIconTask();
-                task.addTaskListener(onIconTaskListener);
-                TaskContext taskContext = new TaskContext();
-                taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
-                taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
-                taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
-                task.execute(taskContext);
+                uploadIcon(cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)));
+                Toast.makeText(mContext, R.string.toast_icon_processing, Toast.LENGTH_SHORT).show();
             } catch (IllegalArgumentException e) {
                 Log.e(TAG, "Column does not exist");
+                Toast.makeText(mContext, R.string.toast_icon_image_error, Toast.LENGTH_SHORT).show();
+            }
+        } else if (requestCode == REQUEST_CAMERA && resultCode == Activity.RESULT_OK && data != null) {
+            Bitmap bitmap = ImageUtil.getScaledBitmapLimit((Bitmap) data.getExtras().get("data"), 160);
+            String filename = DirManager.getImageCachePath() + "/upload_icon.tmp";
+            if (ImageUtil.bitmap2File(bitmap, filename)) {
+                uploadIcon(filename);
+                Toast.makeText(mContext, R.string.toast_icon_processing, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, R.string.toast_icon_image_error, Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -340,7 +386,7 @@ public class UserpageActivity extends Activity {
             UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mContext).getIcon();
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default, imageLoadingListener);
+                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
             } else {
                 mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }
@@ -452,32 +498,6 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private ImageLoadingListener imageLoadingListener = new ImageLoadingListener() {
-
-        @Override
-        public void onLoadingStarted(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingStarted");
-        }
-
-        @Override
-        public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
-            Log.d(TAG, "onLoadingFailed");
-//            mUserIcon.setRounded(false);
-        }
-
-        @Override
-        public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
-            Log.d(TAG, "onLoadingComplete");
-//            mUserIcon.setRounded(arg2 != null);
-        }
-
-        @Override
-        public void onLoadingCancelled(String arg0, View arg1) {
-            Log.d(TAG, "onLoadingCancelled");
-//            mUserIcon.setRounded(false);
-        }
-    };
-
     private Comparator<Program> comparator = new Comparator<Program>() {
         @Override
         public int compare(Program lhs, Program rhs) {
@@ -507,7 +527,7 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private SimpleRefreshListView.OnUpdateListener onUpdateListener = new SimpleRefreshListView.OnUpdateListener() {
+    private RefreshListView.OnUpdateListener onUpdateListener = new RefreshListView.OnUpdateListener() {
         @Override
         public void onRefresh() {
             mRefreshFinish = false;

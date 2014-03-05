@@ -52,10 +52,10 @@ import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
-import com.pplive.liveplatform.ui.widget.ChatBox;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
+import com.pplive.liveplatform.ui.widget.chat.ChatBox;
 import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
@@ -65,6 +65,7 @@ import com.pplive.liveplatform.util.ViewUtil;
 import de.greenrobot.event.EventBus;
 
 public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
+
     static final String TAG = "_LivePlayerActivity";
 
     private static final int SCREEN_ORIENTATION_INVALID = -1;
@@ -114,6 +115,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private int mCurrentOrient;
 
     private int mUserOrient;
+
+    private long mDelay;
 
     private boolean mIsFull;
 
@@ -173,6 +176,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mShareDialog.setActivity(this);
 
         /* init values */
+        mDelay = 0;
         mUserOrient = SCREEN_ORIENTATION_INVALID;
         mCurrentOrient = getRequestedOrientation();
         mHalfScreenHeight = (int) (DisplayUtil.getWidthPx(this) * 3.0f / 4.0f);
@@ -560,7 +564,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
-            long delay = liveStatus.getDelayInSeconds();
+            mDelay = liveStatus.getDelayInSeconds();
             switch (liveStatus.getStatus()) {
             case STOPPED:
             case DELETED:
@@ -576,10 +580,8 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mLivePlayerFragment.showBreakInfo(getString(R.string.player_signal_break));
                     showWaiting();
                     startGetMedia();
-                    keepAliveDelay(6000);
-                } else {
-                    keepAliveDelay(delay * 1000);
                 }
+                keepAliveDelay(mDelay * 1000);
                 break;
             default:
                 break;
@@ -755,7 +757,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mHandler.removeMessages(MSG_MEDIA_RETRY);
         mHandler.sendEmptyMessage(MSG_START_PLAY);
         mLivePlayerFragment.hideBreakInfo();
-        keepAliveDelay(0);
         mWatchDacStat.setIsSuccess(true);
         mWatchDacStat.onPlayRealStart();
     }
@@ -765,7 +766,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         if (mProgram.isLiving()) {
             Log.d(TAG, "onError: isLiving");
             mInterrupted = true;
-            keepAliveDelay(0);
+            keepAliveDelay(mDelay * 1000);
             return true;
         } else if (mProgram.isVOD()) {
             Log.d(TAG, "onError: isVOD");
@@ -869,7 +870,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
             showWaiting();
             startGetMedia();
-            keepAliveDelay(0);
+            keepAliveDelay(mDelay * 1000);
             break;
         case MOBILE:
         case FAST_MOBILE:
@@ -881,7 +882,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                     mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
                     showWaiting();
                     startGetMedia();
-                    keepAliveDelay(0);
+                    keepAliveDelay(mDelay * 1000);
                 }
             }).show();
             break;

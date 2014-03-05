@@ -302,6 +302,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
             wechatSNSShare(bitmap);
             break;
         }
+        bitmap.recycle();
     }
 
     private Task.OnTaskListener taskListener = new Task.OnTaskListener() {

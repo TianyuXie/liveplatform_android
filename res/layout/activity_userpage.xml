@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/userpage_bg"
@@ -84,13 +85,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <com.pplive.liveplatform.ui.widget.refresh.SimpleRefreshListView
+            <com.pplive.liveplatform.ui.widget.refresh.RefreshListView
                 android:id="@+id/list_userpage_program"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
                 android:divider="@null"
-                android:listSelector="@android:color/transparent" />
+                android:listSelector="@android:color/transparent"
+                live:extra_width="90dp" />
         </LinearLayout>
 
         <LinearLayout

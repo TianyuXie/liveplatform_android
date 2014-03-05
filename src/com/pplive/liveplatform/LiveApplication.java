@@ -6,6 +6,8 @@ import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
+import android.pplive.media.MeetSDK;
+import android.pplive.media.util.LogUtils;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -22,9 +24,9 @@ import com.pplive.liveplatform.dac.info.SessionInfo;
 import com.pplive.liveplatform.dac.info.UserInfo;
 import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.util.DirManager;
-import com.pplive.liveplatform.util.FileUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringManager;
+import com.pplive.liveplatform.util.SysUtil;
 
 public class LiveApplication extends Application {
 
@@ -36,6 +38,7 @@ public class LiveApplication extends Application {
 
         DirManager.init(getApplicationContext());
         StringManager.init(getApplicationContext());
+        NetworkManager.init(getApplicationContext());
         initPaths();
         initImageLoader(getApplicationContext());
 
@@ -44,10 +47,10 @@ public class LiveApplication extends Application {
         UserInfo.init(getApplicationContext());
         SessionInfo.init();
 
-        NetworkManager.init(getApplicationContext());
-
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
+        MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
+        LogUtils.logDeviceInfo();
     }
 
     private void initImageLoader(Context context) {
@@ -60,12 +63,13 @@ public class LiveApplication extends Application {
     }
 
     private void initPaths() {
-        FileUtil.checkPath(DirManager.getPrivateCachePath());
-        FileUtil.checkPath(DirManager.getPrivateFilesPath());
-        FileUtil.checkPath(DirManager.getCachePath());
-        FileUtil.checkPath(DirManager.getFilesPath());
-        FileUtil.checkPath(DirManager.getAppPath());
-        FileUtil.checkPath(DirManager.getShareCachePath());
-        FileUtil.checkPath(DirManager.getDownloadPath());
+        SysUtil.checkPath(DirManager.getPrivateCachePath());
+        SysUtil.checkPath(DirManager.getPrivateFilesPath());
+        SysUtil.checkPath(DirManager.getCachePath());
+        SysUtil.checkPath(DirManager.getFilesPath());
+        SysUtil.checkPath(DirManager.getAppPath());
+        SysUtil.checkPath(DirManager.getLogCachePath());
+        SysUtil.checkPath(DirManager.getShareCachePath());
+        SysUtil.checkPath(DirManager.getDownloadPath());
     }
 }

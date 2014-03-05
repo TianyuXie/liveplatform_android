@@ -33,7 +33,7 @@ public class Feed {
 
     int floor;
 
-    long createtime;
+    long createTime;
 
     Type type;
 
@@ -53,7 +53,7 @@ public class Feed {
 
     public String getTime() {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss yyyy.MM.dd", Locale.US);
-        return format.format(new Date(createtime));
+        return format.format(new Date(createTime));
     }
 
 }

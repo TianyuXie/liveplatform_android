@@ -4,11 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Locale;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -67,6 +65,21 @@ public class ImageUtil {
         return result;
     }
 
+    public static Bitmap getCircleBitmap(Drawable src) {
+        if (src == null) {
+            return null;
+        }
+        if (src instanceof BitmapDrawable) {
+            return getCircleBitmap(((BitmapDrawable) src).getBitmap());
+        } else {
+            return null;
+        }
+    }
+
+    public static Bitmap getCircleBitmap(Context context, int id) {
+        return getCircleBitmap(BitmapFactory.decodeResource(context.getResources(), id));
+    }
+
     public static Bitmap getScaledBitmap(Drawable src, float destSize) {
         if (src == null) {
             return null;
@@ -74,8 +87,20 @@ public class ImageUtil {
         if (src instanceof BitmapDrawable) {
             return getScaledBitmap(((BitmapDrawable) src).getBitmap(), destSize);
         } else {
-            throw new UnsupportedException("Unsupported");
+            return null;
         }
+    }
+
+    public static Bitmap getScaledBitmapLimit(Bitmap src, float limit) {
+        if (src == null) {
+            return null;
+        }
+        int width = src.getWidth();
+        int height = src.getHeight();
+        float scale = ((float) limit) / Math.max(width, height);
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        return Bitmap.createBitmap(src, 0, 0, width, height, matrix, true);
     }
 
     public static Bitmap getScaledBitmap(Bitmap src, float destSize) {
@@ -91,97 +116,99 @@ public class ImageUtil {
         return Bitmap.createBitmap(src, 0, 0, width, height, matrix, true);
     }
 
-    public static Bitmap getCircleBitmap(Drawable src) {
-        if (src instanceof BitmapDrawable) {
-            return getCircleBitmap(((BitmapDrawable) src).getBitmap());
-        } else {
-            throw new UnsupportedException("Unsupported");
-        }
+    public static Bitmap getScaledBitmap(Context context, int id, float destSize) {
+        return getScaledBitmap(BitmapFactory.decodeResource(context.getResources(), id), destSize);
     }
 
-    public static Bitmap getCircleBitmap(Resources res, int id) {
-        return getCircleBitmap(BitmapFactory.decodeResource(res, id));
-    }
-
-    public static Drawable getCircleDrawable(Resources res, Bitmap src) {
-        return new BitmapDrawable(res, getCircleBitmap(src));
-    }
-
-    public static Drawable getCircleDrawable(Resources res, Drawable src) {
-        return new BitmapDrawable(res, getCircleBitmap(src));
-    }
-
-    public static Drawable getCircleDrawable(Resources res, int id) {
-        return new BitmapDrawable(res, getCircleBitmap(res, id));
-    }
-
-    public static Bitmap loadImageFromUrl(String url, float width, float height) throws IOException {
-        InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;
-        Bitmap bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
-        newOpts.inJustDecodeBounds = false;
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
-        int be = 1;
-        if (w >= h && w > width) {
-            be = (int) (w / width);
-        } else if (w < h && h > height) {
-            be = (int) (h / height);
-        }
-        if (be <= 0) {
-            be = 1;
-        }
-        newOpts.inSampleSize = be;
-        newOpts.inPreferredConfig = Config.RGB_565;
-        newOpts.inPurgeable = true;
-        newOpts.inInputShareable = true;
-        inputStream = (InputStream) new java.net.URL(url).getContent();
-        bitmap = BitmapFactory.decodeStream(inputStream, null, newOpts);
-        return bitmap;
-    }
-
-    public static void bitmap2File(Bitmap bitmap, String filename) {
+    public static boolean bitmap2File(Bitmap bitmap, String filename) {
         try {
             File f = new File(filename);
             FileOutputStream fos = new FileOutputStream(f);
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
-            bitmap.recycle();
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
+    }
+
+    public static Bitmap getCircleBitmap(Context context, int id, float size) {
+        Bitmap tmp = getScaledBitmap(context, id, size);
+        Bitmap result = getCircleBitmap(tmp);
+        if (tmp != null) {
+            tmp.recycle();
+        }
+        return result;
+    }
+
+    public static Bitmap getCircleBitmap(Drawable src, float size) {
+        Bitmap tmp = getScaledBitmap(src, size);
+        Bitmap result = getCircleBitmap(tmp);
+        if (tmp != null) {
+            tmp.recycle();
+        }
+        return result;
+    }
+
+    public static Bitmap getCircleBitmap(Bitmap src, float size) {
+        Bitmap tmp = getScaledBitmap(src, size);
+        Bitmap result = getCircleBitmap(tmp);
+        if (tmp != null) {
+            tmp.recycle();
+        }
+        return result;
     }
 
     public static Bitmap getBitmapFromRes(Context context, int resid) {
-        return ((BitmapDrawable) context.getApplicationContext().getResources().getDrawable(resid)).getBitmap();
+        return BitmapFactory.decodeResource(context.getResources(), resid);
     }
 
     public static Bitmap getBitmapFromAssets(Context context, String fileName) {
-        Bitmap image = null;
-        AssetManager am = context.getAssets();
         try {
+            AssetManager am = context.getAssets();
             InputStream is = am.open(fileName);
-            image = BitmapFactory.decodeStream(is);
+            Bitmap image = BitmapFactory.decodeStream(is);
             is.close();
+            return image;
         } catch (IOException e) {
-            e.printStackTrace();
+            return null;
         }
-        return image;
     }
 
-    public static String getScreenshotBySize(String url, int size) {
-        int index = url.lastIndexOf("/");
-        return String.format(Locale.US, "%s/sp%d%s", url.substring(0, index), size, url.substring(index));
-    }
+    public static Bitmap getBitmapFromUrl(String url, float width, float height) {
+        byte[] buffer = null;
+        try {
+            InputStream inputStream = (InputStream) new java.net.URL(url).getContent();
+            buffer = IOUtils.inputStream2Bytes(inputStream);
+            inputStream.close();
+        } catch (IOException e) {
+            return null;
+        }
 
-    static class UnsupportedException extends RuntimeException {
-
-        private static final long serialVersionUID = 1L;
-
-        public UnsupportedException(String str) {
-            super(str);
+        if (buffer != null && buffer.length > 0) {
+            BitmapFactory.Options newOpts = new BitmapFactory.Options();
+            newOpts.inJustDecodeBounds = true;
+            BitmapFactory.decodeByteArray(buffer, 0, buffer.length, newOpts);
+            newOpts.inJustDecodeBounds = false;
+            int w = newOpts.outWidth;
+            int h = newOpts.outHeight;
+            int be = 1;
+            if (w >= h && w > width) {
+                be = (int) (w / width);
+            } else if (w < h && h > height) {
+                be = (int) (h / height);
+            }
+            if (be <= 0) {
+                be = 1;
+            }
+            newOpts.inSampleSize = be;
+            newOpts.inPreferredConfig = Config.RGB_565;
+            newOpts.inPurgeable = true;
+            newOpts.inInputShareable = true;
+            return BitmapFactory.decodeByteArray(buffer, 0, buffer.length, newOpts);
+        } else {
+            return null;
         }
     }
 }

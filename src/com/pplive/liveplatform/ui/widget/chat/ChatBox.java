@@ -1,13 +1,12 @@
-package com.pplive.liveplatform.ui.widget;
+package com.pplive.liveplatform.ui.widget.chat;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
@@ -15,11 +14,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
+import com.pplive.liveplatform.core.service.comment.model.FeedItem;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -38,7 +40,8 @@ public class ChatBox extends RelativeLayout {
 
     private final static int DEFAULT_RETRY_DELAY = 10000;
 
-    private TextView mTextView;
+    private List<FeedItem> mFeedItems;
+    private ChatContentAdapter mAdapter;
 
     private TextView mNoContentInfo;
 
@@ -49,6 +52,8 @@ public class ChatBox extends RelativeLayout {
     private int mUserColor;
 
     private int mContentColor;
+
+    private int mOwnerColor;
 
     private int mRefreshDelay;
 
@@ -68,18 +73,23 @@ public class ChatBox extends RelativeLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.widget_chatbox, this);
-        mTextView = (TextView) root.findViewById(R.id.text_chatbox);
         mNoContentInfo = (TextView) root.findViewById(R.id.text_chatbox_nocontent);
-        View scrollView = root.findViewById(R.id.scroll_chatbox);
-        scrollView.setOnTouchListener(onTouchListener);
 
         // init values
         int paddingLeft = 0;
         int paddingRight = 0;
         int paddingTop = 0;
         int paddingBottom = 0;
+        float textSize = 16.0f;
+
         mRefreshDelay = DEFAULT_REFRESH_DELAY;
         mRetryDelay = DEFAULT_RETRY_DELAY;
+        mFeedItems = new ArrayList<FeedItem>();
+        mAdapter = new ChatContentAdapter(context, mFeedItems);
+
+        ListView listView = (ListView) root.findViewById(R.id.list_chatbox);
+        listView.setAdapter(mAdapter);
+        listView.setOnTouchListener(onTouchListener);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ChatBox);
         int n = a.getIndexCount();
@@ -87,7 +97,7 @@ public class ChatBox extends RelativeLayout {
             int attr = a.getIndex(i);
             switch (attr) {
             case R.styleable.ChatBox_textSize:
-                mTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimensionPixelSize(attr, 16));
+                textSize = a.getDimensionPixelSize(attr, 16);
                 mNoContentInfo.setTextSize(TypedValue.COMPLEX_UNIT_PX, a.getDimensionPixelSize(attr, 16));
                 break;
             case R.styleable.ChatBox_paddingLeft:
@@ -111,13 +121,8 @@ public class ChatBox extends RelativeLayout {
             case R.styleable.ChatBox_background:
                 int background = a.getResourceId(attr, -1);
                 if (background > 0) {
-                    scrollView.setBackgroundResource(background);
+                    listView.setBackgroundResource(background);
                 }
-                break;
-            case R.styleable.ChatBox_textColor:
-                int color = a.getColor(attr, getResources().getColor(R.color.white));
-                mTextView.setTextColor(color);
-                mNoContentInfo.setTextColor(color);
                 break;
             case R.styleable.ChatBox_userColor:
                 mUserColor = a.getColor(attr, getResources().getColor(R.color.white));
@@ -125,9 +130,8 @@ public class ChatBox extends RelativeLayout {
             case R.styleable.ChatBox_contentColor:
                 mContentColor = a.getColor(attr, getResources().getColor(R.color.white));
                 break;
-            case R.styleable.ChatBox_lineSpacingMultiplier:
-                float mult = a.getFloat(attr, 1.0f);
-                mTextView.setLineSpacing(0.0f, mult);
+            case R.styleable.ChatBox_ownerColor:
+                mOwnerColor = a.getColor(attr, getResources().getColor(R.color.white));
                 break;
             case R.styleable.ChatBox_defaultText:
                 mNoContentInfo.setText(a.getString(attr));
@@ -135,7 +139,8 @@ public class ChatBox extends RelativeLayout {
             }
         }
         a.recycle();
-        scrollView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        listView.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        mAdapter.setTextSize(textSize);
     }
 
     private Task.OnTaskListener onGetFeedListener = new Task.OnTaskListener() {
@@ -152,13 +157,17 @@ public class ChatBox extends RelativeLayout {
             if (mStart) {
                 FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);
                 if (feeds != null) {
-                    mTextView.setText("");
-                    Collection<String> contents = feeds.getFeedStrings(mUserColor, mContentColor);
+                    //                    mTextView.setText("");
+                    List<FeedItem> contents = feeds.getFeedItems(UserManager.getInstance(getContext()).getUsernamePlain(), mUserColor, mContentColor,
+                            mOwnerColor);
                     if (contents.size() != 0) {
                         mNoContentInfo.setVisibility(View.GONE);
-                        for (String content : contents) {
-                            mTextView.append(Html.fromHtml(content.toString()));
-                        }
+                        mFeedItems.clear();
+                        mFeedItems.addAll(contents);
+                        mAdapter.notifyDataSetChanged();
+                        //                        for (String content : contents) {
+                        //                            mTextView.append(Html.fromHtml(content.toString()));
+                        //                        }
                         long topFid = feeds.getTopFeedId();
                         if (topFid > 0 && topFid != mTopFid) {
                             mTopFid = topFid;
@@ -247,7 +256,7 @@ public class ChatBox extends RelativeLayout {
     }
 
     public boolean isEmpty() {
-        return TextUtils.isEmpty(mTextView.getText().toString());
+        return mFeedItems.isEmpty();
     }
 
     public interface OnSingleTapListener {

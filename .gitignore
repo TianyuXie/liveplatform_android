@@ -20,6 +20,9 @@ dist/
 *.orig
 *.swp
 
+# Mac
+.Ds_Store
+
 # Dev
 # libs/armeabi/
 # libs/android.ppmedia.jar

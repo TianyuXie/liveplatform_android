@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.core.task.other;
 
-import java.io.IOException;
-
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
@@ -63,16 +61,7 @@ public class LoadImageTask extends Task {
             result.setContext(context);
             return result;
         }
-        Bitmap bitmap = null;
-        try {
-            bitmap = ImageUtil.loadImageFromUrl(url, 120.0f, 90.0f);
-        } catch (IOException e) {
-            e.printStackTrace();
-            result.setStatus(TaskStatus.Failed);
-            result.setMessage("load image error");
-            result.setContext(context);
-            return result;
-        }
+        Bitmap bitmap = ImageUtil.getBitmapFromUrl(url, 120.0f, 90.0f);
         if (bitmap == null) {
             result.setStatus(TaskStatus.Failed);
             result.setMessage("No data");

@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/live_record_footer_bar_bg" >
+    android:background="@drawable/live_record_footer_bar_bg"
+    android:clickable="true" >
 
     <RelativeLayout
         android:id="@+id/toolbar_container"

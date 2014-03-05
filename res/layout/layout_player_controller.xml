@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.pplive.liveplatform.ui.player.LivePlayerController xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@color/player_seekbar_black" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/layout_player_controlbar"
-        android:background="@color/player_seekbar_black"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/layout_player_controlbar"
         android:paddingBottom="2dp"
         android:paddingTop="2dp" >
 
@@ -47,10 +48,10 @@
 
     <RelativeLayout
         android:id="@id/layout_player_controlbar"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@drawable/player_controlbar_bg"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="10dp"
         android:clickable="true"
         android:minHeight="50dp" >
 

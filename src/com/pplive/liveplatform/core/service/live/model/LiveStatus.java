@@ -5,9 +5,9 @@ public class LiveStatus {
 
     LiveStatusEnum livestatus;
     
-    long pid;
+    Long pid;
     
-    long delay;  // second
+    Long delay;  // second
     
     public LiveStatus(LiveStatusEnum livestatus) {
         this.livestatus = livestatus;
@@ -18,10 +18,10 @@ public class LiveStatus {
     }
     
     public long getProgramId() {
-        return pid;
+        return null != pid ? pid : -1;
     }
     
     public long getDelayInSeconds() {
-        return delay;
+        return null != delay ? delay : 0;
     }
 }

@@ -124,6 +124,15 @@
                 </TableRow>
 
                 <TableRow
+                    android:id="@+id/layout_settings_feedback"
+                    style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_feedback" />
+                </TableRow>
+
+                <TableRow
                     android:id="@+id/layout_settings_update"
                     style="@style/settings_tablerow" >
 
