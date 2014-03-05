@@ -37,6 +37,11 @@
                 attr="android:value"
                 path="//manifest/application/meta-data[@android:name=&apos;INSTALL_CHANNEL&apos;]"
                 value="${app.channel}" />
+            
+            <attr
+                attr="android:value"
+                path="//manifest/application/meta-data[@android:name=&apos;UMENG_CHANNEL&apos;]"
+                value="${app.channel}" />
         </xmltask>
     </target>
 

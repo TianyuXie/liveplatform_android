@@ -19,19 +19,19 @@ public class LiveMediaRecorder implements Handler.Callback {
     private static final int WHAT_CHECK_UPLOAD_INFO = 9001;
 
     private static final int WHAT_CHECK_REMAINING_TIME = 9002;
-    
+
     private static final int WHAT_ERROR = 9009;
 
     private static final int DELAY_CHECK_UPLOAD_INFO = 500; // millisecond
-    
-    private static final int DELAY_CHECK_REMAINING_TIME = 5000; // millisecond
+
+    private static final int DELAY_CHECK_REMAINING_TIME = 30000; // millisecond
 
     private PPboxSink mCapture;
 
     private String mOutputPath;
 
     private boolean mRecording = false;
-    
+
     private Quality mQuality = Quality.Normal;
 
     private Handler mInnerHandler = new Handler(this);
@@ -136,7 +136,7 @@ public class LiveMediaRecorder implements Handler.Callback {
                     Log.d(TAG, "mUploadStatistic.time: " + mUploadStatistic.time);
 
                     onSuccess();
-                    
+
                     mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
                 } else {
                     mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_UPLOAD_INFO, DELAY_CHECK_UPLOAD_INFO);
@@ -144,32 +144,33 @@ public class LiveMediaRecorder implements Handler.Callback {
             }
         }
     }
-    
+
     private void onCheckRemainingTime() {
         Log.d(TAG, "onCheckRemainingtime");
         if (null != mCapture) {
             mUploadStatistic.remaining_time = 0;
             long ret = MediaSDK.CaptureStatInfo(mCapture.getCaptureId(), mUploadStatistic);
-            
+
             Log.d(TAG, "ret: " + ret);
             if (0 == ret) {
                 int remaining_time = mUploadStatistic.remaining_time;
+
                 Log.d(TAG, "mUploadStatistic.remaining_time: " + remaining_time);
-                
-                if (remaining_time > 0 && remaining_time < 500 /* millisecond */) {
-                    
+
+                if (remaining_time >= 0 && remaining_time <= 500 /* millisecond */) {
+
                     mQuality = mQuality.next();
-                    
-                } else if (remaining_time > 2500 /* millisecond */) {
-                    
+
+                } else if (remaining_time >= 2500 /* millisecond */) {
+
                     mQuality = mQuality.previous();
                 }
-                
+
                 Log.d(TAG, "interval: " + mQuality.interval());
-                
+
                 mCapture.setPreviewInterval(mQuality.interval());
             }
-            
+
             if (mRecording) {
                 mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
             }
@@ -190,65 +191,65 @@ public class LiveMediaRecorder implements Handler.Callback {
             mMediaRecorderListener.onError();
         }
     }
-    
+
     enum Quality {
         High {
-          
+
             @Override
             Quality next() {
                 return High;
             }
-            
+
             @Override
             Quality previous() {
                 return Normal;
             }
-            
+
             @Override
             int interval() {
-                return 25;
+                return 35;
             }
         },
         Normal {
-            
+
             @Override
             Quality next() {
                 return High;
             }
-            
+
             @Override
             Quality previous() {
                 return Low;
             }
-            
+
             @Override
             int interval() {
                 return 50;
             }
         },
-        
+
         Low {
-            
+
             @Override
             Quality next() {
                 return Normal;
             }
-            
+
             @Override
             Quality previous() {
                 return Low;
             }
-            
+
             @Override
             int interval() {
-                return 80;
+                return 125;
             }
         };
-        
+
         abstract Quality next();
-        
+
         abstract Quality previous();
-        
+
         abstract int interval();
     }
 }

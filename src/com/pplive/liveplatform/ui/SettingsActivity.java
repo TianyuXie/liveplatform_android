@@ -16,6 +16,7 @@ import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.update.Update;
+import com.umeng.fb.FeedbackAgent;
 
 public class SettingsActivity extends Activity {
     static final String TAG = "_SettingsActivity";
@@ -43,6 +44,8 @@ public class SettingsActivity extends Activity {
     private View mThirdpartyView;
 
     private int mResultCode;
+    
+    private FeedbackAgent mFeedbackAgent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,7 @@ public class SettingsActivity extends Activity {
         findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
         findViewById(R.id.layout_settings_about).setOnClickListener(onAboutClickListener);
         findViewById(R.id.layout_settings_update).setOnClickListener(onUpdateClickListener);
+        findViewById(R.id.layout_settings_feedback).setOnClickListener(onFeedbackClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
@@ -63,6 +67,9 @@ public class SettingsActivity extends Activity {
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
         mPPTVUserView = findViewById(R.id.row_settings_user);
         mThirdpartyView = findViewById(R.id.layout_settings_thirdparty);
+        
+        mFeedbackAgent = new FeedbackAgent(this);
+        mFeedbackAgent.sync();
 
         mResultCode = -1;
     }
@@ -168,6 +175,14 @@ public class SettingsActivity extends Activity {
         @Override
         public void onClick(View v) {
             Update.updateManual(SettingsActivity.this);
+        }
+    };
+    
+    private View.OnClickListener onFeedbackClickListener = new View.OnClickListener() {
+        
+        @Override
+        public void onClick(View v) {
+            mFeedbackAgent.startFeedbackActivity();
         }
     };
 
