@@ -8,9 +8,11 @@
     <RelativeLayout
         android:id="@+id/umeng_fb_contact_header"
         android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="#000000" >
+        android:background="#000000"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp" >
 
         <ImageView
             android:id="@+id/umeng_fb_back"
@@ -19,6 +21,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
+            android:contentDescription="@null"
             android:src="@drawable/umeng_fb_back_selector" />
 
         <TextView
@@ -36,6 +39,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="5dp"
+            android:contentDescription="@null"
             android:src="@drawable/umeng_fb_tick_selector" />
     </RelativeLayout>
 
@@ -67,7 +71,7 @@
         android:padding="5dp"
         android:text="@string/umeng_fb_contact_update_at"
         android:textColor="#333333"
-        android:textSize="8sp"
+        android:textSize="12sp"
         android:visibility="gone" />
 
 </RelativeLayout>
