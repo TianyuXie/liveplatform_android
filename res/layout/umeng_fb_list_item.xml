@@ -60,8 +60,8 @@
             android:maxWidth="200dp"
             android:text="@string/umeng_fb_reply_content_default"
             android:textColor="#ffffff"
-            android:textIsSelectable="true"
-            android:textSize="16sp" />
+            android:textIsSelectable="false"
+            android:textSize="30px" />
     </RelativeLayout>
 
 </RelativeLayout>
