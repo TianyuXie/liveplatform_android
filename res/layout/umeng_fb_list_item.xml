@@ -61,7 +61,7 @@
             android:text="@string/umeng_fb_reply_content_default"
             android:textColor="#ffffff"
             android:textIsSelectable="false"
-            android:textSize="30px" />
+            android:textSize="18sp" />
     </RelativeLayout>
 
 </RelativeLayout>
