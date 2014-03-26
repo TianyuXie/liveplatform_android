@@ -3,7 +3,9 @@ package com.pplive.liveplatform.ui.widget.chat;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +15,13 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.comment.model.FeedItem;
+import com.pplive.liveplatform.ui.player.Emoji;
 
 public class ChatContentAdapter extends BaseAdapter {
+
+    static final String TAG = ChatContentAdapter.class.getSimpleName();
+
+    private Context mContext;
 
     private List<FeedItem> mFeedItems;
 
@@ -22,8 +29,24 @@ public class ChatContentAdapter extends BaseAdapter {
 
     private float mTextSize;
 
+    private Html.ImageGetter mImageGetter = new Html.ImageGetter() {
+
+        @Override
+        public Drawable getDrawable(String source) {
+
+            Log.d(TAG, "source: " + source);
+
+            Drawable drawable = mContext.getResources().getDrawable(Emoji.EMOJI_ICON_MAP.get(source));
+            drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+
+            return drawable;
+        }
+    };
+
     public ChatContentAdapter(Context context, List<FeedItem> mFeedItems) {
         super();
+
+        this.mContext = context;
         this.mFeedItems = mFeedItems;
         this.mInflater = LayoutInflater.from(context);
         this.mTextSize = 16.0f;
@@ -39,13 +62,13 @@ public class ChatContentAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int arg0) {
-        return mFeedItems.get(arg0);
+    public Object getItem(int position) {
+        return mFeedItems.get(position);
     }
 
     @Override
-    public long getItemId(int arg0) {
-        return arg0;
+    public long getItemId(int position) {
+        return position;
     }
 
     @Override
@@ -67,7 +90,7 @@ public class ChatContentAdapter extends BaseAdapter {
     }
 
     private void updateView(ViewHolder holder, FeedItem data) {
-        holder.contentTextView.setText(Html.fromHtml(data.formatedContent));
+        holder.contentTextView.setText(Html.fromHtml(data.formatedContent, mImageGetter, null));
         holder.timeTextView.setText(data.time);
     }
 

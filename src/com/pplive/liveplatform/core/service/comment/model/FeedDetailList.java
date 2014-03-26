@@ -3,10 +3,16 @@ package com.pplive.liveplatform.core.service.comment.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 import android.text.TextUtils;
+import android.util.Log;
+
+import com.pplive.liveplatform.ui.player.Emoji;
 
 public class FeedDetailList {
+    
+    static final String TAG = FeedDetailList.class.getSimpleName();
 
     long[] feedIds;
 
@@ -79,8 +85,28 @@ public class FeedDetailList {
         if (currentUser.equals(username)) {
             contentColor = ownerColor;
         }
+        
+        content = convertEmojiToImageTag(content);
+        
         return new FeedItem(String.format("<b><font color='#%06x'>%s:&nbsp;</font><font color='#%06x'>%s</font></b>", userColor, nickname, contentColor,
                 content), feed.createTime);
     }
 
+    private String convertEmojiToImageTag(String content) {
+        StringBuilder sb = new StringBuilder(content);
+        
+        Log.d(TAG, sb.toString());
+
+        Matcher matcher = Emoji.REG_EMOJI.matcher(sb);
+
+        while (matcher.find()) {
+            sb.replace(matcher.start(), matcher.end(), "<img src=\"" + matcher.group(1) + "\"/>");
+            
+            matcher = Emoji.REG_EMOJI.matcher(sb);
+        }
+
+        Log.d(TAG, sb.toString());
+
+        return sb.toString();
+    }
 }
