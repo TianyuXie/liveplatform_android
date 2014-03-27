@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.util.URL;
 import com.pplive.liveplatform.util.URL.Protocol;

@@ -1,42 +1,14 @@
 package com.pplive.liveplatform.core.service.passport;
 
-import java.io.IOException;
-import java.net.Socket;
 import java.net.URI;
-import java.net.UnknownHostException;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
-import org.apache.http.HttpVersion;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
-import org.apache.http.protocol.HTTP;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -45,8 +17,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.RestTemplateFactory;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.model.CheckCode;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.service.passport.resp.GuidResp;
@@ -82,62 +55,26 @@ public class PassportService {
         return sInstance;
     }
 
-    private HttpComponentsClientHttpRequestFactory mFactory;
+    private final RestTemplate mRestTemplate;
+    
+    private final HttpHeaders mHttpHeaders;
 
     private PassportService() {
-
-        try {
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(null, null);
-
-            SSLSocketFactory sslFactory = new SSLSocketFactoryEx(trustStore);
-
-            sslFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-            SchemeRegistry reg = new SchemeRegistry();
-            reg.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-            reg.register(new Scheme("https", sslFactory, 443));
-
-            HttpParams params = new BasicHttpParams();
-            HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
-            HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
-
-            ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, reg);
-
-            HttpClient client = new DefaultHttpClient(ccm, params);
-            mFactory = new HttpComponentsClientHttpRequestFactory();
-            mFactory.setHttpClient(client);
-
-        } catch (IOException e) {
-
-        } catch (CertificateException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
-        } catch (KeyStoreException e) {
-
-        } catch (KeyManagementException e) {
-
-        } catch (UnrecoverableKeyException e) {
-
-        }
+        mRestTemplate = RestTemplateFactory.newInstance();
+        mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverterEx());
+        
+        mHttpHeaders = new HttpHeaders();
+        mHttpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     }
 
     public LoginResult login(String usr, String pwd) throws LiveHttpException {
         Log.d(TAG, "user: " + usr + "; password: " + pwd);
 
-        RestTemplate template = new RestTemplate(false);
-        template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
 
         LoginResultResp resp = null;
         try {
-            HttpEntity<LoginResultResp> rep = template.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
+            HttpEntity<LoginResultResp> rep = mRestTemplate.exchange(TEMPLATE_PASSPORT_LOGIN, HttpMethod.GET, entity, LoginResultResp.class, usr, pwd);
 
             resp = rep.getBody();
 
@@ -157,14 +94,7 @@ public class PassportService {
 
     public LoginResult thirdpartyRegister(String id, String faceUrl, String nickName, String apptype) throws LiveHttpException {
 
-        RestTemplate template = new RestTemplate(false);
-        template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
-        HttpEntity<String> entity = new HttpEntity<String>(headers);
+        HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
 
         String infovalue = null;
         Random random = new Random();
@@ -187,7 +117,7 @@ public class PassportService {
 
         LoginResultResp resp = null;
         try {
-            HttpEntity<LoginResultResp> rep = template.exchange(uri, HttpMethod.GET, entity, LoginResultResp.class);
+            HttpEntity<LoginResultResp> rep = mRestTemplate.exchange(uri, HttpMethod.GET, entity, LoginResultResp.class);
 
             resp = rep.getBody();
 
@@ -207,16 +137,9 @@ public class PassportService {
 
     public boolean register(String username, String password, String email, String checkCode, String guid) throws LiveHttpException {
 
-        RestTemplate template = new RestTemplate(false);
-        template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
         MessageResp resp = null;
         try {
-            resp = template.getForObject(TEMPLATE_PASSPORT_REGISTER, MessageResp.class, username, password, email, checkCode, guid);
+            resp = mRestTemplate.getForObject(TEMPLATE_PASSPORT_REGISTER, MessageResp.class, username, password, email, checkCode, guid);
 
             if (0 == resp.getErrorCode()) {
 
@@ -235,16 +158,9 @@ public class PassportService {
 
     public String getCheckCodeGUID() throws LiveHttpException {
 
-        RestTemplate template = new RestTemplate(false);
-        template.setRequestFactory(mFactory);
-        template.getMessageConverters().add(new GsonHttpMessageConverterEx());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-
         GuidResp resp = null;
         try {
-            resp = template.getForObject(TEMPLATE_PASSPORT_GET_GUID, GuidResp.class);
+            resp = mRestTemplate.getForObject(TEMPLATE_PASSPORT_GET_GUID, GuidResp.class);
 
             if (0 == resp.getErrorCode()) {
                 return resp.getResult();
@@ -273,42 +189,6 @@ public class PassportService {
         String image_url = getCheckCodeImageUrl(guid);
 
         return new CheckCode(guid, image_url);
-    }
-}
-
-class SSLSocketFactoryEx extends SSLSocketFactory {
-
-    TrustManager mTrustManager = new X509TrustManager() {
-
-        @Override
-        public X509Certificate[] getAcceptedIssuers() {
-            return null;
-        }
-
-        @Override
-        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            // TODO Auto-generated method stub
-
-        }
-    };
-
-    SSLContext mSSLContext = SSLContext.getInstance("TLS");
-
-    public SSLSocketFactoryEx(KeyStore keystore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-        super(keystore);
-
-        mSSLContext.init(null, new TrustManager[] { mTrustManager }, null);
-    }
-
-    @Override
-    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-        return mSSLContext.getSocketFactory().createSocket(socket, host, port, autoClose);
     }
 }
 

@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.core.exception;
+package com.pplive.liveplatform.core.service.exception;
 
 public class LiveHttpException extends Exception {
 

@@ -8,8 +8,8 @@ import org.springframework.http.HttpMethod;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.auth.PlayTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.Push;
@@ -57,9 +57,9 @@ public class MediaService extends RestService {
     public Push getPushByLiveToken(long pid, String liveToken) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + liveToken);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
+        mHttpHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
 
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
 
         PushResp resp = null;
         try {
@@ -91,9 +91,9 @@ public class MediaService extends RestService {
     public List<Watch> getPlayWatchListByPlayTokenV1(long pid, String playToken) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + playToken);
 
-        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
+        mHttpHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
 
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
 
         WatchListResp resp = null;
         try {
@@ -125,9 +125,9 @@ public class MediaService extends RestService {
     public WatchList getPlayWatchListByPlayTokenV2(long pid, String playToken) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + playToken);
         
-        mRequestHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
+        mHttpHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
         
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
         
         WatchListResp2 resp = null;
         try {
@@ -159,9 +159,9 @@ public class MediaService extends RestService {
     public List<Watch> getPreviewWatchListByLiveToken(long pid, String token) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + token);
 
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(token));
+        mHttpHeaders.setAuthorization(new LiveTokenAuthentication(token));
 
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
 
         WatchListResp resp = null;
         try {

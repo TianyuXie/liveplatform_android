@@ -61,6 +61,13 @@ public class LiveApplication extends Application {
                 .discCache(discCache).discCacheExtraOptions(120, 90, CompressFormat.JPEG, 75, null).build();
         ImageLoader.getInstance().init(config);
     }
+    
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        
+        ImageLoader.getInstance().clearMemoryCache();
+    }
 
     private void initPaths() {
         SysUtil.checkPath(DirManager.getPrivateCachePath());

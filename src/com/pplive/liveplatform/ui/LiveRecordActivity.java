@@ -32,7 +32,7 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
