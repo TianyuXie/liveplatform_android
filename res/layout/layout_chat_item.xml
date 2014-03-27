@@ -18,6 +18,7 @@
         android:id="@id/text_chat_time"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/text_chat_content"
         android:layout_alignParentRight="true"
         android:gravity="right"
         android:singleLine="true"

@@ -54,51 +54,74 @@
         live:textSize="18sp"
         live:userColor="@color/player_chat_nickname" />
 
-    <LinearLayout
-        android:id="@id/wrapper_player_comment"
+    <RelativeLayout
+        android:id="@+id/layout_player_comment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@color/black"
+        android:gravity="center_vertical"
         android:visibility="gone" >
 
-        <LinearLayout
-            android:id="@+id/layout_player_dimmy"
-            android:layout_width="0px"
-            android:layout_height="0px"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:orientation="horizontal" />
+        <ImageButton
+            android:id="@+id/btn_show_emoji_or_keyboard"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/emoji_board_emoji" />
 
-        <LinearLayout
-            android:id="@+id/layout_player_comment"
+        <com.pplive.liveplatform.ui.widget.EnterSendEditText
+            android:id="@+id/edit_player_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/btn_show_emoji_or_keyboard"
             android:background="@drawable/player_dialog_input_bg"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:imeOptions="actionSend"
+            android:inputType="text|textMultiLine"
+            android:maxLines="4"
             android:paddingBottom="6dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="6dp"
-            android:visibility="gone" >
+            android:textColor="@color/black"
+            android:textSize="18sp" />
 
-            <com.pplive.liveplatform.ui.widget.EnterSendEditText
-                android:id="@+id/edit_player_comment"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/input_text_bg"
-                android:imeOptions="actionSend"
-                android:inputType="text|textMultiLine"
-                android:maxLines="4"
-                android:textColor="@color/black"
-                android:textSize="17sp" />
-        </LinearLayout>
-    </LinearLayout>
+        <com.pplive.liveplatform.ui.player.EmojiView
+            android:id="@+id/emoji_view"
+            android:layout_width="fill_parent"
+            android:layout_height="200dp"
+            android:layout_below="@+id/edit_player_comment"
+            android:layout_marginTop="10dp"
+            android:background="@color/white"
+            android:numColumns="8"
+            android:padding="10dp"
+            android:verticalSpacing="5dp"
+            android:visibility="gone" >
+        </com.pplive.liveplatform.ui.player.EmojiView>
+
+        <ImageButton
+            android:id="@+id/btn_del_emoji"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/emoji_view"
+            android:layout_alignRight="@+id/emoji_view"
+            android:layout_margin="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/emoji_del_emoji"
+            android:visibility="gone" />
+    </RelativeLayout>
 
     <Button
-        android:id="@+id/btn_player_write"
+        android:id="@+id/btn_show_comment_input"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"

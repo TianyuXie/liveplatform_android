@@ -52,7 +52,6 @@
             android:name=".ui.LivePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" >
         </activity>
@@ -122,6 +121,7 @@
         <activity
             android:name=".ui.UserpageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
         <activity
@@ -185,18 +185,6 @@
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.pplive.liveplatform.core.alarm.PreliveReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.pplive.liveplatform.START_PRELIVE" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.pplive.liveplatform.core.alarm.BootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
     </application>
