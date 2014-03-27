@@ -187,18 +187,6 @@
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver
-            android:name="com.pplive.liveplatform.core.alarm.PreliveReceiver"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="com.pplive.liveplatform.START_PRELIVE" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name="com.pplive.liveplatform.core.alarm.BootReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
