@@ -4,7 +4,7 @@ enum Mode {
     INITIAL {
         @Override
         public int flags() {
-            return FLAG_BTN_LIVE_HOME | FLAG_EDIT_LIVE_TITLE | FLAG_BTN_LIVE_PRELIVE;
+            return FLAG_BTN_LIVE_HOME | FLAG_EDIT_LIVE_TITLE ;
         }
     },
     ADD_PRELIVE {

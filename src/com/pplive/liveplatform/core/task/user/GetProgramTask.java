@@ -74,7 +74,7 @@ public class GetProgramTask extends Task {
         if (TextUtils.isEmpty(token)) {
             // User
             for (Program program : data) {
-                if (program.isDeleted() || program.isExpiredPrelive()) {
+                if (program.isDeleted() || program.isExpiredPrelive() || program.isPrelive()) {
                     removePrograms.add(program);
                 }
             }

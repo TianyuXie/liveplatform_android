@@ -18,6 +18,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -26,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
@@ -51,6 +53,7 @@ import com.pplive.liveplatform.dac.stat.WatchDacStat;
 import com.pplive.liveplatform.net.NetworkManager;
 import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.ui.player.EmojiView;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
 import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
@@ -64,7 +67,7 @@ import com.pplive.liveplatform.util.ViewUtil;
 
 import de.greenrobot.event.EventBus;
 
-public class LivePlayerActivity extends FragmentActivity implements SensorEventListener, LivePlayerFragment.Callback {
+public class LivePlayerActivity extends FragmentActivity implements View.OnClickListener, SensorEventListener, LivePlayerFragment.Callback {
 
     static final String TAG = "_LivePlayerActivity";
 
@@ -94,8 +97,6 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private View mCommentView;
 
-    private View mCommentWrapper;
-
     private View mLoadingImage;
 
     private ChatBox mChatBox;
@@ -104,11 +105,27 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private LoadingButton mLoadingButton;
 
-    private Button mWriteBtn;
+    private Button mBtnShowCommentInput;
 
     private EnterSendEditText mCommentEditText;
 
     private SensorManager mSensorManager;
+
+    private ImageButton mBtnShowEmojiOrKeyboard;
+
+    private boolean mEmojiShowing = false;
+
+    private EmojiView mEmojiView;
+
+    private EmojiView.OnEmojiClickListener mOnEmojiClickListener = new EmojiView.OnEmojiClickListener() {
+
+        @Override
+        public void onClick(String emoji) {
+            mCommentEditText.append(emoji);
+        }
+    };
+
+    private ImageButton mBtnDelEmoji;
 
     private Sensor mSensor;
 
@@ -120,7 +137,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     private boolean mIsFull;
 
-    private boolean mWriting;
+    private boolean mCommentInputShowing;
 
     private boolean mRotatable;
 
@@ -153,9 +170,10 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     private Handler mHandler;
 
     @Override
-    protected void onCreate(Bundle arg0) {
-        super.onCreate(arg0);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+
         mContext = this;
         mHandler = new InnerHandler(this);
 
@@ -170,6 +188,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment = new LivePlayerFragment();
         fragmentTransaction.add(R.id.layout_player_fragment, mLivePlayerFragment);
         fragmentTransaction.commit();
+
         mLivePlayerFragment.setCallbackListener(this);
 
         mShareDialog = new ShareDialog(this, R.style.share_dialog, getString(R.string.share_dialog_title));
@@ -183,18 +202,28 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
         /* init views */
         mRootLayout = (DetectableRelativeLayout) ((ViewGroup) findViewById(android.R.id.content)).getChildAt(0);
-        mRootLayout.setOnSoftInputListener(onSoftInputListener);
+        mRootLayout.setOnSoftInputListener(mOnSoftInputListener);
         mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
-        mCommentEditText.setOnEnterListener(onCommentEnterListener);
+        mCommentEditText.setOnEnterListener(mOnCommentEnterListener);
         mCommentView = findViewById(R.id.layout_player_comment);
-        mCommentWrapper = findViewById(R.id.wrapper_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
         mChatBox.setOnSingleTapListener(onSingleTapListener);
         mLoadingImage = findViewById(R.id.layout_player_loading);
         mLoadingButton = (LoadingButton) findViewById(R.id.btn_player_loading);
-        mWriteBtn = (Button) findViewById(R.id.btn_player_write);
-        mWriteBtn.setOnClickListener(onWriteBtnClickListener);
+
+        mBtnShowCommentInput = (Button) findViewById(R.id.btn_show_comment_input);
+        mBtnShowCommentInput.setOnClickListener(this);
+
+        mBtnShowEmojiOrKeyboard = (ImageButton) findViewById(R.id.btn_show_emoji_or_keyboard);
+        mBtnShowEmojiOrKeyboard.setOnClickListener(this);
+
+        mEmojiView = (EmojiView) findViewById(R.id.emoji_view);
+        mEmojiView.setOnEmojiClickListener(mOnEmojiClickListener);
+
+        mBtnDelEmoji = (ImageButton) findViewById(R.id.btn_del_emoji);
+        mBtnDelEmoji.setOnClickListener(this);
+
         setLayout(DisplayUtil.isLandscape(this), true);
 
         /* init others */
@@ -258,28 +287,20 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     }
 
     @Override
-    protected void onDestroy() {
-        Log.d(TAG, "onDestroy");
-        mLivePlayerFragment.setCallbackListener(null);
-        mHandler.removeCallbacksAndMessages(null);
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(TAG, "onPause");
-        pauseWriting();
-        EventBus.getDefault().unregister(this);
-        mSensorManager.unregisterListener(this);
-        super.onPause();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
         EventBus.getDefault().register(this);
         mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        pauseComment();
+        EventBus.getDefault().unregister(this);
+        mSensorManager.unregisterListener(this);
+        super.onPause();
     }
 
     @Override
@@ -291,18 +312,28 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         super.onStop();
     }
 
+    @Override
+    protected void onDestroy() {
+        Log.d(TAG, "onDestroy");
+        mLivePlayerFragment.setCallbackListener(null);
+        mHandler.removeCallbacksAndMessages(null);
+        super.onDestroy();
+    }
+
     private void setLayout(boolean isFull, boolean init) {
         if (mIsFull == isFull && !init) {
             return;
         }
+
         Log.d(TAG, "setLayout");
+
         mIsFull = isFull;
         RelativeLayout.LayoutParams containerLp = (RelativeLayout.LayoutParams) mFragmentContainer.getLayoutParams();
         if (mIsFull) {
             containerLp.height = LayoutParams.MATCH_PARENT;
             mChatBox.setVisibility(View.GONE);
             mCommentView.setVisibility(View.GONE);
-            mWriteBtn.setVisibility(View.GONE);
+            mBtnShowCommentInput.setVisibility(View.GONE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         } else {
             RelativeLayout.LayoutParams dialogLp = (RelativeLayout.LayoutParams) mChatBox.getLayoutParams();
@@ -310,18 +341,21 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
             loadingLp.topMargin = mHalfScreenHeight - DisplayUtil.dp2px(mContext, 75);
             containerLp.height = mHalfScreenHeight;
             dialogLp.topMargin = mHalfScreenHeight;
+
             if (mFirstLoadFinish) {
                 mChatBox.setVisibility(View.VISIBLE);
-                if (mWriting) {
+                if (mCommentInputShowing) {
                     mCommentView.setVisibility(View.VISIBLE);
-                    mWriteBtn.setVisibility(View.GONE);
+                    mBtnShowCommentInput.setVisibility(View.GONE);
                 } else {
                     mCommentView.setVisibility(View.GONE);
-                    mWriteBtn.setVisibility(View.VISIBLE);
+                    mBtnShowCommentInput.setVisibility(View.VISIBLE);
                 }
             }
+
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
+
         if (!init) {
             mLivePlayerFragment.setLayout(mIsFull);
         }
@@ -334,37 +368,96 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         setLayout(DisplayUtil.isLandscape(this), false);
     }
 
-    private View.OnClickListener onWriteBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (UserManager.getInstance(mContext).isLoginSafely()) {
-                startWriting();
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()) {
+        case R.id.btn_show_comment_input:
+            onClickBtnShowCommentInput();
+            break;
+        case R.id.btn_show_emoji_or_keyboard:
+            onClickBtnShowEmojiOrKeyboard();
+            break;
+        case R.id.btn_del_emoji:
+            onClickBtnDelEmoji();
+            break;
+        }
+    }
+
+    private void onClickBtnShowEmojiOrKeyboard() {
+        Log.d(TAG, "onClickBtnShowEmojiOrKeyboard");
+
+        if (mEmojiShowing) {
+            mCommentEditText.requestFocus();
+
+            mBtnShowEmojiOrKeyboard.setImageResource(R.drawable.emoji_board_emoji);
+
+            mEmojiShowing = false;
+        } else {
+            mCommentEditText.clearFocus();
+
+            mBtnShowEmojiOrKeyboard.setImageResource(R.drawable.emoji_board_system);
+
+            mEmojiShowing = true;
+        }
+
+        Log.d(TAG, "mEmojiShowing: " + mEmojiShowing);
+    }
+
+    private void onClickBtnShowCommentInput() {
+        if (UserManager.getInstance(mContext).isLoginSafely()) {
+            startComment();
+        } else {
+            Intent intent = new Intent(mContext, LoginActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    private void onClickBtnDelEmoji() {
+        Editable edit = mCommentEditText.getEditableText();
+        if (edit.length() > 0) {
+            if (edit.charAt(edit.length() - 1) != ']') {
+
+                edit.delete(edit.length() - 1, edit.length());
             } else {
-                Intent intent = new Intent(mContext, LoginActivity.class);
-                startActivity(intent);
+
+                int start = -1;
+                for (int index = edit.length() - 1; index >= 0; --index) {
+                    if (edit.charAt(index) == '[') {
+                        start = index;
+                        break;
+                    }
+                }
+
+                if (start >= 0) {
+                    edit.delete(start, edit.length());
+                }
             }
         }
-    };
+    }
 
     private ChatBox.OnSingleTapListener onSingleTapListener = new ChatBox.OnSingleTapListener() {
 
         @Override
         public void onSingleTap() {
-            pauseWriting();
+            pauseComment();
         }
     };
 
     @Override
-    public void setRequestedOrientation(int requestedOrientation) {
-        if (mCurrentOrient != requestedOrientation && mRotatable) {
+    public void setRequestedOrientation(final int requestedOrientation) {
+        if (mRotatable && requestedOrientation != mCurrentOrient) {
+
             Log.d(TAG, "setRequestedOrientation");
+
             mCurrentOrient = requestedOrientation;
-            pauseWriting();
+            pauseComment();
+
             super.setRequestedOrientation(requestedOrientation);
         }
     }
 
-    public void sensorOrientation(int requestedOrientation) {
+    public void sensorOrientation(final int requestedOrientation) {
         if (mUserOrient == SCREEN_ORIENTATION_INVALID || mUserOrient == requestedOrientation) {
             mUserOrient = SCREEN_ORIENTATION_INVALID;
             setRequestedOrientation(requestedOrientation);
@@ -404,7 +497,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    private EnterSendEditText.OnEnterListener onCommentEnterListener = new EnterSendEditText.OnEnterListener() {
+    private EnterSendEditText.OnEnterListener mOnCommentEnterListener = new EnterSendEditText.OnEnterListener() {
 
         @Override
         public boolean onEnter(View v) {
@@ -418,53 +511,96 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
                 taskContext.set(PutFeedTask.KEY_TOKEN, token);
                 postFeed(taskContext);
             }
-            stopWriting();
+
+            stopComment(true);
+
             return true;
         }
     };
 
-    private DetectableRelativeLayout.OnSoftInputListener onSoftInputListener = new DetectableRelativeLayout.OnSoftInputListener() {
+    private DetectableRelativeLayout.OnSoftInputListener mOnSoftInputListener = new DetectableRelativeLayout.OnSoftInputListener() {
         @Override
         public void onSoftInputShow() {
             Log.d(TAG, "onSoftInputShow");
+
+            if (mEmojiShowing) {
+                mBtnShowEmojiOrKeyboard.setImageResource(R.drawable.emoji_board_emoji);
+
+                mEmojiShowing = false;
+            }
+
+            mEmojiView.setVisibility(View.GONE);
+            mBtnDelEmoji.setVisibility(View.GONE);
             mCommentView.setVisibility(View.VISIBLE);
+
             popupDialog();
         }
 
         @Override
         public void onSoftInputHide() {
             Log.d(TAG, "onSoftInputHide");
+
             popdownDialog();
-            mCommentView.setVisibility(View.GONE);
-            if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-                mWriteBtn.setVisibility(View.VISIBLE);
+
+            if (!mEmojiShowing) {
+
+                mCommentView.setVisibility(View.GONE);
+                if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                    mBtnShowCommentInput.setVisibility(View.VISIBLE);
+                }
+
+                mCommentInputShowing = false;
+            } else {
+
+                if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                    mEmojiView.setVisibility(View.VISIBLE);
+                    mBtnDelEmoji.setVisibility(View.VISIBLE);
+                }
             }
-            mWriting = false;
         }
     };
 
-    private void startWriting() {
-        if (!mWriting) {
-            mWriting = true;
-            mWriteBtn.setVisibility(View.GONE);
+    private void startComment() {
+        Log.d(TAG, "startComment");
+
+        if (!mCommentInputShowing) {
+            mCommentInputShowing = true;
+            mBtnShowCommentInput.setVisibility(View.GONE);
             mCommentEditText.requestFocus();
         }
     }
 
-    private void pauseWriting() {
-        if (mWriting) {
-            mWriting = false;
+    private void pauseComment() {
+        Log.d(TAG, "pauseComment");
+
+        stopComment(false);
+
+    }
+
+    private void stopComment(boolean clear) {
+        Log.d(TAG, "stopComment; clear: " + clear);
+
+        if (mCommentInputShowing) {
+            mCommentInputShowing = false;
+
+            if (clear) {
+                mCommentEditText.setText("");
+            }
+
             mCommentEditText.clearFocus();
             mCommentView.setVisibility(View.GONE);
         }
-    }
 
-    private void stopWriting() {
-        if (mWriting) {
-            mWriting = false;
-            mCommentEditText.setText("");
-            mCommentEditText.clearFocus();
-            mCommentView.setVisibility(View.GONE);
+        if (mEmojiShowing) {
+            mEmojiShowing = false;
+
+            if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+                mBtnShowCommentInput.setVisibility(View.VISIBLE);
+            }
+
+            mEmojiView.setVisibility(View.GONE);
+            mBtnDelEmoji.setVisibility(View.GONE);
+            mBtnShowEmojiOrKeyboard.setImageResource(R.drawable.emoji_board_emoji);
         }
     }
 
@@ -473,7 +609,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mChatBox.getLayoutParams();
         lp.topMargin = mRootLayout.getHalfHeight() - DisplayUtil.dp2px(this, 170);
         ViewUtil.showLayoutDelay(mChatBox, 100);
-        ViewUtil.requestLayoutDelay(mCommentWrapper, 100);
+        ViewUtil.requestLayoutDelay(mCommentView, 100);
     }
 
     private void popdownDialog() {
@@ -484,7 +620,7 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
 
     @Override
     public void onTouchPlayer() {
-        pauseWriting();
+        pauseComment();
     }
 
     @Override
@@ -674,9 +810,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
         mLivePlayerFragment.initIcon();
         mLoadingImage.setVisibility(View.VISIBLE);
         mLoadingButton.startLoading(R.string.player_loading);
-        mCommentWrapper.setVisibility(View.GONE);
+        mCommentView.setVisibility(View.GONE);
         mChatBox.setVisibility(View.GONE);
-        mWriteBtn.setVisibility(View.GONE);
+        mBtnShowCommentInput.setVisibility(View.GONE);
     }
 
     public void showWaiting() {
@@ -719,9 +855,9 @@ public class LivePlayerActivity extends FragmentActivity implements SensorEventL
     public void hideFirstLoading() {
         mFirstLoading = false;
         mLoadingImage.setVisibility(View.GONE);
-        mCommentWrapper.setVisibility(View.VISIBLE);
+        mCommentView.setVisibility(View.GONE);
         mChatBox.setVisibility(View.VISIBLE);
-        mWriteBtn.setVisibility(View.VISIBLE);
+        mBtnShowCommentInput.setVisibility(View.VISIBLE);
     }
 
     public void hideSecondLoading() {
