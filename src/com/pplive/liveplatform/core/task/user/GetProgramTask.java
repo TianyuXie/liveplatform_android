@@ -81,7 +81,7 @@ public class GetProgramTask extends Task {
         } else {
             // Owner
             for (Program program : data) {
-                if (program.isDeleted()) {
+                if (program.isDeleted() || program.isPrelive()) {
                     removePrograms.add(program);
                 }
             }

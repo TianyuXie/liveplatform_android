@@ -171,7 +171,7 @@
 
         <!-- Services -->
         <service
-            android:name="com.pplive.liveplatform.dac.DacReportService"
+            android:name="com.pplive.liveplatform.core.dac.DacReportService"
             android:process=":service" >
         </service>
         <service
@@ -181,7 +181,7 @@
         </service>
 
         <!-- Receivers -->
-        <receiver android:name="com.pplive.liveplatform.net.NetworkManager" >
+        <receiver android:name="com.pplive.liveplatform.core.network.NetworkManager" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />

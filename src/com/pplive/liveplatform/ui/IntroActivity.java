@@ -21,9 +21,9 @@ import android.widget.RadioGroup;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.dac.DacSender;
+import com.pplive.liveplatform.core.dac.info.LocationInfo;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
-import com.pplive.liveplatform.dac.DacSender;
-import com.pplive.liveplatform.dac.info.LocationInfo;
 import com.pplive.liveplatform.ui.widget.viewpager.AdvancedViewPager;
 
 public class IntroActivity extends Activity {

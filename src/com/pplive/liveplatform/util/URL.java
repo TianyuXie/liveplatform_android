@@ -8,11 +8,10 @@ import java.util.Map.Entry;
 
 import android.net.Uri;
 import android.text.TextUtils;
-import android.util.Log;
 
 public class URL implements Serializable {
 
-    private static final String TAG = URL.class.getSimpleName();
+    static final String TAG = URL.class.getSimpleName();
 
     private static final long serialVersionUID = -3649683692013310693L;
 
@@ -116,7 +115,6 @@ public class URL implements Serializable {
     }
 
     public final <T> void addParameter(String key, T value) {
-        Log.d(TAG, "key: " + key);
         mParams.put(key, value);
     }
 

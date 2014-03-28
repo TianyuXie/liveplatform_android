@@ -266,7 +266,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                     EventBus.getDefault().post(new EventProgramAdded(program));
                 } else {
                     if (mAttachedActivity != null) {
-                        Toast.makeText(mAttachedActivity, R.string.toast_prelive_fail, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mAttachedActivity, R.string.toast_prelive_creat_fail, Toast.LENGTH_SHORT).show();
                     }
                 }
 

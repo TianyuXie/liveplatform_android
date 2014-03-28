@@ -3,7 +3,7 @@ package com.pplive.liveplatform.ui;
 import java.lang.reflect.Field;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.update.DownManager;
+import com.pplive.liveplatform.core.update.DownManager;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

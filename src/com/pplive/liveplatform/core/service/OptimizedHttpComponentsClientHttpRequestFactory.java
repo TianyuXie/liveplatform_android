@@ -49,7 +49,7 @@ public class OptimizedHttpComponentsClientHttpRequestFactory extends HttpCompone
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
 
-        HttpClient httpClient = new DefaultHttpClient(connectionManager, null);
+        HttpClient httpClient = new DefaultHttpClient(connectionManager, params);
         setReadTimeout(DEFAULT_READ_TIMEOUT_MILLISECONDS);
 
         setHttpClient(httpClient);

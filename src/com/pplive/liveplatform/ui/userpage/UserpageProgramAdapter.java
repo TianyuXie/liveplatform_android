@@ -31,7 +31,6 @@ public class UserpageProgramAdapter extends BaseAdapter {
     }
 
     public UserpageProgramAdapter(Context context, List<Program> programs) {
-        super();
         this.mContext = context;
         this.mPrograms = programs;
         this.mInflater = LayoutInflater.from(context);
