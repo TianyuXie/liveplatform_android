@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.pplive.media.MeetSDK;
-import android.pplive.media.util.LogUtils;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -18,6 +17,7 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.pplive.liveplatform.core.crash.AppCrashHandler;
 import com.pplive.liveplatform.core.dac.info.AppInfo;
 import com.pplive.liveplatform.core.dac.info.DeviceInfo;
 import com.pplive.liveplatform.core.dac.info.SessionInfo;
@@ -27,6 +27,7 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.SysUtil;
+import com.pplive.thirdparty.BreakpadUtil;
 
 public class LiveApplication extends Application {
 
@@ -36,10 +37,10 @@ public class LiveApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        DirManager.init(getApplicationContext());
         StringManager.init(getApplicationContext());
         NetworkManager.init(getApplicationContext());
-        initPaths();
+
+        initPaths(getApplicationContext());
         initImageLoader(getApplicationContext());
 
         AppInfo.init(getApplicationContext());
@@ -49,8 +50,18 @@ public class LiveApplication extends Application {
 
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
+
         MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
-        LogUtils.logDeviceInfo();
+
+        AppCrashHandler.init();
+        BreakpadUtil.registerBreakpad(new File(DirManager.getCrashCachePath()));
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+
+        ImageLoader.getInstance().clearMemoryCache();
     }
 
     private void initImageLoader(Context context) {
@@ -61,21 +72,17 @@ public class LiveApplication extends Application {
                 .discCache(discCache).discCacheExtraOptions(120, 90, CompressFormat.JPEG, 75, null).build();
         ImageLoader.getInstance().init(config);
     }
-    
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        
-        ImageLoader.getInstance().clearMemoryCache();
-    }
 
-    private void initPaths() {
+    private void initPaths(Context context) {
+        DirManager.init(context);
+
         SysUtil.checkPath(DirManager.getPrivateCachePath());
         SysUtil.checkPath(DirManager.getPrivateFilesPath());
         SysUtil.checkPath(DirManager.getCachePath());
         SysUtil.checkPath(DirManager.getFilesPath());
         SysUtil.checkPath(DirManager.getAppPath());
         SysUtil.checkPath(DirManager.getLogCachePath());
+        SysUtil.checkPath(DirManager.getCrashCachePath());
         SysUtil.checkPath(DirManager.getShareCachePath());
         SysUtil.checkPath(DirManager.getDownloadPath());
     }
