@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.RadioGroup;
 
+import com.igexin.slavesdk.MessageManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.dac.DacSender;
@@ -84,6 +85,8 @@ public class IntroActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+        
+        MessageManager.getInstance().initialize(getApplicationContext());
     }
 
     @Override
