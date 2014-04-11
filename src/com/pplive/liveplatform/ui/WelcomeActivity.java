@@ -22,15 +22,16 @@ import android.widget.RadioGroup;
 import com.igexin.slavesdk.MessageManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.dac.DacSender;
+import com.pplive.liveplatform.core.crash.CrashReportService;
+import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.info.LocationInfo;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
 import com.pplive.liveplatform.ui.widget.viewpager.AdvancedViewPager;
 
-public class IntroActivity extends Activity {
+public class WelcomeActivity extends Activity {
     static final String TAG = "_IntroActivity";
 
-    private static final int MSG_GO_HOME = 4000;
+    private static final int MSG_GO_MAIN = 4000;
 
     private static final int MSG_GO_INTRO = 4001;
 
@@ -50,7 +51,7 @@ public class IntroActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mHandler = new InnerHandler(this);
-        setContentView(R.layout.activity_intro);
+        setContentView(R.layout.activity_welcome);
 
         LocationInfo.reset();
         ImageLoader.getInstance().clearMemoryCache();
@@ -78,15 +79,15 @@ public class IntroActivity extends Activity {
             mViewPager.setCurrentItem(1);
         }
 
-        DacSender.sendAppStartDac(getApplicationContext(), mFirstTime);
+        DacReportService.sendAppStartDac(getApplicationContext(), mFirstTime);
+        CrashReportService.reportCrash(getApplicationContext());
+        MessageManager.getInstance().initialize(getApplicationContext());
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
-        
-        MessageManager.getInstance().initialize(getApplicationContext());
     }
 
     @Override
@@ -94,7 +95,7 @@ public class IntroActivity extends Activity {
         super.onResume();
         Log.d(TAG, "onResume");
         if (!mFirstTime) {
-            mHandler.sendEmptyMessageDelayed(MSG_GO_HOME, 3000);
+            mHandler.sendEmptyMessageDelayed(MSG_GO_MAIN, 3000);
         } else {
             mHandler.sendEmptyMessageDelayed(MSG_GO_INTRO, 3000);
         }
@@ -102,17 +103,19 @@ public class IntroActivity extends Activity {
 
     @Override
     protected void onPause() {
-        Log.d(TAG, "onPause");
-        mHandler.removeMessages(MSG_GO_HOME);
-        mHandler.removeMessages(MSG_GO_INTRO);
         super.onPause();
+
+        Log.d(TAG, "onPause");
+        mHandler.removeMessages(MSG_GO_MAIN);
+        mHandler.removeMessages(MSG_GO_INTRO);
     }
 
     @Override
     protected void onDestroy() {
+        super.onDestroy();
+
         Log.d(TAG, "onDestroy");
         mHandler.removeCallbacksAndMessages(null);
-        super.onDestroy();
     }
 
     private PagerAdapter pagerAdapter = new PagerAdapter() {
@@ -170,35 +173,35 @@ public class IntroActivity extends Activity {
                 if (positionOffset < 0.2f) {
                     mViewPager.setCurrentItem(mImageViewList.size() - 2);
                 } else {
-                    startHomeActivity();
+                    startMainActivity();
                 }
             }
         }
     };
 
-    private void startHomeActivity() {
+    private void startMainActivity() {
         if (!mStarted) {
             mStarted = true;
-            Intent intent = new Intent(IntroActivity.this, HomeActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
         }
     }
 
     static class InnerHandler extends Handler {
-        private WeakReference<IntroActivity> mOuter;
+        private WeakReference<WelcomeActivity> mOuter;
 
-        public InnerHandler(IntroActivity activity) {
-            mOuter = new WeakReference<IntroActivity>(activity);
+        public InnerHandler(WelcomeActivity activity) {
+            mOuter = new WeakReference<WelcomeActivity>(activity);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            IntroActivity outer = mOuter.get();
+            WelcomeActivity outer = mOuter.get();
             if (outer != null) {
                 switch (msg.what) {
-                case MSG_GO_HOME:
-                    outer.startHomeActivity();
+                case MSG_GO_MAIN:
+                    outer.startMainActivity();
                     break;
                 case MSG_GO_INTRO:
                     outer.findViewById(R.id.image_intro_welcome).setVisibility(View.GONE);

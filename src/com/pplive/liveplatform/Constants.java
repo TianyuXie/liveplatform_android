@@ -27,5 +27,7 @@ public interface Constants {
     public static final String BASE_SHARE_LINK_URL = "http://i.pptv.com/play/";
     
     public static final String LIVE_IMGAE_PREFIX = "http://live2image";
+    
+    public static final String CRASH_UPLOAD_SERVICE_HOST = "log.client.pptv.com";
 
 }

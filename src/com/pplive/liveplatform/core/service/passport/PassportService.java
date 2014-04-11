@@ -9,7 +9,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,6 +17,7 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.GsonHttpMessageConverterEx;
 import com.pplive.liveplatform.core.service.RestTemplateFactory;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.model.CheckCode;
@@ -189,14 +189,5 @@ public class PassportService {
         String image_url = getCheckCodeImageUrl(guid);
 
         return new CheckCode(guid, image_url);
-    }
-}
-
-class GsonHttpMessageConverterEx extends GsonHttpMessageConverter {
-
-    @Override
-    public boolean canRead(Class<?> clazz, MediaType mediaType) {
-
-        return true;
     }
 }

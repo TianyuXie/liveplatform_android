@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
@@ -16,9 +15,10 @@ import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
 public class UserpageProgramAdapter extends BaseAdapter {
-    private List<Program> mPrograms;
+
     private LayoutInflater mInflater;
-    private Context mContext;
+
+    private List<Program> mPrograms;
 
     private OnItemRightClickListener mRightClickListener;
 
@@ -31,18 +31,14 @@ public class UserpageProgramAdapter extends BaseAdapter {
     }
 
     public UserpageProgramAdapter(Context context, List<Program> programs) {
-        this.mContext = context;
         this.mPrograms = programs;
         this.mInflater = LayoutInflater.from(context);
     }
 
     @Override
     public int getCount() {
-        if (null != mPrograms) {
-            return mPrograms.size();
-        } else {
-            return 0;
-        }
+
+        return null != mPrograms ? mPrograms.size() : 0;
     }
 
     @Override
@@ -60,14 +56,14 @@ public class UserpageProgramAdapter extends BaseAdapter {
         ViewHolder holder;
         if (convertView == null) {
             convertView = mInflater.inflate(R.layout.layout_userpage_item, parent, false);
+
             holder = new ViewHolder();
-            holder.statusImageView = (ImageView) convertView.findViewById(R.id.image_userpage_time_circle);
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_userpage_program_preview);
-            holder.statusTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_status);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_title);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_vv);
             holder.timeTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_time);
             holder.deleteBtn = convertView.findViewById(R.id.btn_userpage_delete_item);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -81,12 +77,13 @@ public class UserpageProgramAdapter extends BaseAdapter {
                 }
             }
         });
+
         updateView(holder, mPrograms.get(position));
+
         return convertView;
     }
 
     private void updateView(ViewHolder holder, Program data) {
-        holder.statusTextView.setText(data.getLiveStatus().toFriendlyString(mContext));
         holder.titleTextView.setText(data.getTitle());
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
         holder.timeTextView.setText(data.getStartTimeLong());
@@ -94,19 +91,16 @@ public class UserpageProgramAdapter extends BaseAdapter {
         case LIVING:
             holder.viewcountTextView.setText(String.valueOf(data.getViews()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_watch, 0, 0, 0);
-            holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_full);
             break;
         case NOT_START:
         case PREVIEW:
         case INIT:
             holder.viewcountTextView.setText("");
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_half);
             break;
         case STOPPED:
             holder.viewcountTextView.setText(String.valueOf(data.getViews()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
-            holder.statusImageView.setImageResource(R.drawable.userpage_time_circle_none);
             break;
         default:
             break;
@@ -117,10 +111,6 @@ public class UserpageProgramAdapter extends BaseAdapter {
         View deleteBtn;
 
         AsyncImageView previewImageView;
-
-        ImageView statusImageView;
-
-        TextView statusTextView;
 
         TextView timeTextView;
 

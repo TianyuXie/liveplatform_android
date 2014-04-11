@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.core.dac.info;
 
 import java.text.MessageFormat;
+import java.util.UUID;
 
 import android.app.Service;
 import android.content.Context;
@@ -71,6 +72,10 @@ public class DeviceInfo {
 
     public static String getWLANMac() {
         return sWLANMac;
+    }
+    
+    public static String getDeviceId() {
+        return UUID.nameUUIDFromBytes((DeviceInfo.getIMEI() + "|" + DeviceInfo.getWLANMac()).getBytes()).toString();
     }
 
     private DeviceInfo() {

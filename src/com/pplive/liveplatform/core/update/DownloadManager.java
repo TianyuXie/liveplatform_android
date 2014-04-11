@@ -14,7 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
-public class DownManager {
+public class DownloadManager {
 
     /**
      * len
@@ -73,7 +73,7 @@ public class DownManager {
             final Intent intent = new Intent(context, UpdateProgressActivity.class);
             context.startActivity(intent);
 
-            synchronized (DownManager.class) {
+            synchronized (DownloadManager.class) {
                 getDataSource(context, strPath, dir);
             }
             beginUpload = false;
@@ -120,7 +120,7 @@ public class DownManager {
             dir.mkdir();
         }
 
-        String fileEx = strPath.substring(strPath.lastIndexOf(".") + 1, strPath.length()).toLowerCase();
+        String fileEx = strPath.substring(strPath.lastIndexOf(".") + 1, strPath.length()).toLowerCase(Locale.US);
         String fileNa = strPath.substring(strPath.lastIndexOf("/") + 1, strPath.lastIndexOf("."));
         File myTempFile = new File(dir, fileNa + "." + fileEx);
         // String currentTempFilePath = myTempFile.getAbsolutePath();

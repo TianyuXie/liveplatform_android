@@ -34,7 +34,7 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.dac.DacSender;
+import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.stat.WatchDacStat;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
@@ -977,7 +977,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
     private void sendDac() {
         mWatchDacStat.onPlayStop();
-        DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
+        DacReportService.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
     }
 
     @Override

@@ -33,7 +33,7 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.dac.DacSender;
+import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
@@ -343,7 +343,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onStop();
 
         Log.d(TAG, "onStop");
-        
+
         if (mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();
         }
@@ -797,7 +797,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void sendDac() {
         if (null != mPublishDacStat) {
             mPublishDacStat.onPlayStop();
-            DacSender.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
+            DacReportService.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
             mPublishDacStat = null;
         }
     }
@@ -827,7 +827,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onClickBtnCameraChange() {
 
         mMediaRecorderView.changeCamera();
-        
+
         if (CameraManager.CAMERA_FACING_FRONT == mMediaRecorderView.getCurrentCameraId()) {
             mBtnFlashLight.setVisibility(View.GONE);
         } else {
@@ -1016,9 +1016,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (StringUtil.isNullOrEmpty(url)) {
                 stopLiving(true);
-                
+
                 Toast.makeText(LiveRecordActivity.this, R.string.toast_live_init_fail, Toast.LENGTH_SHORT).show();
-                
+
                 return;
             }
 

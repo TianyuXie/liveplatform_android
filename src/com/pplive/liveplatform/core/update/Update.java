@@ -335,7 +335,7 @@ public class Update {
         String filePath = DirManager.getDownloadPath() + File.separator + fileName + ".apk";
         File file = new File(filePath);
         if (file.exists()) {
-            DownManager.openFile(activity, file);
+            DownloadManager.openFile(activity, file);
             return;
         }
 
@@ -343,7 +343,7 @@ public class Update {
             @Override
             public void run() {
                 activity.finish();
-                DownManager.down(activity, updateInfo.url, DOWNLOAD_DIR);
+                DownloadManager.down(activity, updateInfo.url, DOWNLOAD_DIR);
             }
         });
 

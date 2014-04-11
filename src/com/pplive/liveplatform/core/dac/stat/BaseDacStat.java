@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.core.dac.stat;
 
-import java.util.UUID;
-
 import android.os.Build;
 import android.pplive.media.MeetSDK;
 
@@ -19,7 +17,7 @@ public abstract class BaseDacStat extends DacStat implements CommonData {
     private static final long serialVersionUID = 1241740408396579165L;
 
     public BaseDacStat() {
-        addValueItem(KEY_DEVICE_ID, UUID.nameUUIDFromBytes((DeviceInfo.getIMEI() + "|" + DeviceInfo.getWLANMac()).getBytes()));
+        addValueItem(KEY_DEVICE_ID, DeviceInfo.getDeviceId());
         addValueItem(KEY_DEVICE_BOARD, Build.BOARD);
         addValueItem(KEY_DEVICE_MODULE, Build.MODEL + "|" + Build.PRODUCT);
         addValueItem(KEY_OS_VERSION, DeviceInfo.getOSVersion());
