@@ -22,7 +22,6 @@ import android.widget.RadioGroup;
 import com.igexin.slavesdk.MessageManager;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.crash.CrashReportService;
 import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.info.LocationInfo;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
@@ -80,7 +79,7 @@ public class WelcomeActivity extends Activity {
         }
 
         DacReportService.sendAppStartDac(getApplicationContext(), mFirstTime);
-        CrashReportService.reportCrash(getApplicationContext());
+        //        CrashReportService.reportCrash(getApplicationContext());
         MessageManager.getInstance().initialize(getApplicationContext());
     }
 
@@ -182,7 +181,7 @@ public class WelcomeActivity extends Activity {
     private void startMainActivity() {
         if (!mStarted) {
             mStarted = true;
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, NavigateActivity.class);
             startActivity(intent);
             finish();
         }

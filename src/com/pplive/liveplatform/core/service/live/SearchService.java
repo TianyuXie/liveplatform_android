@@ -74,6 +74,9 @@ public class SearchService extends RestService {
             "/search/v1/pptv/searchcommon?key={keywords}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}")
             .toString();
 
+    private static final String TEMPLATE_GET_RECOMMEND_PROGRAM = new BaseURL(Protocol.HTTP, "172.16.6.60:8080", "/live/search/v2/c/pptv/recommend/program")
+            .toString();
+
     public static SearchService getInstance() {
         return sInstance;
     }
@@ -121,10 +124,32 @@ public class SearchService extends RestService {
         } catch (Exception e) {
 
         }
+
         if (null != resp) {
             throw new LiveHttpException(resp.getError());
         } else {
             throw new LiveHttpException();
         }
+    }
+
+    public FallList<Program> getRecommandedProgram() throws LiveHttpException {
+
+        ProgramFallListResp resp = null;
+        try {
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_RECOMMEND_PROGRAM, ProgramFallListResp.class);
+
+            if (0 == resp.getError()) {
+                return resp.getFallList();
+            }
+        } catch (Exception e) {
+
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+
     }
 }

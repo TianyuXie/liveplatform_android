@@ -17,7 +17,6 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.pplive.liveplatform.core.crash.AppCrashHandler;
 import com.pplive.liveplatform.core.dac.info.AppInfo;
 import com.pplive.liveplatform.core.dac.info.DeviceInfo;
 import com.pplive.liveplatform.core.dac.info.SessionInfo;
@@ -27,7 +26,6 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.SysUtil;
-import com.pplive.thirdparty.BreakpadUtil;
 
 public class LiveApplication extends Application {
 
@@ -53,8 +51,8 @@ public class LiveApplication extends Application {
 
         MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
 
-        AppCrashHandler.init();
-        BreakpadUtil.registerBreakpad(new File(DirManager.getCrashCachePath()));
+        //        AppCrashHandler.init();
+        //        BreakpadUtil.registerBreakpad(new File(DirManager.getCrashCachePath()));
     }
 
     @Override

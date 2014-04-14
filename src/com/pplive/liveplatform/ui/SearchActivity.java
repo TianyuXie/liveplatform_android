@@ -216,9 +216,9 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
             case R.id.btn_status_living:
                 switchLiveStatus(LiveStatusKeyword.LIVING);
                 break;
-            case R.id.btn_status_tolive:
-                switchLiveStatus(LiveStatusKeyword.COMING);
-                break;
+            //            case R.id.btn_status_tolive:
+            //                switchLiveStatus(LiveStatusKeyword.COMING);
+            //                break;
             case R.id.btn_status_replay:
                 switchLiveStatus(LiveStatusKeyword.VOD);
                 break;

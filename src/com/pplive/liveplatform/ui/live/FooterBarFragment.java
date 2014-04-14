@@ -86,7 +86,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View layout = inflater.inflate(R.layout.layout_footerbar_fragment, container, false);
+        View layout = inflater.inflate(R.layout.fragment_footerbar, container, false);
 
         mParentLayout = layout;
 

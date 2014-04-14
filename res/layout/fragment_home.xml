@@ -7,15 +7,15 @@
     <RelativeLayout
         android:id="@+id/layout_titlebar_home"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/titlebar_height"
+        android:layout_height="@dimen/top_bar_height"
         android:layout_alignParentTop="true"
         android:background="@color/black" >
 
         <ToggleButton
             android:id="@+id/btn_home_menu"
             style="@style/togglebutton_notext"
-            android:layout_width="@dimen/titlebar_height"
-            android:layout_height="@dimen/titlebar_height"
+            android:layout_width="@dimen/top_bar_height"
+            android:layout_height="@dimen/top_bar_height"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:background="@drawable/titlebar_menu_btn_bg" />
@@ -28,15 +28,15 @@
             android:layout_centerVertical="true"
             android:text="@string/home_title"
             android:textColor="@color/white"
-            android:textSize="@dimen/titlebar_text_size" />
+            android:textSize="@dimen/top_bar_text_size" />
 
         <Button
             android:id="@+id/btn_home_search"
-            android:layout_width="@dimen/titlebar_height"
-            android:layout_height="@dimen/titlebar_height"
+            android:layout_width="@dimen/top_bar_height"
+            android:layout_height="@dimen/top_bar_height"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/titlebar_search_btn_bg" />
+            android:background="@drawable/top_bar_search_btn" />
     </RelativeLayout>
 
     <LinearLayout

@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/titlebar_height"
+        android:layout_height="@dimen/top_bar_height"
         android:background="@color/black"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -50,13 +50,15 @@
             </com.pplive.liveplatform.ui.widget.EnterSendEditText>
         </LinearLayout>
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_searchbar_close"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_margin="12dp"
-            android:background="@drawable/searchbar_close_btn_bg"
-            android:gravity="center_vertical" />
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@null"
+            android:gravity="center_vertical"
+            android:padding="10dp"
+            android:src="@drawable/searchbar_close_btn_bg" />
     </LinearLayout>
 
     <LinearLayout

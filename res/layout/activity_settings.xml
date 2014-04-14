@@ -10,15 +10,15 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/titlebar_height" >
+        android:layout_height="@dimen/top_bar_height" >
 
         <Button
             android:id="@+id/btn_settings_back"
-            android:layout_width="@dimen/titlebar_back_btn_size"
-            android:layout_height="@dimen/titlebar_back_btn_size"
+            android:layout_width="@dimen/top_bar_back_btn_size"
+            android:layout_height="@dimen/top_bar_back_btn_size"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/titlebar_back_btn_bg" />
+            android:background="@drawable/top_bar_back_btn" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +27,7 @@
             android:layout_centerVertical="true"
             android:text="@string/settings_title"
             android:textColor="@color/white"
-            android:textSize="@dimen/titlebar_text_size" />
+            android:textSize="@dimen/top_bar_text_size" />
     </RelativeLayout>
 
     <ScrollView
@@ -38,6 +38,7 @@
         android:scrollbars="none" >
 
         <LinearLayout
+            android:id="@+id/layout_settings_user"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
@@ -58,11 +59,6 @@
                         android:textColor="@color/white"
                         android:textSize="18sp" />
                 </TableRow>
-            </TableLayout>
-
-            <TableLayout
-                android:id="@+id/layout_settings_user"
-                style="@style/settings_tablelayout" >
 
                 <TableRow
                     android:id="@+id/row_settings_user"
@@ -76,7 +72,7 @@
                         android:id="@+id/text_settings_user"
                         android:layout_marginRight="12dp"
                         android:textColor="@color/white"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
                 </TableRow>
 
                 <TableRow
@@ -97,9 +93,29 @@
 
             <TableLayout style="@style/settings_tablelayout" >
 
+                <TableRow style="@style/settings_tablerow_switcher" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_quality" />
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:layout_marginRight="10dp"
+                        android:drawablePadding="5dp"
+                        android:drawableRight="@drawable/settings_arrow_right"
+                        android:text="标清"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </TableRow>
+            </TableLayout>
+
+            <TableLayout style="@style/settings_tablelayout" >
+
                 <TableRow
                     android:id="@+id/layout_settings_prelive"
-                    style="@style/settings_tablerow_switcher" >
+                    style="@style/settings_tablerow_switcher"
+                    android:visibility="gone" >
 
                     <TextView
                         style="@style/settings_text"
@@ -124,15 +140,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/layout_settings_feedback"
-                    style="@style/settings_tablerow" >
-
-                    <TextView
-                        style="@style/settings_text"
-                        android:text="@string/settings_feedback" />
-                </TableRow>
-
-                <TableRow
                     android:id="@+id/layout_settings_update"
                     style="@style/settings_tablerow" >
 
@@ -140,9 +147,19 @@
                         style="@style/settings_text"
                         android:text="@string/settings_update" />
                 </TableRow>
-            </TableLayout>
 
-            <TableLayout style="@style/settings_tablelayout" >
+                <TableRow
+                    android:id="@+id/layout_settings_feedback"
+                    style="@style/settings_tablerow" >
+
+                    <TextView
+                        style="@style/settings_text"
+                        android:text="@string/settings_feedback" />
+
+                    <ImageView
+                        style="@style/settings_right_arrow"
+                        android:contentDescription="@null" />
+                </TableRow>
 
                 <TableRow
                     android:id="@+id/layout_settings_about"

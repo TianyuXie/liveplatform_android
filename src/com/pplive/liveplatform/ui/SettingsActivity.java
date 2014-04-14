@@ -92,7 +92,7 @@ public class SettingsActivity extends Activity {
             nickView.setVisibility(View.VISIBLE);
             userView.setVisibility(View.VISIBLE);
             logoutBtn.setVisibility(View.VISIBLE);
-            preliveView.setVisibility(View.VISIBLE);
+            preliveView.setVisibility(View.GONE);
             loginBtn.setVisibility(View.GONE);
             if (UserManager.getInstance(this).isThirdPartyLogin()) {
                 mPPTVUserView.setVisibility(View.GONE);

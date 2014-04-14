@@ -147,7 +147,7 @@ public class UserpageActivity extends Activity {
         mListView.setOnUpdateListener(onUpdateListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
-        mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
+        mUserIcon = (CircularImageView) findViewById(R.id.image_icon);
         mUserIcon.setOnClickListener(mOnIconClickListener);
         mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
 
