@@ -53,9 +53,13 @@ public class DirManager {
     public static String getImageCachePath() {
         return getCachePath() + "/image";
     }
-    
+
     public static String getLogCachePath() {
         return getCachePath() + "/log";
+    }
+
+    public static String getCrashCachePath() {
+        return getCachePath() + "/crash";
     }
 
     public static String getDownloadPath() {

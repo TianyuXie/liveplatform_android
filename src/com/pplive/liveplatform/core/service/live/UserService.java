@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.live.resp.MessageResp;
@@ -39,8 +39,8 @@ public class UserService extends RestService {
         Log.d(TAG, "username: " + username);
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
         UserResp resp = null;
         try {
@@ -65,8 +65,8 @@ public class UserService extends RestService {
         Log.d(TAG, "username: " + user.getUsername() + "; nickname: " + user.getNickname());
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<User> req = new HttpEntity<User>(user, mRequestHeaders);
+        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        HttpEntity<User> req = new HttpEntity<User>(user, mHttpHeaders);
 
         MessageResp resp = null;
         try {

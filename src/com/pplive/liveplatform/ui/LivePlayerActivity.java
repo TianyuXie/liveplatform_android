@@ -34,6 +34,10 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.dac.DacReportService;
+import com.pplive.liveplatform.core.dac.stat.WatchDacStat;
+import com.pplive.liveplatform.core.network.NetworkManager;
+import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Watch;
@@ -48,10 +52,6 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
 import com.pplive.liveplatform.core.task.player.LiveStatusTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
-import com.pplive.liveplatform.dac.DacSender;
-import com.pplive.liveplatform.dac.stat.WatchDacStat;
-import com.pplive.liveplatform.net.NetworkManager;
-import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.EmojiView;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
@@ -977,7 +977,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
     private void sendDac() {
         mWatchDacStat.onPlayStop();
-        DacSender.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
+        DacReportService.sendProgramWatchDac(getApplicationContext(), mWatchDacStat);
     }
 
     @Override

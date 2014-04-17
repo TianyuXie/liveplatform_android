@@ -8,7 +8,9 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.text.TextUtils;
 
 public class SysUtil {
+
     public static boolean checkPath(String path) {
+
         if (TextUtils.isEmpty(path))
             return false;
         File file = new File(path);

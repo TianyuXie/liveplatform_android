@@ -9,8 +9,8 @@ import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.auth.LiveTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveAlive;
@@ -87,8 +87,8 @@ public class LiveControlService extends RestService {
     private boolean updateLiveStatusByLiveToken(String liveToken, Program program, LiveStatusEnum livestatus) throws LiveHttpException {
         Log.d(TAG, "pid: " + program.getId() + "; livestatus: " + livestatus);
         
-        mRequestHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
-        HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mRequestHeaders);
+        mHttpHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
+        HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mHttpHeaders);
         
         MessageResp resp = null;
         try {
@@ -113,8 +113,8 @@ public class LiveControlService extends RestService {
     public LiveAlive keepLiveAlive(String coToken, long pid) throws LiveHttpException {
         Log.d(TAG, "pid: ");
         
-        mRequestHeaders.setAuthorization(new UserTokenAuthentication(coToken));
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        mHttpHeaders.setAuthorization(new UserTokenAuthentication(coToken));
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
         
         LiveAliveResp resp = null; 
         try {

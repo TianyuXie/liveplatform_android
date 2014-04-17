@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -26,7 +27,7 @@ public class SearchBar extends LinearLayout {
 
     private final static String LIST_ITEM_KEY = "ItemTitle";
 
-    private Button mCloseButton;
+    private ImageButton mCloseButton;
 
     private Button mSearchButton;
 
@@ -52,7 +53,7 @@ public class SearchBar extends LinearLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.widget_searchbar, this);
-        mCloseButton = (Button) root.findViewById(R.id.btn_searchbar_close);
+        mCloseButton = (ImageButton) root.findViewById(R.id.btn_searchbar_close);
         mSearchButton = (Button) root.findViewById(R.id.btn_searchbar_search);
 
         mSearchEditText = (EnterSendEditText) root.findViewById(R.id.edit_searchbar);

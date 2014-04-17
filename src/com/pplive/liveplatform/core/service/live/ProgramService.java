@@ -11,8 +11,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
@@ -79,10 +79,10 @@ public class ProgramService extends RestService {
 
         if (isOwner) {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-            mRequestHeaders.setAuthorization(coTokenAuthentication);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
         }
 
-        HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
         ProgramListResp resp = null;
         try {
@@ -114,8 +114,8 @@ public class ProgramService extends RestService {
         Log.d(TAG, program.toString());
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        HttpEntity<Program> req = new HttpEntity<Program>(program, mHttpHeaders);
 
         ProgramResp resp = null;
         try {
@@ -142,8 +142,8 @@ public class ProgramService extends RestService {
         MessageResp resp = null;
         try {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-            mRequestHeaders.setAuthorization(coTokenAuthentication);
-            HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
+            HttpEntity<Program> req = new HttpEntity<Program>(program, mHttpHeaders);
 
             resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, MessageResp.class, program.getId());
 
@@ -167,8 +167,8 @@ public class ProgramService extends RestService {
         MessageResp resp = null;
         try {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-            mRequestHeaders.setAuthorization(coTokenAuthentication);
-            HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
+            HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
             ResponseEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, MessageResp.class, pid);
 

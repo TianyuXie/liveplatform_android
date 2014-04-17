@@ -7,7 +7,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/titlebar_height"
+        android:layout_marginTop="@dimen/top_bar_height"
         android:background="@color/home_fragment_body_bg"
         android:orientation="vertical" >
 

@@ -20,7 +20,7 @@ import android.widget.BaseAdapter;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;

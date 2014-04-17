@@ -2,7 +2,7 @@ package com.pplive.liveplatform.core.task.user;
 
 import android.text.TextUtils;
 
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.passport.PassportService;
 import com.pplive.liveplatform.core.service.passport.model.CheckCode;
 import com.pplive.liveplatform.core.task.Task;

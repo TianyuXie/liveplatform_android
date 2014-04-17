@@ -7,15 +7,15 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/titlebar_height" >
+        android:layout_height="@dimen/top_bar_height" >
 
         <Button
             android:id="@+id/btn_login_back"
-            android:layout_width="@dimen/titlebar_back_btn_size"
-            android:layout_height="@dimen/titlebar_back_btn_size"
+            android:layout_width="@dimen/top_bar_back_btn_size"
+            android:layout_height="@dimen/top_bar_back_btn_size"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/titlebar_back_btn_bg" />
+            android:background="@drawable/top_bar_back_btn" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,12 +24,12 @@
             android:layout_centerVertical="true"
             android:text="@string/login_title"
             android:textColor="@color/white"
-            android:textSize="@dimen/titlebar_text_size" />
+            android:textSize="@dimen/top_bar_text_size" />
 
         <Button
             android:id="@+id/btn_login_confirm"
-            android:layout_width="@dimen/titlebar_back_btn_size"
-            android:layout_height="@dimen/titlebar_back_btn_size"
+            android:layout_width="@dimen/top_bar_back_btn_size"
+            android:layout_height="@dimen/top_bar_back_btn_size"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:background="@drawable/titlebar_confirm_btn_bg"

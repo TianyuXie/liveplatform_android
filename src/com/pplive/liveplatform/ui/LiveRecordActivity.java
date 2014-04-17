@@ -27,12 +27,18 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.dac.DacReportService;
+import com.pplive.liveplatform.core.dac.stat.PublishDacStat;
+import com.pplive.liveplatform.core.network.NetworkManager;
+import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
+import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
@@ -41,11 +47,6 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
-import com.pplive.liveplatform.dac.DacSender;
-import com.pplive.liveplatform.dac.stat.PublishDacStat;
-import com.pplive.liveplatform.net.NetworkManager;
-import com.pplive.liveplatform.net.NetworkManager.NetworkState;
-import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
@@ -342,7 +343,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onStop();
 
         Log.d(TAG, "onStop");
-        
+
         if (mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();
         }
@@ -796,7 +797,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void sendDac() {
         if (null != mPublishDacStat) {
             mPublishDacStat.onPlayStop();
-            DacSender.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
+            DacReportService.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
             mPublishDacStat = null;
         }
     }
@@ -826,7 +827,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onClickBtnCameraChange() {
 
         mMediaRecorderView.changeCamera();
-        
+
         if (CameraManager.CAMERA_FACING_FRONT == mMediaRecorderView.getCurrentCameraId()) {
             mBtnFlashLight.setVisibility(View.GONE);
         } else {
@@ -1015,6 +1016,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (StringUtil.isNullOrEmpty(url)) {
                 stopLiving(true);
+
+                Toast.makeText(LiveRecordActivity.this, R.string.toast_live_init_fail, Toast.LENGTH_SHORT).show();
 
                 return;
             }

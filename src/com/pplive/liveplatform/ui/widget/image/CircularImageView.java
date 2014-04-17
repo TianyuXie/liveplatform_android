@@ -39,8 +39,11 @@ public class CircularImageView extends AsyncImageView {
         if (null != drawable && mRounded) {
             if (mBitmap != null) {
                 mBitmap.recycle();
+                mBitmap = null;
             }
+
             mBitmap = ImageUtil.getCircleBitmap(drawable, getWidth());
+
             Rect rect = getRect(mBitmap);
             canvas.drawBitmap(mBitmap, rect, rect, mPaint);
         } else {

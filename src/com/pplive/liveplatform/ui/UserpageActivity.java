@@ -89,16 +89,25 @@ public class UserpageActivity extends Activity {
     private final static int REQUEST_CAMERA = 7803;
 
     private Context mContext;
+
     private List<Program> mPrograms;
+
     private String mUsername;
 
     private TextView mNicknameText;
+
     private RefreshListView mListView;
+
     private TextView mNodataText;
-    private Button mNodataButton;
+
+    private Button mNoDataButton;
+
     private CircularImageView mUserIcon;
+
     private UserpageProgramAdapter mAdapter;
+
     private RefreshDialog mRefreshDialog;
+
     private IconDialog mIconDialog;
 
     private boolean mRefreshFinish;
@@ -120,15 +129,15 @@ public class UserpageActivity extends Activity {
         mNeedUpdate = true;
         mPrograms = new ArrayList<Program>();
         mAdapter = new UserpageProgramAdapter(this, mPrograms);
-        mAdapter.setRightClickListener(onItemRightClickListener);
+        mAdapter.setRightClickListener(mOnItemRightClickListener);
         mRefreshDialog = new RefreshDialog(this);
         mIconDialog = new IconDialog(this, R.style.icon_dialog);
 
         findViewById(R.id.btn_userpage_back).setOnClickListener(onBackBtnClickListener);
-        mNodataButton = (Button) findViewById(R.id.btn_userpage_record);
-        mNodataButton.setOnClickListener(onNodataBtnClickListener);
+        mNoDataButton = (Button) findViewById(R.id.btn_userpage_record);
+        mNoDataButton.setOnClickListener(mOnNodataBtnClickListener);
         Button settingsButton = (Button) findViewById(R.id.btn_userpage_settings);
-        settingsButton.setOnClickListener(onSettingsBtnClickListener);
+        settingsButton.setOnClickListener(mOnSettingsBtnClickListener);
 
         mListView = (RefreshListView) findViewById(R.id.list_userpage_program);
         LinearLayout pullHeader = (LinearLayout) findViewById(R.id.layout_userpage_pull_header);
@@ -138,13 +147,14 @@ public class UserpageActivity extends Activity {
         mListView.setOnUpdateListener(onUpdateListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_userpage_nickname);
-        mUserIcon = (CircularImageView) findViewById(R.id.image_userpage_icon);
-        mUserIcon.setOnClickListener(onIconClickListener);
+        mUserIcon = (CircularImageView) findViewById(R.id.image_icon);
+        mUserIcon.setOnClickListener(mOnIconClickListener);
         mNodataText = (TextView) findViewById(R.id.text_userpage_nodata);
 
         //init views
         TextView title = (TextView) findViewById(R.id.text_userpage_title);
         View cameraIcon = findViewById(R.id.image_userpage_camera);
+
         mUsername = getIntent().getStringExtra(EXTRA_USER);
         if (isLogin(mUsername)) {
             title.setText(R.string.userpage_my_title);
@@ -157,6 +167,7 @@ public class UserpageActivity extends Activity {
             cameraIcon.setVisibility(View.GONE);
             mListView.setSlidable(false);
         }
+
         initUserinfo();
     }
 
@@ -210,7 +221,7 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onSettingsBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnSettingsBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(mContext, SettingsActivity.class);
@@ -218,14 +229,14 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onNodataBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnNodataBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             goRecorderActivity(null);
         }
     };
 
-    private View.OnClickListener onCameraClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnCameraClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -239,7 +250,7 @@ public class UserpageActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onGalleryClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnGalleryClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             try {
@@ -254,18 +265,18 @@ public class UserpageActivity extends Activity {
 
     };
 
-    private View.OnClickListener onIconClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnIconClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (UserManager.getInstance(mContext).isLogin(mUsername)) {
                 mIconDialog.show();
-                mIconDialog.setOnCameraClickListener(onCameraClickListener);
-                mIconDialog.setOnGalleryClickListener(onGalleryClickListener);
+                mIconDialog.setOnCameraClickListener(mOnCameraClickListener);
+                mIconDialog.setOnGalleryClickListener(mOnGalleryClickListener);
             }
         }
     };
 
-    private OnItemRightClickListener onItemRightClickListener = new OnItemRightClickListener() {
+    private OnItemRightClickListener mOnItemRightClickListener = new OnItemRightClickListener() {
 
         @Override
         public void onRightClick(View v, final int position) {
@@ -275,19 +286,25 @@ public class UserpageActivity extends Activity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         long pid = mPrograms.get(position).getId();
+
                         RemoveProgramTask task = new RemoveProgramTask();
                         task.addTaskListener(onRemoveTaskListener);
+
                         TaskContext taskContext = new TaskContext();
                         taskContext.set(RemoveProgramTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
                         taskContext.set(RemoveProgramTask.KEY_PID, pid);
+
                         task.execute(taskContext);
+
                         mPrograms.remove(position);
                         mAdapter.notifyDataSetChanged();
+
                         if (mPrograms.isEmpty()) {
                             mNodataText.setText(R.string.userpage_user_nodata);
-                            mNodataButton.setEnabled(true);
+                            mNoDataButton.setEnabled(true);
                             findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
                         }
+
                         AlarmCenter.getInstance(mContext).deletePrelive(pid);
                     }
                 });
@@ -459,10 +476,10 @@ public class UserpageActivity extends Activity {
             if (mPrograms.isEmpty()) {
                 if (isLogin(mUsername)) {
                     mNodataText.setText(R.string.userpage_user_nodata);
-                    mNodataButton.setEnabled(true);
+                    mNoDataButton.setEnabled(true);
                 } else {
                     mNodataText.setText(R.string.userpage_others_nodata);
-                    mNodataButton.setEnabled(false);
+                    mNoDataButton.setEnabled(false);
                 }
                 findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
             } else {
@@ -478,8 +495,8 @@ public class UserpageActivity extends Activity {
             mPrograms.clear();
             mAdapter.notifyDataSetChanged();
             mNodataText.setText(R.string.userpage_user_error);
-            mNodataButton.setEnabled(true);
-            mNodataButton.setOnClickListener(onErrorBtnClickListener);
+            mNoDataButton.setEnabled(true);
+            mNoDataButton.setOnClickListener(onErrorBtnClickListener);
             findViewById(R.id.layout_userpage_nodata).setVisibility(View.VISIBLE);
         }
 

@@ -38,6 +38,7 @@ import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.util.ViewUtil;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
+
     static final String TAG = "_HomeFragment";
 
     private final static int REFRESH = 1000;
@@ -108,7 +109,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.layout_home_fragment, container, false);
+        InterceptableRelativeLayout layout = (InterceptableRelativeLayout) inflater.inflate(R.layout.fragment_home, container, false);
         mContainer = (ProgramContainer) layout.findViewById(R.id.layout_home_body);
         mContainer.setOnUpdateListener(onUpdateListener);
         mContainer.setOnStatusChangeListener(onStatusChangeListener);
@@ -149,7 +150,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mContainer.stopTimer();
         super.onDestroy();
     }
-
+    
     public void switchSubject(int id) {
         mSubjectId = id;
         updateCatalogText();
@@ -427,9 +428,9 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             case R.id.btn_status_living:
                 switchLiveStatus(LiveStatusKeyword.LIVING);
                 break;
-            case R.id.btn_status_tolive:
-                switchLiveStatus(LiveStatusKeyword.COMING);
-                break;
+            //            case R.id.btn_status_tolive:
+            //                switchLiveStatus(LiveStatusKeyword.COMING);
+            //                break;
             case R.id.btn_status_replay:
                 switchLiveStatus(LiveStatusKeyword.VOD);
                 break;

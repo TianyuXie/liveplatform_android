@@ -3,7 +3,7 @@ package com.pplive.liveplatform.ui;
 import java.lang.reflect.Field;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.update.DownManager;
+import com.pplive.liveplatform.core.update.DownloadManager;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -62,13 +62,13 @@ public class UpdateProgressActivity extends Activity {
             @Override
             public void run() {
 
-                while (true && !isFinishing() && DownManager.beginUpload) {
+                while (true && !isFinishing() && DownloadManager.beginUpload) {
 
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if (DownManager.len > 0 && DownManager.cLen > 0) {
-                                dialog.setProgress(((int) (1f * DownManager.cLen / DownManager.len * 10000)) / 100);
+                            if (DownloadManager.len > 0 && DownloadManager.cLen > 0) {
+                                dialog.setProgress(((int) (1f * DownloadManager.cLen / DownloadManager.len * 10000)) / 100);
                             }
                         }
                     });
@@ -80,7 +80,7 @@ public class UpdateProgressActivity extends Activity {
                     }
                 }
 
-                if (DownManager.error && !isFinishing()) {
+                if (DownloadManager.error && !isFinishing()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -122,8 +122,8 @@ public class UpdateProgressActivity extends Activity {
             canvas.drawRect(10, h / 2 - 10, w - 10, h / 2 + 10, p0);
             Paint p1 = new Paint();
             p1.setColor(Color.YELLOW);
-            canvas.drawRect(10, h / 2 - 10, (w - 20) * (1f * DownManager.cLen / DownManager.len) + 10, h / 2 + 10, p1);
-            canvas.drawText(DownManager.cLen + "/" + DownManager.len + " " + ((int) (1f * DownManager.cLen / DownManager.len * 10000)) / 100f + "%",
+            canvas.drawRect(10, h / 2 - 10, (w - 20) * (1f * DownloadManager.cLen / DownloadManager.len) + 10, h / 2 + 10, p1);
+            canvas.drawText(DownloadManager.cLen + "/" + DownloadManager.len + " " + ((int) (1f * DownloadManager.cLen / DownloadManager.len * 10000)) / 100f + "%",
                     w / 2 - 50, h / 2 - 8, mPaint);
             invalidate();
         }

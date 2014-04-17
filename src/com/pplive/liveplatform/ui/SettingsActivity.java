@@ -14,8 +14,8 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.update.Update;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
-import com.pplive.liveplatform.update.Update;
 import com.umeng.fb.FeedbackAgent;
 
 public class SettingsActivity extends Activity {
@@ -92,7 +92,7 @@ public class SettingsActivity extends Activity {
             nickView.setVisibility(View.VISIBLE);
             userView.setVisibility(View.VISIBLE);
             logoutBtn.setVisibility(View.VISIBLE);
-            preliveView.setVisibility(View.VISIBLE);
+            preliveView.setVisibility(View.GONE);
             loginBtn.setVisibility(View.GONE);
             if (UserManager.getInstance(this).isThirdPartyLogin()) {
                 mPPTVUserView.setVisibility(View.GONE);

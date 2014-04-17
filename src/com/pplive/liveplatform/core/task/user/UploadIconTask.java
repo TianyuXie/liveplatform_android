@@ -2,7 +2,7 @@ package com.pplive.liveplatform.core.task.user;
 
 import android.util.Log;
 
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.FileUploadService;
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;

@@ -6,7 +6,7 @@ import java.util.List;
 
 import android.text.TextUtils;
 
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
@@ -81,7 +81,7 @@ public class GetProgramTask extends Task {
         } else {
             // Owner
             for (Program program : data) {
-                if (program.isDeleted()) {
+                if (program.isDeleted() || program.isPrelive()) {
                     removePrograms.add(program);
                 }
             }

@@ -23,7 +23,7 @@
     <string name="toast_version_low">手机系统版本这么低还想直播, 升成4.1再来试试吧~</string>
 
     <!-- color -->
-    <color name="home_fragment_body_bg">#FF121212</color>
+    <color name="home_fragment_body_bg">#FF1A1A1A</color>
     <color name="home_program_item_bg">#FF272727</color>
     <color name="home_livestate_btn_checked">#FF272727</color>
     <color name="home_livestate_text_checked">#FFAAAAAA</color>
@@ -40,16 +40,5 @@
         <item name="android:padding">5dp</item>
     </style>
 
-    <style name="home_live_status_button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/home_livestate_text_color</item>
-        <item name="android:background">@drawable/home_livestate_btn_bg</item>
-        <item name="android:padding">10dp</item>
-        <item name="android:drawablePadding">5dp</item>
-        <item name="android:button">@null</item>
-    </style>
 
 </resources>

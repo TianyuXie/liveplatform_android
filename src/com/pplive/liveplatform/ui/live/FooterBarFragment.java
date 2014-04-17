@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.live.event.EventProgramAdded;
@@ -86,7 +86,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
 
-        View layout = inflater.inflate(R.layout.layout_footerbar_fragment, container, false);
+        View layout = inflater.inflate(R.layout.fragment_footerbar, container, false);
 
         mParentLayout = layout;
 
@@ -266,7 +266,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                     EventBus.getDefault().post(new EventProgramAdded(program));
                 } else {
                     if (mAttachedActivity != null) {
-                        Toast.makeText(mAttachedActivity, R.string.toast_prelive_fail, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mAttachedActivity, R.string.toast_prelive_creat_fail, Toast.LENGTH_SHORT).show();
                     }
                 }
 

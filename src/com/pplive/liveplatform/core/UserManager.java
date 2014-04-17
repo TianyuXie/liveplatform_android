@@ -5,12 +5,12 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pplive.liveplatform.core.dac.info.UserInfo;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
 import com.pplive.liveplatform.core.settings.SettingsProvider;
-import com.pplive.liveplatform.dac.info.UserInfo;
 import com.pplive.liveplatform.util.EncryptUtil;
 import com.pplive.liveplatform.util.StringUtil;
 

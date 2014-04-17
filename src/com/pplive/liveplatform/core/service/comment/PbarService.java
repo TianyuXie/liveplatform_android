@@ -13,14 +13,15 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.RestTemplateFactory;
 import com.pplive.liveplatform.core.service.comment.auth.PBarTokenAuthentication;
 import com.pplive.liveplatform.core.service.comment.model.Feed;
 import com.pplive.liveplatform.core.service.comment.model.Feed.Type;
 import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.comment.resp.FeedDetailListResp;
 import com.pplive.liveplatform.core.service.comment.resp.FeedIdResp;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.util.URL.Protocol;
 
 public class PbarService {
@@ -37,9 +38,12 @@ public class PbarService {
     public static PbarService getInstance() {
         return sInstance;
     }
+    
+    private RestTemplate mRestTemplate;
 
     private PbarService() {
-
+        mRestTemplate = RestTemplateFactory.newInstance();
+        mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
     }
 
     public FeedDetailList getFeeds(String coToken, long pid) throws LiveHttpException {
@@ -57,14 +61,11 @@ public class PbarService {
             headers.setAuthorization(authentication);
         }
 
-        RestTemplate template = new RestTemplate();
-        template.getMessageConverters().add(new GsonHttpMessageConverter());
-
         HttpEntity<String> req = new HttpEntity<String>(headers);
 
         FeedDetailListResp resp = null;
         try {
-            HttpEntity<FeedDetailListResp> rep = template.exchange(TEMPLATE_GET_FEEDS, HttpMethod.GET, req, FeedDetailListResp.class, "LivePlatform-pbar_" + pid,
+            HttpEntity<FeedDetailListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_FEEDS, HttpMethod.GET, req, FeedDetailListResp.class, "LivePlatform-pbar_" + pid,
                     pagesize);
             
             resp = rep.getBody();
@@ -107,14 +108,11 @@ public class PbarService {
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setAuthorization(authentication);
 
-        RestTemplate template = new RestTemplate();
-        template.getMessageConverters().add(new GsonHttpMessageConverter());
-
         HttpEntity<Feed> req = new HttpEntity<Feed>(feed, headers);
 
         FeedIdResp resp = null;
         try {
-            HttpEntity<FeedIdResp> rep = template.exchange(TEMPLATE_PUT_FEED, HttpMethod.PUT, req, FeedIdResp.class);
+            HttpEntity<FeedIdResp> rep = mRestTemplate.exchange(TEMPLATE_PUT_FEED, HttpMethod.PUT, req, FeedIdResp.class);
     
             resp = rep.getBody();
     

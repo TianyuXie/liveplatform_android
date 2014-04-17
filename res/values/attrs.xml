@@ -52,7 +52,7 @@
     </declare-styleable>
     <declare-styleable name="SlideListView">
         <attr name="extra_width" format="dimension" />
-        <attr name="slidable" format="boolean" />
+        <attr name="slideable" format="boolean" />
     </declare-styleable>
     <declare-styleable name="SwipeListView">
         <attr name="swipeOpenOnLongPress" format="boolean" />

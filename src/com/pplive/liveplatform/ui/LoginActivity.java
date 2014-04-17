@@ -198,6 +198,9 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
                     intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
                     intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
                     intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
+
+                    setResult(999, intent);
+
                     mContext.startActivity(intent);
                 } catch (ClassNotFoundException e) {
                     e.printStackTrace();

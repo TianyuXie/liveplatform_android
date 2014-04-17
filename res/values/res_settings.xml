@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- For settings -->
-    <string name="settings_nickname">昵称</string>
+    <string name="settings_nickname">用户名</string>
     <string name="settings_pptv_user">PPTV帐号</string>
     <string name="settings_thirdparty">第三方登录</string>
     <string name="settings_login_qq">腾讯QQ</string>
@@ -13,11 +13,11 @@
     <string name="settings_prelive">预播提醒</string>
     <string name="settings_content">内容提醒</string>
     <string name="settings_about">关于爱播</string>
+    <string name="settings_quality">wifi下拍摄</string>
     <string name="settings_update">检查更新</string>
     <string name="settings_feedback">意见反馈</string>
     <string name="about_app_info">爱播介绍\n产品预留图标及文字</string>
     <string name="about_copyright">Copyright&#169;产品预留版权声明</string>
-    <string name="about_version">Version 1.0.1</string>
     <string name="settings_logout">退出登录</string>
     <string name="settings_login">登&#160;&#160;录</string>
     <string name="settings_title">设置</string>
