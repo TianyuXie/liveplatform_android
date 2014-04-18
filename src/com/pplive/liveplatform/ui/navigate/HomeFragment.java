@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui.navigate;
 
+import java.util.List;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -26,22 +28,22 @@ public class HomeFragment extends Fragment {
 
         mContainer = (ProgramContainer) layout.findViewById(R.id.layout_channel_body);
         mContainer.setOnUpdateListener(new OnUpdateListener() {
-            
+
             @Override
             public void onScrollDown(boolean isDown) {
                 // TODO Auto-generated method stub
-                
+
             }
-            
+
             @Override
             public void onRefresh() {
                 mContainer.onRefreshComplete();
             }
-            
+
             @Override
             public void onAppend() {
                 // TODO Auto-generated method stub
-                
+
             }
         });
         mContainer.setStatusVisibility(View.GONE);
@@ -53,10 +55,10 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        AsyncTask<Void, Void, java.util.List<Program>> task = new AsyncTask<Void, Void, java.util.List<Program>>() {
+        AsyncTask<Void, Void, List<Program>> task = new AsyncTask<Void, Void, List<Program>>() {
 
             @Override
-            protected java.util.List<Program> doInBackground(Void... params) {
+            protected List<Program> doInBackground(Void... params) {
 
                 FallList<Program> programs = null;
                 try {
@@ -65,17 +67,19 @@ public class HomeFragment extends Fragment {
 
                 }
 
-                return programs.getList();
+                return null != programs ? programs.getList() : null;
             }
 
             @Override
-            protected void onPostExecute(java.util.List<Program> programs) {
-                mContainer.refreshData(programs, true);
+            protected void onPostExecute(List<Program> programs) {
+                if (null != programs) {
+                    mContainer.refreshData(programs, true);
+                }
             }
 
         };
 
         task.execute();
     }
-    
+
 }

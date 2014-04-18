@@ -12,11 +12,12 @@
 
         <com.pplive.liveplatform.ui.widget.image.AsyncImageView
             android:id="@+id/image_userpage_program_preview"
-            android:layout_width="100dp"
-            android:layout_height="75dp"
-            android:layout_marginRight="10dp"
+            android:layout_width="140dp"
+            android:layout_height="106dp"
+            android:layout_marginRight="20dp"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/blank" />
+            android:contentDescription="@string/blank"
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/text_userpage_program_title"
@@ -27,7 +28,7 @@
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/text_userpage_program_time"
@@ -36,7 +37,7 @@
             android:layout_alignBottom="@+id/image_userpage_program_preview"
             android:layout_toRightOf="@+id/image_userpage_program_preview"
             android:textColor="@color/userpage_program_title_bg"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/text_userpage_program_vv"
@@ -48,18 +49,28 @@
             android:gravity="center_vertical"
             android:text="@string/userpage_default_vv"
             android:textColor="@color/userpage_program_title_bg"
-            android:textSize="16sp" />
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/image_live"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/image_userpage_program_preview"
+            android:layout_alignTop="@+id/image_userpage_program_preview"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/statebar_live" />
     </RelativeLayout>
 
     <TextView
         android:id="@+id/btn_userpage_delete_item"
         android:layout_width="90dp"
         android:layout_height="fill_parent"
-        android:background="@color/red"
+        android:background="#8d1d1c"
         android:clickable="true"
         android:gravity="center"
         android:text="@string/btn_delete"
         android:textColor="@color/white"
-        android:textSize="18sp" />
+        android:textSize="20sp" />
 
 </LinearLayout>

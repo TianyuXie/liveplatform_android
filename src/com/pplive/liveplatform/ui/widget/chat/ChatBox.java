@@ -280,4 +280,8 @@ public class ChatBox extends RelativeLayout {
             return false;
         }
     };
+    
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+    };
 }

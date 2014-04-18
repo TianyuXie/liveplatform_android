@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.util.Stack;
-
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageButton;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.pplive.liveplatform.R;
@@ -30,16 +27,16 @@ public class NavigateActivity extends FragmentActivity {
 
     static final String TAG = NavigateActivity.class.getSimpleName();
 
-    private Stack<Fragment> mFragmentStack;
-
     private FragmentManager mFragmentManager;
+
+    private Fragment mCurrentFragment;
 
     private HomeFragment mHomeFragment;
 
     private ChannelFragment mChannelFragment;
 
     private UserPageFragment mUserPageFragment;
-    
+
     private BlankUserPageFragment mBlankUserPageFragment;
 
     private ChannelListFragment mChannelListFragment;
@@ -48,8 +45,6 @@ public class NavigateActivity extends FragmentActivity {
 
     private RadioGroup mNavigateBar;
 
-    private int mLastCheckedRadioButtonId = -1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,9 +52,14 @@ public class NavigateActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_navigate);
 
-        mFragmentStack = new Stack<Fragment>();
-
         mNavigateBar = (RadioGroup) findViewById(R.id.nav_bar);
+        mNavigateBar.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                NavigateActivity.this.onCheckedChanged(checkedId);
+            }
+        });
 
         mBtnLiveRecord = (ImageButton) findViewById(R.id.navbar_btn_createlive);
         mBtnLiveRecord.setOnClickListener(new OnClickListener() {
@@ -74,7 +74,7 @@ public class NavigateActivity extends FragmentActivity {
 
         mFragmentManager = getSupportFragmentManager();
 
-        mHomeFragment = new HomeFragment();
+        mHomeFragment = (HomeFragment) mFragmentManager.findFragmentById(R.id.fragment_home);
 
         mChannelFragment = new ChannelFragment();
 
@@ -89,15 +89,17 @@ public class NavigateActivity extends FragmentActivity {
         });
 
         mUserPageFragment = new UserPageFragment();
-        
+
         mBlankUserPageFragment = new BlankUserPageFragment();
 
-        switchFragment(mHomeFragment);
+        mCurrentFragment = mHomeFragment;
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        onCheckedChanged(mNavigateBar.getCheckedRadioButtonId());
     }
 
     @Override
@@ -118,69 +120,51 @@ public class NavigateActivity extends FragmentActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void switchFragment(Fragment fragment) {
-        switchFragment(fragment, true);
+    private void switchFragment(Fragment to) {
+        switchFragment(mCurrentFragment, to);
     }
 
-    private void switchFragment(Fragment fragment, boolean push) {
-        if (fragment.isAdded()) {
+    private void switchFragment(Fragment from, Fragment to) {
+        if (from == to) {
             return;
         }
 
         FragmentTransaction transcation = mFragmentManager.beginTransaction();
 
-        transcation.replace(R.id.layout_fragment_container, fragment);
+        if (!to.isAdded()) {
+            transcation.hide(mCurrentFragment).add(R.id.layout_fragment_container, to);
+        } else {
+            transcation.hide(mCurrentFragment).show(to);
+        }
 
-        transcation.commitAllowingStateLoss();
+        transcation.commit();
 
-        if (push) {
-            mFragmentStack.remove(fragment);
-            mFragmentStack.push(fragment);
+        mCurrentFragment = to;
+
+    }
+
+    private void onCheckedChanged(int checkId) {
+
+        switch (checkId) {
+        case R.id.navbar_home:
+            switchFragment(mHomeFragment);
+            break;
+        case R.id.navbar_original:
+            mChannelFragment.switchSubject(1);
+            switchFragment(mChannelFragment);
+            break;
+        case R.id.navbar_channel_list:
+            switchFragment(mChannelListFragment);
+            break;
+        case R.id.navbar_personal:
+            onCheckedNavBarPersonal();
+            break;
+        default:
+            break;
         }
     }
 
-    private void popBackFragment() {
-        if (!mFragmentStack.isEmpty()) {
-            Fragment fragment = mFragmentStack.pop();
-            switchFragment(fragment, false);
-        }
-    }
-
-    public void onRadioButtonClicked(View view) {
-        if (view instanceof RadioButton) {
-            boolean checked = ((RadioButton) view).isChecked();
-
-            switch (view.getId()) {
-            case R.id.navbar_personal:
-                if (checked) {
-                    onClickNavBarPersonal();
-                }
-                break;
-            case R.id.navbar_home:
-                if (checked) {
-                    switchFragment(mHomeFragment);
-                }
-                break;
-            case R.id.navbar_original:
-                if (checked) {
-                    mChannelFragment.switchSubject(1);
-                    switchFragment(mChannelFragment);
-                }
-                break;
-            case R.id.navbar_channel:
-                if (checked) {
-                    switchFragment(mChannelListFragment);
-                }
-                break;
-            default:
-                break;
-            }
-
-            mLastCheckedRadioButtonId = mNavigateBar.getCheckedRadioButtonId();
-        }
-    }
-
-    private void onClickNavBarPersonal() {
+    private void onCheckedNavBarPersonal() {
         Context context = this;
 
         if (UserManager.getInstance(context).isLoginSafely()) {
@@ -194,7 +178,6 @@ public class NavigateActivity extends FragmentActivity {
             switchFragment(mUserPageFragment);
         } else {
 
-            
             switchFragment(mBlankUserPageFragment);
         }
     }
