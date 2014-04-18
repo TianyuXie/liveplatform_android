@@ -22,14 +22,12 @@
             android:id="@+id/btn_status_living"
             style="@style/style_live_state_btn"
             android:background="@drawable/live_state_living"
-            android:checked="true"
-            android:text="@string/live_status_living" />
+            android:checked="true" />
 
         <RadioButton
             android:id="@+id/btn_status_replay"
             style="@style/style_live_state_btn"
-            android:background="@drawable/live_state_reply"
-            android:text="@string/live_status_vod" />
+            android:background="@drawable/live_state_reply" />
     </RadioGroup>
 
     <com.pplive.liveplatform.ui.widget.refresh.RefreshGridView

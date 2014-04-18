@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
@@ -66,6 +67,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_title);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_vv);
             holder.timeTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_time);
+            holder.liveImageView = (ImageView) convertView.findViewById(R.id.image_live);
             holder.deleteBtn = convertView.findViewById(R.id.btn_userpage_delete_item);
 
             convertView.setTag(holder);
@@ -91,6 +93,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
         holder.titleTextView.setText(data.getTitle());
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
         holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext, data.getStartTime()));
+        holder.liveImageView.setVisibility(data.isLiving() ? View.VISIBLE : View.GONE);
         switch (data.getLiveStatus()) {
         case LIVING:
             holder.viewcountTextView.setText(String.valueOf(data.getViews()));
@@ -121,5 +124,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
         TextView titleTextView;
 
         TextView viewcountTextView;
+
+        ImageView liveImageView;
     }
 }

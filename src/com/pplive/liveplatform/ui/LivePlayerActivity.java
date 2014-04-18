@@ -808,11 +808,14 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         mFirstLoading = true;
         mSecondLoading = true;
         mLivePlayerFragment.initIcon();
-        mLoadingImage.setVisibility(View.VISIBLE);
-        mLoadingButton.startLoading(R.string.player_loading);
-        mCommentView.setVisibility(View.GONE);
-        mChatBox.setVisibility(View.GONE);
-        mBtnShowCommentInput.setVisibility(View.GONE);
+
+        if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mLoadingImage.setVisibility(View.VISIBLE);
+            mLoadingButton.startLoading(R.string.player_loading);
+            mCommentView.setVisibility(View.GONE);
+            mChatBox.setVisibility(View.GONE);
+            mBtnShowCommentInput.setVisibility(View.GONE);
+        }
     }
 
     public void showWaiting() {
@@ -823,7 +826,10 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         mSecondLoading = true;
         mLivePlayerFragment.initIcon();
         mLoadingImage.setVisibility(View.GONE);
-        mLoadingButton.startLoading(R.string.player_waiting);
+
+        if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mLoadingButton.startLoading(R.string.player_waiting);
+        }
     }
 
     private void checkFirstLoading() {
@@ -854,10 +860,14 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
     public void hideFirstLoading() {
         mFirstLoading = false;
-        mLoadingImage.setVisibility(View.GONE);
-        mCommentView.setVisibility(View.GONE);
-        mChatBox.setVisibility(View.VISIBLE);
-        mBtnShowCommentInput.setVisibility(View.VISIBLE);
+
+        if (mCurrentOrient == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            mLoadingImage.setVisibility(View.GONE);
+            mCommentView.setVisibility(View.GONE);
+            mChatBox.setVisibility(View.VISIBLE);
+            mBtnShowCommentInput.setVisibility(View.VISIBLE);
+        }
+
     }
 
     public void hideSecondLoading() {
