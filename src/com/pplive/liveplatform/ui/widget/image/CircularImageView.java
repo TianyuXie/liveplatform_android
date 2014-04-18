@@ -65,8 +65,9 @@ public class CircularImageView extends AsyncImageView {
     }
 
     public void release() {
-        if (mBitmap != null) {
+        if (mBitmap != null && !mBitmap.isRecycled()) {
             mBitmap.recycle();
+            mBitmap = null;
         }
     }
 

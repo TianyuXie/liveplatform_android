@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="fmt_start_time_year">%d年前</string>
+    <string name="fmt_start_time_month">%d月前</string>
+    <string name="fmt_start_time_day">%d天前</string>
+    <string name="fmt_start_time_hour">%d小时前</string>
+    <string name="fmt_start_time_minute">%d分钟前</string>
+
+</resources>

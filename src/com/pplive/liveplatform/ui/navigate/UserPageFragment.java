@@ -230,6 +230,9 @@ public class UserPageFragment extends Fragment {
     }
 
     private void refreshData(boolean isPull) {
+        if (TextUtils.isEmpty(mUsername)) {
+            return;
+        }
         GetProgramTask task = new GetProgramTask();
         task.addTaskListener(onGetTaskListener);
         TaskContext taskContext = new TaskContext();
@@ -250,7 +253,6 @@ public class UserPageFragment extends Fragment {
     public void onDestroy() {
         mPullHandler.removeCallbacksAndMessages(null);
         mUserIcon.release();
-        //        mListView.release();
         super.onDestroy();
     }
 

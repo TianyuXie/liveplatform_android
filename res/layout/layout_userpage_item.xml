@@ -12,11 +12,12 @@
 
         <com.pplive.liveplatform.ui.widget.image.AsyncImageView
             android:id="@+id/image_userpage_program_preview"
-            android:layout_width="100dp"
-            android:layout_height="75dp"
+            android:layout_width="140dp"
+            android:layout_height="106dp"
             android:layout_marginRight="10dp"
             android:adjustViewBounds="true"
-            android:contentDescription="@string/blank" />
+            android:contentDescription="@string/blank"
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/text_userpage_program_title"

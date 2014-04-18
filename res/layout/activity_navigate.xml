@@ -10,6 +10,12 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_above="@+id/nav_bar" >
+
+        <fragment
+            android:id="@+id/fragment_home"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            class="com.pplive.liveplatform.ui.navigate.HomeFragment" />
     </FrameLayout>
 
     <RadioGroup
@@ -31,7 +37,6 @@
             android:checked="true"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_home"
-            android:onClick="onRadioButtonClicked"
             android:text="@string/navbar_home"
             android:textColor="@color/navbar_text_color" />
 
@@ -43,7 +48,6 @@
             android:layout_weight="1"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_original"
-            android:onClick="onRadioButtonClicked"
             android:text="@string/navbar_original"
             android:textColor="@color/navbar_text_color" />
 
@@ -57,14 +61,13 @@
             android:src="@drawable/navbar_btn_createlive" />
 
         <RadioButton
-            android:id="@+id/navbar_channel"
+            android:id="@+id/navbar_channel_list"
             style="@style/Widget.RadioButton.Transparent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_channel"
-            android:onClick="onRadioButtonClicked"
             android:text="@string/navbar_channel"
             android:textColor="@color/navbar_text_color" />
 
@@ -76,7 +79,6 @@
             android:layout_weight="1"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_personal"
-            android:onClick="onRadioButtonClicked"
             android:text="@string/navbar_personal"
             android:textColor="@color/navbar_text_color" />
     </RadioGroup>
