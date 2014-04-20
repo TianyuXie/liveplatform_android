@@ -431,7 +431,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             //            case R.id.btn_status_tolive:
             //                switchLiveStatus(LiveStatusKeyword.COMING);
             //                break;
-            case R.id.btn_status_replay:
+            case R.id.btn_status_reply:
                 switchLiveStatus(LiveStatusKeyword.VOD);
                 break;
             default:

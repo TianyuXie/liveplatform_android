@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import android.util.Log;
-
 public abstract class DacStat implements Serializable {
 
     private static final long serialVersionUID = -2416309042028184210L;
@@ -29,16 +27,16 @@ public abstract class DacStat implements Serializable {
     }
 
     private void addItem(Map<String, String> map, String key, String value) {
-        Log.d(TAG, "key: " + key + "; value: " + value);
+        //        Log.d(TAG, "key: " + key + "; value: " + value);
 
         map.put(key, value);
     }
-    
+
     @SuppressWarnings("unchecked")
     public Map.Entry<String, String>[] getMetaItems() {
         return mMetaItems.entrySet().toArray(new Map.Entry[0]);
     }
-    
+
     @SuppressWarnings("unchecked")
     public Map.Entry<String, String>[] getValueItems() {
         return mValueItems.entrySet().toArray(new Map.Entry[0]);

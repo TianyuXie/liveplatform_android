@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black"
+    android:background="@color/app_bg"
     android:orientation="vertical"
     android:paddingBottom="10dp"
     android:paddingLeft="10dp"
@@ -43,11 +43,11 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <TableLayout
-                android:id="@+id/layout_settings_nickname"
-                style="@style/settings_tablelayout" >
+            <TableLayout style="@style/settings_tablelayout" >
 
-                <TableRow style="@style/settings_tablerow" >
+                <TableRow
+                    android:id="@+id/layout_settings_nickname"
+                    style="@style/settings_tablerow" >
 
                     <TextView
                         style="@style/settings_text"

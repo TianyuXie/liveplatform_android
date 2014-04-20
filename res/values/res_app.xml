@@ -9,5 +9,6 @@
     
     <!-- Color -->
     <color name="app_bg">#FF1A1A1A</color>
+    <color name="pull_to_refresh_header_bg">#FF272727</color>
 
 </resources>

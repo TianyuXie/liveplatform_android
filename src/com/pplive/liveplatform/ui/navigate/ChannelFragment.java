@@ -400,7 +400,7 @@ public class ChannelFragment extends Fragment {
                 Log.d(TAG, "living");
                 switchLiveStatus(LiveStatusKeyword.LIVING);
                 break;
-            case R.id.btn_status_replay:
+            case R.id.btn_status_reply:
                 Log.d(TAG, "replay");
                 switchLiveStatus(LiveStatusKeyword.VOD);
                 break;

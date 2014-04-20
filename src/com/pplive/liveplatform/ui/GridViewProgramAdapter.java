@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.home;
+package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 
-public class HomeProgramAdapter extends BaseAdapter {
+public class GridViewProgramAdapter extends BaseAdapter {
 
     private static float ratio = 16.0f / 10.0f;
 
@@ -23,7 +23,7 @@ public class HomeProgramAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private int mHeight;
 
-    public HomeProgramAdapter(Context context, List<Program> programs) {
+    public GridViewProgramAdapter(Context context, List<Program> programs) {
         super();
         this.mPrograms = programs;
         this.mInflater = LayoutInflater.from(context);
