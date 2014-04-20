@@ -166,7 +166,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
         public View getView(int position, View convertView, ViewGroup parent) {
 
             if (convertView == null) {
-                convertView = mInflater.inflate(R.layout.layout_live_itemview, null);
+                convertView = mInflater.inflate(R.layout.item_live_program, null);
             }
 
             if (convertView instanceof LiveListItemView) {

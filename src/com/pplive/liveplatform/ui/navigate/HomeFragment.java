@@ -174,7 +174,7 @@ class ProgramAdapter extends BaseAdapter {
         Log.d(TAG, "getView position: " + position);
 
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_program_item, null);
+            convertView = mInflater.inflate(R.layout.item_program, null);
             ViewHolder holder = new ViewHolder();
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
             holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);

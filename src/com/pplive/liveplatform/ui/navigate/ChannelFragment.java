@@ -27,7 +27,7 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
-import com.pplive.liveplatform.ui.widget.SearchTopBarView;
+import com.pplive.liveplatform.ui.widget.SearchBarView;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 import com.pplive.liveplatform.util.ViewUtil;
 
@@ -59,7 +59,7 @@ public class ChannelFragment extends Fragment {
 
     private final static int CATALOG_FINANCE = 5;
 
-    private SearchTopBarView mSearchTopBarView;
+    private SearchBarView mSearchTopBarView;
 
     private ProgramContainer mContainer;
 
@@ -113,7 +113,7 @@ public class ChannelFragment extends Fragment {
         //        mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
         //        mTitleBar.setOnClickListener(onTitleBarClickListener);
 
-        mSearchTopBarView = (SearchTopBarView) layout.findViewById(R.id.search_top_bar);
+        mSearchTopBarView = (SearchBarView) layout.findViewById(R.id.search_top_bar);
 
         mRetryText = (TextView) layout.findViewById(R.id.text_channel_retry);
         mRetryLayout = layout.findViewById(R.id.layout_channel_retry);

@@ -75,7 +75,7 @@ public class ChatContentAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_chat_item, parent, false);
+            convertView = mInflater.inflate(R.layout.item_chat, parent, false);
             holder = new ViewHolder();
             holder.contentTextView = (TextView) convertView.findViewById(R.id.text_chat_content);
             holder.timeTextView = (TextView) convertView.findViewById(R.id.text_chat_time);

@@ -30,7 +30,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
-import com.pplive.liveplatform.ui.SearchActivity;
+import com.pplive.liveplatform.ui.SearchResultActivity;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
 import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
@@ -489,7 +489,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {
-                Intent intent = new Intent(getActivity(), SearchActivity.class);
+                Intent intent = new Intent(getActivity(), SearchResultActivity.class);
                 startActivity(intent);
             }
         }

@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -26,11 +27,14 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
-import com.pplive.liveplatform.ui.widget.SearchBar;
+import com.pplive.liveplatform.ui.widget.SearchInputBarView;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 
-public class SearchActivity extends Activity implements SearchBar.Callback {
-    static final String TAG = "_SearchActivity";
+public class SearchResultActivity extends Activity implements SearchInputBarView.Callback {
+
+    static final String TAG = SearchResultActivity.class.getSimpleName();
+    
+    public final static String KEY_SEARCH_KEY_WORD = "search_key_word";
 
     private final static int REFRESH = 1000;
 
@@ -38,7 +42,7 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
 
     private final static int FALL_COUNT = 16;
 
-    private SearchBar mSearchBar;
+    private SearchInputBarView mSearchBar;
 
     private String mNextToken;
 
@@ -60,9 +64,9 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_search);
+        setContentView(R.layout.activity_search_result);
 
-        mSearchBar = (SearchBar) findViewById(R.id.searchbar_search);
+        mSearchBar = (SearchInputBarView) findViewById(R.id.searchbar_search);
         mSearchBar.setOnClickListener(onSearchBarClickListener);
         mSearchBar.setCallbackListener(this);
 
@@ -78,11 +82,29 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         mShadowView = findViewById(R.id.layout_search_shadow);
         mShadowView.setOnTouchListener(onTouchListener);
     }
+    
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        
+        setIntent(intent);
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
-        mSearchBar.forcusEditText();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        Intent intent = getIntent();
+        String keyword = intent.getStringExtra(KEY_SEARCH_KEY_WORD);
+        
+        if (!TextUtils.isEmpty(keyword)) {
+            startSearchTask(keyword);
+        }
     }
 
     private View.OnClickListener onSearchBarClickListener = new View.OnClickListener() {
@@ -186,7 +208,7 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             mBusy = false;
-            Toast.makeText(SearchActivity.this, R.string.toast_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SearchResultActivity.this, R.string.toast_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -197,14 +219,14 @@ public class SearchActivity extends Activity implements SearchBar.Callback {
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "SearchTask onTimeout");
             mBusy = false;
-            Toast.makeText(SearchActivity.this, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SearchResultActivity.this, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onTaskCancel(Object sender, TaskCancelEvent event) {
             Log.d(TAG, "SearchTask onTaskCancel");
             mBusy = false;
-            Toast.makeText(SearchActivity.this, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
+            Toast.makeText(SearchResultActivity.this, R.string.toast_cancel, Toast.LENGTH_SHORT).show();
         }
     };
 

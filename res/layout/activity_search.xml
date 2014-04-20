@@ -1,58 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/top_bar_height"
-        android:background="@color/home_fragment_body_bg"
-        android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/text_search_result"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/search_nodata_text"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:visibility="gone" />
-
-        <com.pplive.liveplatform.ui.home.ProgramContainer
-            android:id="@+id/layout_search_body"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/layout_search_nodata"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="200dp"
-        android:background="@color/home_fragment_body_bg"
-        android:gravity="center_horizontal"
-        android:text="@string/search_nodata_text"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        android:visibility="gone" />
+    android:layout_height="fill_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".SearchActivity" >
 
     <RelativeLayout
-        android:id="@+id/layout_search_shadow"
+        android:id="@+id/serach_edit_bar"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/searchbar_body_bg"
-        android:clickable="true"
-        android:visibility="gone" />
+        android:layout_height="@dimen/top_bar_height" >
 
-    <com.pplive.liveplatform.ui.widget.SearchBar
-        android:id="@+id/searchbar_search"
+        <com.pplive.liveplatform.ui.widget.EnterSendEditText
+            android:id="@+id/search_input_bar_edit_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/search_input_bar_close_btn"
+            android:background="@drawable/searchbar_input_bg"
+            android:drawablePadding="10dp"
+            android:drawableStart="@drawable/searchbar_icon"
+            android:hint="@string/search_hint_text"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:padding="10dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textColorHint="@color/search_hint"
+            android:textSize="17sp" />
+
+        <ImageButton
+            android:id="@+id/search_input_bar_close_btn"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:src="@drawable/searchbar_close_btn" />
+    </RelativeLayout>
+
+    <ExpandableListView
+        android:id="@+id/expandable_list_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true" />
+        android:groupIndicator="@null" />
 
-</RelativeLayout>
+</LinearLayout>
