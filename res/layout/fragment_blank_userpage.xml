@@ -2,53 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/app_bg" >
+    android:background="@drawable/blank_userpage_bg" >
 
-    <com.pplive.liveplatform.ui.widget.TopBarView
-        android:id="@+id/top_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height"
-        android:background="@color/app_bg" />
+    <View
+        android:id="@+id/anchor_view"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:layout_centerInParent="true" />
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/top_bar" >
+    <ImageButton
+        android:id="@+id/btn_login"
+        style="@style/Widget.Button.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/anchor_view"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="80dp"
+        android:contentDescription="@null"
+        android:src="@drawable/userpage_landed_button" />
 
-        <View
-            android:id="@+id/anchor_view"
-            android:layout_width="1dp"
-            android:layout_height="1dp"
-            android:layout_centerInParent="true" />
-
-        <com.pplive.liveplatform.ui.widget.image.CircularImageView
-            android:id="@+id/image_icon"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_above="@+id/anchor_view"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="100dp" />
-
-        <ImageButton
-            android:id="@+id/btn_login"
-            style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/anchor_view"
-            android:layout_centerHorizontal="true"
-            android:contentDescription="@null"
-            android:src="@drawable/userpage_landed_button_hover" />
-
-        <ImageButton
-            android:id="@+id/btn_register"
-            style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_login"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:contentDescription="@null"
-            android:src="@drawable/userpage_registration_button_hover" />
-    </RelativeLayout>
+    <ImageButton
+        android:id="@+id/btn_register"
+        style="@style/Widget.Button.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/btn_login"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:contentDescription="@null"
+        android:src="@drawable/userpage_registration_button" />
 
 </RelativeLayout>

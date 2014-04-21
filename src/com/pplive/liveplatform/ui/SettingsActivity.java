@@ -52,13 +52,13 @@ public class SettingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_settings);
-        findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
-        findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
-        findViewById(R.id.btn_settings_login).setOnClickListener(onLoginBtnClickListener);
-        findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
-        findViewById(R.id.layout_settings_about).setOnClickListener(onAboutClickListener);
-        findViewById(R.id.layout_settings_update).setOnClickListener(onUpdateClickListener);
-        findViewById(R.id.layout_settings_feedback).setOnClickListener(onFeedbackClickListener);
+        findViewById(R.id.btn_settings_back).setOnClickListener(mOnBackBtnClickListener);
+        findViewById(R.id.btn_settings_logout).setOnClickListener(mOnLogoutBtnClickListener);
+        findViewById(R.id.btn_settings_login).setOnClickListener(mOnLoginBtnClickListener);
+        findViewById(R.id.layout_settings_nickname).setOnClickListener(mOnNicknameClickListener);
+        findViewById(R.id.layout_settings_about).setOnClickListener(mOnAboutClickListener);
+        findViewById(R.id.layout_settings_update).setOnClickListener(mOnUpdateClickListener);
+        findViewById(R.id.layout_settings_feedback).setOnClickListener(mOnFeedbackClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
@@ -123,14 +123,14 @@ public class SettingsActivity extends Activity {
         super.onStop();
     }
 
-    private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnBackBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
         }
     };
 
-    private View.OnClickListener onLogoutBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnLogoutBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Dialog dialog = DialogManager.alertLogoutDialog(SettingsActivity.this, new DialogInterface.OnClickListener() {
@@ -145,7 +145,7 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onLoginBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnLoginBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
@@ -155,7 +155,7 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onNicknameClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnNicknameClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
@@ -163,7 +163,7 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onAboutClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnAboutClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
@@ -171,14 +171,14 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnUpdateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Update.updateManual(SettingsActivity.this);
         }
     };
     
-    private View.OnClickListener onFeedbackClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnFeedbackClickListener = new View.OnClickListener() {
         
         @Override
         public void onClick(View v) {

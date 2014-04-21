@@ -25,7 +25,7 @@
             android:checked="true" />
 
         <RadioButton
-            android:id="@+id/btn_status_replay"
+            android:id="@+id/btn_status_reply"
             style="@style/style_live_state_btn"
             android:background="@drawable/live_state_reply" />
     </RadioGroup>

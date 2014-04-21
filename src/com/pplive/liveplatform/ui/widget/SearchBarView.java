@@ -1,24 +1,24 @@
 package com.pplive.liveplatform.ui.widget;
 
-import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.ui.SearchActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.View;
 
-public class SearchTopBarView extends TopBarView {
+import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.SearchActivity;
 
-    public SearchTopBarView(Context context) {
+public class SearchBarView extends TopBarView {
+
+    public SearchBarView(Context context) {
         this(context, null);
     }
 
-    public SearchTopBarView(Context context, AttributeSet attrs) {
+    public SearchBarView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SearchTopBarView(Context context, AttributeSet attrs, int defStyle) {
+    public SearchBarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
     }
 

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- String -->
     <string name="search_hint_text">搜点什么好呢</string>
     <string name="search_nodata_text">暂时没有数据</string>
     <string name="search_clear_data">清除搜索记录</string>
 
+    <!-- Color -->
     <color name="searchbar_body_bg">#AA000000</color>
     <color name="searchbar_clear_text">#FFAAAAAA</color>
     <color name="searchbar_list_text_select">#FF5AC7FF</color>
@@ -13,5 +15,9 @@
     <color name="searchbar_list_select">#CC001E33</color>
     <color name="searchbar_list_divider">#FF080808</color>
     <color name="search_hint">#FF555555</color>
+    <color name="search_group_bg">#FF272727</color>
+    <color name="search_group_text_color">#FF199FFE</color>
+    <color name="search_keyword_bg_hover">#FF001E33</color>
+    <color name="search_keyword_divider_color">#FF151515</color>
 
 </resources>

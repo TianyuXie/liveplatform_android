@@ -196,6 +196,7 @@ public class UserPageFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
         if (mNeedUpdate) {
             refreshData(false);
         }

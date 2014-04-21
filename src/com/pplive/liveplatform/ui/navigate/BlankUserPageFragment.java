@@ -11,11 +11,8 @@ import android.widget.ImageButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.ui.LoginActivity;
 import com.pplive.liveplatform.ui.RegisterActivity;
-import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 
 public class BlankUserPageFragment extends Fragment {
-
-    private CircularImageView mImageIcon;
 
     private ImageButton mBtnLogin;
 
@@ -24,8 +21,6 @@ public class BlankUserPageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_blank_userpage, container, false);
-
-        mImageIcon = (CircularImageView) layout.findViewById(R.id.image_icon);
 
         mBtnLogin = (ImageButton) layout.findViewById(R.id.btn_login);
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
@@ -55,8 +50,6 @@ public class BlankUserPageFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        mImageIcon.setLocalImage(R.drawable.user_icon_default);
     }
 
 }

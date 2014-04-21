@@ -5,7 +5,7 @@
     android:orientation="horizontal" >
 
     <RelativeLayout
-        android:id="@+id/layout_userpage_item_front"
+        android:id="@+id/layout_userpage_item"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:padding="10dp" >

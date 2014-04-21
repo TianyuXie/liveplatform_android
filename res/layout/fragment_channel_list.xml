@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:background="@color/home_fragment_body_bg" >
 
-    <com.pplive.liveplatform.ui.widget.SearchTopBarView
+    <com.pplive.liveplatform.ui.widget.SearchBarView
         android:id="@+id/search_top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
@@ -20,7 +20,6 @@
         android:layout_centerHorizontal="true"
         android:divider="@null"
         android:listSelector="@android:color/transparent"
-        ptr:ptrHeaderBackground="#FF272727"
-        ptr:ptrMode="both" />
+        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg" />
 
 </RelativeLayout>

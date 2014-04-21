@@ -46,8 +46,7 @@
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/search_hint"
-                android:textSize="17sp" >
-            </com.pplive.liveplatform.ui.widget.EnterSendEditText>
+                android:textSize="17sp" />
         </LinearLayout>
 
         <ImageButton
@@ -58,7 +57,7 @@
             android:contentDescription="@null"
             android:gravity="center_vertical"
             android:padding="10dp"
-            android:src="@drawable/searchbar_close_btn_bg" />
+            android:src="@drawable/searchbar_close_btn" />
     </LinearLayout>
 
     <LinearLayout

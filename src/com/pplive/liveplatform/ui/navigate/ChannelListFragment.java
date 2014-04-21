@@ -20,13 +20,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Subject;
-import com.pplive.liveplatform.ui.widget.SearchTopBarView;
+import com.pplive.liveplatform.ui.widget.SearchBarView;
 
 public class ChannelListFragment extends Fragment {
 
     static final String TAG = ChannelListFragment.class.getSimpleName();
 
-    private SearchTopBarView mSearchTopBarView;
+    private SearchBarView mSearchTopBarView;
 
     private PullToRefreshListView mListViewChannel;
 
@@ -47,7 +47,7 @@ public class ChannelListFragment extends Fragment {
             ViewHolder holder = null;
             if (null == convertView) {
                 LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.layout_channel_list_item, null);
+                convertView = inflater.inflate(R.layout.item_channel_list, null);
 
                 holder = new ViewHolder();
 
@@ -86,7 +86,7 @@ public class ChannelListFragment extends Fragment {
 
         View layout = inflater.inflate(R.layout.fragment_channel_list, container, false);
 
-        mSearchTopBarView = (SearchTopBarView) layout.findViewById(R.id.search_top_bar);
+        mSearchTopBarView = (SearchBarView) layout.findViewById(R.id.search_top_bar);
         mSearchTopBarView.setTitle(R.string.navbar_channel);
 
         mListViewChannel = (PullToRefreshListView) layout.findViewById(R.id.listview_channel);

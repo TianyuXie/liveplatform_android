@@ -87,7 +87,7 @@ class EmojiAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (null == convertView) {
-            convertView = mInflater.inflate(R.layout.layout_emoji_item, null);
+            convertView = mInflater.inflate(R.layout.item_emoji, null);
 
             ViewHolder holder = new ViewHolder();
             holder.mImageView = (ImageView) convertView.findViewById(R.id.image_emoji_icon);

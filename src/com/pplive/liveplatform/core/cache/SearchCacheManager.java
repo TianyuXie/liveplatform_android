@@ -8,20 +8,21 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
-public class CacheManager {
+public class SearchCacheManager {
+
     private SQLiteDatabase mUserCache;
 
     private CacheHelper mUserCacheHelper;
 
-    private static CacheManager instance;
+    private static SearchCacheManager instance;
 
-    public static synchronized CacheManager getInstance(Context context) {
+    public static synchronized SearchCacheManager getInstance(Context context) {
         if (instance == null)
-            instance = new CacheManager(context.getApplicationContext());
+            instance = new SearchCacheManager(context.getApplicationContext());
         return instance;
     }
 
-    private CacheManager(Context context) {
+    private SearchCacheManager(Context context) {
         mUserCacheHelper = new CacheHelper(context);
         mUserCache = mUserCacheHelper.getWritableDatabase();
     }

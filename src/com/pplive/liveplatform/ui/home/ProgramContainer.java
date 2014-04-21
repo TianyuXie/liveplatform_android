@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.ui.GridViewProgramAdapter;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 
@@ -30,7 +31,7 @@ public class ProgramContainer extends RelativeLayout {
 
     private List<Program> mPrograms;
 
-    private HomeProgramAdapter mAdapter;
+    private GridViewProgramAdapter mAdapter;
 
     private RefreshGridView mGridView;
 
@@ -47,7 +48,7 @@ public class ProgramContainer extends RelativeLayout {
     public ProgramContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPrograms = new ArrayList<Program>();
-        mAdapter = new HomeProgramAdapter(context, mPrograms);
+        mAdapter = new GridViewProgramAdapter(context, mPrograms);
         mItemClickable = true;
 
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -57,7 +58,7 @@ public class ProgramContainer extends RelativeLayout {
         mGridView = (RefreshGridView) root.findViewById(R.id.grid_home_results);
 
         mRadioBtnLiving = (RadioButton) root.findViewById(R.id.btn_status_living);
-        mRadioBtnReplay = (RadioButton) root.findViewById(R.id.btn_status_replay);
+        mRadioBtnReplay = (RadioButton) root.findViewById(R.id.btn_status_reply);
 
         LinearLayout pullHeader = (LinearLayout) root.findViewById(R.id.layout_pull_header);
         pullHeader.addView(mGridView.getPullView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
@@ -130,7 +131,7 @@ public class ProgramContainer extends RelativeLayout {
         case R.id.btn_status_living:
             mRadioBtnLiving.setChecked(true);
             break;
-        case R.id.btn_status_replay:
+        case R.id.btn_status_reply:
             mRadioBtnReplay.setChecked(true);
             break;
         default:

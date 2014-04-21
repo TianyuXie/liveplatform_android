@@ -60,7 +60,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.layout_userpage_item, parent, false);
+            convertView = mInflater.inflate(R.layout.item_userpage_program, parent, false);
 
             holder = new ViewHolder();
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_userpage_program_preview);

@@ -20,9 +20,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.cache.CacheManager;
+import com.pplive.liveplatform.core.cache.SearchCacheManager;
 
-public class SearchBar extends LinearLayout {
+public class SearchInputBarView extends LinearLayout {
     final static String TAG = "_SearchBar";
 
     private final static String LIST_ITEM_KEY = "ItemTitle";
@@ -31,7 +31,7 @@ public class SearchBar extends LinearLayout {
 
     private Button mSearchButton;
 
-    private CacheManager mCacheManager;
+    private SearchCacheManager mCacheManager;
 
     private EnterSendEditText mSearchEditText;
 
@@ -41,13 +41,13 @@ public class SearchBar extends LinearLayout {
 
     private SimpleAdapter mRecordItemAdapter;
 
-    public SearchBar(Context context) {
+    public SearchInputBarView(Context context) {
         this(context, null);
     }
 
-    public SearchBar(Context context, AttributeSet attrs) {
+    public SearchInputBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mCacheManager = CacheManager.getInstance(context);
+        mCacheManager = SearchCacheManager.getInstance(context);
         mRecordItems = new ArrayList<Map<String, Object>>();
         mRecords = new ArrayList<String>();
 
