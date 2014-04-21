@@ -1,59 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@color/app_bg" >
 
-    <LinearLayout
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        android:id="@+id/top_bar"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="@dimen/top_bar_height"
-        android:background="@color/home_fragment_body_bg"
-        android:orientation="vertical" >
+        android:layout_height="@dimen/top_bar_height" />
 
-        <TextView
-            android:id="@+id/text_search_result"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:padding="10dp"
-            android:text="@string/search_nodata_text"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:visibility="gone" />
-
-        <com.pplive.liveplatform.ui.home.ProgramContainer
-            android:id="@+id/layout_search_body"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent" />
-    </LinearLayout>
+    <com.pplive.liveplatform.ui.home.ProgramContainer
+        android:id="@+id/layout_search_body"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_bar" />
 
     <TextView
         android:id="@+id/layout_search_nodata"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="200dp"
-        android:background="@color/home_fragment_body_bg"
+        android:layout_alignTop="@+id/layout_search_body"
+        android:layout_marginTop="80dp"
         android:gravity="center_horizontal"
         android:text="@string/search_nodata_text"
         android:textColor="@color/white"
         android:textSize="18sp"
-        android:visibility="gone" />
-
-    <RelativeLayout
-        android:id="@+id/layout_search_shadow"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/searchbar_body_bg"
-        android:clickable="true"
-        android:visibility="gone" />
-
-    <com.pplive.liveplatform.ui.widget.SearchInputBarView
-        android:id="@+id/searchbar_search"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:visibility="gone" />
 
 </RelativeLayout>

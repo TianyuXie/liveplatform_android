@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
 
 public class SearchCacheManager {
+
     private SQLiteDatabase mUserCache;
 
     private CacheHelper mUserCacheHelper;

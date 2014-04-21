@@ -52,13 +52,14 @@ public class TopBarView extends RelativeLayout {
         setTitle(R.string.app_name);
     }
 
-    public void setTitle(String title) {
+    public void setTitle(CharSequence title) {
         mTextTitle.setText(title);
     }
 
     public void setTitle(int resId) {
         mTextTitle.setText(resId);
     }
+    
 
     public void setLeftBtnOnClickListener(View.OnClickListener listener) {
         setBtnOnClickListener(true, listener);

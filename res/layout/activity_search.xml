@@ -4,13 +4,14 @@
     android:layout_height="fill_parent"
     android:background="@color/app_bg"
     android:orientation="vertical"
-    android:padding="10dp"
     tools:context=".SearchActivity" >
 
     <RelativeLayout
         android:id="@+id/serach_edit_bar"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height" >
+        android:layout_height="@dimen/top_bar_height"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
 
         <com.pplive.liveplatform.ui.widget.EnterSendEditText
             android:id="@+id/search_input_bar_edit_view"
@@ -27,7 +28,7 @@
             android:inputType="text"
             android:padding="10dp"
             android:singleLine="true"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textColorHint="@color/search_hint"
             android:textSize="17sp" />
 
@@ -48,6 +49,8 @@
         android:id="@+id/expandable_list_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:groupIndicator="@null" />
+        android:childDivider="@color/search_keyword_divider_color"
+        android:groupIndicator="@null"
+        android:listSelector="#00000000" />
 
 </LinearLayout>

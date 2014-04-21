@@ -7,7 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +22,7 @@ import com.pplive.liveplatform.ui.SearchResultActivity;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 
 public class SearchActivity extends Activity {
-    
+
     static final String TAG = SearchActivity.class.getSimpleName();
 
     private EnterSendEditText mEditSearchInput;
@@ -32,7 +32,7 @@ public class SearchActivity extends Activity {
     private ExpandableListView mExpandableListView;
 
     private SearchExpandableListAdapter mAdapter;
-    
+
     private SearchCacheManager mCacheManager;
 
     @Override
@@ -44,16 +44,13 @@ public class SearchActivity extends Activity {
 
         mEditSearchInput = (EnterSendEditText) findViewById(R.id.search_input_bar_edit_view);
         mEditSearchInput.setOnEnterListener(new EnterSendEditText.OnEnterListener() {
-            
+
             @Override
             public boolean onEnter(View v) {
-                Log.d(TAG, "keyword: " + mEditSearchInput.getText().toString());
-                
-                Intent intent = new Intent(getApplicationContext(), SearchResultActivity.class);
-                intent.putExtra(SearchResultActivity.KEY_SEARCH_KEY_WORD, mEditSearchInput.getText().toString());
-                
-                startActivity(intent);
-                
+                String keyword = mEditSearchInput.getText().toString();
+
+                search(keyword);
+
                 return true;
             }
         });
@@ -69,132 +66,156 @@ public class SearchActivity extends Activity {
         });
 
         mExpandableListView = (ExpandableListView) findViewById(R.id.expandable_list_view);
-        
+        mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                
+                String keyword = mAdapter.getChild(groupPosition, childPosition);
+                
+                search(keyword);
+                
+                return true;
+            }
+        });
+
         mAdapter = new SearchExpandableListAdapter(getApplicationContext());
         mExpandableListView.setAdapter(mAdapter);
         mExpandableListView.expandGroup(0);
         mExpandableListView.expandGroup(1);
-        
+
         mCacheManager = SearchCacheManager.getInstance(getApplicationContext());
     }
-    
-    
+
     @Override
     protected void onResume() {
         super.onResume();
-        
+
         mAdapter.setSearchHistoryKeywords(mCacheManager.getSearchCache(10));
     }
-
-}
-
-class SearchExpandableListAdapter extends BaseExpandableListAdapter {
-
-    static final String TAG = SearchExpandableListAdapter.class.getSimpleName();
-
-    private String[] keywords = { "NBA", "英超" };
     
-    private List<String> mSearchHistoryKeywords;
+    private void search(String keyword) {
+        if (!TextUtils.isEmpty(keyword)) {
 
-    private LayoutInflater mInflater;
+            mCacheManager.updateCache(keyword);
 
-    public SearchExpandableListAdapter(Context context) {
-        mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-    }
-    
-    public void setSearchHistoryKeywords(List<String> list) {
-        mSearchHistoryKeywords = list;
-        
-        notifyDataSetChanged();
+            Intent intent = new Intent(getApplicationContext(), SearchResultActivity.class);
+            intent.putExtra(SearchResultActivity.KEY_SEARCH_KEY_WORD, keyword);
+
+            startActivity(intent);
+        }
     }
 
-    @Override
-    public int getGroupCount() {
-        return 2;
-    }
-    
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return 0 == groupPosition ? keywords.length : null != mSearchHistoryKeywords ? mSearchHistoryKeywords.size() : 0;
-    }
+    class SearchExpandableListAdapter extends BaseExpandableListAdapter {
 
-    @Override
-    public Object getGroup(int groupPosition) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        private String[] keywords = { "NBA", "英超" };
 
-    @Override
-    public Object getChild(int groupPosition, int childPosition) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        private List<String> mSearchHistoryKeywords;
 
-    @Override
-    public long getGroupId(int groupPosition) {
-        return groupPosition;
-    }
+        private LayoutInflater mInflater;
 
-    @Override
-    public long getChildId(int groupPosition, int childPosition) {
-         return childPosition;
-    }
-
-    @Override
-    public boolean hasStableIds() {
-        return false;
-    }
-
-    @Override
-    public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-
-        if (null == convertView) {
-            convertView = mInflater.inflate(R.layout.item_search_keyword, null, false);
-
-            ViewHolder holder = new ViewHolder();
-            holder.mTextView = (TextView) convertView.findViewById(R.id.text);
-
-            convertView.setTag(holder);
+        public SearchExpandableListAdapter(Context context) {
+            mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         }
 
-        ViewHolder holder = (ViewHolder) convertView.getTag();
-        holder.mTextView.setText(groupPosition == 0 ? "热门关键字" : "最近搜索历史");
+        public void setSearchHistoryKeywords(List<String> list) {
+            mSearchHistoryKeywords = list;
 
-        return convertView;
-    }
-
-    @Override
-    public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-        
-        if (null == convertView) {
-            convertView = mInflater.inflate(R.layout.item_search_keyword, null, false);
-
-            ViewHolder holder = new ViewHolder();
-            holder.mTextView = (TextView) convertView.findViewById(R.id.text);
-
-            convertView.setTag(holder);
+            notifyDataSetChanged();
         }
-        
-        if (1 == groupPosition) {
+
+        @Override
+        public int getGroupCount() {
+            return 2;
+        }
+
+        @Override
+        public int getChildrenCount(int groupPosition) {
+            return 0 == groupPosition ? keywords.length : null != mSearchHistoryKeywords ? mSearchHistoryKeywords.size() : 0;
+        }
+
+        @Override
+        public Object getGroup(int groupPosition) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String getChild(int groupPosition, int childPosition) {
             
-        } else {
-            ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.mTextView.setText(keywords[childPosition]);
+            String keyword = null;
+            if (1 == groupPosition) {
+                keyword = mSearchHistoryKeywords.get(childPosition);
+            } else {
+                keyword = keywords[childPosition];
+            }
+            
+            return keyword;
         }
 
-        
-        return convertView;
-    }
+        @Override
+        public long getGroupId(int groupPosition) {
+            return groupPosition;
+        }
 
-    @Override
-    public boolean isChildSelectable(int groupPosition, int childPosition) {
-        // TODO Auto-generated method stub
-        return true;
+        @Override
+        public long getChildId(int groupPosition, int childPosition) {
+            return childPosition;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+
+        @Override
+        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
+
+            if (null == convertView) {
+                convertView = mInflater.inflate(R.layout.item_search_group, null, false);
+
+                ViewHolder holder = new ViewHolder();
+                holder.mTextView = (TextView) convertView.findViewById(R.id.text);
+
+                convertView.setTag(holder);
+            }
+
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+            holder.mTextView.setText(groupPosition == 0 ? "热词推荐" : "搜索记录");
+
+            return convertView;
+        }
+
+        @Override
+        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
+
+            if (null == convertView) {
+                convertView = mInflater.inflate(R.layout.item_search_keyword, null, false);
+
+                ViewHolder holder = new ViewHolder();
+                holder.mTextView = (TextView) convertView.findViewById(R.id.text);
+
+                convertView.setTag(holder);
+            }
+
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+            if (1 == groupPosition) {
+                holder.mTextView.setText(mSearchHistoryKeywords.get(childPosition));
+            } else {
+                holder.mTextView.setText(keywords[childPosition]);
+            }
+
+            return convertView;
+        }
+
+        @Override
+        public boolean isChildSelectable(int groupPosition, int childPosition) {
+            // TODO Auto-generated method stub
+            return true;
+        }
     }
-    
 
     static class ViewHolder {
         TextView mTextView;
     }
-
 }

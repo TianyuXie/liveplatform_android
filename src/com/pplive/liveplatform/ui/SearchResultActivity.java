@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
@@ -27,13 +25,13 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
-import com.pplive.liveplatform.ui.widget.SearchInputBarView;
+import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 
-public class SearchResultActivity extends Activity implements SearchInputBarView.Callback {
+public class SearchResultActivity extends Activity {
 
     static final String TAG = SearchResultActivity.class.getSimpleName();
-    
+
     public final static String KEY_SEARCH_KEY_WORD = "search_key_word";
 
     private final static int REFRESH = 1000;
@@ -42,7 +40,7 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
 
     private final static int FALL_COUNT = 16;
 
-    private SearchInputBarView mSearchBar;
+    private TopBarView mTopBarView;
 
     private String mNextToken;
 
@@ -54,39 +52,39 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
 
     private View mRetryLayout;
 
-    private View mShadowView;
-
-    private TextView mResultText;
-
     private boolean mBusy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_search_result);
 
-        mSearchBar = (SearchInputBarView) findViewById(R.id.searchbar_search);
-        mSearchBar.setOnClickListener(onSearchBarClickListener);
-        mSearchBar.setCallbackListener(this);
+        mTopBarView = (TopBarView) findViewById(R.id.top_bar);
+        mTopBarView.setLeftBtnOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+        mTopBarView.showLeftBtn();
 
         mContainer = (ProgramContainer) findViewById(R.id.layout_search_body);
-        mContainer.setOnUpdateListener(onUpdateListener);
-        mContainer.setOnStatusChangeListener(onStatusChangeListener);
+        mContainer.setOnUpdateListener(mOnUpdateListener);
+        mContainer.setOnStatusChangeListener(mOnStatusChangeListener);
         mContainer.setPullable(false);
+
         mRetryLayout = findViewById(R.id.layout_search_nodata);
-        mResultText = (TextView) findViewById(R.id.text_search_result);
 
         mLiveStatus = LiveStatusKeyword.LIVING;
-
-        mShadowView = findViewById(R.id.layout_search_shadow);
-        mShadowView.setOnTouchListener(onTouchListener);
     }
-    
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        
+
         setIntent(intent);
     }
 
@@ -94,33 +92,21 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
     protected void onStart() {
         super.onStart();
     }
-    
+
     @Override
     protected void onResume() {
         super.onResume();
-        
+
         Intent intent = getIntent();
         String keyword = intent.getStringExtra(KEY_SEARCH_KEY_WORD);
-        
+
         if (!TextUtils.isEmpty(keyword)) {
             startSearchTask(keyword);
         }
-    }
 
-    private View.OnClickListener onSearchBarClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            switch (v.getId()) {
-            case R.id.btn_searchbar_close:
-                finish();
-                break;
-            case R.id.btn_searchbar_search:
-                mSearchBar.clearFocus();
-                startSearchTask(mSearchBar.getText().toString());
-                break;
-            }
-        }
-    };
+        mTopBarView
+                .setTitle(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>", mKeyword)));
+    }
 
     private void startSearchTask(String keyword) {
         if (!mBusy) {
@@ -175,9 +161,6 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
         @SuppressWarnings("unchecked")
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mBusy = false;
-            mResultText.setVisibility(View.VISIBLE);
-            mResultText.setText(Html.fromHtml(String.format("<b><font color=white>\"%s\"</font></b>&nbsp;<small><font color=#BBBBBB>搜索结果</font><small>",
-                    mKeyword)));
             FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
             mNextToken = fallList.nextToken();
             Log.d(TAG, mNextToken);
@@ -230,7 +213,7 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
         }
     };
 
-    private RadioGroup.OnCheckedChangeListener onStatusChangeListener = new RadioGroup.OnCheckedChangeListener() {
+    private RadioGroup.OnCheckedChangeListener mOnStatusChangeListener = new RadioGroup.OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -250,7 +233,7 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
         }
     };
 
-    private RefreshGridView.OnUpdateListener onUpdateListener = new RefreshGridView.OnUpdateListener() {
+    private RefreshGridView.OnUpdateListener mOnUpdateListener = new RefreshGridView.OnUpdateListener() {
         @Override
         public void onRefresh() {
         }
@@ -267,29 +250,9 @@ public class SearchResultActivity extends Activity implements SearchInputBarView
     };
 
     @Override
-    public void onShowRecord(boolean show) {
-        if (show) {
-            mShadowView.setVisibility(View.VISIBLE);
-        } else {
-            mShadowView.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
     protected void onStop() {
         //ImageLoader.getInstance().clearMemoryCache();
         super.onStop();
     }
-
-    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                Log.d(TAG, "onTouch");
-                mSearchBar.clearFocus();
-            }
-            return false;
-        }
-    };
 
 }
