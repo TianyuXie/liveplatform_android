@@ -6,8 +6,10 @@ import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.core.cache.SearchCacheManager;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.live.SearchService;
 import com.pplive.liveplatform.ui.SearchResultActivity;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 
@@ -67,14 +71,14 @@ public class SearchActivity extends Activity {
 
         mExpandableListView = (ExpandableListView) findViewById(R.id.expandable_list_view);
         mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            
+
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                
+
                 String keyword = mAdapter.getChild(groupPosition, childPosition);
-                
+
                 search(keyword);
-                
+
                 return true;
             }
         });
@@ -88,12 +92,43 @@ public class SearchActivity extends Activity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+
+        AsyncTask<Void, Void, List<String>> task = new AsyncTask<Void, Void, List<String>>() {
+
+            @Override
+            protected List<String> doInBackground(Void... params) {
+
+                List<String> searchKeyWords = null;
+                try {
+                    searchKeyWords = SearchService.getInstance().getSearchWordsList();
+                } catch (LiveHttpException e) {
+                    Log.w(TAG, e.toString());
+                }
+
+                return searchKeyWords;
+            }
+
+            @Override
+            protected void onPostExecute(List<String> result) {
+
+                if (null != result) {
+                    mAdapter.setSearchKeyWords(result);
+                }
+            }
+        };
+
+        task.execute();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
 
         mAdapter.setSearchHistoryKeywords(mCacheManager.getSearchCache(10));
     }
-    
+
     private void search(String keyword) {
         if (!TextUtils.isEmpty(keyword)) {
 
@@ -108,7 +143,7 @@ public class SearchActivity extends Activity {
 
     class SearchExpandableListAdapter extends BaseExpandableListAdapter {
 
-        private String[] keywords = { "NBA", "英超" };
+        private List<String> mSearchKeywords;
 
         private List<String> mSearchHistoryKeywords;
 
@@ -116,6 +151,10 @@ public class SearchActivity extends Activity {
 
         public SearchExpandableListAdapter(Context context) {
             mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+        }
+
+        public void setSearchKeyWords(List<String> list) {
+
         }
 
         public void setSearchHistoryKeywords(List<String> list) {
@@ -131,7 +170,15 @@ public class SearchActivity extends Activity {
 
         @Override
         public int getChildrenCount(int groupPosition) {
-            return 0 == groupPosition ? keywords.length : null != mSearchHistoryKeywords ? mSearchHistoryKeywords.size() : 0;
+
+            List<String> list = null;
+            if (0 == groupPosition) {
+                list = mSearchKeywords;
+            } else {
+                list = mSearchHistoryKeywords;
+            }
+
+            return null != list ? list.size() : 0;
         }
 
         @Override
@@ -142,14 +189,14 @@ public class SearchActivity extends Activity {
 
         @Override
         public String getChild(int groupPosition, int childPosition) {
-            
+
             String keyword = null;
-            if (1 == groupPosition) {
-                keyword = mSearchHistoryKeywords.get(childPosition);
+            if (0 == groupPosition) {
+                keyword = mSearchKeywords.get(childPosition);
             } else {
-                keyword = keywords[childPosition];
+                keyword = mSearchHistoryKeywords.get(childPosition);
             }
-            
+
             return keyword;
         }
 
@@ -199,10 +246,12 @@ public class SearchActivity extends Activity {
             }
 
             ViewHolder holder = (ViewHolder) convertView.getTag();
-            if (1 == groupPosition) {
-                holder.mTextView.setText(mSearchHistoryKeywords.get(childPosition));
+            if (0 == groupPosition) {
+                holder.mTextView.setText(mSearchKeywords.get(childPosition));
+
             } else {
-                holder.mTextView.setText(keywords[childPosition]);
+                holder.mTextView.setText(mSearchHistoryKeywords.get(childPosition));
+
             }
 
             return convertView;

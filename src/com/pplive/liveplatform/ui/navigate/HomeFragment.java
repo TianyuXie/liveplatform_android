@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,8 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.GridLayoutAnimationController;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -22,10 +25,9 @@ import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.SearchService;
-import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
-import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeUtil;
@@ -35,7 +37,7 @@ public class HomeFragment extends Fragment {
     static final String TAG = HomeFragment.class.getSimpleName();
 
     private PullToRefreshGridView mContainer;
-    
+
     private ProgramAdapter mAdapter;
 
     @Override
@@ -53,14 +55,28 @@ public class HomeFragment extends Fragment {
                 task.execute();
             }
         });
-        
+
+        mContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (null != mAdapter) {
+                    Program program = mAdapter.getItem(position);
+
+                    Intent intent = new Intent(getActivity(), LivePlayerActivity.class);
+                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                    startActivity(intent);
+                }
+            }
+        });
+
         return layout;
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        
+
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.home_gridview_flyin);
         mContainer.getRefreshableView().setLayoutAnimation(glac);
 
@@ -91,7 +107,7 @@ public class HomeFragment extends Fragment {
         protected List<Program> doInBackground(Void... params) {
             FallList<Program> programs = null;
             try {
-                programs = SearchService.getInstance().searchProgram(2, SortKeyword.START_TIME, LiveStatusKeyword.LIVING, null, 10);
+                programs = SearchService.getInstance().getRecommandedProgram();
             } catch (LiveHttpException e) {
             }
 
@@ -181,6 +197,7 @@ class ProgramAdapter extends BaseAdapter {
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
             holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_owner);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewcount);
+            holder.liveImageView = (ImageView) convertView.findViewById(R.id.image_live);
             convertView.setTag(holder);
         }
 
@@ -198,21 +215,26 @@ class ProgramAdapter extends BaseAdapter {
         holder.titleTextView.setText(data.getTitle());
         holder.viewcountTextView.setText(String.valueOf(data.getViews()));
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+
         if (data.isPrelive()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.program_coming_icon, 0, 0, 0);
             holder.timedownTextView.setText(TimeUtil.stringForCountdown(data.getStartTime() - System.currentTimeMillis()));
+            holder.liveImageView.setVisibility(View.GONE);
         } else if (data.isVOD()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             holder.timedownTextView.setText(String.format("%s %s", TimeUtil.stamp2StringShort(data.getRealStartTime()),
                     TimeUtil.stringForTimeMin(data.getLength())));
+            holder.liveImageView.setVisibility(View.GONE);
         } else {
+            holder.liveImageView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setVisibility(View.GONE);
         }
     }
 
     static class ViewHolder {
+
         AsyncImageView previewImageView;
 
         TextView timedownTextView;
@@ -222,6 +244,8 @@ class ProgramAdapter extends BaseAdapter {
         TextView ownerTextView;
 
         TextView viewcountTextView;
+
+        ImageView liveImageView;
     }
 
 }

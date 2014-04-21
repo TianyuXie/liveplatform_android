@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
@@ -60,6 +61,8 @@ public class GridViewProgramAdapter extends BaseAdapter {
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
             holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_owner);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewcount);
+            holder.liveImageView = (ImageView) convertView.findViewById(R.id.image_live);
+
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -79,12 +82,17 @@ public class GridViewProgramAdapter extends BaseAdapter {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.program_coming_icon, 0, 0, 0);
             holder.timedownTextView.setText(TimeUtil.stringForCountdown(data.getStartTime() - System.currentTimeMillis()));
+
+            holder.liveImageView.setVisibility(View.GONE);
         } else if (data.isVOD()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             holder.timedownTextView.setText(String.format("%s %s", TimeUtil.stamp2StringShort(data.getRealStartTime()),
                     TimeUtil.stringForTimeMin(data.getLength())));
+
+            holder.liveImageView.setVisibility(View.GONE);
         } else {
+            holder.liveImageView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setVisibility(View.GONE);
         }
     }
@@ -99,5 +107,7 @@ public class GridViewProgramAdapter extends BaseAdapter {
         TextView ownerTextView;
 
         TextView viewcountTextView;
+
+        ImageView liveImageView;
     }
 }

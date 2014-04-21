@@ -95,15 +95,6 @@ public class ChannelFragment extends Fragment {
     }
 
     @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(null);
-
-        mContainer.checkStatus(R.id.btn_status_living);
-
-        updateTitle();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
         View layout = inflater.inflate(R.layout.fragment_channel, container, false);
@@ -117,7 +108,7 @@ public class ChannelFragment extends Fragment {
 
         mRetryText = (TextView) layout.findViewById(R.id.text_channel_retry);
         mRetryLayout = layout.findViewById(R.id.layout_channel_retry);
-        layout.findViewById(R.id.btn_channel_retry).setOnClickListener(mOnRetryClickListener);
+        mRetryLayout.setOnClickListener(mOnRetryClickListener);
 
         return layout;
     }
@@ -126,9 +117,10 @@ public class ChannelFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
+        Log.d(TAG, "onStart");
+
         mContainer.setStatusVisibility(mShowStatus ? View.VISIBLE : View.GONE);
 
-        Log.d(TAG, "onStart");
         if (!mInit) {
             mInit = true;
             startRefreshTask();
@@ -169,6 +161,9 @@ public class ChannelFragment extends Fragment {
         mLiveStatus = LiveStatusKeyword.LIVING;
 
         if (null != mContainer) {
+            mRetryLayout.setVisibility(View.GONE);
+
+            mContainer.clearData();
             mContainer.checkStatus(R.id.btn_status_living);
             mContainer.setStatusVisibility(mShowStatus ? View.VISIBLE : View.GONE);
 
