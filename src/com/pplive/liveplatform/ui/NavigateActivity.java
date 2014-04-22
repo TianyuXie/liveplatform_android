@@ -84,7 +84,7 @@ public class NavigateActivity extends FragmentActivity {
             @Override
             public void onSubjectSelected(Subject subject) {
                 switchFragment(mChannelFragment);
-                mChannelFragment.switchSubject(subject.getId());
+                mChannelFragment.switchSubject(subject);
             }
         });
 
@@ -140,7 +140,6 @@ public class NavigateActivity extends FragmentActivity {
         transcation.commit();
 
         mCurrentFragment = to;
-
     }
 
     private void onCheckedChanged(int checkId) {
@@ -150,8 +149,8 @@ public class NavigateActivity extends FragmentActivity {
             switchFragment(mHomeFragment);
             break;
         case R.id.navbar_original:
-            mChannelFragment.switchSubject(1);
             switchFragment(mChannelFragment);
+            mChannelFragment.switchSubject(1);
             break;
         case R.id.navbar_channel_list:
             switchFragment(mChannelListFragment);

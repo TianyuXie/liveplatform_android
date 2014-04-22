@@ -126,8 +126,6 @@ public class UserPageFragment extends Fragment {
 
     private boolean mRefreshDelayed;
 
-    private boolean mNeedUpdate;
-
     private Handler mPullHandler;
 
     private View mNoDataView;
@@ -154,7 +152,6 @@ public class UserPageFragment extends Fragment {
 
         mPullHandler = new PullHandler(this);
 
-        mNeedUpdate = true;
         mPrograms = new ArrayList<Program>();
         mAdapter = new UserpageProgramAdapter(mActivity, mPrograms);
         mAdapter.setRightClickListener(mOnItemRightClickListener);
@@ -197,14 +194,18 @@ public class UserPageFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        if (mNeedUpdate) {
-            refreshData(false);
-        }
+        Log.d(TAG, "onStart");
+
+        mPrograms.clear();
+        mAdapter.notifyDataSetChanged();
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.d(TAG, "onResumre");
 
         if (isLogin(mUsername)) {
             mTopBarView.setTitle(R.string.userpage_my_title);
@@ -219,6 +220,8 @@ public class UserPageFragment extends Fragment {
         }
 
         initUserinfo();
+
+        refreshData(false);
     }
 
     private void initUserinfo() {
@@ -511,7 +514,8 @@ public class UserPageFragment extends Fragment {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            mNeedUpdate = false;
+            Log.d(TAG, "onTaskFinished");
+
             mRefreshDialog.dismiss();
             mListView.setLastUpdateTime(System.currentTimeMillis());
             if ((Integer) event.getContext().get(GetProgramTask.KEY_TYPE) == PULL) {
@@ -539,6 +543,7 @@ public class UserPageFragment extends Fragment {
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "onTaskFailed");
+
             mRefreshDialog.dismiss();
             mPullHandler.sendEmptyMessage(MSG_PULL_FINISH);
             mPrograms.clear();
@@ -624,7 +629,6 @@ public class UserPageFragment extends Fragment {
 
     private void goRecorderActivity(Program program) {
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
-            mNeedUpdate = true;
             Intent intent = new Intent(mActivity, LiveRecordActivity.class);
             if (program != null) {
                 intent.putExtra(LiveRecordActivity.EXTRA_PROGRAM, program);

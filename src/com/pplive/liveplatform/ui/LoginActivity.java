@@ -86,6 +86,27 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        setIntent(intent);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        Intent intent = getIntent();
+
+        if (null != intent) {
+            String username = intent.getStringExtra(EXTRA_USERNAME);
+            String password = intent.getStringExtra(EXTRA_PASSWORD);
+
+            startLogin(username, password, DELAY_LOGIN);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mErrorHandler.removeCallbacksAndMessages(null);
@@ -96,7 +117,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         if (requestCode == RegisterActivity.FROM_LOGIN && resultCode == RegisterActivity.REGISTER_SUCCESS) {
             String username = data.getStringExtra(EXTRA_USERNAME);
             String password = data.getStringExtra(EXTRA_PASSWORD);
-            mRefreshDialog.show();
+
             startLogin(username, password, DELAY_LOGIN);
         } else if (WeiboPassport.getInstance().mSsoHandler != null) {
             WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
@@ -145,12 +166,18 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     private View.OnClickListener onConfirmBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mRefreshDialog.show();
             startLogin(mUsrEditText.getText().toString(), mPwdEditText.getText().toString(), 0);
         }
     };
 
     private void startLogin(String username, String password, int dalay) {
+
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+            return;
+        }
+
+        mRefreshDialog.show();
+
         LoginTask task = new LoginTask();
         task.addTaskListener(onLoginTaskListener);
         task.setDelay(dalay);

@@ -17,10 +17,12 @@ import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.core.service.live.resp.LiveStatusResp;
 import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramListResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramResp;
+import com.pplive.liveplatform.core.service.live.resp.SubjectListResp;
 import com.pplive.liveplatform.util.URL.Protocol;
 
 public class ProgramService extends RestService {
@@ -41,6 +43,9 @@ public class ProgramService extends RestService {
     private static final String TEMPLATE_DELETE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
 
     private static final String TEMPLATE_GET_LIVESTATUS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/livestatus")
+            .toString();
+
+    private static final String TEMPLATE_GET_SUBJECTS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/bk/subject/v2/pptv/subjects")
             .toString();
 
     public static final int ERR_UNAUTHORIZED = 401;
@@ -197,6 +202,27 @@ public class ProgramService extends RestService {
 
             if (0 == resp.getError()) {
                 return resp.getData();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public List<Subject> getSubjects() throws LiveHttpException {
+        Log.d(TAG, "getSubjects");
+
+        SubjectListResp resp = null;
+        try {
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_SUBJECTS, SubjectListResp.class);
+
+            if (0 == resp.getError()) {
+                return resp.getList();
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());
