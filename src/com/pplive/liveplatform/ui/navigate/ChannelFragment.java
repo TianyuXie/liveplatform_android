@@ -18,6 +18,7 @@ import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword
 import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -79,6 +80,8 @@ public class ChannelFragment extends Fragment {
 
     private int mSubjectId;
 
+    private String mSubjectName;
+
     private LiveStatusKeyword mLiveStatus;
 
     private Handler mPullHandler;
@@ -89,9 +92,8 @@ public class ChannelFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
+
         mPullHandler = new PullHandler(this);
-        //        mSubjectId = CATALOG_ORIGIN;
-        mLiveStatus = LiveStatusKeyword.LIVING;
     }
 
     @Override
@@ -101,8 +103,6 @@ public class ChannelFragment extends Fragment {
         mContainer = (ProgramContainer) layout.findViewById(R.id.layout_channel_body);
         mContainer.setOnUpdateListener(onUpdateListener);
         mContainer.setOnStatusChangeListener(onStatusChangeListener);
-        //        mTitleBar = (TitleBar) layout.findViewById(R.id.titlebar_home);
-        //        mTitleBar.setOnClickListener(onTitleBarClickListener);
 
         mSearchTopBarView = (SearchBarView) layout.findViewById(R.id.search_top_bar);
 
@@ -111,6 +111,13 @@ public class ChannelFragment extends Fragment {
         mRetryLayout.setOnClickListener(mOnRetryClickListener);
 
         return layout;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        updateTitle();
     }
 
     @Override
@@ -140,25 +147,27 @@ public class ChannelFragment extends Fragment {
         super.onDestroy();
     }
 
+    public void switchSubject(Subject subject) {
+        if (null != subject) {
+            mShowStatus = subject.hasVod();
+
+            mSubjectName = subject.getSubjectName();
+
+            switchSubject(subject.getId());
+        }
+    }
+
     public void switchSubject(int id) {
         Log.d(TAG, "switchSubject: " + id);
-        switch (id) {
-        case CATALOG_ORIGIN:
-        case CATALOG_SPORT:
-            mShowStatus = true;
-            //            mContainer.setStatusVisibility(View.VISIBLE);
-            break;
-        case CATALOG_FINANCE:
-        case CATALOG_GAME:
-        case CATALOG_TV:
-            mShowStatus = false;
-            //            mContainer.setStatusVisibility(View.GONE);
-
-            break;
-        }
 
         mSubjectId = id;
-        mLiveStatus = LiveStatusKeyword.LIVING;
+
+        switch (id) {
+        case CATALOG_ORIGIN:
+            mShowStatus = true;
+            mSubjectName = "原创";
+            break;
+        }
 
         if (null != mContainer) {
             mRetryLayout.setVisibility(View.GONE);
@@ -174,30 +183,9 @@ public class ChannelFragment extends Fragment {
     }
 
     private void updateTitle() {
-
-        String title = null;
-        switch (mSubjectId) {
-        case CATALOG_ORIGIN:
-            title = "原创";
-            break;
-        case CATALOG_SPORT:
-            title = "体育";
-            break;
-        case CATALOG_FINANCE:
-            title = "财经";
-            break;
-        case CATALOG_GAME:
-            title = "游戏";
-            break;
-        case CATALOG_TV:
-            title = "电视台";
-            break;
-        default:
-            title = "爱播";
-            break;
+        if (null != mSearchTopBarView) {
+            mSearchTopBarView.setTitle(mSubjectName);
         }
-
-        mSearchTopBarView.setTitle(title);
     }
 
     private void switchLiveStatus(LiveStatusKeyword status) {
@@ -242,6 +230,9 @@ public class ChannelFragment extends Fragment {
             taskContext.set(SearchTask.KEY_TYPE, type);
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
+
+            mLiveStatus = null != mLiveStatus ? mLiveStatus : LiveStatusKeyword.LIVING;
+
             taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
             switch (mLiveStatus) {
             case COMING:

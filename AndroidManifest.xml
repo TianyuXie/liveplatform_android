@@ -147,6 +147,7 @@
         <activity
             android:name="com.pplive.liveplatform.ui.LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" >
         </activity>

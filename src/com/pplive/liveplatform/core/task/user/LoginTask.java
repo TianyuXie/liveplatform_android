@@ -105,6 +105,7 @@ public class LoginTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
+        
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_USERNAME, usr);
         context.set(KEY_TOKEN, token);

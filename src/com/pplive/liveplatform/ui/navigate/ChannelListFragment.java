@@ -1,17 +1,22 @@
 package com.pplive.liveplatform.ui.navigate;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import android.app.Service;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -19,8 +24,10 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.ui.widget.SearchBarView;
+import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
 public class ChannelListFragment extends Fragment {
 
@@ -32,54 +39,7 @@ public class ChannelListFragment extends Fragment {
 
     private CallbackListener mCallbackListener;
 
-    private BaseAdapter mAdapter = new BaseAdapter() {
-
-        final int[] icons = new int[] { R.drawable.channel_list_tvbar, R.drawable.channel_list_gamebar, R.drawable.channel_list_sportbar,
-                R.drawable.channel_list_financebar, R.drawable.channel_list_squarebar };
-
-        final String[] names = new String[] { "电视台", "游戏", "体育", "财经", "公共摄像头" };
-
-        final int[] subjectIds = new int[] { 2, 3, 4, 5, 6 };
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            ViewHolder holder = null;
-            if (null == convertView) {
-                LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-                convertView = inflater.inflate(R.layout.item_channel_list, null);
-
-                holder = new ViewHolder();
-
-                holder.icon = (ImageView) convertView.findViewById(R.id.channel_icon);
-                holder.name = (TextView) convertView.findViewById(R.id.channel_name);
-
-                convertView.setTag(holder);
-            } else {
-                holder = (ViewHolder) convertView.getTag();
-            }
-
-            holder.icon.setImageResource(icons[position]);
-            holder.name.setText(names[position]);
-
-            return convertView;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public Subject getItem(int position) {
-            return new Subject(subjectIds[position - 1], names[position - 1], icons[position - 1]);
-        }
-
-        @Override
-        public int getCount() {
-            return icons.length;
-        }
-    };
+    private SubjectAdapter mAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,14 +66,29 @@ public class ChannelListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 if (null != mCallbackListener) {
-                    mCallbackListener.onSubjectSelected(((Subject) mAdapter.getItem(position)));
+                    mCallbackListener.onSubjectSelected((mAdapter.getItem(position)));
                 }
             }
         });
 
+        return layout;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mAdapter = new SubjectAdapter(getActivity());
         mListViewChannel.setAdapter(mAdapter);
 
-        return layout;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        AsyncTaskGetSubjects task = new AsyncTaskGetSubjects();
+        task.execute();
     }
 
     public void setCallbackListener(CallbackListener listener) {
@@ -123,9 +98,108 @@ public class ChannelListFragment extends Fragment {
     public interface CallbackListener {
         void onSubjectSelected(Subject subject);
     }
+
+    class AsyncTaskGetSubjects extends AsyncTask<Void, Void, List<Subject>> {
+
+        @Override
+        protected List<Subject> doInBackground(Void... params) {
+            List<Subject> list = null;
+
+            try {
+                list = ProgramService.getInstance().getSubjects();
+            } catch (Exception e) {
+
+            }
+
+            return list;
+        }
+
+        @Override
+        protected void onPostExecute(List<Subject> result) {
+
+            if (null != result) {
+                mAdapter.setSubjects(result);
+            }
+
+        }
+    }
 }
 
-class ViewHolder {
-    ImageView icon;
-    TextView name;
+class SubjectAdapter extends BaseAdapter {
+
+    static final int CHANNEL_ORIGINAL_ID = 1;
+
+    private LayoutInflater mInflater;
+
+    private List<Subject> mSubjects;
+
+    public SubjectAdapter(Context context) {
+        mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+    }
+
+    public void setSubjects(List<Subject> list) {
+        if (null == list) {
+            return;
+        }
+
+        for (int index = 0; index < list.size(); ++index) {
+            if (CHANNEL_ORIGINAL_ID == list.get(index).getId()) {
+                list.remove(index);
+            }
+        }
+
+        Collections.sort(list, new Comparator<Subject>() {
+
+            @Override
+            public int compare(Subject lhs, Subject rhs) {
+                return lhs.getSeq() - rhs.getSeq();
+            }
+        });
+
+        mSubjects = list;
+
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getCount() {
+        return null != mSubjects ? mSubjects.size() : 0;
+    }
+
+    @Override
+    public Subject getItem(int position) {
+        return null != mSubjects ? mSubjects.get(position - 1) : null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        if (null == convertView) {
+            convertView = mInflater.inflate(R.layout.item_channel_list, null, false);
+
+            ViewHolder holder = new ViewHolder();
+
+            holder.icon = (AsyncImageView) convertView.findViewById(R.id.channel_icon);
+
+            convertView.setTag(holder);
+        }
+
+        ViewHolder holder = (ViewHolder) convertView.getTag();
+
+        String imageUrl = mSubjects.get(position).getImageUrl();
+        if (!TextUtils.isEmpty(imageUrl)) {
+            holder.icon.setImageAsync(mSubjects.get(position).getImageUrl());
+        }
+
+        return convertView;
+    }
+
+    static class ViewHolder {
+        AsyncImageView icon;
+    }
 }

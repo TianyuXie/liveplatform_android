@@ -56,13 +56,13 @@ public class PassportService {
     }
 
     private final RestTemplate mRestTemplate;
-    
+
     private final HttpHeaders mHttpHeaders;
 
     private PassportService() {
         mRestTemplate = RestTemplateFactory.newInstance();
         mRestTemplate.getMessageConverters().add(new GsonHttpMessageConverterEx());
-        
+
         mHttpHeaders = new HttpHeaders();
         mHttpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     }
@@ -154,6 +154,13 @@ public class PassportService {
         } else {
             throw new LiveHttpException();
         }
+    }
+
+    public LoginResult registerAndLogin(String username, String password, String email, String checkCode, String guid) throws LiveHttpException {
+
+        register(username, password, email, checkCode, guid);
+
+        return login(username, password);
     }
 
     public String getCheckCodeGUID() throws LiveHttpException {

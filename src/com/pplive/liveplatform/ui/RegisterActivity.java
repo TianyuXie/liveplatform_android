@@ -222,10 +222,15 @@ public class RegisterActivity extends Activity {
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
-            Intent data = new Intent();
+            Intent data = new Intent(getApplicationContext(), LoginActivity.class);
+
             data.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_USERNAME));
             data.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
-            setResult(REGISTER_SUCCESS, data);
+
+            //            setResult(REGISTER_SUCCESS, data);
+
+            RegisterActivity.this.startActivity(data);
+
             finish();
         }
 
