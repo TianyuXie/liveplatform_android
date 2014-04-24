@@ -1,10 +1,11 @@
 package com.pplive.liveplatform.core.settings;
 
+import com.pplive.liveplatform.Constants;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class SettingsProvider {
-    private static final String PREFS_NAME = "com.pplive.liveplatform_preferences";
+public class SettingsPreferences {
 
     private static final String KEY_CONTENT = "content";
     private static final String KEY_PRELIVE = "prelive";
@@ -19,16 +20,19 @@ public class SettingsProvider {
 
     private SharedPreferences sharedPreferences;
 
-    private static SettingsProvider instance;
+    private static SettingsPreferences instance;
 
-    public static synchronized SettingsProvider getInstance(Context context) {
-        if (instance == null)
-            instance = new SettingsProvider(context);
+    public static synchronized SettingsPreferences getInstance(Context context) {
+
+        if (instance == null) {
+            instance = new SettingsPreferences(context);
+        }
+
         return instance;
     }
 
-    private SettingsProvider(Context context) {
-        this.sharedPreferences = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    private SettingsPreferences(Context context) {
+        this.sharedPreferences = context.getApplicationContext().getSharedPreferences(Constants.PREFERENCES_NAME, Context.MODE_PRIVATE);
     }
 
     public AppPrefs getAppPrefs() {

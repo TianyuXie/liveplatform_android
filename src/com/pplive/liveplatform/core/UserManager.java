@@ -10,7 +10,7 @@ import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.model.LoginResult;
 import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
 import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.util.EncryptUtil;
 import com.pplive.liveplatform.util.StringUtil;
 
@@ -44,13 +44,13 @@ public class UserManager {
     private UserManager(Context context) {
         mAppContext = context;
         mImei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-        mUserPrivate = SettingsProvider.getInstance(context).getUserPrivate();
+        mUserPrivate = SettingsPreferences.getInstance(context).getUserPrivate();
         mTokenChecked = false;
         if (!TextUtils.isEmpty(mUserPrivate)) {
-            mToken = SettingsProvider.getInstance(context).getToken();
-            mNickname = SettingsProvider.getInstance(context).getNickname();
-            mIcon = SettingsProvider.getInstance(context).getIcon();
-            mThirdPartySource = SettingsProvider.getInstance(context).getThirdParty();
+            mToken = SettingsPreferences.getInstance(context).getToken();
+            mNickname = SettingsPreferences.getInstance(context).getNickname();
+            mIcon = SettingsPreferences.getInstance(context).getIcon();
+            mThirdPartySource = SettingsPreferences.getInstance(context).getThirdParty();
             String[] infos = EncryptUtil.decrypt(mUserPrivate, mImei).split(String.valueOf((char) 0x01));
             mUsernamePlain = infos[0];
             if (infos.length > 1) {
@@ -81,7 +81,7 @@ public class UserManager {
 
     public boolean shouldUpdateToken() {
         long currentTime = System.currentTimeMillis();
-        long loginTime = SettingsProvider.getInstance(mAppContext).getLoginTime();
+        long loginTime = SettingsPreferences.getInstance(mAppContext).getLoginTime();
         return currentTime < loginTime || currentTime - loginTime > TEN_DAYS;
     }
 
@@ -105,7 +105,7 @@ public class UserManager {
         StringBuffer sb = new StringBuffer();
         sb.append(usrPlain).append((char) 0x01).append(pwdPlain);
         String userPrivate = EncryptUtil.encrypt(sb.toString(), mImei);
-        SettingsProvider.getInstance(mAppContext).setUserPrivate(userPrivate, token);
+        SettingsPreferences.getInstance(mAppContext).setUserPrivate(userPrivate, token);
         mUserPrivate = userPrivate;
         mUsernamePlain = usrPlain;
         mPasswordPlain = pwdPlain;
@@ -123,7 +123,7 @@ public class UserManager {
                 Log.d(TAG, "Tencent logout");
                 TencentPassport.getInstance().logout(mAppContext);
             }
-            SettingsProvider.getInstance(mAppContext).clearUser();
+            SettingsPreferences.getInstance(mAppContext).clearUser();
             mThirdPartySource = 0;
             mUserPrivate = null;
             mUsernamePlain = null;
@@ -138,7 +138,7 @@ public class UserManager {
         if (isLogin() && userinfo != null) {
             mNickname = userinfo.getNickname();
             mIcon = userinfo.getIcon();
-            SettingsProvider.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
+            SettingsPreferences.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
         }
     }
 
@@ -146,14 +146,14 @@ public class UserManager {
         if (isLogin()) {
             mNickname = nickname;
             mIcon = icon;
-            SettingsProvider.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
+            SettingsPreferences.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
         }
     }
 
     public void setThirdParty(int thirdParty) {
         if (isLogin()) {
             mThirdPartySource = thirdParty;
-            SettingsProvider.getInstance(mAppContext).setThirdparty(thirdParty);
+            SettingsPreferences.getInstance(mAppContext).setThirdparty(thirdParty);
         }
     }
 

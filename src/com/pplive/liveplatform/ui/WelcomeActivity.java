@@ -24,7 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.info.LocationInfo;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.ui.widget.viewpager.AdvancedViewPager;
 
 public class WelcomeActivity extends Activity {
@@ -58,7 +58,7 @@ public class WelcomeActivity extends Activity {
         mViewPager = (AdvancedViewPager) findViewById(R.id.viewpager_intro);
         mRadioGroup = (RadioGroup) findViewById(R.id.radiogroup_intro);
         mImageViewList = new ArrayList<View>();
-        mFirstTime = SettingsProvider.getInstance(this).isFirstLaunch();
+        mFirstTime = SettingsPreferences.getInstance(this).isFirstLaunch();
 
         if (mFirstTime) {
             ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);

@@ -6,8 +6,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.pplive.liveplatform.ui.live.record.MediaRecorderListener;
-import com.pplive.liveplatform.ui.live.record.PPboxSink;
+import com.pplive.liveplatform.core.record.MediaRecorderListener;
+import com.pplive.liveplatform.core.record.PPboxSink;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 import com.pplive.sdk.MediaSDK.Upload_Statistic;

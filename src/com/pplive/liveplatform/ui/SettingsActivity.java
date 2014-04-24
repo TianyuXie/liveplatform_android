@@ -13,7 +13,7 @@ import android.widget.ToggleButton;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.settings.AppPrefs;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.core.update.Update;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.widget.TopBarView;
@@ -91,7 +91,7 @@ public class SettingsActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        mUserPrefs = SettingsProvider.getInstance(this).getAppPrefs();
+        mUserPrefs = SettingsPreferences.getInstance(this).getAppPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mPPTVUserText.setText(UserManager.getInstance(this).getUsernamePlain());
@@ -140,7 +140,7 @@ public class SettingsActivity extends Activity {
     protected void onStop() {
         mUserPrefs.setContentNotify(mContentButton.isChecked());
         mUserPrefs.setPreliveNotify(mPreliveButton.isChecked());
-        SettingsProvider.getInstance(this).setAppPrefs(mUserPrefs);
+        SettingsPreferences.getInstance(this).setAppPrefs(mUserPrefs);
         super.onStop();
     }
 

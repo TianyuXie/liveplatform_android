@@ -51,7 +51,7 @@ public class SearchActivity extends Activity {
 
             @Override
             public boolean onEnter(View v) {
-                String keyword = mEditSearchInput.getText().toString();
+                String keyword = mEditSearchInput.getText().toString().trim();
 
                 search(keyword);
 
@@ -138,6 +138,8 @@ public class SearchActivity extends Activity {
             intent.putExtra(SearchResultActivity.KEY_SEARCH_KEY_WORD, keyword);
 
             startActivity(intent);
+        } else {
+
         }
     }
 
