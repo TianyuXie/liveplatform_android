@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:background="@color/search_group_bg"
+    android:paddingBottom="5dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="5dp" >
 
     <TextView
-        android:id="@+id/text"
-        android:layout_width="fill_parent"
+        android:id="@+id/group_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@color/search_group_bg"
-        android:paddingBottom="5dp"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
-        android:paddingTop="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
         android:textColor="@color/search_group_text_color"
         android:textSize="14sp" />
+
+    <ImageButton
+        android:id="@+id/btn_clear_phase"
+        style="@style/Widget.Button.Transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"
+        android:src="@drawable/search_group_btn_clear_phase" />
 
 </RelativeLayout>

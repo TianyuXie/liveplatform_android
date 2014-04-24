@@ -28,6 +28,8 @@ public class PPboxSink {
 
     private Download_Callback mDownloadCallback;
 
+    private Quality mQuality;
+
     public static void init(Context c) {
         File cacheDirFile = c.getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
@@ -42,10 +44,11 @@ public class PPboxSink {
         MediaSDK.startP2PEngine("161", "12", "111");
     }
 
-    public PPboxSink(Camera camera) {
+    public PPboxSink(Camera camera, Quality quality) {
         this.mCamera = camera;
+        this.mQuality = quality;
     }
-    
+
     public long getCaptureId() {
         return mCaptureId;
     }
@@ -53,7 +56,7 @@ public class PPboxSink {
     public void setDownloadCallback(Download_Callback callback) {
         mDownloadCallback = callback;
     }
-    
+
     public void open(String url) {
         Log.d(TAG, "url: " + url);
 
@@ -70,13 +73,13 @@ public class PPboxSink {
         MediaSDK.CaptureInit(mCaptureId, config);
 
         mStartTime = System.nanoTime();
-        mVideoStream = new PPboxVideoStream(mCaptureId, 0, mStartTime, mCamera);
-        mAudioStream = new PPboxAudioStream(mCaptureId, 1, mStartTime, mAudioRecord);
+        mVideoStream = new PPboxVideoStream(mCaptureId, 0, mStartTime, mCamera, mQuality);
+        mAudioStream = new PPboxAudioStream(mCaptureId, 1, mStartTime, mAudioRecord, mQuality);
     }
 
     public void resetCamera(Camera camera) {
         mCamera = camera;
-        
+
         if (null != mVideoStream) {
             mVideoStream.resetCamera(mCamera);
         }
@@ -103,7 +106,7 @@ public class PPboxSink {
             mAudioStream.close();
             mAudioStream = null;
         }
-        
+
         if (null != mAudioRecord) {
             mAudioRecord.release();
             mAudioRecord = null;
@@ -114,9 +117,4 @@ public class PPboxSink {
         Log.d(TAG, "After destroy capture");
     }
 
-    public void setPreviewInterval(int interval) {
-        if (null != mVideoStream) {
-            mVideoStream.setPreviewInterval(interval);
-        }
-    }
 }

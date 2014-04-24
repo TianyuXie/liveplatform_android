@@ -19,8 +19,8 @@ public class PPboxAudioStream extends PPboxStream {
 
     private Thread mAudioThread;
 
-    public PPboxAudioStream(long capture, int itrack, long startTime, AudioRecord audio) {
-        super(capture, startTime);
+    public PPboxAudioStream(long capture, int itrack, long startTime, AudioRecord audio, Quality quality) {
+        super(capture, startTime, quality);
         
         mStreamType = "Audio";
 
@@ -30,7 +30,7 @@ public class PPboxAudioStream extends PPboxStream {
 
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
             MediaFormat format = MediaManager.getInstance().getSupportedEncodingAudioFormat(MediaManager.MIME_TYPE_AUDIO_AAC, audio.getSampleRate(),
-                    audio.getChannelCount());
+                    audio.getChannelCount(), mQuality);
             mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_AUDIO_AAC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }

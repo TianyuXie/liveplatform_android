@@ -12,6 +12,8 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.network.QualityPreferences;
+import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.core.update.Update;
@@ -133,7 +135,21 @@ public class SettingsActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        mQualityText.setText(R.string.settings_quality_normal);
+        int resId = R.string.settings_quality_normal;
+        Quality quality = QualityPreferences.getInstance(getApplicationContext()).getQuality();
+        switch (quality) {
+        case High:
+            resId = R.string.settings_quality_high;
+            break;
+        case Normal:
+            resId = R.string.settings_quality_normal;
+            break;
+        case Low:
+            resId = R.string.settings_quality_low;
+            break;
+        }
+
+        mQualityText.setText(resId);
     }
 
     @Override

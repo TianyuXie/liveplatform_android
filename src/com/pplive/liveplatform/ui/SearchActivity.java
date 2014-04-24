@@ -85,8 +85,17 @@ public class SearchActivity extends Activity {
 
         mAdapter = new SearchExpandableListAdapter(getApplicationContext());
         mExpandableListView.setAdapter(mAdapter);
+        mExpandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                return true;
+            }
+        });
         mExpandableListView.expandGroup(0);
         mExpandableListView.expandGroup(1);
+
+        mExpandableListView.collapseGroup(0);
 
         mCacheManager = SearchCacheManager.getInstance(getApplicationContext());
     }
@@ -156,7 +165,9 @@ public class SearchActivity extends Activity {
         }
 
         public void setSearchKeyWords(List<String> list) {
+            mSearchKeywords = list;
 
+            notifyDataSetChanged();
         }
 
         public void setSearchHistoryKeywords(List<String> list) {
@@ -224,13 +235,29 @@ public class SearchActivity extends Activity {
                 convertView = mInflater.inflate(R.layout.item_search_group, null, false);
 
                 ViewHolder holder = new ViewHolder();
-                holder.mTextView = (TextView) convertView.findViewById(R.id.text);
+                holder.mTextView = (TextView) convertView.findViewById(R.id.group_text);
+                holder.mImageButton = (ImageButton) convertView.findViewById(R.id.btn_clear_phase);
 
                 convertView.setTag(holder);
             }
 
             ViewHolder holder = (ViewHolder) convertView.getTag();
             holder.mTextView.setText(groupPosition == 0 ? "热词推荐" : "搜索记录");
+            holder.mImageButton.setVisibility(groupPosition == 0 ? View.GONE : View.VISIBLE);
+            holder.mImageButton.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+                    setSearchHistoryKeywords(null);
+                    mCacheManager.clearSearchCache();
+                }
+            });
+
+            if (0 == groupPosition) {
+                holder.mImageButton.setVisibility(View.GONE);
+            } else {
+                holder.mImageButton.setVisibility(getChildrenCount(groupPosition) > 0 ? View.VISIBLE : View.GONE);
+            }
 
             return convertView;
         }
@@ -261,12 +288,17 @@ public class SearchActivity extends Activity {
 
         @Override
         public boolean isChildSelectable(int groupPosition, int childPosition) {
-            // TODO Auto-generated method stub
             return true;
+        }
+
+        @Override
+        public void onGroupCollapsed(int groupPosition) {
         }
     }
 
     static class ViewHolder {
         TextView mTextView;
+
+        ImageButton mImageButton;
     }
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.core.record.Quality;
 
 public class QualityPreferences {
 
@@ -49,14 +50,18 @@ public class QualityPreferences {
         return mSharedPreferences.getFloat(KEY_SPEED, -1f);
     }
 
-    public void setQuality(int quality) {
-        SharedPreferences.Editor edit = mSharedPreferences.edit();
-        edit.putInt(KEY_QUALITY, quality);
-        edit.commit();
+    public void setQuality(Quality quality) {
+        if (null != quality) {
+            SharedPreferences.Editor edit = mSharedPreferences.edit();
+            edit.putInt(KEY_QUALITY, quality.getIntValue());
+            edit.commit();
+        }
     }
 
-    public int getQuality() {
-        return mSharedPreferences.getInt(KEY_QUALITY, -1);
+    public Quality getQuality() {
+        int value = mSharedPreferences.getInt(KEY_QUALITY, -1);
+
+        return Quality.mapIntToValue(value);
     }
 
     public void reset() {

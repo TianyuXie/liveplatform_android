@@ -260,7 +260,9 @@ public class MediaService extends RestService {
 
     private String testNetSpeed(String url, final byte[] data) {
 
-        //        url = "http://172.16.205.48:80/net-speed";
+        url = "http://172.16.205.48:80/net-speed";
+
+        url = "http://61.163.51.19/net-speed?type=liveplatform";
 
         if (TextUtils.isEmpty(url) || null == data) {
             throw new IllegalArgumentException();
@@ -308,6 +310,8 @@ public class MediaService extends RestService {
                 for (int numOfBytes = -1; (numOfBytes = r.read(buff)) > 0;) {
                     sb.append(buff, 0, numOfBytes);
                 }
+
+                Log.d(TAG, sb.toString());
 
                 return sb.toString();
             }

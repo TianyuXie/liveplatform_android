@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.pplive.liveplatform.core.record.MediaRecorderListener;
 import com.pplive.liveplatform.core.record.PPboxSink;
+import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 import com.pplive.sdk.MediaSDK.Upload_Statistic;
@@ -51,17 +52,21 @@ public class LiveMediaRecorder implements Handler.Callback {
             }
         }
     };
-
-    public LiveMediaRecorder(Context ctx, Camera camera) {
+    
+    public LiveMediaRecorder(Context ctx, Camera camera, Quality quality) {
 
         PPboxSink.init(ctx.getApplicationContext());
-        mCapture = new PPboxSink(camera);
+        mCapture = new PPboxSink(camera, quality);
     }
 
     public void setOutputPath(String url) {
         mOutputPath = url;
         //        mOutputPath = "rtmp://172.16.205.53:1936/push/test?ts=1386312842&token=44b3f8302518eb86b1f16b3cb3c05f63";
         //        mOutputPath = "/sdcard/test.flv";
+    }
+
+    public void setQuality(Quality quality) {
+        mQuality = quality;
     }
 
     public void setMediaRecorderListener(MediaRecorderListener listener) {
@@ -107,9 +112,9 @@ public class LiveMediaRecorder implements Handler.Callback {
         case WHAT_CHECK_UPLOAD_INFO:
             onCheckUploadInfo();
             break;
-        case WHAT_CHECK_REMAINING_TIME:
-            onCheckRemainingTime();
-            break;
+        //        case WHAT_CHECK_REMAINING_TIME:
+        //            onCheckRemainingTime();
+        //            break;
         case WHAT_ERROR:
             onError();
             break;
@@ -137,7 +142,7 @@ public class LiveMediaRecorder implements Handler.Callback {
 
                     onSuccess();
 
-                    mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
+                    //                    mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
                 } else {
                     mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_UPLOAD_INFO, DELAY_CHECK_UPLOAD_INFO);
                 }
@@ -166,13 +171,11 @@ public class LiveMediaRecorder implements Handler.Callback {
                     mQuality = mQuality.previous();
                 }
 
-                Log.d(TAG, "interval: " + mQuality.interval());
-
-                mCapture.setPreviewInterval(mQuality.interval());
+                Log.d(TAG, "interval: " + mQuality.getInterval());
             }
 
             if (mRecording) {
-                mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
+                //                mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
             }
         }
     }
@@ -190,66 +193,5 @@ public class LiveMediaRecorder implements Handler.Callback {
         if (null != mMediaRecorderListener) {
             mMediaRecorderListener.onError();
         }
-    }
-
-    enum Quality {
-        High {
-
-            @Override
-            Quality next() {
-                return High;
-            }
-
-            @Override
-            Quality previous() {
-                return Normal;
-            }
-
-            @Override
-            int interval() {
-                return 35;
-            }
-        },
-        Normal {
-
-            @Override
-            Quality next() {
-                return High;
-            }
-
-            @Override
-            Quality previous() {
-                return Low;
-            }
-
-            @Override
-            int interval() {
-                return 50;
-            }
-        },
-
-        Low {
-
-            @Override
-            Quality next() {
-                return Normal;
-            }
-
-            @Override
-            Quality previous() {
-                return Low;
-            }
-
-            @Override
-            int interval() {
-                return 125;
-            }
-        };
-
-        abstract Quality next();
-
-        abstract Quality previous();
-
-        abstract int interval();
     }
 }

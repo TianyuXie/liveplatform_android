@@ -3,10 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_bg"
-    android:orientation="vertical"
-    android:paddingBottom="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp" >
+    android:orientation="vertical" >
 
     <com.pplive.liveplatform.ui.widget.TopBarView
         xmlns:live="http://schemas.android.com/apk/res-auto"
@@ -19,6 +16,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
+        android:padding="10dp"
         android:requiresFadingEdge="vertical"
         android:scrollbars="none" >
 
@@ -90,7 +88,7 @@
                         android:id="@+id/text_quality"
                         style="@style/settings_text"
                         android:layout_marginRight="10dp"
-                        android:drawablePadding="10dp"
+                        android:drawablePadding="15dp"
                         android:drawableRight="@drawable/settings_arrow_right"
                         android:textColor="@color/white"
                         android:textSize="18sp" />

@@ -2,31 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/about_bg"
+    android:background="@color/app_bg"
     android:orientation="vertical" >
 
-    <RelativeLayout
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        android:background="@color/black" >
-
-        <Button
-            android:id="@+id/btn_about_back"
-            android:layout_width="@dimen/top_bar_back_btn_size"
-            android:layout_height="@dimen/top_bar_back_btn_size"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/top_bar_back_btn" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/settings_about"
-            android:textColor="@color/white"
-            android:textSize="@dimen/top_bar_text_size" />
-    </RelativeLayout>
+        live:text="@string/settings_about" />
 
     <ImageView
         android:id="@+id/image_about_icon"

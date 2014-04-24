@@ -237,6 +237,10 @@
             android:name="com.pplive.liveplatform.core.crash.CrashReportService"
             android:process=":service" >
         </service>
+        <service
+            android:name="com.pplive.liveplatform.core.network.WifiSpeedCheckService"
+            android:process=":service" >
+        </service>
 
         <!-- Baidu Service -->
         <service

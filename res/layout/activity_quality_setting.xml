@@ -21,18 +21,21 @@
         android:paddingRight="10dp" >
 
         <RadioButton
+            android:id="@+id/quality_low"
             style="@style/settings_quality_setting"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_quality_low" />
 
         <RadioButton
+            android:id="@+id/quality_normal"
             style="@style/settings_quality_setting"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_quality_normal" />
 
         <RadioButton
+            android:id="@+id/quality_high"
             style="@style/settings_quality_setting"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
