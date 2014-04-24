@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.live.record;
+package com.pplive.liveplatform.core.record;
 
 import android.annotation.TargetApi;
 import android.hardware.Camera;
@@ -25,12 +25,6 @@ public class MediaManager {
 
     public static final String MIME_TYPE_AUDIO_AAC = "audio/mp4a-latm";
 
-    public static final int VIDEO_BIT_RATE = 230000;
-
-    public static final int AUDIO_BIT_RATE = 32000;
-
-    public static final int FRAME_RATE = 15;
-
     public static final int IFRAME_INTERVAL = 1;
 
     public static final int[] SAMPLE_RATES = new int[] { 22050, 44100, 11025, 8000 };
@@ -48,7 +42,7 @@ public class MediaManager {
     private MediaManager() {
     };
 
-    public MediaFormat getSupportedEncodingVideoFormat(final String mime, final Camera.Size size) {
+    public MediaFormat getSupportedEncodingVideoFormat(final String mime, final Camera.Size size, final Quality quality) {
         int codecCount = MediaCodecList.getCodecCount();
         for (int i = 0; i < codecCount; ++i) {
             MediaCodecInfo info = MediaCodecList.getCodecInfoAt(i);
@@ -74,8 +68,8 @@ public class MediaManager {
                     Log.d(TAG, "colorFormat: " + colorFormat);
 
                     MediaFormat format = MediaFormat.createVideoFormat(MIME_TYPE_VIDEO_AVC, size.width, size.height);
-                    format.setInteger(MediaFormat.KEY_BIT_RATE, VIDEO_BIT_RATE);
-                    format.setInteger(MediaFormat.KEY_FRAME_RATE, FRAME_RATE);
+                    format.setInteger(MediaFormat.KEY_BIT_RATE, quality.getVideoBitrate());
+                    format.setInteger(MediaFormat.KEY_FRAME_RATE, quality.getFrameRate());
                     format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, IFRAME_INTERVAL);
                     format.setInteger(MediaFormat.KEY_COLOR_FORMAT, colorFormat);
 
@@ -87,9 +81,9 @@ public class MediaManager {
         return null;
     }
 
-    public MediaFormat getSupportedEncodingAudioFormat(final String mime, int sampleRate, int channelCount) {
+    public MediaFormat getSupportedEncodingAudioFormat(final String mime, final int sampleRate, final int channelCount, final Quality quality) {
         MediaFormat format = MediaFormat.createAudioFormat(mime, sampleRate, channelCount);
-        format.setInteger(MediaFormat.KEY_BIT_RATE, AUDIO_BIT_RATE);
+        format.setInteger(MediaFormat.KEY_BIT_RATE, quality.getAudioBitrate());
 
         return format;
     }

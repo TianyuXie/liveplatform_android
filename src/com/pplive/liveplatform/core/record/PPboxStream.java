@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.live.record;
+package com.pplive.liveplatform.core.record;
 
 import java.nio.ByteBuffer;
 
@@ -63,10 +63,13 @@ public abstract class PPboxStream {
     protected MediaSDK.Sample mSample;
 
     protected String mStreamType;
+    
+    protected Quality mQuality;
 
-    public PPboxStream(long captureId, long startTime) {
+    public PPboxStream(long captureId, long startTime, Quality quality) {
         mCaptureId = captureId;
         mStartTime = startTime;
+        mQuality = quality;
     }
 
     public void start() {

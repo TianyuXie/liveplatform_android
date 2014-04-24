@@ -31,7 +31,7 @@ import com.pplive.liveplatform.core.dac.info.LocationInfo;
 import com.pplive.liveplatform.core.dac.info.SessionInfo;
 import com.pplive.liveplatform.core.location.LocatorActivity;
 import com.pplive.liveplatform.core.location.Locator.LocationData;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -125,7 +125,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
 
-        if (SettingsProvider.getInstance(this).isFirstHome()) {
+        if (SettingsPreferences.getInstance(this).isFirstHome()) {
             mHelpView.setVisibility(View.VISIBLE);
         } else {
             mHelpView.setVisibility(View.GONE);

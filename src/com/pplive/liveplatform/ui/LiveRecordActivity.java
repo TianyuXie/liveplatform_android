@@ -37,7 +37,12 @@ import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
+import com.pplive.liveplatform.core.network.QualityPreferences;
 import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
+import com.pplive.liveplatform.core.record.CameraManager;
+import com.pplive.liveplatform.core.record.MediaRecorderListener;
+import com.pplive.liveplatform.core.record.MediaRecorderView;
+import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
@@ -54,10 +59,6 @@ import com.pplive.liveplatform.ui.live.FooterBarFragment;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
-import com.pplive.liveplatform.ui.live.record.CameraManager;
-import com.pplive.liveplatform.ui.live.record.MediaManager;
-import com.pplive.liveplatform.ui.live.record.MediaRecorderListener;
-import com.pplive.liveplatform.ui.live.record.MediaRecorderView;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.chat.ChatBox;
@@ -149,6 +150,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private boolean mAttached;
 
     private boolean mFirstPopped;
+
+    private Quality mQuality = Quality.Normal;
 
     private AnimationListener openDoorListener = new AnimationListener() {
 
@@ -336,6 +339,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetPausedProgramTask.execute();
         }
 
+        selectQuality();
+
+    }
+
+    private void selectQuality() {
+        if (NetworkManager.isNetworkAvailable(getApplicationContext()) && NetworkState.WIFI == NetworkManager.getCurrentNetworkState()) {
+
+            float speed = QualityPreferences.getInstance(getApplicationContext()).getSpeed();
+            Quality quality = QualityPreferences.getInstance(getApplicationContext()).getQuality();
+
+            mQuality = null != quality ? quality : Quality.selectQuality(speed);
+        } else {
+            mQuality = Quality.Low;
+        }
+
+        Log.d(TAG, "mQuality: " + mQuality);
     }
 
     @Override
@@ -555,12 +574,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mBtnLivingShare.setText(mLivingProgram.getTitle());
 
-            // TODO: Debug Code
-            // mTextLivingTitle.append("\n");
-            // mTextLivingTitle.append("pid: " + mLivingProgram.getId());
-            // mTextLivingTitle.append("\n");
-            // mTextLivingTitle.append(mLivingUrl);
-
             Message msg = mInnerHandler.obtainMessage(WHAT_LIVING_DURATION_UPDATE);
             mInnerHandler.sendMessage(msg);
         }
@@ -698,6 +711,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
 
         mMediaRecorderView.setOutputPath(mLivingUrl);
+        mMediaRecorderView.setQuality(mQuality);
         mMediaRecorderView.startRecording();
 
         if (null != mPublishDacStat) {
@@ -723,8 +737,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mPublishDacStat.setVideoResolution(size.height, size.width);
         }
 
-        mPublishDacStat.setBitrate((MediaManager.VIDEO_BIT_RATE + MediaManager.AUDIO_BIT_RATE) / 1000);
-        mPublishDacStat.setVideoFPS(MediaManager.FRAME_RATE);
+        mPublishDacStat.setBitrate(mQuality.getBitrate() / 1000);
+        mPublishDacStat.setVideoFPS(mQuality.getFrameRate());
     }
 
     private void stopRecording(boolean stopLiving) {

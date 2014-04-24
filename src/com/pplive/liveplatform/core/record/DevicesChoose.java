@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.live.record;
+package com.pplive.liveplatform.core.record;
 
 import android.annotation.TargetApi;
 import android.graphics.ImageFormat;

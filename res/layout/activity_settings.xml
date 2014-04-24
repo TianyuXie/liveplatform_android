@@ -3,37 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/app_bg"
-    android:orientation="vertical"
-    android:paddingBottom="10dp"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp" >
+    android:orientation="vertical" >
 
-    <RelativeLayout
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height" >
-
-        <Button
-            android:id="@+id/btn_settings_back"
-            android:layout_width="@dimen/top_bar_back_btn_size"
-            android:layout_height="@dimen/top_bar_back_btn_size"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/top_bar_back_btn" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/settings_title"
-            android:textColor="@color/white"
-            android:textSize="@dimen/top_bar_text_size" />
-    </RelativeLayout>
+        android:layout_height="@dimen/top_bar_height"
+        live:text="@string/settings_title" />
 
     <ScrollView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:overScrollMode="never"
+        android:padding="10dp"
         android:requiresFadingEdge="vertical"
         android:scrollbars="none" >
 
@@ -93,18 +76,20 @@
 
             <TableLayout style="@style/settings_tablelayout" >
 
-                <TableRow style="@style/settings_tablerow_switcher" >
+                <TableRow
+                    android:id="@+id/layout_settings_quality"
+                    style="@style/settings_tablerow_switcher" >
 
                     <TextView
                         style="@style/settings_text"
                         android:text="@string/settings_quality" />
 
                     <TextView
+                        android:id="@+id/text_quality"
                         style="@style/settings_text"
                         android:layout_marginRight="10dp"
-                        android:drawablePadding="5dp"
+                        android:drawablePadding="15dp"
                         android:drawableRight="@drawable/settings_arrow_right"
-                        android:text="标清"
                         android:textColor="@color/white"
                         android:textSize="18sp" />
                 </TableRow>

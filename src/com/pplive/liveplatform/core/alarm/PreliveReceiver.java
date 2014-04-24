@@ -11,7 +11,7 @@ import android.util.Log;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.ui.LiveRecordActivity;
 
 public class PreliveReceiver extends BroadcastReceiver {
@@ -21,7 +21,7 @@ public class PreliveReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive");
-        if (SettingsProvider.getInstance(context).getAppPrefs().isPreliveNotify()) {
+        if (SettingsPreferences.getInstance(context).getAppPrefs().isPreliveNotify()) {
             Log.d(TAG, "isPreliveNotify");
             Program program = (Program) intent.getSerializableExtra(AlarmCenter.EXTRA_PROGRAM);
             if (AlarmCenter.getInstance(context).isAvailablePrelive(program.getId(), UserManager.getInstance(context).getUsernamePlain())) {

@@ -52,14 +52,6 @@ public class ChannelFragment extends Fragment {
 
     private final static int CATALOG_ORIGIN = 1;
 
-    private final static int CATALOG_TV = 2;
-
-    private final static int CATALOG_GAME = 3;
-
-    private final static int CATALOG_SPORT = 4;
-
-    private final static int CATALOG_FINANCE = 5;
-
     private SearchBarView mSearchTopBarView;
 
     private ProgramContainer mContainer;

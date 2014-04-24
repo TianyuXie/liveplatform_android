@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.SearchActivity;
+import com.pplive.liveplatform.ui.SearchActivity;
 
 public class SearchBarView extends TopBarView {
 

@@ -19,15 +19,17 @@ public interface Constants {
     public static final String LIVEPLATFORM_API_HOST = "api.liveplatform.pptv.com";
 
     public static final String LIVEPLATFORM_API_CDN_HOST = "apicdn.liveplatform.pptv.com";
-    
+
     public static final String GROCERY_API_HOST = "api.grocery.pptv.com";
 
     public static final String SC_API_HOST = "api.sc.pptv.com";
 
     public static final String BASE_SHARE_LINK_URL = "http://i.pptv.com/play/";
-    
+
     public static final String LIVE_IMGAE_PREFIX = "http://live2image";
-    
+
     public static final String CRASH_UPLOAD_SERVICE_HOST = "log.client.pptv.com";
+
+    public static final String PREFERENCES_NAME = "com.pplive.liveplatform_preferences";
 
 }

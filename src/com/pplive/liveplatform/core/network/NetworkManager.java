@@ -16,10 +16,6 @@ import de.greenrobot.event.EventBus;
 
 public class NetworkManager extends BroadcastReceiver {
 
-    public enum NetworkState {
-        WIFI, MOBILE, FAST_MOBILE, DISCONNECTED, UNKNOWN;
-    }
-
     private static final String TAG = NetworkManager.class.getSimpleName();
 
     private static NetworkState sCurrentNetworkState = NetworkState.UNKNOWN;
@@ -29,6 +25,8 @@ public class NetworkManager extends BroadcastReceiver {
         sCurrentNetworkState = getNetworkState(context);
 
         Log.d(TAG, "Network State: " + sCurrentNetworkState);
+
+        checkWifiSpeed(context);
     }
 
     private static NetworkState getNetworkState(Context context) {
@@ -79,13 +77,30 @@ public class NetworkManager extends BroadcastReceiver {
             if (sCurrentNetworkState != state) {
                 Log.d(TAG, "Network Type Changed!!!");
                 EventBus.getDefault().post(new EventNetworkChanged(state));
+
             }
 
             if (null != state) {
                 sCurrentNetworkState = state;
             }
+
+            if (NetworkState.WIFI == state) {
+                checkWifiSpeed(context);
+            }
+
         } else if (WifiManager.WIFI_STATE_CHANGED_ACTION == intent.getAction()) {
 
         }
+    }
+
+    private static void checkWifiSpeed(Context context) {
+        Log.d(TAG, "Check Wifi Speed");
+        Intent serviceIntent = new Intent(context, WifiSpeedCheckService.class);
+        serviceIntent.setAction(WifiSpeedCheckService.ACTION_CHECK_WIFI_SPEED);
+        context.startService(serviceIntent);
+    }
+
+    public enum NetworkState {
+        WIFI, MOBILE, FAST_MOBILE, DISCONNECTED, UNKNOWN;
     }
 }

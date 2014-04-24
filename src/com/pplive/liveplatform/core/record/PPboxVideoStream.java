@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.live.record;
+package com.pplive.liveplatform.core.record;
 
 import java.nio.ByteBuffer;
 
@@ -23,8 +23,6 @@ public class PPboxVideoStream extends PPboxStream {
 
     private int mVideoHeight = -1;
 
-    private int mPreviewInterval = 50; /* millisecond */
-
     private Camera.PreviewCallback mPreviewCallback = new Camera.PreviewCallback() {
 
         private final long time_scale = 1000 * 1000 * 1000;
@@ -44,7 +42,7 @@ public class PPboxVideoStream extends PPboxStream {
             long cur_time = System.currentTimeMillis();
             long time_stamp = System.nanoTime() - mStartTime;
 
-            if (cur_time - last_put_preview_time > mPreviewInterval) {
+            if (cur_time - last_put_preview_time > mQuality.getInterval()) {
                 Log.d(TAG, "interval: " + (cur_time - last_put_preview_time));
 
                 PPboxStream.InBuffer buffer = pop();
@@ -89,8 +87,8 @@ public class PPboxVideoStream extends PPboxStream {
         }
     };
 
-    public PPboxVideoStream(long capture, int itrack, long startTime, Camera camera) {
-        super(capture, startTime);
+    public PPboxVideoStream(long capture, int itrack, long startTime, Camera camera, Quality quality) {
+        super(capture, startTime, quality);
 
         mStreamType = "Video";
 
@@ -98,13 +96,15 @@ public class PPboxVideoStream extends PPboxStream {
 
         mCamera = camera;
 
+        mQuality = quality;
+
         Camera.Parameters p = camera.getParameters();
 
         Log.d(TAG, "Preview Format: " + p.getPreviewFormat());
 
         Camera.Size size = p.getPreviewSize();
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
-            MediaFormat format = MediaManager.getInstance().getSupportedEncodingVideoFormat(MediaManager.MIME_TYPE_VIDEO_AVC, size);
+            MediaFormat format = MediaManager.getInstance().getSupportedEncodingVideoFormat(MediaManager.MIME_TYPE_VIDEO_AVC, size, mQuality);
             mEncoder = MediaCodec.createEncoderByType(MediaManager.MIME_TYPE_VIDEO_AVC);
             mEncoder.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE);
         }
@@ -118,7 +118,7 @@ public class PPboxVideoStream extends PPboxStream {
         mStreamInfo.bitrate = 0;
         mStreamInfo.__union0 = p.getPreviewSize().width;
         mStreamInfo.__union1 = p.getPreviewSize().height;
-        mStreamInfo.__union2 = MediaManager.FRAME_RATE;
+        mStreamInfo.__union2 = mQuality.getFrameRate();
         mStreamInfo.__union3 = 0;
 
         if (Constants.LARGER_THAN_OR_EQUAL_JELLY_BEAN) {
@@ -159,9 +159,5 @@ public class PPboxVideoStream extends PPboxStream {
 
         camera.addCallbackBuffer(video_buffer);
         camera.setPreviewCallbackWithBuffer(mPreviewCallback);
-    }
-
-    public void setPreviewInterval(int interval) {
-        mPreviewInterval = interval;
     }
 }

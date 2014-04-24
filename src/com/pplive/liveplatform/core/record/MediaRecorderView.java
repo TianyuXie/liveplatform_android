@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.live.record;
+package com.pplive.liveplatform.core.record;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,6 +19,8 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
     private Camera mCamera;
     private SurfaceHolder mSurfaceHolder;
+
+    private Quality mQuality;
 
     private int mCurrentCameraId = CameraManager.CAMERA_FACING_BACK;
     private int mNumberOfCameras = CameraManager.getInstance().getNumberOfCameras();
@@ -71,6 +73,10 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
     public void setOutputPath(String path) {
         mOutputPath = path;
+    }
+
+    public void setQuality(Quality quality) {
+        mQuality = quality;
     }
 
     public void setMediaRecorderListener(MediaRecorderListener listener) {
@@ -191,7 +197,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
         if (!isRecording()) {
             Log.d(TAG, "startRecording 2");
 
-            mMediaRecoder = new LiveMediaRecorder(getContext(), mCamera);
+            mMediaRecoder = new LiveMediaRecorder(getContext(), mCamera, mQuality);
             mMediaRecoder.setMediaRecorderListener(mMediaRecorderListener);
             mMediaRecoder.setOutputPath(mOutputPath);
 
@@ -227,7 +233,7 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
 
         return null;
     }
-    
+
     public int getCurrentCameraId() {
         return mCurrentCameraId;
     }
