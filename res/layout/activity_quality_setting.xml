@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical" >
+
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/top_bar_height"
+        live:text="@string/settings_quality" />
+
+    <RadioGroup
+        android:id="@+id/group_quality"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" >
+
+        <RadioButton
+            style="@style/settings_quality_setting"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_quality_low" />
+
+        <RadioButton
+            style="@style/settings_quality_setting"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_quality_normal" />
+
+        <RadioButton
+            style="@style/settings_quality_setting"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/settings_quality_high" />
+    </RadioGroup>
+
+</LinearLayout>

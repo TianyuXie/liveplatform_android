@@ -2,6 +2,8 @@ package com.pplive.liveplatform.ui.widget;
 
 import android.app.Service;
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,8 @@ public class TopBarView extends RelativeLayout {
 
     private ImageButton mBtnRight;
 
+    private String mTitle;
+
     public TopBarView(Context context) {
         this(context, null);
     }
@@ -33,6 +37,16 @@ public class TopBarView extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.widget_top_bar, this, true);
 
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TopBarView);
+        for (int i = 0; i < a.length(); ++i) {
+            int attr = a.getIndex(i);
+
+            if (attr == R.styleable.TopBarView_text) {
+                mTitle = a.getString(attr);
+            }
+        }
+
+        a.recycle();
     }
 
     @Override
@@ -49,7 +63,11 @@ public class TopBarView extends RelativeLayout {
     private void init() {
         setLeftBtnImageResource(R.drawable.top_bar_back_btn);
 
-        setTitle(R.string.app_name);
+        if (TextUtils.isEmpty(mTitle)) {
+            setTitle(R.string.app_name);
+        } else {
+            setTitle(mTitle);
+        }
     }
 
     public void setTitle(CharSequence title) {
@@ -59,7 +77,6 @@ public class TopBarView extends RelativeLayout {
     public void setTitle(int resId) {
         mTextTitle.setText(resId);
     }
-    
 
     public void setLeftBtnOnClickListener(View.OnClickListener listener) {
         setBtnOnClickListener(true, listener);

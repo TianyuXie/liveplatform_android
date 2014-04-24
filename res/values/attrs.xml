@@ -81,5 +81,8 @@
         <attr name="swipeDrawableChecked" format="reference" />
         <attr name="swipeDrawableUnchecked" format="reference" />
     </declare-styleable>
+    <declare-styleable name="TopBarView">
+        <attr name="text" />
+    </declare-styleable>
 
 </resources>

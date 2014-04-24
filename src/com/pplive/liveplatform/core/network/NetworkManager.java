@@ -16,10 +16,6 @@ import de.greenrobot.event.EventBus;
 
 public class NetworkManager extends BroadcastReceiver {
 
-    public enum NetworkState {
-        WIFI, MOBILE, FAST_MOBILE, DISCONNECTED, UNKNOWN;
-    }
-
     private static final String TAG = NetworkManager.class.getSimpleName();
 
     private static NetworkState sCurrentNetworkState = NetworkState.UNKNOWN;
@@ -87,5 +83,9 @@ public class NetworkManager extends BroadcastReceiver {
         } else if (WifiManager.WIFI_STATE_CHANGED_ACTION == intent.getAction()) {
 
         }
+    }
+
+    public enum NetworkState {
+        WIFI, MOBILE, FAST_MOBILE, DISCONNECTED, UNKNOWN;
     }
 }

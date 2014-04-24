@@ -1,4 +1,4 @@
-package com.pplive.liveplatform;
+package com.pplive.liveplatform.ui;
 
 import java.util.List;
 
@@ -19,10 +19,10 @@ import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.cache.SearchCacheManager;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.SearchService;
-import com.pplive.liveplatform.ui.SearchResultActivity;
 import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 
 public class SearchActivity extends Activity {
