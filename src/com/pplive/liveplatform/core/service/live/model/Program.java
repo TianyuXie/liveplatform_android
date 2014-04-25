@@ -53,7 +53,7 @@ public class Program implements Serializable {
     Token tk;
 
     Recommend recommend;
-    
+
     StreamStatus streamstatus;
 
     public Program(String owner, String title, long starttime) {
@@ -180,8 +180,12 @@ public class Program implements Serializable {
         return (null == tk || StringUtil.isNullOrEmpty(tk.livetk)) ? "" : tk.livetk;
     }
 
+    public boolean isPause() {
+        return livestatus == LiveStatusEnum.PAUSE;
+    }
+
     public boolean isLiving() {
-        return livestatus == LiveStatusEnum.LIVING;
+        return livestatus == LiveStatusEnum.LIVING || livestatus == LiveStatusEnum.PAUSE;
     }
 
     public boolean isVOD() {

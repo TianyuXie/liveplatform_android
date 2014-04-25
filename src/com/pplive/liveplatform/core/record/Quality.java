@@ -2,7 +2,7 @@ package com.pplive.liveplatform.core.record;
 
 public enum Quality {
 
-    High(0x3, 35, 450000, 50000, 25), Normal(0x2, 50, 220000, 30000, 15), Low(0x1, 125, 110000, 15000, 10);
+    High(0x3, 35, 450000, 50000, 20), Normal(0x2, 50, 220000, 30000, 15), Low(0x1, 125, 110000, 15000, 5);
 
     static {
         High.mNext = High;
