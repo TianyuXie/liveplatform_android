@@ -137,16 +137,18 @@ public class SettingsActivity extends Activity {
 
         int resId = R.string.settings_quality_normal;
         Quality quality = QualityPreferences.getInstance(getApplicationContext()).getQuality();
-        switch (quality) {
-        case High:
-            resId = R.string.settings_quality_high;
-            break;
-        case Normal:
-            resId = R.string.settings_quality_normal;
-            break;
-        case Low:
-            resId = R.string.settings_quality_low;
-            break;
+        if (null != quality) {
+            switch (quality) {
+            case High:
+                resId = R.string.settings_quality_high;
+                break;
+            case Normal:
+                resId = R.string.settings_quality_normal;
+                break;
+            case Low:
+                resId = R.string.settings_quality_low;
+                break;
+            }
         }
 
         mQualityText.setText(resId);

@@ -30,10 +30,10 @@ public class ProgramService extends RestService {
     private static final String TAG = ProgramService.class.getSimpleName();
 
     private static final String TEMPLATE_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
-            "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
+            "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
     private static final String TEMPLATE_CDN_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
-            "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
+            "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
     private static final String TEMPLATE_CREATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
