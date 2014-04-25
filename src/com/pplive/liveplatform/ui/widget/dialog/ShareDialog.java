@@ -97,7 +97,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_share);
         ((TextView) findViewById(R.id.text_share_dialog_title)).setText(mDialogTitle);
-        findViewById(R.id.btn_share_dialog_close).setOnClickListener(this);
         findViewById(R.id.btn_share_dialog_sina).setOnClickListener(this);
         findViewById(R.id.btn_share_dialog_wechat).setOnClickListener(this);
         findViewById(R.id.btn_share_dialog_wechatSNS).setOnClickListener(this);
@@ -254,9 +253,6 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-        case R.id.btn_share_dialog_close:
-            dismiss();
-            break;
         case R.id.btn_share_dialog_qq:
             qqShare();
             break;

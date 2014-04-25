@@ -6,10 +6,10 @@ import com.google.gson.annotations.SerializedName;
 import com.pplive.liveplatform.R;
 
 public enum LiveStatusEnum {
-    
+
     @SerializedName("living")
     LIVING {
-        
+
         @Override
         public LiveStatusEnum nextStatus() {
             return STOPPED;
@@ -19,19 +19,38 @@ public enum LiveStatusEnum {
         public String toString() {
             return "living";
         }
-        
+
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_living);
         }
     },
-    
-    @SerializedName("notstart")
-    NOT_START {
-        
+
+    @SerializedName("pause")
+    PAUSE {
+
         @Override
         public LiveStatusEnum nextStatus() {
-            
+            return LIVING;
+        }
+
+        @Override
+        public String toString() {
+            return "pause";
+        }
+
+        @Override
+        public String toFriendlyString(Context context) {
+            return context.getString(R.string.program_status_living);
+        }
+    },
+
+    @SerializedName("notstart")
+    NOT_START {
+
+        @Override
+        public LiveStatusEnum nextStatus() {
+
             return INIT;
         }
 
@@ -39,7 +58,7 @@ public enum LiveStatusEnum {
         public String toString() {
             return "notstart";
         }
-        
+
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_notstart);
@@ -48,17 +67,17 @@ public enum LiveStatusEnum {
 
     @SerializedName("init")
     INIT {
-        
+
         @Override
         public LiveStatusEnum nextStatus() {
-            return PREVIEW;
+            return LIVING;
         }
 
         @Override
         public String toString() {
             return "init";
         }
-        
+
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_notstart);
@@ -67,10 +86,10 @@ public enum LiveStatusEnum {
 
     @SerializedName("preview")
     PREVIEW {
-        
+
         @Override
         public LiveStatusEnum nextStatus() {
-            
+
             return LIVING;
         }
 
@@ -78,7 +97,7 @@ public enum LiveStatusEnum {
         public String toString() {
             return "preview";
         }
-        
+
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_notstart);
@@ -92,7 +111,7 @@ public enum LiveStatusEnum {
         public String toString() {
             return "stopped";
         }
-        
+
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_stopped);
@@ -106,7 +125,7 @@ public enum LiveStatusEnum {
         public String toString() {
             return "deleted";
         }
-        
+
         @Override
         public String toFriendlyString(Context context) {
             return context.getString(R.string.program_status_deleted);
@@ -115,7 +134,7 @@ public enum LiveStatusEnum {
 
     @SerializedName("sysdeleted")
     SYS_DELETED {
-        
+
         @Override
         public String toString() {
             return "sysdeleted";
@@ -126,9 +145,9 @@ public enum LiveStatusEnum {
             return context.getString(R.string.program_status_deleted);
         }
     };
-    
+
     public abstract String toFriendlyString(Context context);
-    
+
     public LiveStatusEnum nextStatus() {
         return null;
     }

@@ -1,10 +1,13 @@
 package com.pplive.liveplatform.core.service.live;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
@@ -25,7 +28,7 @@ public class LiveControlService extends RestService {
 
     private static final String TAG = LiveControlService.class.getSimpleName();
 
-    private static final String TEMPLATE_UPDATE_LIVE_STATUS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/c/v1/pptv/program/{pid}/livestatus")
+    private static final String TEMPLATE_UPDATE_LIVE_STATUS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/c/v2/pptv/program/{pid}/livestatus")
             .toString();
 
     private static final String TEMPLATE_KEEP_LIVE_ALIVE = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/c/v1/pptv/program/{pid}/livealive")
@@ -39,62 +42,114 @@ public class LiveControlService extends RestService {
 
     private LiveControlService() {
     }
-    
-    public void updateLiveStatusByCoTokenAsync(final Context context, final Program program) {
+
+    public void updateLiveStatusByCoTokenAsync(final Context context, final Program program, final LiveStatusEnum status) {
         String username = UserManager.getInstance(context).getUsernamePlain();
         String coToken = UserManager.getInstance(context).getToken();
-        
-        updateLiveStatusByCoTokenAsync(coToken, program, username);
+
+        updateLiveStatusByCoTokenAsync(coToken, program, username, status);
     }
-    
-    private void updateLiveStatusByCoTokenAsync(final String coToken, final Program program, final String username) {
+
+    private void updateLiveStatusByCoTokenAsync(final String coToken, final Program program, final String username, final LiveStatusEnum status) {
+
         AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
-            
+
             @Override
             protected Boolean doInBackground(Void... params) {
-                
-                try {
-                    
-                    return updateLiveStatusByCoToken(coToken, program, username);
-                } catch (LiveHttpException e) {
-                    
+
+                for (int i = 0; i < 3; ++i) {
+
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(1000);
+
+                        String liveToken = TokenService.getInstance().getLiveToken(coToken, program.getId(), username);
+
+                        if (!TextUtils.isEmpty(liveToken) && updateLiveStatusByLiveToken(liveToken, program, status)) {
+                            return true;
+                        }
+
+                    } catch (InterruptedException e) {
+
+                    } catch (LiveHttpException e) {
+                        Log.w(TAG, e.toString());
+                        continue;
+                    }
+
                 }
-                
+
                 return false;
             }
         };
-        
+
         task.execute();
     }
-    
+
+    public void updateLiveStatusByCoTokenAsync(final Context context, final Program program) {
+        String username = UserManager.getInstance(context).getUsernamePlain();
+        String coToken = UserManager.getInstance(context).getToken();
+
+        updateLiveStatusByCoTokenAsync(coToken, program, username);
+    }
+
+    private void updateLiveStatusByCoTokenAsync(final String coToken, final Program program, final String username) {
+        AsyncTask<Void, Void, Boolean> task = new AsyncTask<Void, Void, Boolean>() {
+
+            @Override
+            protected Boolean doInBackground(Void... params) {
+
+                for (int i = 0; i < 3; ++i) {
+
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(1000);
+
+                        if (updateLiveStatusByCoToken(coToken, program, username)) {
+                            return true;
+                        }
+
+                    } catch (InterruptedException e) {
+
+                    } catch (LiveHttpException e) {
+                        Log.w(TAG, e.toString());
+                        continue;
+                    }
+
+                }
+
+                return false;
+            }
+        };
+
+        task.execute();
+    }
+
     public boolean updateLiveStatusByCoToken(String coToken, Program program, String username) throws LiveHttpException {
         String liveToken = TokenService.getInstance().getLiveToken(coToken, program.getId(), username);
 
         return updateLiveStatusByLiveToken(liveToken, program);
     }
-    
+
     public boolean updateLiveStatusByLiveToken(String liveToken, Program program) throws LiveHttpException {
         LiveStatusEnum status = program.getLiveStatus();
-        
+
         if (null != status.nextStatus()) {
-            
+
             return updateLiveStatusByLiveToken(liveToken, program, status.nextStatus());
         }
-        
+
         throw new LiveHttpException();
     }
-    
+
     private boolean updateLiveStatusByLiveToken(String liveToken, Program program, LiveStatusEnum livestatus) throws LiveHttpException {
         Log.d(TAG, "pid: " + program.getId() + "; livestatus: " + livestatus);
-        
+
         mHttpHeaders.setAuthorization(new LiveTokenAuthentication(liveToken));
         HttpEntity<?> req = new HttpEntity<LiveStatus>(new LiveStatus(livestatus), mHttpHeaders);
-        
+
         MessageResp resp = null;
         try {
-    
+
             resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_LIVE_STATUS, req, MessageResp.class, program.getId());
-            
+
             if (0 == resp.getError()) {
                 program.setLiveStatus(livestatus);
                 return true;
@@ -102,7 +157,7 @@ public class LiveControlService extends RestService {
         } catch (Exception e) {
             Log.w(TAG, e.toString());
         }
-        
+
         if (null != resp) {
             throw new LiveHttpException(resp.getError());
         } else {
@@ -112,24 +167,24 @@ public class LiveControlService extends RestService {
 
     public LiveAlive keepLiveAlive(String coToken, long pid) throws LiveHttpException {
         Log.d(TAG, "pid: ");
-        
+
         mHttpHeaders.setAuthorization(new UserTokenAuthentication(coToken));
         HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
-        
-        LiveAliveResp resp = null; 
+
+        LiveAliveResp resp = null;
         try {
-            
+
             HttpEntity<LiveAliveResp> rep = mRestTemplate.exchange(TEMPLATE_KEEP_LIVE_ALIVE, HttpMethod.GET, req, LiveAliveResp.class, pid);
-           
+
             resp = rep.getBody();
-            
+
             if (0 == resp.getError()) {
                 return resp.getData();
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());
         }
-        
+
         if (null != resp) {
             throw new LiveHttpException(resp.getError());
         } else {
