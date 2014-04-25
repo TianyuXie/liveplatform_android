@@ -53,6 +53,8 @@ public class Program implements Serializable {
     Token tk;
 
     Recommend recommend;
+    
+    StreamStatus streamstatus;
 
     public Program(String owner, String title, long starttime) {
         this(owner, LiveModeEnum.CAMERA, title, starttime);

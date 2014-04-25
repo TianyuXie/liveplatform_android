@@ -19,7 +19,7 @@ public class SearchService extends RestService {
     private static final SearchService sInstance = new SearchService();
 
     private static final String TEMPLATE_SEARCH_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
-            "/search/v1/pptv/searchcommon?key={keywords}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}")
+            "/search/v2/pptv/searchcommon?key={keywords}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}")
             .toString();
 
     private static final String TEMPLATE_GET_RECOMMEND_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/search/v2/c/pptv/recommend/program")

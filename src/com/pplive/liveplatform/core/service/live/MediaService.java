@@ -45,7 +45,7 @@ public class MediaService extends RestService {
     private static final String TEMPLATE_GET_PLAY_V1 = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch")
             .toString();
 
-    private static final String TEMPLATE_GET_PLAY_V2 = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v2/pptv/program/{pid}/watch")
+    private static final String TEMPLATE_GET_PLAY_V3 = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v3/pptv/program/{pid}/watch")
             .toString();
 
     private static final String TEMPLATE_GET_PREVIEW = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/preview")
@@ -131,15 +131,15 @@ public class MediaService extends RestService {
         }
     }
 
-    public WatchList getPlayWatchListV2(String coToken, long pid, String username) throws LiveHttpException {
+    public WatchList getPlayWatchListV3(String coToken, long pid, String username) throws LiveHttpException {
         Log.d(TAG, "coToken: " + coToken + "; pid; " + pid + "; username: " + username);
 
         String playToken = TokenService.getInstance().getPlayToken(coToken, pid, username);
 
-        return getPlayWatchListByPlayTokenV2(pid, playToken);
+        return getPlayWatchListByPlayTokenV3(pid, playToken);
     }
 
-    public WatchList getPlayWatchListByPlayTokenV2(long pid, String playToken) throws LiveHttpException {
+    public WatchList getPlayWatchListByPlayTokenV3(long pid, String playToken) throws LiveHttpException {
         Log.d(TAG, "pid: " + pid + "; token: " + playToken);
 
         mHttpHeaders.setAuthorization(new PlayTokenAuthentication(playToken));
@@ -148,7 +148,7 @@ public class MediaService extends RestService {
 
         WatchListResp2 resp = null;
         try {
-            HttpEntity<WatchListResp2> rep = mRestTemplate.exchange(TEMPLATE_GET_PLAY_V2, HttpMethod.GET, req, WatchListResp2.class, pid);
+            HttpEntity<WatchListResp2> rep = mRestTemplate.exchange(TEMPLATE_GET_PLAY_V3, HttpMethod.GET, req, WatchListResp2.class, pid);
             resp = rep.getBody();
 
             if (0 == resp.getError()) {
