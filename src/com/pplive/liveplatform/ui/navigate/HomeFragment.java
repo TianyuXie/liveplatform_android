@@ -40,6 +40,8 @@ public class HomeFragment extends Fragment {
 
     private ProgramAdapter mAdapter;
 
+    private boolean mInited = false;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -89,9 +91,13 @@ public class HomeFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        AsyncTaskGetRecommendProgramList task = new AsyncTaskGetRecommendProgramList();
+        if (!mInited) {
+            AsyncTaskGetRecommendProgramList task = new AsyncTaskGetRecommendProgramList();
 
-        task.execute();
+            task.execute();
+
+            mInited = true;
+        }
     }
 
     class AsyncTaskGetRecommendProgramList extends AsyncTask<Void, Void, List<Program>> {

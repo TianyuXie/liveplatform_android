@@ -44,6 +44,7 @@ public class LiveControlService extends RestService {
     }
 
     public void updateLiveStatusByCoTokenAsync(final Context context, final Program program, final LiveStatusEnum status) {
+
         String username = UserManager.getInstance(context).getUsernamePlain();
         String coToken = UserManager.getInstance(context).getToken();
 

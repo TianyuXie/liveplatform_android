@@ -755,7 +755,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 mPublishDacStat.onPauseStart();
             }
 
-            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram, LiveStatusEnum.PAUSE);
+            if (null != mLivingProgram) {
+                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram, LiveStatusEnum.PAUSE);
+            }
         }
 
         mLivingUrl = null;
@@ -771,8 +773,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void stopLivingProgram(final Program program) {
-        if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus()) {
-            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program);
+        if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus() || LiveStatusEnum.PAUSE == program.getLiveStatus()) {
+            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program, LiveStatusEnum.STOPPED);
         }
     }
 
