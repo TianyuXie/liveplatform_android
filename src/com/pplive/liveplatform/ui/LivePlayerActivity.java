@@ -416,23 +416,18 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
     private void onClickBtnDelEmoji() {
         Editable edit = mCommentEditText.getEditableText();
         if (edit.length() > 0) {
-            if (edit.charAt(edit.length() - 1) != ']') {
 
-                edit.delete(edit.length() - 1, edit.length());
+            char c = edit.charAt(edit.length() - 1);
+
+            if (edit.length() >= 3) {
+                if (edit.charAt(edit.length() - 3) == '/') {
+
+                    edit.delete(edit.length() - 3, edit.length());
+                }
             } else {
-
-                int start = -1;
-                for (int index = edit.length() - 1; index >= 0; --index) {
-                    if (edit.charAt(index) == '[') {
-                        start = index;
-                        break;
-                    }
-                }
-
-                if (start >= 0) {
-                    edit.delete(start, edit.length());
-                }
+                edit.delete(edit.length() - 1, edit.length());
             }
+
         }
     }
 

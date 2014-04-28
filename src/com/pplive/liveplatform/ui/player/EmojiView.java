@@ -61,7 +61,6 @@ public class EmojiView extends GridView implements android.widget.AdapterView.On
 
 class EmojiAdapter extends BaseAdapter {
 
-
     private LayoutInflater mInflater;
 
     public EmojiAdapter(Context context) {
@@ -75,7 +74,7 @@ class EmojiAdapter extends BaseAdapter {
 
     @Override
     public String getItem(int position) {
-        return "[" + Emoji.EMOJI_KEY_LIST.get(position) + "]";
+        return "/" + Emoji.EMOJI_KEY_LIST.get(position);
     }
 
     @Override

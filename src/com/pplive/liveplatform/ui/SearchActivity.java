@@ -18,6 +18,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.cache.SearchCacheManager;
@@ -149,6 +150,7 @@ public class SearchActivity extends Activity {
             startActivity(intent);
         } else {
 
+            Toast.makeText(this, R.string.search_keyword_empty, Toast.LENGTH_SHORT).show();
         }
     }
 

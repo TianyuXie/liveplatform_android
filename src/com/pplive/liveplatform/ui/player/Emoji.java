@@ -67,13 +67,13 @@ public class Emoji {
         EMOJI_ICON_LIST.add(R.drawable.emoji_024);
         
         StringBuilder sb = new StringBuilder();
-        sb.append("\\[(");
+        sb.append("/(");
         for (int i = 0; i < EMOJI_KEY_LIST.size(); ++i) {
             EMOJI_ICON_MAP.put(EMOJI_KEY_LIST.get(i), EMOJI_ICON_LIST.get(i));
             
             sb.append(String.format(Locale.US, i == 0 ? "%s" : "|%s", EMOJI_KEY_LIST.get(i)));
         }
-        sb.append(")\\]");
+        sb.append(")");
         REG_EMOJI = Pattern.compile(sb.toString());
     }
 }
