@@ -3,13 +3,12 @@
     xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/userpage_bg"
+    android:background="@color/app_bg"
     android:orientation="vertical" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height"
-        android:background="@color/black" >
+        android:layout_height="@dimen/top_bar_height" >
 
         <Button
             android:id="@+id/btn_userpage_back"

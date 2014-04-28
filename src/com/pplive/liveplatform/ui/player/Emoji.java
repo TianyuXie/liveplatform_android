@@ -10,9 +10,11 @@ import com.pplive.liveplatform.R;
 public class Emoji {
 
     public static final ArrayList<String> EMOJI_KEY_LIST = new ArrayList<String>();
+    public static final ArrayList<Integer> EMOJI_BIG_ICON_LIST = new ArrayList<Integer>();
     public static final ArrayList<Integer> EMOJI_ICON_LIST = new ArrayList<Integer>();
+
     public static final HashMap<String, Integer> EMOJI_ICON_MAP = new HashMap<String, Integer>();
-    
+
     public static final Pattern REG_EMOJI;
 
     static {
@@ -41,6 +43,31 @@ public class Emoji {
         EMOJI_KEY_LIST.add("握手");
         EMOJI_KEY_LIST.add("电话");
 
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_001_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_002_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_003_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_004_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_005_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_006_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_007_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_008_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_009_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_010_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_011_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_012_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_013_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_014_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_015_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_016_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_017_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_018_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_019_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_020_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_021_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_022_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_023_big);
+        EMOJI_BIG_ICON_LIST.add(R.drawable.emoji_024_big);
+
         EMOJI_ICON_LIST.add(R.drawable.emoji_001);
         EMOJI_ICON_LIST.add(R.drawable.emoji_002);
         EMOJI_ICON_LIST.add(R.drawable.emoji_003);
@@ -65,15 +92,15 @@ public class Emoji {
         EMOJI_ICON_LIST.add(R.drawable.emoji_022);
         EMOJI_ICON_LIST.add(R.drawable.emoji_023);
         EMOJI_ICON_LIST.add(R.drawable.emoji_024);
-        
+
         StringBuilder sb = new StringBuilder();
-        sb.append("\\[(");
+        sb.append("/(");
         for (int i = 0; i < EMOJI_KEY_LIST.size(); ++i) {
             EMOJI_ICON_MAP.put(EMOJI_KEY_LIST.get(i), EMOJI_ICON_LIST.get(i));
-            
+
             sb.append(String.format(Locale.US, i == 0 ? "%s" : "|%s", EMOJI_KEY_LIST.get(i)));
         }
-        sb.append(")\\]");
+        sb.append(")");
         REG_EMOJI = Pattern.compile(sb.toString());
     }
 }

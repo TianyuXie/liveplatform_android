@@ -30,9 +30,11 @@
         <Button
             android:id="@+id/btn_share_dialog_wechat"
             style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:drawableTop="@drawable/share_wechat_btn"
             android:text="@string/share_wechat" >
         </Button>
@@ -40,10 +42,11 @@
         <Button
             android:id="@+id/btn_share_dialog_wechatSNS"
             style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:drawableTop="@drawable/share_wechat_sns_btn"
             android:text="@string/share_wechat_sns" >
         </Button>
@@ -51,10 +54,11 @@
         <Button
             android:id="@+id/btn_share_dialog_sina"
             style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:drawableTop="@drawable/share_weibo_btn"
             android:text="@string/share_weibo" >
         </Button>
@@ -62,9 +66,11 @@
         <Button
             android:id="@+id/btn_share_dialog_qq"
             style="@style/Widget.Button.Transparent"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
             android:drawableTop="@drawable/share_qq_btn"
             android:text="@string/share_qq" >
         </Button>
