@@ -94,7 +94,7 @@ class EmojiAdapter extends BaseAdapter {
         }
 
         ViewHolder holder = (ViewHolder) convertView.getTag();
-        holder.mImageView.setImageResource(Emoji.EMOJI_ICON_LIST.get(position));
+        holder.mImageView.setImageResource(Emoji.EMOJI_BIG_ICON_LIST.get(position));
 
         return convertView;
     }

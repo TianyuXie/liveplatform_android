@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <string name="send">发送</string>
     <string name="player_loading">载入中&#8230;</string>
     <string name="player_waiting">请稍候&#8230;</string>
     <string name="player_finish">载入完成</string>
@@ -32,7 +33,7 @@
     <color name="player_chat_content">#FF919191</color>
     <color name="player_chat_owner">#19a0ff</color>
     <color name="player_seek_normal">#9c9c9c</color>
-
+    
     <style name="player_progressBarStyleHorizontal">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/player_seekbar_horizontal</item>

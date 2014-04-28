@@ -20,6 +20,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -113,6 +114,8 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
     private ImageButton mBtnShowEmojiOrKeyboard;
 
+    private Button mBtnSendComment;
+
     private boolean mEmojiShowing = false;
 
     private EmojiView mEmojiView;
@@ -205,6 +208,36 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         mRootLayout.setOnSoftInputListener(mOnSoftInputListener);
         mCommentEditText = (EnterSendEditText) findViewById(R.id.edit_player_comment);
         mCommentEditText.setOnEnterListener(mOnCommentEnterListener);
+        mCommentEditText.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                // TODO Auto-generated method stub
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                String content = mCommentEditText.getEditableText().toString().trim();
+                if (content.length() > 0 && content.length() <= 20) {
+                    mBtnSendComment.setEnabled(true);
+                } else {
+                    mBtnSendComment.setEnabled(false);
+                }
+
+                if (content.length() > 20) {
+                    Toast.makeText(LivePlayerActivity.this, "评论字数不能超过20字符", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         mCommentView = findViewById(R.id.layout_player_comment);
         mFragmentContainer = findViewById(R.id.layout_player_fragment);
         mChatBox = (ChatBox) findViewById(R.id.layout_player_chatbox);
@@ -217,6 +250,15 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
         mBtnShowEmojiOrKeyboard = (ImageButton) findViewById(R.id.btn_show_emoji_or_keyboard);
         mBtnShowEmojiOrKeyboard.setOnClickListener(this);
+
+        mBtnSendComment = (Button) findViewById(R.id.btn_send_comment);
+        mBtnSendComment.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                sendComment();
+            }
+        });
 
         mEmojiView = (EmojiView) findViewById(R.id.emoji_view);
         mEmojiView.setOnEmojiClickListener(mOnEmojiClickListener);
@@ -417,8 +459,6 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         Editable edit = mCommentEditText.getEditableText();
         if (edit.length() > 0) {
 
-            char c = edit.charAt(edit.length() - 1);
-
             if (edit.length() >= 3) {
                 if (edit.charAt(edit.length() - 3) == '/') {
 
@@ -496,22 +536,34 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
         @Override
         public boolean onEnter(View v) {
-            long pid = mProgram.getId();
-            if (pid > 0) {
-                String content = mCommentEditText.getText().toString();
+            sendComment();
+
+            return true;
+        }
+    };
+
+    private void sendComment() {
+        long pid = mProgram.getId();
+        if (pid > 0) {
+            String content = mCommentEditText.getText().toString().trim();
+
+            if (content.length() > 0) {
+
                 String token = UserManager.getInstance(mContext).getToken();
                 TaskContext taskContext = new TaskContext();
                 taskContext.set(PutFeedTask.KEY_PID, pid);
                 taskContext.set(PutFeedTask.KEY_CONTENT, content);
                 taskContext.set(PutFeedTask.KEY_TOKEN, token);
                 postFeed(taskContext);
+            } else if (content.length() > 20) {
+                Toast.makeText(this, "评论字数不能超过20字符", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "评论内容不能为空", Toast.LENGTH_SHORT).show();
             }
-
-            stopComment(true);
-
-            return true;
         }
-    };
+
+        stopComment(true);
+    }
 
     private DetectableRelativeLayout.OnSoftInputListener mOnSoftInputListener = new DetectableRelativeLayout.OnSoftInputListener() {
         @Override
