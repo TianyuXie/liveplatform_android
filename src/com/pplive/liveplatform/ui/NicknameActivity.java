@@ -85,7 +85,7 @@ public class NicknameActivity extends Activity {
     private View.OnKeyListener mOnNickEditEnterListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN && mConfirmButton.isEnabled()) {
                 mConfirmButton.performClick();
                 return true;
             }

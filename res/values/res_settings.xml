@@ -41,6 +41,8 @@
         <item name="android:paddingLeft">12dp</item>
         <item name="android:textColor">@color/settings_text</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">middle</item>
     </style>
 
     <style name="settings_tablelayout">
