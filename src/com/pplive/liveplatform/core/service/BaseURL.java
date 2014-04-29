@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.service;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.dac.info.AppInfo;
+import com.pplive.liveplatform.core.dac.info.AppInfo;
 import com.pplive.liveplatform.util.URL;
 
 public class BaseURL extends URL {

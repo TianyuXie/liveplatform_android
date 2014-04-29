@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- String -->
+    <string name="navbar_home">首页</string>
+    <string name="navbar_original">原创</string>
+    <string name="navbar_channel">频道</string>
+    <string name="navbar_personal">我的</string>
+    <string name="live_status_living">正在直播</string>
+    <string name="live_status_vod">精彩回看</string>
+    
+    <string name="blank_user_page_login">登录</string>
+    <string name="blank_user_page_register">注册</string>
+
+    <!-- Style -->
+    <style name="style_live_state_btn" parent="@style/Widget.Button.Transparent">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/home_livestate_text_color</item>
+        <item name="android:button">@null</item>
+    </style>
+
+</resources>

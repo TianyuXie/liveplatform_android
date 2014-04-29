@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.UserService;
 import com.pplive.liveplatform.core.service.live.model.User;
 import com.pplive.liveplatform.core.service.passport.PassportService;
@@ -105,6 +105,7 @@ public class LoginTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
+        
         TaskResult result = new TaskResult(TaskStatus.Finished);
         context.set(KEY_USERNAME, usr);
         context.set(KEY_TOKEN, token);

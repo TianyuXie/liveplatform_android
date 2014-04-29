@@ -145,9 +145,11 @@ public class ImageUtil {
     public static Bitmap getCircleBitmap(Drawable src, float size) {
         Bitmap tmp = getScaledBitmap(src, size);
         Bitmap result = getCircleBitmap(tmp);
-        if (tmp != null) {
-            tmp.recycle();
-        }
+        
+        // TODO: memory leak here
+        //        if (tmp != null) {
+        //            tmp.recycle();
+        //        }
         return result;
     }
 

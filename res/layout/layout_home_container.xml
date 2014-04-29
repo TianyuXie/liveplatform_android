@@ -2,47 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:paddingTop="2dp"
-    android:paddingBottom="6dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp" >
+    android:orientation="vertical" >
 
     <LinearLayout
         android:id="@+id/layout_pull_header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:background="#FF272727"
         android:orientation="vertical" />
 
     <RadioGroup
         android:id="@+id/layout_grid_header"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
-        android:paddingBottom="12dp"
-        android:paddingTop="3dp" >
+        android:padding="10dp" >
 
         <RadioButton
             android:id="@+id/btn_status_living"
-            style="@style/home_live_status_button"
-            android:checked="true"
-            android:drawableLeft="@drawable/home_livestate_live_icon"
-            android:text="@string/home_livestate_live" />
+            style="@style/style_live_state_btn"
+            android:background="@drawable/live_state_living"
+            android:checked="true" />
 
         <RadioButton
-            android:id="@+id/btn_status_tolive"
-            style="@style/home_live_status_button"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:drawableLeft="@drawable/home_livestate_tolive_icon"
-            android:text="@string/home_livestate_tolive" />
-
-        <RadioButton
-            android:id="@+id/btn_status_replay"
-            style="@style/home_live_status_button"
-            android:drawableLeft="@drawable/home_livestate_replay_icon"
-            android:text="@string/home_livestate_replay" />
+            android:id="@+id/btn_status_reply"
+            style="@style/style_live_state_btn"
+            android:background="@drawable/live_state_reply" />
     </RadioGroup>
 
     <com.pplive.liveplatform.ui.widget.refresh.RefreshGridView
@@ -50,6 +35,8 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layoutAnimation="@anim/home_gridview_flyin"
-        android:numColumns="2" />
+        android:numColumns="2"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp" />
 
 </LinearLayout>

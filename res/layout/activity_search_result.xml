@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/app_bg" >
+
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        android:id="@+id/top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/top_bar_height" />
+
+    <com.pplive.liveplatform.ui.home.ProgramContainer
+        android:id="@+id/layout_search_body"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/top_bar" />
+
+    <TextView
+        android:id="@+id/layout_search_nodata"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/layout_search_body"
+        android:layout_marginTop="80dp"
+        android:gravity="center_horizontal"
+        android:text="@string/search_nodata_text"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+</RelativeLayout>

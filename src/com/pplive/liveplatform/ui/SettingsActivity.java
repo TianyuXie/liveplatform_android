@@ -12,10 +12,13 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.network.QualityPreferences;
+import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.liveplatform.core.settings.AppPrefs;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
+import com.pplive.liveplatform.core.update.Update;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
-import com.pplive.liveplatform.update.Update;
+import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.umeng.fb.FeedbackAgent;
 
 public class SettingsActivity extends Activity {
@@ -27,6 +30,8 @@ public class SettingsActivity extends Activity {
 
     private static final int REQUEST_NICK = 9801;
 
+    private TopBarView mTopBarView;
+
     private AppPrefs mUserPrefs;
 
     private TextView mNicknameText;
@@ -34,6 +39,8 @@ public class SettingsActivity extends Activity {
     private TextView mPPTVUserText;
 
     private TextView mThirdpartyText;
+
+    private TextView mQualityText;
 
     private ToggleButton mContentButton;
 
@@ -44,30 +51,38 @@ public class SettingsActivity extends Activity {
     private View mThirdpartyView;
 
     private int mResultCode;
-    
+
     private FeedbackAgent mFeedbackAgent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_settings);
-        findViewById(R.id.btn_settings_back).setOnClickListener(onBackBtnClickListener);
-        findViewById(R.id.btn_settings_logout).setOnClickListener(onLogoutBtnClickListener);
-        findViewById(R.id.btn_settings_login).setOnClickListener(onLoginBtnClickListener);
-        findViewById(R.id.layout_settings_nickname).setOnClickListener(onNicknameClickListener);
-        findViewById(R.id.layout_settings_about).setOnClickListener(onAboutClickListener);
-        findViewById(R.id.layout_settings_update).setOnClickListener(onUpdateClickListener);
-        findViewById(R.id.layout_settings_feedback).setOnClickListener(onFeedbackClickListener);
+
+        mTopBarView = (TopBarView) findViewById(R.id.top_bar);
+        mTopBarView.setLeftBtnOnClickListener(mOnBackBtnClickListener);
+        mTopBarView.showLeftBtn();
+
+        findViewById(R.id.btn_settings_logout).setOnClickListener(mOnLogoutBtnClickListener);
+        findViewById(R.id.btn_settings_login).setOnClickListener(mOnLoginBtnClickListener);
+        findViewById(R.id.layout_settings_nickname).setOnClickListener(mOnNicknameClickListener);
+        findViewById(R.id.layout_settings_about).setOnClickListener(mOnAboutClickListener);
+        findViewById(R.id.layout_settings_update).setOnClickListener(mOnUpdateClickListener);
+        findViewById(R.id.layout_settings_feedback).setOnClickListener(mOnFeedbackClickListener);
+        findViewById(R.id.layout_settings_quality).setOnClickListener(mOnQualitySettingClickListener);
 
         mNicknameText = (TextView) findViewById(R.id.text_settings_nickname);
         mPPTVUserText = (TextView) findViewById(R.id.text_settings_user);
         mThirdpartyText = (TextView) findViewById(R.id.text_settings_thirdparty);
+        mQualityText = (TextView) findViewById(R.id.text_quality);
+
         mPreliveButton = (ToggleButton) findViewById(R.id.btn_settings_prelive);
         mContentButton = (ToggleButton) findViewById(R.id.btn_settings_content);
         mPPTVUserView = findViewById(R.id.row_settings_user);
         mThirdpartyView = findViewById(R.id.layout_settings_thirdparty);
-        
+
         mFeedbackAgent = new FeedbackAgent(this);
         mFeedbackAgent.sync();
 
@@ -77,7 +92,8 @@ public class SettingsActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        mUserPrefs = SettingsProvider.getInstance(this).getAppPrefs();
+
+        mUserPrefs = SettingsPreferences.getInstance(this).getAppPrefs();
         mPreliveButton.setChecked(mUserPrefs.isPreliveNotify());
         mContentButton.setChecked(mUserPrefs.isContentNotify());
         mPPTVUserText.setText(UserManager.getInstance(this).getUsernamePlain());
@@ -92,7 +108,7 @@ public class SettingsActivity extends Activity {
             nickView.setVisibility(View.VISIBLE);
             userView.setVisibility(View.VISIBLE);
             logoutBtn.setVisibility(View.VISIBLE);
-            preliveView.setVisibility(View.VISIBLE);
+            preliveView.setVisibility(View.GONE);
             loginBtn.setVisibility(View.GONE);
             if (UserManager.getInstance(this).isThirdPartyLogin()) {
                 mPPTVUserView.setVisibility(View.GONE);
@@ -116,21 +132,44 @@ public class SettingsActivity extends Activity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        int resId = R.string.settings_quality_normal;
+        Quality quality = QualityPreferences.getInstance(getApplicationContext()).getQuality();
+        if (null != quality) {
+            switch (quality) {
+            case High:
+                resId = R.string.settings_quality_high;
+                break;
+            case Normal:
+                resId = R.string.settings_quality_normal;
+                break;
+            case Low:
+                resId = R.string.settings_quality_low;
+                break;
+            }
+        }
+
+        mQualityText.setText(resId);
+    }
+
+    @Override
     protected void onStop() {
         mUserPrefs.setContentNotify(mContentButton.isChecked());
         mUserPrefs.setPreliveNotify(mPreliveButton.isChecked());
-        SettingsProvider.getInstance(this).setAppPrefs(mUserPrefs);
+        SettingsPreferences.getInstance(this).setAppPrefs(mUserPrefs);
         super.onStop();
     }
 
-    private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnBackBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
         }
     };
 
-    private View.OnClickListener onLogoutBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnLogoutBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Dialog dialog = DialogManager.alertLogoutDialog(SettingsActivity.this, new DialogInterface.OnClickListener() {
@@ -145,7 +184,7 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onLoginBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnLoginBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
@@ -155,7 +194,7 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onNicknameClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnNicknameClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, NicknameActivity.class);
@@ -163,7 +202,7 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onAboutClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnAboutClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
@@ -171,18 +210,27 @@ public class SettingsActivity extends Activity {
         }
     };
 
-    private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnUpdateClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Update.updateManual(SettingsActivity.this);
         }
     };
-    
-    private View.OnClickListener onFeedbackClickListener = new View.OnClickListener() {
-        
+
+    private View.OnClickListener mOnFeedbackClickListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             mFeedbackAgent.startFeedbackActivity();
+        }
+    };
+
+    private View.OnClickListener mOnQualitySettingClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(SettingsActivity.this, QualitySettingActivity.class);
+            startActivity(intent);
         }
     };
 

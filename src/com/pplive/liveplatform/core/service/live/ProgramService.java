@@ -11,16 +11,18 @@ import org.springframework.web.client.HttpClientErrorException;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.model.LiveStatus;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.core.service.live.resp.LiveStatusResp;
 import com.pplive.liveplatform.core.service.live.resp.MessageResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramListResp;
 import com.pplive.liveplatform.core.service.live.resp.ProgramResp;
+import com.pplive.liveplatform.core.service.live.resp.SubjectListResp;
 import com.pplive.liveplatform.util.URL.Protocol;
 
 public class ProgramService extends RestService {
@@ -28,10 +30,10 @@ public class ProgramService extends RestService {
     private static final String TAG = ProgramService.class.getSimpleName();
 
     private static final String TEMPLATE_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
-            "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
+            "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
     private static final String TEMPLATE_CDN_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
-            "/ft/v1/owner/{owner}/programs?livestatus={livestatus}").toString();
+            "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
     private static final String TEMPLATE_CREATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
@@ -41,6 +43,9 @@ public class ProgramService extends RestService {
     private static final String TEMPLATE_DELETE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}").toString();
 
     private static final String TEMPLATE_GET_LIVESTATUS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program/{programid}/livestatus")
+            .toString();
+
+    private static final String TEMPLATE_GET_SUBJECTS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/bk/subject/v2/pptv/subjects")
             .toString();
 
     public static final int ERR_UNAUTHORIZED = 401;
@@ -79,10 +84,10 @@ public class ProgramService extends RestService {
 
         if (isOwner) {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-            mRequestHeaders.setAuthorization(coTokenAuthentication);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
         }
 
-        HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+        HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
         ProgramListResp resp = null;
         try {
@@ -114,8 +119,8 @@ public class ProgramService extends RestService {
         Log.d(TAG, program.toString());
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        HttpEntity<Program> req = new HttpEntity<Program>(program, mHttpHeaders);
 
         ProgramResp resp = null;
         try {
@@ -142,8 +147,8 @@ public class ProgramService extends RestService {
         MessageResp resp = null;
         try {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-            mRequestHeaders.setAuthorization(coTokenAuthentication);
-            HttpEntity<Program> req = new HttpEntity<Program>(program, mRequestHeaders);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
+            HttpEntity<Program> req = new HttpEntity<Program>(program, mHttpHeaders);
 
             resp = mRestTemplate.postForObject(TEMPLATE_UPDATE_PROGRAM, req, MessageResp.class, program.getId());
 
@@ -167,8 +172,8 @@ public class ProgramService extends RestService {
         MessageResp resp = null;
         try {
             UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-            mRequestHeaders.setAuthorization(coTokenAuthentication);
-            HttpEntity<String> req = new HttpEntity<String>(mRequestHeaders);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
+            HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
             ResponseEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_DELETE_PROGRAM, HttpMethod.DELETE, req, MessageResp.class, pid);
 
@@ -197,6 +202,27 @@ public class ProgramService extends RestService {
 
             if (0 == resp.getError()) {
                 return resp.getData();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public List<Subject> getSubjects() throws LiveHttpException {
+        Log.d(TAG, "getSubjects");
+
+        SubjectListResp resp = null;
+        try {
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_SUBJECTS, SubjectListResp.class);
+
+            if (0 == resp.getError()) {
+                return resp.getList();
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());

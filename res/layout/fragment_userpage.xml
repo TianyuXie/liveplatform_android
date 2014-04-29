@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/userpage_bg"
+    android:orientation="vertical" >
+
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        android:id="@+id/top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/top_bar_height"
+        android:background="@color/app_bg" />
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="180dp"
+        android:background="@drawable/userpage_bg" >
+
+        <com.pplive.liveplatform.ui.widget.image.CircularImageView
+            android:id="@+id/image_icon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/user_icon_default" />
+
+        <TextView
+            android:id="@+id/text_userpage_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_icon"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="3dp"
+            android:textColor="@color/white"
+            android:textSize="13sp" />
+
+        <ImageView
+            android:id="@+id/image_userpage_camera"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignBottom="@id/image_icon"
+            android:layout_alignRight="@id/image_icon"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/userpage_avatar_change"
+            android:contentDescription="@null" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/layout_userpage_pull_header"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+            <com.pplive.liveplatform.ui.widget.refresh.RefreshListView
+                xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
+                android:id="@+id/list_userpage_program"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:divider="@null"
+                android:listSelector="@android:color/transparent"
+                live:extra_width="90dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_userpage_nodata"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <Button
+                android:id="@+id/btn_userpage_record"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="50dp"
+                android:background="@drawable/home_empty_btn_bg" />
+
+            <TextView
+                android:id="@+id/text_userpage_nodata"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_horizontal"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/userpage_user_nodata"
+                android:textColor="@color/true_gray"
+                android:textSize="18sp" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.pplive.liveplatform.R;
 
 public class SlideListView extends ListView {
+
     static final String TAG = "_SlideListView";
 
     private final static int DURATION_STEP = 10;
@@ -35,26 +36,29 @@ public class SlideListView extends ListView {
 
     private boolean mSlidable;
 
+    private MoveHandler mHandler = new MoveHandler(this);
+
     public SlideListView(Context context) {
         this(context, null);
     }
 
     public SlideListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SlideListView);
-        int n = a.getIndexCount();
-        for (int i = 0; i < n; i++) {
-            int attr = a.getIndex(i);
+
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.SlideListView);
+        for (int i = 0; i < array.getIndexCount(); i++) {
+            int attr = array.getIndex(i);
             switch (attr) {
             case R.styleable.SlideListView_extra_width:
-                mRightViewWidth = a.getDimensionPixelSize(attr, 0);
+                mRightViewWidth = array.getDimensionPixelSize(attr, 0);
                 break;
-            case R.styleable.SlideListView_slidable:
-                mSlidable = a.getBoolean(attr, true);
+            case R.styleable.SlideListView_slideable:
+                mSlidable = array.getBoolean(attr, true);
                 break;
             }
         }
-        a.recycle();
+
+        array.recycle();
     }
 
     /**
@@ -243,7 +247,8 @@ public class SlideListView extends ListView {
         if (view == null) {
             return;
         }
-        Message msg = new MoveHandler(this).obtainMessage();
+
+        Message msg = mHandler.obtainMessage();
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = mRightViewWidth;
@@ -262,7 +267,7 @@ public class SlideListView extends ListView {
         if (mCurrentItemView == null || view == null) {
             return;
         }
-        Message msg = new MoveHandler(this).obtainMessage();
+        Message msg = mHandler.obtainMessage();
         msg.obj = view;
         msg.arg1 = view.getScrollX();
         msg.arg2 = 0;
@@ -272,17 +277,21 @@ public class SlideListView extends ListView {
         mIsShown = false;
     }
 
+    public void setSlidable(boolean sliable) {
+        this.mSlidable = sliable;
+    }
+
     /**
      * show or hide right layout animation
      */
     static class MoveHandler extends Handler {
-        int stepX = 0;
+        int mStepX = 0;
 
-        int fromX;
+        int mFromX;
 
-        int toX;
+        int mToX;
 
-        View view;
+        View mView;
 
         WeakReference<SlideListView> mOuter;
 
@@ -294,7 +303,7 @@ public class SlideListView extends ListView {
 
         private void animationOver() {
             mIsInAnimation = false;
-            stepX = 0;
+            mStepX = 0;
         }
 
         @Override
@@ -305,36 +314,38 @@ public class SlideListView extends ListView {
                 return;
             }
 
-            if (stepX == 0) {
+            if (mStepX == 0) {
                 if (mIsInAnimation) {
                     return;
                 }
+
                 mIsInAnimation = true;
-                view = (View) msg.obj;
-                fromX = msg.arg1;
-                toX = msg.arg2;
-                stepX = (int) ((toX - fromX) * DURATION_STEP * 1.0 / 100);
-                if (stepX < 0 && stepX > -1) {
-                    stepX = -1;
-                } else if (stepX > 0 && stepX < 1) {
-                    stepX = 1;
+                mView = (View) msg.obj;
+                mFromX = msg.arg1;
+                mToX = msg.arg2;
+                mStepX = (int) ((mToX - mFromX) * DURATION_STEP * 1.0 / 100);
+                if (mStepX < 0 && mStepX > -1) {
+                    mStepX = -1;
+                } else if (mStepX > 0 && mStepX < 1) {
+                    mStepX = 1;
                 }
-                if (Math.abs(toX - fromX) < 10) {
-                    if (view != null) {
-                        view.scrollTo(toX, 0);
+
+                if (Math.abs(mToX - mFromX) < 10) {
+                    if (mView != null) {
+                        mView.scrollTo(mToX, 0);
                     }
                     animationOver();
                     return;
                 }
             }
 
-            fromX += stepX;
-            boolean isLastStep = (stepX > 0 && fromX > toX) || (stepX < 0 && fromX < toX);
+            mFromX += mStepX;
+            boolean isLastStep = (mStepX > 0 && mFromX > mToX) || (mStepX < 0 && mFromX < mToX);
             if (isLastStep) {
-                fromX = toX;
+                mFromX = mToX;
             }
-            if (view != null) {
-                view.scrollTo(fromX, 0);
+            if (mView != null) {
+                mView.scrollTo(mFromX, 0);
             }
             outer.invalidate();
 
@@ -344,10 +355,6 @@ public class SlideListView extends ListView {
                 animationOver();
             }
         }
-    }
-
-    public void setSlidable(boolean sliable) {
-        this.mSlidable = sliable;
     }
 
 }

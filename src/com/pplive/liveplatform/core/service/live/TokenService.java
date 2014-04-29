@@ -11,8 +11,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import android.util.Log;
 
 import com.pplive.liveplatform.Constants;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.BaseURL;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.auth.UserTokenAuthentication;
 import com.pplive.liveplatform.core.service.live.resp.ExpireTimeResp;
 import com.pplive.liveplatform.core.service.live.resp.TokenResp;
@@ -76,8 +76,8 @@ public class TokenService extends RestService {
         Log.d(TAG, "TokenType: " + type + "; pid: " + pid + "; username: " + username + "; expiretime: " + expiretime);
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
 
         TokenResp resp = null;
         try {
@@ -107,8 +107,8 @@ public class TokenService extends RestService {
         Log.d(TAG, "coToken: " + coToken + "; username: " + username + "; expiretime: " + expiretime);
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mRequestHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<?> req = new HttpEntity<String>(mRequestHeaders);
+        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
 
         TokenResp resp = null;
         try {

@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <solid android:color="@color/input_text_bg" />
+    <solid android:color="#FF001E33" />
 
-    <corners android:radius="12dp" />
+    <stroke
+        android:width="2dp"
+        android:color="#FF199FFE" />
+
+    <corners android:radius="20dp" />
 
 </shape>

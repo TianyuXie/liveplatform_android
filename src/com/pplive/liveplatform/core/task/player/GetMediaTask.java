@@ -52,7 +52,7 @@ public class GetMediaTask extends Task {
         String token = (String) context.get(KEY_TOKEN);
         WatchList data = null;
         try {
-            data = MediaService.getInstance().getPlayWatchListV2(token, pid, username);
+            data = MediaService.getInstance().getPlayWatchListV3(token, pid, username);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.Failed, "MediaService error");
         }

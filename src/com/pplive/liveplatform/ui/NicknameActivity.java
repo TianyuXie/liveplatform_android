@@ -45,25 +45,30 @@ public class NicknameActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = this;
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_nickname);
-        findViewById(R.id.btn_nickname_back).setOnClickListener(onBackBtnClickListener);
+        findViewById(R.id.btn_nickname_back).setOnClickListener(mOnBackBtnClickListener);
+
         mConfirmButton = (Button) findViewById(R.id.btn_nickname_confirm);
-        mConfirmButton.setOnClickListener(onConfirmBtnClickListener);
+        mConfirmButton.setOnClickListener(mOnConfirmBtnClickListener);
         mNickEditText = (EditText) findViewById(R.id.edit_nickname);
+
+        mNickEditText.setText(UserManager.getInstance(mContext).getNickname());
+
         mNickEditText.addTextChangedListener(textWatcher);
-        mNickEditText.setOnKeyListener(onNickEditEnterListener);
+        mNickEditText.setOnKeyListener(mOnNickEditEnterListener);
         mRefreshDialog = new RefreshDialog(this);
     }
 
-    private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnBackBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
         }
     };
 
-    private View.OnClickListener onConfirmBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnConfirmBtnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mRefreshDialog.show();
@@ -77,10 +82,10 @@ public class NicknameActivity extends Activity {
         }
     };
 
-    private View.OnKeyListener onNickEditEnterListener = new View.OnKeyListener() {
+    private View.OnKeyListener mOnNickEditEnterListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN && mConfirmButton.isEnabled()) {
                 mConfirmButton.performClick();
                 return true;
             }
@@ -141,8 +146,11 @@ public class NicknameActivity extends Activity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (!TextUtils.isEmpty(mNickEditText.getText())) {
-                mConfirmButton.setEnabled(true);
+            String oldNickName = UserManager.getInstance(mContext).getNickname();
+            String newNickName = mNickEditText.getText().toString().trim();
+
+            if (!TextUtils.isEmpty(newNickName)) {
+                mConfirmButton.setEnabled(!newNickName.equals(oldNickName));
             } else {
                 mConfirmButton.setEnabled(false);
             }

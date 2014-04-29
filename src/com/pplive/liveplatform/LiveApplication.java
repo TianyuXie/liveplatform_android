@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.pplive.media.MeetSDK;
-import android.pplive.media.util.LogUtils;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
 import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
@@ -18,11 +17,11 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.pplive.liveplatform.dac.info.AppInfo;
-import com.pplive.liveplatform.dac.info.DeviceInfo;
-import com.pplive.liveplatform.dac.info.SessionInfo;
-import com.pplive.liveplatform.dac.info.UserInfo;
-import com.pplive.liveplatform.net.NetworkManager;
+import com.pplive.liveplatform.core.dac.info.AppInfo;
+import com.pplive.liveplatform.core.dac.info.DeviceInfo;
+import com.pplive.liveplatform.core.dac.info.SessionInfo;
+import com.pplive.liveplatform.core.dac.info.UserInfo;
+import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringManager;
@@ -36,10 +35,10 @@ public class LiveApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        DirManager.init(getApplicationContext());
         StringManager.init(getApplicationContext());
         NetworkManager.init(getApplicationContext());
-        initPaths();
+
+        initPaths(getApplicationContext());
         initImageLoader(getApplicationContext());
 
         AppInfo.init(getApplicationContext());
@@ -49,26 +48,39 @@ public class LiveApplication extends Application {
 
         PPBoxUtil.initPPBox(getApplicationContext());
         PPBoxUtil.startPPBox();
+
         MeetSDK.setLogPath(DirManager.getLogCachePath() + "/upload.log", DirManager.getLogCachePath());
-        LogUtils.logDeviceInfo();
+
+        //        AppCrashHandler.init();
+        //        BreakpadUtil.registerBreakpad(new File(DirManager.getCrashCachePath()));
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+
+        ImageLoader.getInstance().clearMemoryCache();
     }
 
     private void initImageLoader(Context context) {
         MemoryCacheAware<String, Bitmap> memoryCache = new LimitedAgeMemoryCache<String, Bitmap>(new LruMemoryCache(2 * 1024 * 1024), 5 * 60);
         DiscCacheAware discCache = new FileCountLimitedDiscCache(new File(DirManager.getImageCachePath()), new Md5FileNameGenerator(), 200);
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(4)
-                .denyCacheImageMultipleSizesInMemory().tasksProcessingOrder(QueueProcessingType.LIFO).memoryCache(memoryCache).memoryCacheExtraOptions(120, 90)
-                .discCache(discCache).discCacheExtraOptions(120, 90, CompressFormat.JPEG, 75, null).build();
+                .denyCacheImageMultipleSizesInMemory().tasksProcessingOrder(QueueProcessingType.LIFO).memoryCache(memoryCache).discCache(discCache)
+                .discCacheExtraOptions(120, 90, CompressFormat.JPEG, 75, null).build();
         ImageLoader.getInstance().init(config);
     }
 
-    private void initPaths() {
+    private void initPaths(Context context) {
+        DirManager.init(context);
+
         SysUtil.checkPath(DirManager.getPrivateCachePath());
         SysUtil.checkPath(DirManager.getPrivateFilesPath());
         SysUtil.checkPath(DirManager.getCachePath());
         SysUtil.checkPath(DirManager.getFilesPath());
         SysUtil.checkPath(DirManager.getAppPath());
         SysUtil.checkPath(DirManager.getLogCachePath());
+        SysUtil.checkPath(DirManager.getCrashCachePath());
         SysUtil.checkPath(DirManager.getShareCachePath());
         SysUtil.checkPath(DirManager.getDownloadPath());
     }

@@ -125,7 +125,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        mRoot = inflater.inflate(R.layout.layout_player_fragment, container, false);
+        mRoot = inflater.inflate(R.layout.fragment_player, container, false);
         mVideoView = (MeetVideoView) mRoot.findViewById(R.id.live_player_videoview);
         mModeBtn = (ToggleButton) mRoot.findViewById(R.id.btn_player_mode);
         mCountTextView = (TextView) mRoot.findViewById(R.id.text_player_countdown);

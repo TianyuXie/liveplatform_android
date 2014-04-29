@@ -2,7 +2,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- For settings -->
-    <string name="settings_nickname">昵称</string>
+    <string name="settings_nickname">用户名</string>
     <string name="settings_pptv_user">PPTV帐号</string>
     <string name="settings_thirdparty">第三方登录</string>
     <string name="settings_login_qq">腾讯QQ</string>
@@ -17,12 +17,15 @@
     <string name="settings_feedback">意见反馈</string>
     <string name="about_app_info">爱播介绍\n产品预留图标及文字</string>
     <string name="about_copyright">Copyright&#169;产品预留版权声明</string>
-    <string name="about_version">Version 1.0.1</string>
     <string name="settings_logout">退出登录</string>
     <string name="settings_login">登&#160;&#160;录</string>
     <string name="settings_title">设置</string>
     <string name="settings_logout_title">退出登录</string>
     <string name="settings_logout_text">确定要退出吗?</string>
+    <string name="settings_quality">当前Wifi拍摄</string>
+    <string name="settings_quality_low">流畅</string>
+    <string name="settings_quality_normal">标清</string>
+    <string name="settings_quality_high">高清</string>
 
     <color name="settings_table_bg">#FF151515</color>
     <color name="settings_text">#FF919191</color>
@@ -30,7 +33,6 @@
     <color name="settings_version">#FF676767</color>
     <color name="settings_user">#FF1A1A1A</color>
     <color name="about_text">#FF555555</color>
-    <color name="about_bg">#FF1B1B1B</color>
 
     <style name="settings_text">
         <item name="android:layout_width">wrap_content</item>
@@ -39,6 +41,8 @@
         <item name="android:paddingLeft">12dp</item>
         <item name="android:textColor">@color/settings_text</item>
         <item name="android:textSize">16sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">middle</item>
     </style>
 
     <style name="settings_tablelayout">
@@ -78,6 +82,18 @@
         <item name="android:layout_gravity">right</item>
         <item name="android:paddingRight">10dp</item>
         <item name="android:src">@drawable/settings_arrow_right</item>
+    </style>
+
+    <style name="settings_quality_setting" parent="@style/Widget.RadioButton.Transparent">
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingLeft">20dp</item>
+        <item name="android:gravity">left</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/settings_table_bg</item>
     </style>
 
 </resources>

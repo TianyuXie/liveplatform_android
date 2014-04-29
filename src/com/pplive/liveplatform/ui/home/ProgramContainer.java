@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.ui.GridViewProgramAdapter;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
 
@@ -29,9 +30,16 @@ public class ProgramContainer extends RelativeLayout {
     private static final int TIMER_DELAY = 10000;
 
     private List<Program> mPrograms;
-    private HomeProgramAdapter mAdapter;
+
+    private GridViewProgramAdapter mAdapter;
+
     private RefreshGridView mGridView;
+
     private RadioGroup mRadioGroup;
+
+    private RadioButton mRadioBtnLiving;
+
+    private RadioButton mRadioBtnReplay;
 
     private boolean mItemClickable;
 
@@ -40,13 +48,18 @@ public class ProgramContainer extends RelativeLayout {
     public ProgramContainer(Context context, AttributeSet attrs) {
         super(context, attrs);
         mPrograms = new ArrayList<Program>();
-        mAdapter = new HomeProgramAdapter(context, mPrograms);
+        mAdapter = new GridViewProgramAdapter(context, mPrograms);
         mItemClickable = true;
 
         LayoutInflater inflater = LayoutInflater.from(context);
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.layout_home_container, this);
         mRadioGroup = (RadioGroup) root.findViewById(R.id.layout_grid_header);
+
         mGridView = (RefreshGridView) root.findViewById(R.id.grid_home_results);
+
+        mRadioBtnLiving = (RadioButton) root.findViewById(R.id.btn_status_living);
+        mRadioBtnReplay = (RadioButton) root.findViewById(R.id.btn_status_reply);
+
         LinearLayout pullHeader = (LinearLayout) root.findViewById(R.id.layout_pull_header);
         pullHeader.addView(mGridView.getPullView(), new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, Gravity.CENTER));
         mGridView.setAdapter(mAdapter);
@@ -114,7 +127,16 @@ public class ProgramContainer extends RelativeLayout {
     };
 
     public void checkStatus(int id) {
-        ((RadioButton) mRadioGroup.findViewById(id)).setChecked(true);
+        switch (id) {
+        case R.id.btn_status_living:
+            mRadioBtnLiving.setChecked(true);
+            break;
+        case R.id.btn_status_reply:
+            mRadioBtnReplay.setChecked(true);
+            break;
+        default:
+            break;
+        }
     }
 
     public int getCheckedRadioButtonId() {
@@ -152,10 +174,10 @@ public class ProgramContainer extends RelativeLayout {
     };
 
     public void setStatusVisibility(int visibility) {
-//        findViewById(R.id.btn_status_tolive).setVisibility(visibility);
-//        findViewById(R.id.btn_status_replay).setVisibility(visibility);
-        
+        Log.d(TAG, "setStatusVisibility: " + visibility);
+
         findViewById(R.id.layout_grid_header).setVisibility(visibility);
+        mRadioGroup.setVisibility(visibility);
     }
 
     public void setUpdateTime(long time) {

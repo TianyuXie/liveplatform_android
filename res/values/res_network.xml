@@ -11,5 +11,8 @@
     <string name="alert_mobile_positive">找找wifi</string>
     <string name="alert_mobile_3g_live_negative">去直播</string>
     <string name="alert_mobile_3g_play_negative">看节目</string>
+    
+    
+    <string name="alert_no_network_live_title">爱播提醒</string>
 
 </resources>

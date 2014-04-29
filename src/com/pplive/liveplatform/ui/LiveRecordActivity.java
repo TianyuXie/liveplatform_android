@@ -27,12 +27,22 @@ import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.exception.LiveHttpException;
+import com.pplive.liveplatform.core.dac.DacReportService;
+import com.pplive.liveplatform.core.dac.stat.PublishDacStat;
+import com.pplive.liveplatform.core.network.NetworkManager;
+import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
+import com.pplive.liveplatform.core.network.QualityPreferences;
+import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
+import com.pplive.liveplatform.core.record.CameraManager;
+import com.pplive.liveplatform.core.record.MediaRecorderListener;
+import com.pplive.liveplatform.core.record.MediaRecorderView;
+import com.pplive.liveplatform.core.record.Quality;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.LiveControlService;
 import com.pplive.liveplatform.core.service.live.MediaService;
 import com.pplive.liveplatform.core.service.live.ProgramService;
@@ -41,11 +51,6 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
-import com.pplive.liveplatform.dac.DacSender;
-import com.pplive.liveplatform.dac.stat.PublishDacStat;
-import com.pplive.liveplatform.net.NetworkManager;
-import com.pplive.liveplatform.net.NetworkManager.NetworkState;
-import com.pplive.liveplatform.net.event.EventNetworkChanged;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
@@ -53,10 +58,6 @@ import com.pplive.liveplatform.ui.live.FooterBarFragment;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
-import com.pplive.liveplatform.ui.live.record.CameraManager;
-import com.pplive.liveplatform.ui.live.record.MediaManager;
-import com.pplive.liveplatform.ui.live.record.MediaRecorderListener;
-import com.pplive.liveplatform.ui.live.record.MediaRecorderView;
 import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.chat.ChatBox;
@@ -149,6 +150,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private boolean mFirstPopped;
 
+    private Quality mQuality = Quality.Normal;
+
     private AnimationListener openDoorListener = new AnimationListener() {
 
         @Override
@@ -230,7 +233,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 mPublishDacStat.setIsSuccess(true);
 
                 if (null != mLivingProgram) {
-                    if (LiveStatusEnum.PREVIEW == mLivingProgram.getLiveStatus()) {
+                    if (LiveStatusEnum.INIT == mLivingProgram.getLiveStatus() || LiveStatusEnum.PAUSE == mLivingProgram.getLiveStatus()) {
                         LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram);
                     } else if (LiveStatusEnum.LIVING == mLivingProgram.getLiveStatus()) {
                         mPublishDacStat.onPauseEnd();
@@ -335,6 +338,22 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mGetPausedProgramTask.execute();
         }
 
+        selectQuality();
+
+    }
+
+    private void selectQuality() {
+        if (NetworkManager.isNetworkAvailable(getApplicationContext()) && NetworkState.WIFI == NetworkManager.getCurrentNetworkState()) {
+
+            float speed = QualityPreferences.getInstance(getApplicationContext()).getSpeed();
+            Quality quality = QualityPreferences.getInstance(getApplicationContext()).getQuality();
+
+            mQuality = null != quality ? quality : Quality.selectQuality(speed);
+        } else {
+            mQuality = Quality.Low;
+        }
+
+        Log.d(TAG, "mQuality: " + mQuality);
     }
 
     @Override
@@ -342,7 +361,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         super.onStop();
 
         Log.d(TAG, "onStop");
-        
+
         if (mLoadingDialog.isShowing()) {
             mLoadingDialog.dismiss();
         }
@@ -554,12 +573,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             mBtnLivingShare.setText(mLivingProgram.getTitle());
 
-            // TODO: Debug Code
-            // mTextLivingTitle.append("\n");
-            // mTextLivingTitle.append("pid: " + mLivingProgram.getId());
-            // mTextLivingTitle.append("\n");
-            // mTextLivingTitle.append(mLivingUrl);
-
             Message msg = mInnerHandler.obtainMessage(WHAT_LIVING_DURATION_UPDATE);
             mInnerHandler.sendMessage(msg);
         }
@@ -697,6 +710,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
 
         mMediaRecorderView.setOutputPath(mLivingUrl);
+        mMediaRecorderView.setQuality(mQuality);
         mMediaRecorderView.startRecording();
 
         if (null != mPublishDacStat) {
@@ -722,8 +736,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             mPublishDacStat.setVideoResolution(size.height, size.width);
         }
 
-        mPublishDacStat.setBitrate((MediaManager.VIDEO_BIT_RATE + MediaManager.AUDIO_BIT_RATE) / 1000);
-        mPublishDacStat.setVideoFPS(MediaManager.FRAME_RATE);
+        mPublishDacStat.setBitrate(mQuality.getBitrate() / 1000);
+        mPublishDacStat.setVideoFPS(mQuality.getFrameRate());
     }
 
     private void stopRecording(boolean stopLiving) {
@@ -740,6 +754,10 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (null != mPublishDacStat) {
                 mPublishDacStat.onPauseStart();
             }
+
+            if (null != mLivingProgram) {
+                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram, LiveStatusEnum.PAUSE);
+            }
         }
 
         mLivingUrl = null;
@@ -755,8 +773,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     }
 
     private void stopLivingProgram(final Program program) {
-        if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus()) {
-            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program);
+        if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus() || LiveStatusEnum.PAUSE == program.getLiveStatus()) {
+            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program, LiveStatusEnum.STOPPED);
         }
     }
 
@@ -796,7 +814,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void sendDac() {
         if (null != mPublishDacStat) {
             mPublishDacStat.onPlayStop();
-            DacSender.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
+            DacReportService.sendProgramPublishDac(getApplicationContext(), mPublishDacStat);
             mPublishDacStat = null;
         }
     }
@@ -826,7 +844,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private void onClickBtnCameraChange() {
 
         mMediaRecorderView.changeCamera();
-        
+
         if (CameraManager.CAMERA_FACING_FRONT == mMediaRecorderView.getCurrentCameraId()) {
             mBtnFlashLight.setVisibility(View.GONE);
         } else {
@@ -891,7 +909,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             return true;
         case DISCONNECTED:
-            DialogManager.alertNoNetworkDialog(this, new DialogInterface.OnClickListener() {
+            DialogManager.alertNoNetworkLive(this, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -902,6 +920,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
+                    finish();
                 }
             }).show();
 
@@ -985,7 +1004,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program);
                 }
 
-                if (LiveStatusEnum.INIT == program.getLiveStatus()) {
+                if (LiveStatusEnum.PAUSE == program.getLiveStatus()) {
                     LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program);
                 }
 
@@ -1016,6 +1035,8 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             if (StringUtil.isNullOrEmpty(url)) {
                 stopLiving(true);
 
+                Toast.makeText(LiveRecordActivity.this, R.string.toast_live_init_fail, Toast.LENGTH_SHORT).show();
+
                 return;
             }
 
@@ -1023,7 +1044,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             startRecording();
 
-            AlarmCenter.getInstance(getApplicationContext()).startPrelive(mLivingProgram.getId());
+            //            AlarmCenter.getInstance(getApplicationContext()).startPrelive(mLivingProgram.getId());
         }
     }
 
@@ -1035,7 +1056,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             String token = UserManager.getInstance(getApplicationContext()).getToken();
 
             try {
-                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.LIVING);
+                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.PAUSE);
 
                 if (null != programs && programs.size() > 0) {
                     return programs.get(0);

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <RelativeLayout
+        android:id="@+id/layout_userpage_item"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp" >
+
+        <com.pplive.liveplatform.ui.widget.image.AsyncImageView
+            android:id="@+id/image_userpage_program_preview"
+            android:layout_width="140dp"
+            android:layout_height="106dp"
+            android:layout_marginRight="20dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/blank"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/text_userpage_program_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/image_userpage_program_preview"
+            android:layout_toRightOf="@id/image_userpage_program_preview"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_userpage_program_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image_userpage_program_preview"
+            android:layout_toRightOf="@+id/image_userpage_program_preview"
+            android:textColor="@color/userpage_program_title_bg"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/text_userpage_program_vv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image_userpage_program_preview"
+            android:layout_alignParentRight="true"
+            android:drawablePadding="3dp"
+            android:gravity="center_vertical"
+            android:text="@string/userpage_default_vv"
+            android:textColor="@color/userpage_program_title_bg"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/image_live"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/image_userpage_program_preview"
+            android:layout_alignTop="@+id/image_userpage_program_preview"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/statebar_live" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/btn_userpage_delete_item"
+        android:layout_width="90dp"
+        android:layout_height="fill_parent"
+        android:background="#8d1d1c"
+        android:clickable="true"
+        android:gravity="center"
+        android:text="@string/btn_delete"
+        android:textColor="@color/white"
+        android:textSize="20sp" />
+
+</LinearLayout>

@@ -27,7 +27,11 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.settings.SettingsProvider;
+import com.pplive.liveplatform.core.dac.info.LocationInfo;
+import com.pplive.liveplatform.core.dac.info.SessionInfo;
+import com.pplive.liveplatform.core.location.LocatorActivity;
+import com.pplive.liveplatform.core.location.Locator.LocationData;
+import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -36,10 +40,7 @@ import com.pplive.liveplatform.core.task.TaskFinishedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.TokenTask;
-import com.pplive.liveplatform.dac.info.LocationInfo;
-import com.pplive.liveplatform.dac.info.SessionInfo;
-import com.pplive.liveplatform.location.Locator.LocationData;
-import com.pplive.liveplatform.location.LocatorActivity;
+import com.pplive.liveplatform.core.update.Update;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.home.HomeFragment;
@@ -47,7 +48,6 @@ import com.pplive.liveplatform.ui.widget.AnimDoor;
 import com.pplive.liveplatform.ui.widget.LoadingButton;
 import com.pplive.liveplatform.ui.widget.SideBar;
 import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
-import com.pplive.liveplatform.update.Update;
 import com.pplive.liveplatform.util.DisplayUtil;
 
 public class HomeActivity extends LocatorActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
@@ -125,7 +125,7 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         mStatusUpAnimation.setDuration(TIME_BUTTON_UP);
         mStatusUpAnimation.setAnimationListener(upAnimationListener);
 
-        if (SettingsProvider.getInstance(this).isFirstHome()) {
+        if (SettingsPreferences.getInstance(this).isFirstHome()) {
             mHelpView.setVisibility(View.VISIBLE);
         } else {
             mHelpView.setVisibility(View.GONE);

@@ -52,7 +52,7 @@
     </declare-styleable>
     <declare-styleable name="SlideListView">
         <attr name="extra_width" format="dimension" />
-        <attr name="slidable" format="boolean" />
+        <attr name="slideable" format="boolean" />
     </declare-styleable>
     <declare-styleable name="SwipeListView">
         <attr name="swipeOpenOnLongPress" format="boolean" />
@@ -80,6 +80,9 @@
         </attr>
         <attr name="swipeDrawableChecked" format="reference" />
         <attr name="swipeDrawableUnchecked" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="TopBarView">
+        <attr name="text" />
     </declare-styleable>
 
 </resources>
