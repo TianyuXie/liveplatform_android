@@ -37,6 +37,7 @@
             android:checked="true"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_home"
+            android:onClick="onRadioButtonChecked"
             android:text="@string/navbar_home"
             android:textColor="@color/navbar_text_color" />
 
@@ -48,6 +49,7 @@
             android:layout_weight="1"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_original"
+            android:onClick="onRadioButtonChecked"
             android:text="@string/navbar_original"
             android:textColor="@color/navbar_text_color" />
 
@@ -68,6 +70,7 @@
             android:layout_weight="1"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_channel"
+            android:onClick="onRadioButtonChecked"
             android:text="@string/navbar_channel"
             android:textColor="@color/navbar_text_color" />
 
@@ -79,6 +82,7 @@
             android:layout_weight="1"
             android:contentDescription="@null"
             android:drawableTop="@drawable/navbar_personal"
+            android:onClick="onRadioButtonChecked"
             android:text="@string/navbar_personal"
             android:textColor="@color/navbar_text_color" />
     </RadioGroup>

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
@@ -60,13 +61,6 @@ public class NavigateActivity extends LocatorActivity {
         setContentView(R.layout.activity_navigate);
 
         mNavigateBar = (RadioGroup) findViewById(R.id.nav_bar);
-        mNavigateBar.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                NavigateActivity.this.onCheckedChanged(checkedId);
-            }
-        });
 
         mBtnLiveRecord = (ImageButton) findViewById(R.id.navbar_btn_createlive);
         mBtnLiveRecord.setOnClickListener(new OnClickListener() {
@@ -94,6 +88,12 @@ public class NavigateActivity extends LocatorActivity {
         mHomeFragment = (HomeFragment) mFragmentManager.findFragmentById(R.id.fragment_home);
 
         mChannelFragment = new ChannelFragment();
+        mChannelFragment.setBackBtnOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchFragment(mChannelListFragment);
+            }
+        });
 
         mChannelListFragment = new ChannelListFragment();
         mChannelListFragment.setCallbackListener(new ChannelListFragment.CallbackListener() {
@@ -102,6 +102,7 @@ public class NavigateActivity extends LocatorActivity {
             public void onSubjectSelected(Subject subject) {
                 switchFragment(mChannelFragment);
                 mChannelFragment.switchSubject(subject);
+                mChannelFragment.showBackBtn();
             }
         });
 
@@ -166,6 +167,16 @@ public class NavigateActivity extends LocatorActivity {
         mCurrentFragment = to;
     }
 
+    public void onRadioButtonChecked(View view) {
+        if (view instanceof RadioButton) {
+            boolean checked = ((RadioButton) view).isChecked();
+
+            if (checked) {
+                onCheckedChanged(view.getId());
+            }
+        }
+    }
+
     private void onCheckedChanged(int checkId) {
 
         switch (checkId) {
@@ -175,6 +186,7 @@ public class NavigateActivity extends LocatorActivity {
         case R.id.navbar_original:
             switchFragment(mChannelFragment);
             mChannelFragment.switchSubject(1);
+            mChannelFragment.hideBackBtn();
             break;
         case R.id.navbar_channel_list:
             switchFragment(mChannelListFragment);
@@ -191,12 +203,6 @@ public class NavigateActivity extends LocatorActivity {
         Context context = this;
 
         if (UserManager.getInstance(context).isLoginSafely()) {
-            Intent intent = new Intent();
-            intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(context).getUsernamePlain());
-            intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(context).getIcon());
-            intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(context).getNickname());
-
-            mUserPageFragment.setIntent(intent);
 
             switchFragment(mUserPageFragment);
         } else {

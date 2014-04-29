@@ -80,6 +80,10 @@ public class ChannelFragment extends Fragment {
 
     private boolean mShowStatus = true;
 
+    private boolean mShowBackBtn = false;
+
+    private View.OnClickListener mBtnBackOnClickListener;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,6 +131,19 @@ public class ChannelFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if (mShowBackBtn) {
+            mSearchTopBarView.showLeftBtn();
+        } else {
+            mSearchTopBarView.hideLeftBtn();
+        }
+
+        mSearchTopBarView.setLeftBtnOnClickListener(mBtnBackOnClickListener);
+    }
+
+    @Override
     public void onStop() {
         Log.d(TAG, "onStop");
         super.onStop();
@@ -137,6 +154,26 @@ public class ChannelFragment extends Fragment {
         mPullHandler.removeCallbacksAndMessages(null);
         mContainer.stopTimer();
         super.onDestroy();
+    }
+
+    public void setBackBtnOnClickListener(View.OnClickListener listener) {
+        mBtnBackOnClickListener = listener;
+    }
+
+    public void showBackBtn() {
+        mShowBackBtn = true;
+
+        if (null != mSearchTopBarView) {
+            mSearchTopBarView.showLeftBtn();
+        }
+    }
+
+    public void hideBackBtn() {
+        mShowBackBtn = false;
+
+        if (null != mSearchTopBarView) {
+            mSearchTopBarView.hideLeftBtn();
+        }
     }
 
     public void switchSubject(Subject subject) {

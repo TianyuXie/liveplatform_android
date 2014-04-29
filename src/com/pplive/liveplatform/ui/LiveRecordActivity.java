@@ -909,7 +909,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             return true;
         case DISCONNECTED:
-            DialogManager.alertNoNetworkDialog(this, new DialogInterface.OnClickListener() {
+            DialogManager.alertNoNetworkLive(this, new DialogInterface.OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -920,6 +920,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
+                    finish();
                 }
             }).show();
 

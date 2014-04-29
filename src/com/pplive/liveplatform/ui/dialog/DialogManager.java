@@ -160,10 +160,10 @@ public class DialogManager {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle(R.string.alert_mobile_title);
-        builder.setMessage(R.string.alert_mobile_3g_play_message);
+        builder.setTitle(R.string.alert_no_network_live_title);
+        builder.setMessage(R.string.alert_broken_message);
         builder.setPositiveButton(R.string.alert_mobile_positive, positiveListener);
-        builder.setNegativeButton(R.string.alert_mobile_3g_play_negative, negativeListener);
+        builder.setNegativeButton(R.string.alert_mobile_2g_negative, negativeListener);
 
         return builder.create();
     }
