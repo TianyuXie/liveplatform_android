@@ -201,11 +201,28 @@ public class UserPageFragment extends Fragment {
 
     }
 
+    public void setIntent(Intent intent) {
+        if (null != intent) {
+            mUsername = intent.getStringExtra(EXTRA_USERNAME);
+            mNickName = intent.getStringExtra(EXTRA_NICKNAME);
+            mIconUrl = intent.getStringExtra(EXTRA_ICON);
+        } else {
+            mUsername = null;
+            mNickName = null;
+            mIconUrl = null;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
 
         Log.d(TAG, "onResumre");
+
+        // TODO: Reuse with UserpageActivity;
+        mUsername = UserManager.getInstance(getActivity()).getUsernamePlain();
+        mIconUrl = UserManager.getInstance(getActivity()).getIcon();
+        mNickName = UserManager.getInstance(getActivity()).getNickname();
 
         if (isLogin(mUsername)) {
             mTopBarView.setTitle(R.string.userpage_my_title);
@@ -258,18 +275,6 @@ public class UserPageFragment extends Fragment {
         mPullHandler.removeCallbacksAndMessages(null);
         mUserIcon.release();
         super.onDestroy();
-    }
-
-    public void setIntent(Intent intent) {
-        if (null != intent) {
-            mUsername = intent.getStringExtra(EXTRA_USERNAME);
-            mNickName = intent.getStringExtra(EXTRA_NICKNAME);
-            mIconUrl = intent.getStringExtra(EXTRA_ICON);
-        } else {
-            mUsername = null;
-            mNickName = null;
-            mIconUrl = null;
-        }
     }
 
     private View.OnClickListener mOnSettingsBtnClickListener = new View.OnClickListener() {
