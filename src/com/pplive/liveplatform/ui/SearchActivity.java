@@ -93,10 +93,9 @@ public class SearchActivity extends Activity {
                 return true;
             }
         });
+
         mExpandableListView.expandGroup(0);
         mExpandableListView.expandGroup(1);
-
-        mExpandableListView.collapseGroup(0);
 
         mCacheManager = SearchCacheManager.getInstance(getApplicationContext());
     }
@@ -136,7 +135,8 @@ public class SearchActivity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        mAdapter.setSearchHistoryKeywords(mCacheManager.getSearchCache(10));
+        mAdapter.setSearchHistoryKeywords(mCacheManager.getSearchCache(5));
+
     }
 
     private void search(String keyword) {
