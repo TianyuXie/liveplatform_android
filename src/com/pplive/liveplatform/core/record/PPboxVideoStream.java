@@ -71,6 +71,8 @@ public class PPboxVideoStream extends PPboxStream {
                         dataChange = data;
                     }
 
+                    //                    writeYUV(dataChange);
+
                     buffer.byte_buffer().put(dataChange);
                     put(time_stamp / 1000, buffer);
                     last_put_preview_time = cur_time;

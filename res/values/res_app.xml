@@ -4,9 +4,9 @@
     <!-- String -->
     <string name="app_name">爱播</string>
     <string name="app_exit">再按一次退出程序</string>
-    <string name="app_version">Version 1.1.0</string>
+    <string name="app_version">Version 1.1.1</string>
     <string name="umeng_app_key">530c3c5656240bbbac2acbfd</string>
-    
+
     <!-- Color -->
     <color name="app_bg">#FF1A1A1A</color>
     <color name="pull_to_refresh_header_bg">#FF272727</color>
