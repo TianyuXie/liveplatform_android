@@ -252,11 +252,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
         mIconWrapper.setVisibility(View.INVISIBLE);
         mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default);
-        if (program.isOriginal()) {
-            mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.VISIBLE);
-        } else {
-            mRoot.findViewById(R.id.image_player_pptv_icon).setVisibility(View.GONE);
-        }
     }
 
     @Override

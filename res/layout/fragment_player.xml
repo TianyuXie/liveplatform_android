@@ -61,8 +61,8 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_margin="15dp"
-        android:background="@drawable/player_pptv_icon"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"
+        android:src="@drawable/player_pptv_icon" />
 
     <ImageView
         android:id="@+id/image_player_loading"
