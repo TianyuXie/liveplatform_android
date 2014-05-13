@@ -63,7 +63,7 @@ public abstract class PPboxStream {
     protected MediaSDK.Sample mSample;
 
     protected String mStreamType;
-    
+
     protected Quality mQuality;
 
     public PPboxStream(long captureId, long startTime, Quality quality) {

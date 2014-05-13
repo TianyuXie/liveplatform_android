@@ -98,7 +98,7 @@ public class LiveControlService extends RestService {
             @Override
             protected Boolean doInBackground(Void... params) {
 
-                for (int i = 0; i < 3; ++i) {
+                for (int i = 0; i < 5; ++i) {
 
                     try {
                         TimeUnit.MILLISECONDS.sleep(1000);

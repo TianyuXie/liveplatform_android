@@ -60,7 +60,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     private static final int FLAG_TIME_BAR = 0x8;
 
     private static final int FLAG_VOLUME_BAR = 0x10;
-    
+
     private static final int FLAG_FULL_SHARE = 0x20;
 
     private boolean mMuted = false;
@@ -626,9 +626,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mBreakView.setVisibility(View.GONE);
     }
 
-    public void showBreakInfo(String message) {
+    public void showBreakInfo(int resId) {
         mBreakView.setVisibility(View.VISIBLE);
-        mBreakView.setText(message);
+        mBreakView.setText(resId);
     }
 
     @Override

@@ -233,7 +233,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
                 }
 
                 if (content.length() > 20) {
-                    Toast.makeText(LivePlayerActivity.this, "评论字数不能超过20字符", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LivePlayerActivity.this, R.string.player_comment_warn, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -556,9 +556,9 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
                 taskContext.set(PutFeedTask.KEY_TOKEN, token);
                 postFeed(taskContext);
             } else if (content.length() > 20) {
-                Toast.makeText(this, "评论字数不能超过20字符", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.player_comment_warn, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "评论内容不能为空", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.player_comment_empty, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -760,7 +760,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
                 mEnded = false;
                 if (mInterrupted && !mNetworkDown) {
                     Log.d(TAG, "Interrupted, Retry...");
-                    mLivePlayerFragment.showBreakInfo(getString(R.string.player_signal_break));
+                    mLivePlayerFragment.showBreakInfo(R.string.player_signal_break);
                     showWaiting();
                     startGetMedia();
                 }
@@ -838,11 +838,11 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
     private void retryPlay() {
         if (!mNetworkDown) {
-            mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_timeout));
+            mLivePlayerFragment.showBreakInfo(R.string.player_play_timeout);
             showWaiting();
             startGetMedia();
         } else {
-            mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_break));
+            mLivePlayerFragment.showBreakInfo(R.string.player_network_break);
         }
         mHandler.sendEmptyMessageDelayed(MSG_MEDIA_RETRY, 6000);
     }
@@ -891,7 +891,8 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
                 if (!TextUtils.isEmpty(mUrl)) {
                     mLivePlayerFragment.setupVideoView(mUrl);
                 } else {
-                    Toast.makeText(mContext, R.string.toast_player_error, Toast.LENGTH_LONG).show();
+                    //                    Toast.makeText(mContext, R.string.toast_player_error, Toast.LENGTH_LONG).show();
+                    mLivePlayerFragment.showBreakInfo(R.string.toast_player_error);
                 }
             }
         }
@@ -965,9 +966,9 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
             Log.d(TAG, "onError: isVOD");
             mInterrupted = true;
             if (!mNetworkDown) {
-                mLivePlayerFragment.showBreakInfo(getString(R.string.player_play_error));
+                mLivePlayerFragment.showBreakInfo(R.string.player_play_error);
             } else {
-                mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_break));
+                mLivePlayerFragment.showBreakInfo(R.string.player_network_break);
             }
             return true;
         }
@@ -1060,7 +1061,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         case UNKNOWN:
             mInterrupted = false;
             mNetworkDown = false;
-            mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
+            mLivePlayerFragment.showBreakInfo(R.string.player_network_retry);
             showWaiting();
             startGetMedia();
             keepAliveDelay(mDelay * 1000);
@@ -1072,7 +1073,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
                 public void onClick(DialogInterface dialog, int which) {
                     mInterrupted = false;
                     mNetworkDown = false;
-                    mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_retry));
+                    mLivePlayerFragment.showBreakInfo(R.string.player_network_retry);
                     showWaiting();
                     startGetMedia();
                     keepAliveDelay(mDelay * 1000);
@@ -1081,7 +1082,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
             break;
         case DISCONNECTED:
             mNetworkDown = true;
-            mLivePlayerFragment.showBreakInfo(getString(R.string.player_network_break));
+            mLivePlayerFragment.showBreakInfo(R.string.player_network_break);
             break;
         default:
             break;
