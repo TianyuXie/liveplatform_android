@@ -61,7 +61,6 @@ public class LiveControlService extends RestService {
                 for (int i = 0; i < 3; ++i) {
 
                     try {
-                        TimeUnit.MILLISECONDS.sleep(1000);
 
                         String liveToken = TokenService.getInstance().getLiveToken(coToken, program.getId(), username);
 
@@ -69,11 +68,12 @@ public class LiveControlService extends RestService {
                             return true;
                         }
 
-                    } catch (InterruptedException e) {
+                        TimeUnit.MILLISECONDS.sleep(i == 0 ? 6000 : 3000);
 
+                    } catch (InterruptedException e) {
+                        Log.w(TAG, e.toString());
                     } catch (LiveHttpException e) {
                         Log.w(TAG, e.toString());
-                        continue;
                     }
 
                 }
@@ -98,20 +98,20 @@ public class LiveControlService extends RestService {
             @Override
             protected Boolean doInBackground(Void... params) {
 
-                for (int i = 0; i < 5; ++i) {
+                for (int i = 0; i < 3; ++i) {
 
                     try {
-                        TimeUnit.MILLISECONDS.sleep(1000);
 
                         if (updateLiveStatusByCoToken(coToken, program, username)) {
                             return true;
                         }
 
-                    } catch (InterruptedException e) {
+                        TimeUnit.MILLISECONDS.sleep(i == 0 ? 6000 : 3000);
 
+                    } catch (InterruptedException e) {
+                        Log.w(TAG, e.toString());
                     } catch (LiveHttpException e) {
                         Log.w(TAG, e.toString());
-                        continue;
                     }
 
                 }
@@ -154,6 +154,8 @@ public class LiveControlService extends RestService {
             if (0 == resp.getError()) {
                 program.setLiveStatus(livestatus);
                 return true;
+            } else {
+                return false;
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());
@@ -167,7 +169,7 @@ public class LiveControlService extends RestService {
     }
 
     public LiveAlive keepLiveAlive(String coToken, long pid) throws LiveHttpException {
-        Log.d(TAG, "pid: ");
+        Log.d(TAG, "pid: " + pid);
 
         mHttpHeaders.setAuthorization(new UserTokenAuthentication(coToken));
         HttpEntity<?> req = new HttpEntity<String>(mHttpHeaders);
