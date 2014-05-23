@@ -1,16 +1,13 @@
 package com.pplive.liveplatform.core.service.comment.model;
 
-import com.pplive.liveplatform.util.TimeUtil;
-
 public class FeedItem {
     public String formatedContent;
 
-    public String time;
+    public long time;
 
-    public FeedItem(String formatedContent, long timestamp) {
-        super();
+    public FeedItem(String formatedContent, long time) {
         this.formatedContent = formatedContent;
-        this.time = TimeUtil.getTimeGap(timestamp);
+        this.time = time;
     }
 
 }

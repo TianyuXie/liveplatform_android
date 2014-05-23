@@ -54,7 +54,7 @@ public class RegisterTask extends Task {
         String guid = context.getString(KEY_GUID);
         boolean status = false;
         try {
-            status = PassportService.getInstance().register(username, password, "", checkcode, guid);
+            status = PassportService.getInstance().registerByUsernameSimple(username, password, "", checkcode, guid);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.Failed, e.getMessage());
         }
