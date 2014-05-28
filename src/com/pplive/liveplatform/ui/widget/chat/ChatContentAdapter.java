@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.comment.model.FeedItem;
 import com.pplive.liveplatform.ui.player.Emoji;
+import com.pplive.liveplatform.util.TimeHelper;
 
 public class ChatContentAdapter extends BaseAdapter {
 
@@ -91,7 +92,7 @@ public class ChatContentAdapter extends BaseAdapter {
 
     private void updateView(ViewHolder holder, FeedItem data) {
         holder.contentTextView.setText(Html.fromHtml(data.formatedContent, mImageGetter, null));
-        holder.timeTextView.setText(data.time);
+        holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext, data.time));
     }
 
     static class ViewHolder {

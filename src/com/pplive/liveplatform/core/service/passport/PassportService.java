@@ -40,14 +40,20 @@ public class PassportService {
     private static final String TEMPLATE_PASSPORT_THIRDPARTY_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/register/thirdparty_simple.do?infovalue={infovalue}&apptype={apptype}&index={index}&format=json").toString();
 
-    private static final String TEMPLATE_PASSPORT_REGISTER = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST,
+    private static final String TEMPLATE_PASSPORT_REGISTER_USERNAME_SIMPLE = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/register/username.do?username={username}&password={password}&usermail={usermail}&checkcode={checkcode}&guid={guid}&format=json").toString();
+
+    private static final String TEMPLATE_PASSPORT_REGISTER_PHONENUM_SIMPLE = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
+            "/v3/register/phone_simple.do?index={index}&infovalue={infovalue}&format=json").toString();
 
     private static final String TEMPLATE_PASSPORT_GET_GUID = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST, "/v3/checkcode/guid.do?format=json")
             .toString();
 
     private static final String TEMPLATE_PASSPORT_GET_GUID_IMAGE = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST, "/v3/checkcode/image.do?guid={guid}")
             .toString();
+
+    private static final String TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST,
+            "/v3/phonecode/send.do?phoneNum={phoneNum}&type=pptvzc&department=ibo&index={index}&infovalue={infovalue}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
 
@@ -135,11 +141,11 @@ public class PassportService {
         }
     }
 
-    public boolean register(String username, String password, String email, String checkCode, String guid) throws LiveHttpException {
+    public boolean registerByUsernameSimple(String username, String password, String email, String checkCode, String guid) throws LiveHttpException {
 
         MessageResp resp = null;
         try {
-            resp = mRestTemplate.getForObject(TEMPLATE_PASSPORT_REGISTER, MessageResp.class, username, password, email, checkCode, guid);
+            resp = mRestTemplate.getForObject(TEMPLATE_PASSPORT_REGISTER_USERNAME_SIMPLE, MessageResp.class, username, password, email, checkCode, guid);
 
             if (0 == resp.getErrorCode()) {
 
@@ -156,11 +162,49 @@ public class PassportService {
         }
     }
 
-    public LoginResult registerAndLogin(String username, String password, String email, String checkCode, String guid) throws LiveHttpException {
+    public boolean registerByPhoneNumSimple(String phoneNum, String password, String checkCode) throws LiveHttpException {
 
-        register(username, password, email, checkCode, guid);
+        HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
 
-        return login(username, password);
+        String infovalue = null;
+        Random random = new Random();
+        int keyIndex = random.nextInt(10) + 1;
+        String index = String.format(Locale.getDefault(), "%02d", keyIndex);
+
+        try {
+            infovalue = String.format("%s&%s&%s", URLUtil.encode(phoneNum), URLUtil.encode(password), URLUtil.encode(checkCode));
+
+            infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
+        } catch (EncryptException e) {
+            Log.w(TAG, e.toString());
+        }
+
+        Log.d(TAG, "infovalue: " + infovalue);
+
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_REGISTER_PHONENUM_SIMPLE).buildAndExpand(index, infovalue);
+
+        Log.d(TAG, components.toString());
+
+        URI uri = URI.create(components.toString());
+
+        MessageResp resp = null;
+        try {
+            HttpEntity<MessageResp> rep = mRestTemplate.exchange(uri, HttpMethod.GET, entity, MessageResp.class);
+
+            resp = rep.getBody();
+
+            if (0 == resp.getErrorCode()) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode(), URLUtil.decode(resp.getMessage()));
+        } else {
+            throw new LiveHttpException();
+        }
     }
 
     public String getCheckCodeGUID() throws LiveHttpException {
@@ -196,5 +240,49 @@ public class PassportService {
         String image_url = getCheckCodeImageUrl(guid);
 
         return new CheckCode(guid, image_url);
+    }
+
+    public boolean sendPhoneCheckCode(String phoneNum) throws LiveHttpException {
+        HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
+
+        String infovalue = null;
+        Random random = new Random();
+        int keyIndex = random.nextInt(10) + 1;
+        String index = String.format(Locale.getDefault(), "%02d", keyIndex);
+
+        try {
+            infovalue = String.format("%s&%s", URLUtil.encode(phoneNum), URLUtil.encode(index));
+
+            infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
+        } catch (EncryptException e) {
+            Log.w(TAG, e.toString());
+        }
+
+        Log.d(TAG, "infovalue: " + infovalue);
+
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE).buildAndExpand(phoneNum, index, infovalue);
+
+        Log.d(TAG, components.toString());
+
+        URI uri = URI.create(components.toString());
+
+        MessageResp resp = null;
+        try {
+            HttpEntity<MessageResp> rep = mRestTemplate.exchange(uri, HttpMethod.GET, entity, MessageResp.class);
+
+            resp = rep.getBody();
+
+            if (0 == resp.getErrorCode()) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode(), URLUtil.decode(resp.getMessage()));
+        } else {
+            throw new LiveHttpException();
+        }
     }
 }
