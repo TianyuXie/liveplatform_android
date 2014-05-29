@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SlideInAndSlideOut" parent="@android:style/Theme">
+        <item name="android:windowAnimationStyle">@style/ActivitySlideInAndSlideOut</item>
+    </style>
+
+    <style name="ActivitySlideInAndSlideOut">
+        <item name="android:activityCloseExitAnimation">@anim/act_slide_out</item>
+        <item name="android:activityOpenEnterAnimation">@anim/act_slide_in</item>
+    </style>
+
+    <style name="Theme.SlideOut" parent="@android:style/Theme">
+        <item name="android:windowAnimationStyle">@style/ActivitySlideOut</item>
+    </style>
+
+    <style name="ActivitySlideOut">
+        <item name="android:activityCloseExitAnimation">@anim/act_slide_out</item>
+    </style>
+
+    <style name="Theme.SlideInAndSlideOut.Translucent.NoTitleBar" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/ActivitySlideInAndSlideOut</item>
+    </style>
+
+</resources>
