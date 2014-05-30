@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="login_title">登录</string>
+    <!-- String -->
+    <string name="login">登录</string>
     <string name="login_nav">使用PPTV帐号登录</string>
-    <string name="login_username">用户名</string>
-    <string name="login_failed">登录失败</string>
+    <string name="login_username">PPTV账号</string>
     <string name="login_password">密码</string>
     <string name="login_no_pptv">还没有PPTV帐号?</string>
+    <string name="login_failed">登录失败</string>
+    <string name="login_third_party">使用合作网站账号登录</string>
+    <string name="forget_password"><u>忘记密码</u></string>
     <string name="register_failed">注册失败</string>
     <string name="register_nav">注册PPTV帐号</string>
     <string name="register_username">用户名&#160;-&#160;由数字,字母,下划线组成</string>
@@ -15,12 +18,7 @@
     <string name="register_email">邮箱</string>
     <string name="register_title">注册</string>
     <string name="register_token_fail">认证失败</string>
-    <string name="register_user_agreement">"我已阅读并接受<font color='#19A0FF'>注册协议</font>"</string>
-
-    <color name="login_input_text_bg">#FF919191</color>
-    <color name="login_input_bg">#FF191919</color>
-    <color name="login_no_pptv_bg">#FF19A0FF</color>
-
+    <string name="register_user_agreement">"我已阅读并接受<font color="#19A0FF">注册协议</font>"</string>
     <string name="error_weibo_auth">新浪微博授权错误</string>
     <string name="error_weibo_io">新浪微博网络错误</string>
     <string name="error_weibo_internal">新浪微博内部错误</string>
@@ -33,5 +31,9 @@
     <string name="error_pptv_data">数据错误</string>
     <string name="error_pptv_format">数据格式错误</string>
     <string name="error_pptv_passport">登录失败</string>
+
+    <!-- Color -->
+    <color name="input_text_color">#FF919191</color>
+    <color name="login_input_bg">#FF191919</color>
 
 </resources>

@@ -70,7 +70,7 @@
             android:inputType="textVisiblePassword"
             android:padding="12dp"
             android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
+            android:textColor="@color/input_text_color"
             android:textSize="17sp" />
 
         <EditText
@@ -84,7 +84,7 @@
             android:inputType="textPassword"
             android:padding="12dp"
             android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
+            android:textColor="@color/input_text_color"
             android:textSize="17sp" />
 
         <LinearLayout
@@ -105,7 +105,7 @@
                 android:inputType="textVisiblePassword"
                 android:padding="12dp"
                 android:singleLine="true"
-                android:textColor="@color/login_input_text_bg"
+                android:textColor="@color/input_text_color"
                 android:textSize="17sp" />
 
             <com.pplive.liveplatform.ui.widget.image.AsyncImageView

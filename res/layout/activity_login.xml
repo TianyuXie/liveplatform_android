@@ -1,120 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/app_bg"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/reg_bg"
     android:orientation="vertical" >
+
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/top_bar_height"
+        live:left_btn_src="@drawable/top_bar_close_btn"
+        live:right_btn_src="@drawable/top_bar_register_btn"
+        live:show_left_btn="true"
+        live:show_right_btn="true"
+        live:text="@string/blank" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height" >
-
-        <Button
-            android:id="@+id/btn_login_back"
-            android:layout_width="@dimen/top_bar_back_btn_size"
-            android:layout_height="@dimen/top_bar_back_btn_size"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/top_bar_back_btn" />
+        android:layout_height="fill_parent"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/login_title"
-            android:textColor="@color/white"
-            android:textSize="@dimen/top_bar_text_size" />
-
-        <Button
-            android:id="@+id/btn_login_confirm"
-            android:layout_width="@dimen/top_bar_back_btn_size"
-            android:layout_height="@dimen/top_bar_back_btn_size"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/titlebar_confirm_btn_bg"
-            android:enabled="false" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/navbar_bg"
-        android:orientation="horizontal"
-        android:padding="2dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
+            android:layout_above="@+id/edit_login_username"
+            android:layout_marginBottom="20dp"
             android:text="@string/login_nav"
-            android:textColor="@color/nav_text_bg"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical"
-        android:padding="10dp" >
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/edit_login_username"
+            style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/login_input_bg"
+            android:layout_above="@+id/edit_login_password"
             android:hint="@string/login_username"
             android:imeOptions="actionNext"
-            android:inputType="textUri"
-            android:padding="12dp"
-            android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
-            android:textSize="17sp" />
+            android:inputType="textUri" />
 
         <EditText
             android:id="@+id/edit_login_password"
+            style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:background="@color/login_input_bg"
+            android:layout_above="@+id/text_forget_password"
+            android:layout_marginTop="10dp"
             android:hint="@string/login_password"
-            android:inputType="textPassword"
-            android:padding="12dp"
-            android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
-            android:textSize="17sp" />
-    </LinearLayout>
+            android:inputType="textPassword" />
 
-    <TextView
-        android:id="@+id/text_login_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="@string/login_no_pptv"
-        android:textColor="@color/login_no_pptv_bg"
-        android:textSize="16sp" />
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center_horizontal"
-        android:orientation="horizontal" >
+        <TextView
+            android:id="@+id/text_forget_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_login"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/forget_password"
+            android:textColor="#2987a4"
+            android:textSize="18sp" />
 
         <Button
-            android:layout_width="127dp"
-            android:layout_height="63dp"
-            android:layout_marginRight="8dp"
-            android:background="@drawable/login_btn_weibo"
-            android:onClick="weiboLogin" />
+            android:id="@+id/btn_login"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_login"
+            android:text="@string/login"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
 
-        <Button
-            android:layout_width="127dp"
-            android:layout_height="63dp"
-            android:background="@drawable/login_btn_qq"
-            android:onClick="qqlogin" />
-    </LinearLayout>
+        <TextView
+            android:id="@+id/text_login_third_party"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btn_login"
+            android:text="@string/login_third_party"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_login_third_party"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal" >
+
+            <ImageButton
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@null"
+                android:onClick="loginByWeibo"
+                android:src="@drawable/btn_login_weibo" />
+
+            <ImageButton
+                style="@style/Widget.Button.Transparent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@null"
+                android:onClick="loginByQQ"
+                android:src="@drawable/btn_login_qq" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

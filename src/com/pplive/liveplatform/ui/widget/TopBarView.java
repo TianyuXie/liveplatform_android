@@ -3,7 +3,6 @@ package com.pplive.liveplatform.ui.widget;
 import android.app.Service;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +22,16 @@ public class TopBarView extends RelativeLayout {
 
     private String mTitle;
 
+    private boolean mShowLeftBtn;
+
+    private boolean mShowRightBtn;
+
+    private int mLeftBtnResId;
+
+    private int mRightBtnResId;
+
+    private boolean mShowTitle;
+
     public TopBarView(Context context) {
         this(context, null);
     }
@@ -41,8 +50,18 @@ public class TopBarView extends RelativeLayout {
         for (int i = 0; i < a.length(); ++i) {
             int attr = a.getIndex(i);
 
-            if (attr == R.styleable.TopBarView_text) {
+            if (R.styleable.TopBarView_text == attr) {
                 mTitle = a.getString(attr);
+            } else if (R.styleable.TopBarView_show_left_btn == attr) {
+                mShowLeftBtn = a.getBoolean(attr, false);
+            } else if (R.styleable.TopBarView_show_right_btn == attr) {
+                mShowRightBtn = a.getBoolean(attr, false);
+            } else if (R.styleable.TopBarView_left_btn_src == attr) {
+                mLeftBtnResId = a.getResourceId(attr, 0);
+            } else if (R.styleable.TopBarView_right_btn_src == attr) {
+                mRightBtnResId = a.getResourceId(attr, 0);
+            } else if (R.styleable.TopBarView_show_title == attr) {
+                mShowTitle = a.getBoolean(attr, false);
             }
         }
 
@@ -61,12 +80,21 @@ public class TopBarView extends RelativeLayout {
     }
 
     private void init() {
-        setLeftBtnImageResource(R.drawable.top_bar_back_btn);
+        setLeftBtnImageResource(mLeftBtnResId);
+        setRightBtnImageResource(mRightBtnResId);
 
-        if (TextUtils.isEmpty(mTitle)) {
-            setTitle(R.string.app_name);
-        } else {
-            setTitle(mTitle);
+        if (mShowLeftBtn) {
+            showLeftBtn();
+        }
+
+        if (mShowRightBtn) {
+            showRightBtn();
+        }
+
+        setTitle(mTitle);
+
+        if (mShowTitle) {
+            showTitle();
         }
     }
 
@@ -140,5 +168,13 @@ public class TopBarView extends RelativeLayout {
         } else {
             mBtnRight.setVisibility(View.VISIBLE);
         }
+    }
+
+    public void showTitle() {
+        mTextTitle.setVisibility(View.VISIBLE);
+    }
+
+    public void hideTitle() {
+        mTextTitle.setVisibility(View.GONE);
     }
 }

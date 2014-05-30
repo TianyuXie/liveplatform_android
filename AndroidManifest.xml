@@ -156,7 +156,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.SlideInAndSlideOut"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
         <activity
             android:name="com.pplive.liveplatform.ui.RegisterActivity"

@@ -52,7 +52,7 @@
             android:inputType="text"
             android:padding="12dp"
             android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
+            android:textColor="@color/input_text_color"
             android:textSize="17sp" />
     </LinearLayout>
 
