@@ -3,6 +3,7 @@
 
     <!-- String -->
     <string name="login">登录</string>
+    <string name="login_btn">登\u0020\u0020\u0020录</string>
     <string name="login_nav">使用PPTV帐号登录</string>
     <string name="login_username">PPTV账号</string>
     <string name="login_password">密码</string>
@@ -10,13 +11,13 @@
     <string name="login_failed">登录失败</string>
     <string name="login_third_party">使用合作网站账号登录</string>
     <string name="forget_password"><u>忘记密码</u></string>
+    <string name="register">注册</string>
     <string name="register_failed">注册失败</string>
     <string name="register_nav">注册PPTV帐号</string>
     <string name="register_username">用户名&#160;-&#160;由数字,字母,下划线组成</string>
     <string name="register_password">密码&#160;-&#160;至少6位不能为空</string>
     <string name="register_checkcode">验证码</string>
     <string name="register_email">邮箱</string>
-    <string name="register_title">注册</string>
     <string name="register_token_fail">认证失败</string>
     <string name="register_user_agreement">"我已阅读并接受<font color="#19A0FF">注册协议</font>"</string>
     <string name="error_weibo_auth">新浪微博授权错误</string>

@@ -14,11 +14,11 @@ import com.pplive.liveplatform.R;
 
 public class TopBarView extends RelativeLayout {
 
-    private TextView mTextTitle;
+    private View mTextTitle;
 
-    private ImageButton mBtnLeft;
+    private View mBtnLeft;
 
-    private ImageButton mBtnRight;
+    private View mBtnRight;
 
     private String mTitle;
 
@@ -32,6 +32,8 @@ public class TopBarView extends RelativeLayout {
 
     private boolean mShowTitle;
 
+    private int mLayoutResId = R.layout.widget_top_bar;
+
     public TopBarView(Context context) {
         this(context, null);
     }
@@ -42,9 +44,6 @@ public class TopBarView extends RelativeLayout {
 
     public TopBarView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.widget_top_bar, this, true);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TopBarView);
         for (int i = 0; i < a.length(); ++i) {
@@ -62,19 +61,24 @@ public class TopBarView extends RelativeLayout {
                 mRightBtnResId = a.getResourceId(attr, 0);
             } else if (R.styleable.TopBarView_show_title == attr) {
                 mShowTitle = a.getBoolean(attr, false);
+            } else if (R.styleable.TopBarView_layout == attr) {
+                mLayoutResId = a.getResourceId(attr, R.layout.widget_top_bar);
             }
         }
 
         a.recycle();
+
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(mLayoutResId, this, true);
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mTextTitle = (TextView) findViewById(R.id.top_bar_text_title);
-        mBtnLeft = (ImageButton) findViewById(R.id.top_bar_btn_left);
-        mBtnRight = (ImageButton) findViewById(R.id.top_bar_btn_right);
+        mTextTitle = findViewById(R.id.top_bar_text_title);
+        mBtnLeft = findViewById(R.id.top_bar_btn_left);
+        mBtnRight = findViewById(R.id.top_bar_btn_right);
 
         init();
     }
@@ -99,11 +103,16 @@ public class TopBarView extends RelativeLayout {
     }
 
     public void setTitle(CharSequence title) {
-        mTextTitle.setText(title);
+        if (mTextTitle instanceof TextView) {
+            ((TextView) mTextTitle).setText(title);
+        }
+
     }
 
     public void setTitle(int resId) {
-        mTextTitle.setText(resId);
+        if (mTextTitle instanceof TextView) {
+            ((TextView) mTextTitle).setText(resId);
+        }
     }
 
     public void setLeftBtnOnClickListener(View.OnClickListener listener) {
@@ -131,11 +140,13 @@ public class TopBarView extends RelativeLayout {
     }
 
     private void setBtnImageResource(boolean left, int resId) {
-        if (left) {
-            mBtnLeft.setImageResource(resId);
-        } else {
-            mBtnRight.setImageResource(resId);
+        View btn = null;
+        btn = left ? mBtnLeft : mBtnRight;
+
+        if (btn instanceof ImageButton) {
+            ((ImageButton) btn).setImageResource(resId);
         }
+
     }
 
     public void hideLeftBtn() {

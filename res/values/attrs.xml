@@ -99,6 +99,7 @@
         <attr name="left_btn_src" format="reference" />
         <attr name="right_btn_src" format="reference" />
         <attr name="show_title" format="boolean" />
+        <attr name="layout" format="reference" />
     </declare-styleable>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,7 +28,6 @@ import com.pplive.liveplatform.ui.navigate.ChannelFragment;
 import com.pplive.liveplatform.ui.navigate.ChannelListFragment;
 import com.pplive.liveplatform.ui.navigate.HomeFragment;
 import com.pplive.liveplatform.ui.navigate.UserPageFragment;
-import com.tencent.mm.sdk.platformtools.BackwardSupportUtil.AnimationHelper;
 
 public class NavigateActivity extends LocatorActivity {
 

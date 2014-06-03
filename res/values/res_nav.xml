@@ -4,13 +4,15 @@
     <!-- String -->
     <string name="navbar_home">首页</string>
     <string name="navbar_original">原创</string>
-    <string name="navbar_channel">频道</string>
-    <string name="navbar_personal">我的</string>
+    <string name="navbar_discover">发现</string>
+    <string name="navbar_personal">我</string>
     <string name="live_status_living">正在直播</string>
     <string name="live_status_vod">精彩回看</string>
-    
     <string name="blank_user_page_login">登录</string>
     <string name="blank_user_page_register">注册</string>
+    
+    <string name="home_tab_recommend">推荐</string>
+    <string name="home_tab_focuson">关注</string>
 
     <!-- Style -->
     <style name="style_live_state_btn" parent="@style/Widget.Button.Transparent">
@@ -22,6 +24,15 @@
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/home_livestate_text_color</item>
         <item name="android:button">@null</item>
+    </style>
+
+    <style name="style_home_tab" parent="@style/Widget.RadioButton.Transparent">
+        <item name="android:textColor">@color/radio_btn_text_color</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:paddingRight">30dp</item>
     </style>
 
 </resources>

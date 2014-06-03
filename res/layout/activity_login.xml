@@ -10,8 +10,7 @@
         android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        live:left_btn_src="@drawable/top_bar_close_btn"
-        live:right_btn_src="@drawable/top_bar_register_btn"
+        live:layout="@layout/widget_login_top_bar"
         live:show_left_btn="true"
         live:show_right_btn="true"
         live:text="@string/blank" />
@@ -28,7 +27,7 @@
             android:layout_above="@+id/edit_login_username"
             android:layout_marginBottom="20dp"
             android:text="@string/login_nav"
-            android:textColor="#ffffff"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
         <EditText
@@ -55,7 +54,7 @@
             android:id="@+id/text_forget_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/btn_login"
+            android:layout_above="@+id/btn_login_register"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
@@ -64,23 +63,24 @@
             android:textSize="18sp" />
 
         <Button
-            android:id="@+id/btn_login"
+            android:id="@+id/btn_login_register"
             style="@style/Widget.Button.Transparent"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:background="@drawable/btn_login"
-            android:text="@string/login"
-            android:textColor="#ffffff"
-            android:textSize="20sp" />
+            android:text="@string/login_btn"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/text_login_third_party"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_login"
+            android:layout_below="@+id/btn_login_register"
+            android:layout_marginTop="30dp"
             android:text="@string/login_third_party"
-            android:textColor="#ffffff"
+            android:textColor="@color/white"
             android:textSize="20sp" />
 
         <LinearLayout

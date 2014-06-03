@@ -48,9 +48,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:contentDescription="@null"
-            android:drawableTop="@drawable/navbar_channel"
+            android:drawableTop="@drawable/navbar_discover"
             android:onClick="onRadioButtonChecked"
-            android:text="@string/navbar_channel"
+            android:text="@string/navbar_discover"
             android:textColor="@color/navbar_text_color" />
 
         <RadioButton

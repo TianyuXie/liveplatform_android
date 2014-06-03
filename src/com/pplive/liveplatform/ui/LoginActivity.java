@@ -117,7 +117,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             }
         });
 
-        mBtnLogin = (Button) findViewById(R.id.btn_login);
+        mBtnLogin = (Button) findViewById(R.id.btn_login_register);
         mBtnLogin.setOnClickListener(mOnClickBtnLoginListener);
         // TODO
         //        findViewById(R.id.btn_login_back).setOnClickListener(onBackBtnClickListener);

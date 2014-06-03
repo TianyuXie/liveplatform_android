@@ -47,7 +47,7 @@ public class ChannelListFragment extends Fragment {
         View layout = inflater.inflate(R.layout.fragment_channel_list, container, false);
 
         mSearchTopBarView = (SearchBarView) layout.findViewById(R.id.search_top_bar);
-        mSearchTopBarView.setTitle(R.string.navbar_channel);
+        mSearchTopBarView.setTitle(R.string.navbar_discover);
 
         mListViewChannel = (PullToRefreshListView) layout.findViewById(R.id.listview_channel);
 
