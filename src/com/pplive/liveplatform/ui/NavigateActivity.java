@@ -155,10 +155,14 @@ public class NavigateActivity extends LocatorActivity {
 
         FragmentTransaction transcation = mFragmentManager.beginTransaction();
 
+        if (null != from) {
+            transcation.hide(from);
+        }
+
         if (!to.isAdded()) {
-            transcation.hide(mCurrentFragment).add(R.id.layout_fragment_container, to);
+            transcation.add(R.id.layout_fragment_container, to);
         } else {
-            transcation.hide(mCurrentFragment).show(to);
+            transcation.show(to);
         }
 
         transcation.commit();

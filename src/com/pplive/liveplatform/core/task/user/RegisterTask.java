@@ -9,10 +9,12 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class RegisterTask extends Task {
-    final static String TAG = "_RegisterTask";
-    public final static String KEY_CHECKCODE = "checkcode";
+
+    final static String TAG = RegisterTask.class.getSimpleName();
+
+    public final static String KEY_PHONE_NUMBER = "phone_number";
     public final static String KEY_PASSWORD = "password";
-    public final static String KEY_GUID = "guid";
+    public final static String KEY_CHECK_CODE = "checkcode";
 
     private final String ID = StringUtil.newGuid();
     public final static String TYPE = "Register";
@@ -48,13 +50,15 @@ public class RegisterTask extends Task {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
         TaskContext context = params[0];
-        String username = context.getString(KEY_USERNAME);
+
+        String phoneNumber = context.getString(KEY_PHONE_NUMBER);
         String password = context.getString(KEY_PASSWORD);
-        String checkcode = context.getString(KEY_CHECKCODE);
-        String guid = context.getString(KEY_GUID);
+
+        String checkCode = context.getString(KEY_CHECK_CODE);
+
         boolean status = false;
         try {
-            status = PassportService.getInstance().registerByUsernameSimple(username, password, "", checkcode, guid);
+            status = PassportService.getInstance().registerByPhoneNumSimple(phoneNumber, password, checkCode);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.Failed, e.getMessage());
         }

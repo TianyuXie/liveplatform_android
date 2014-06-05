@@ -29,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
@@ -56,7 +57,6 @@ import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
-import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.widget.image.CircularImageView;
@@ -104,9 +104,9 @@ public class UserPageFragment extends Fragment {
 
     private String mIconUrl;
 
-    private TopBarView mTopBarView;
-
     private TextView mTextNickName;
+
+    private ImageButton mBtnSettings;
 
     private CircularImageView mUserIcon;
 
@@ -158,12 +158,11 @@ public class UserPageFragment extends Fragment {
         mRefreshDialog = new RefreshDialog(mActivity);
         mIconDialog = new IconDialog(mActivity, R.style.icon_dialog);
 
-        mTopBarView = (TopBarView) layout.findViewById(R.id.top_bar);
-        mTopBarView.setRightBtnImageResource(R.drawable.titlebar_settings_btn_bg);
-        mTopBarView.setRightBtnOnClickListener(mOnSettingsBtnClickListener);
-
         mNoDataButton = (Button) layout.findViewById(R.id.btn_userpage_record);
         mNoDataButton.setOnClickListener(mOnNodataBtnClickListener);
+
+        mBtnSettings = (ImageButton) layout.findViewById(R.id.btn_settings);
+        mBtnSettings.setOnClickListener(mOnSettingsBtnClickListener);
 
         mListView = (RefreshListView) layout.findViewById(R.id.list_userpage_program);
         LinearLayout pullHeader = (LinearLayout) layout.findViewById(R.id.layout_userpage_pull_header);
@@ -225,13 +224,9 @@ public class UserPageFragment extends Fragment {
         mNickName = UserManager.getInstance(getActivity()).getNickname();
 
         if (isLogin(mUsername)) {
-            mTopBarView.setTitle(R.string.userpage_my_title);
-            mTopBarView.showRightBtn();
             mCameraIcon.setVisibility(View.VISIBLE);
             mListView.setSlidable(true);
         } else {
-            mTopBarView.setTitle(R.string.userpage_others_title);
-            mTopBarView.hideRightBtn();
             mCameraIcon.setVisibility(View.GONE);
             mListView.setSlidable(false);
         }

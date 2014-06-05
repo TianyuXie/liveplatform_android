@@ -12,13 +12,13 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class CheckCodeTask extends Task {
-    final static String TAG = "_CheckCodeTask";
+    final static String TAG = CheckCodeTask.class.getSimpleName();
 
-    public final static String KEY_GUID = "guid";
-    public final static String KEY_IMAGE = "image";
+    public final static String TYPE = "CheckCode";
+
+    public static final String KEY_PHONE_NUMBER = "PhoneNumber";
 
     private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "CheckCode";
 
     @Override
     public String getID() {
@@ -47,25 +47,25 @@ public class CheckCodeTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
-        CheckCode code = null;
+
+        TaskContext context = params[0];
+
+        String phoneNumber = context.getString(KEY_PHONE_NUMBER);
+
         try {
-            code = PassportService.getInstance().getCheckCode();
+            PassportService.getInstance().sendPhoneCheckCode(phoneNumber);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, "PassportService error");
+            return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
         }
-        if (code == null) {
-            return new TaskResult(TaskStatus.Failed, "No data");
-        } else if (TextUtils.isEmpty(code.getGUID()) || TextUtils.isEmpty(code.getImageUrl())) {
-            return new TaskResult(TaskStatus.Failed, "Invalid data");
-        }
+
         if (isCancelled()) {
             return new TaskResult(TaskStatus.Cancel, "Cancelled");
         }
+
         TaskResult result = new TaskResult(TaskStatus.Finished);
-        TaskContext context = new TaskContext();
-        context.set(KEY_GUID, code.getGUID());
-        context.set(KEY_IMAGE, code.getImageUrl());
+
         result.setContext(context);
+
         return result;
     }
 

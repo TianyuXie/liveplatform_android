@@ -22,7 +22,7 @@ public class BlankUserPageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View layout = inflater.inflate(R.layout.fragment_blank_userpage, container, false);
 
-        mBtnLogin = (ImageButton) layout.findViewById(R.id.btn_login_register);
+        mBtnLogin = (ImageButton) layout.findViewById(R.id.btn_login);
         mBtnLogin.setOnClickListener(new View.OnClickListener() {
 
             @Override

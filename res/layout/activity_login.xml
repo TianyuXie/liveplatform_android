@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/reg_bg"
+    android:background="@drawable/login_register_bg"
     android:orientation="vertical" >
 
     <com.pplive.liveplatform.ui.widget.TopBarView
@@ -51,33 +51,45 @@
             android:inputType="textPassword" />
 
         <TextView
+            android:id="@+id/text_error"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/btn_login"
+            android:layout_alignParentLeft="true"
+            android:layout_marginTop="20dp"
+            android:layout_toRightOf="@+id/text_forget_password"
+            android:textColor="@color/red"
+            android:textSize="18sp" />
+
+        <TextView
             android:id="@+id/text_forget_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/btn_login_register"
+            android:layout_above="@+id/btn_login"
             android:layout_alignParentRight="true"
-            android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
             android:text="@string/forget_password"
             android:textColor="#2987a4"
             android:textSize="18sp" />
 
         <Button
-            android:id="@+id/btn_login_register"
+            android:id="@+id/btn_login"
             style="@style/Widget.Button.Transparent"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:background="@drawable/btn_login"
-            android:text="@string/login_btn"
-            android:textColor="@color/white"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/btn_confirm_bg"
+            android:enabled="false"
+            android:text="@string/login"
+            android:textColor="@color/btn_login_reigster_color"
             android:textSize="22sp" />
 
         <TextView
             android:id="@+id/text_login_third_party"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/btn_login_register"
+            android:layout_below="@+id/btn_login"
             android:layout_marginTop="30dp"
             android:text="@string/login_third_party"
             android:textColor="@color/white"
@@ -90,7 +102,7 @@
             android:layout_marginTop="20dp"
             android:orientation="horizontal" >
 
-            <ImageButton
+            <ImageView
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -99,7 +111,7 @@
                 android:onClick="loginByWeibo"
                 android:src="@drawable/btn_login_weibo" />
 
-            <ImageButton
+            <ImageView
                 style="@style/Widget.Button.Transparent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

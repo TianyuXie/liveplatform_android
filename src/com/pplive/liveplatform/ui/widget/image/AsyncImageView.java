@@ -9,14 +9,16 @@ import android.widget.ImageView;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.pplive.liveplatform.Constants;
 
 public class AsyncImageView extends ImageView {
-    static final String TAG = "_AsyncImageView";
 
-    private ImageLoader mImageLoader = ImageLoader.getInstance();
+    static final String TAG = AsyncImageView.class.getSimpleName();
 
-    private String mUrl;
+    protected ImageLoader mImageLoader = ImageLoader.getInstance();
+
+    protected String mUrl;
 
     public AsyncImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0 /* defStyle */);

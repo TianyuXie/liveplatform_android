@@ -13,7 +13,8 @@ import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
 import com.pplive.liveplatform.util.ImageUtil;
 
 public class CircularImageView extends AsyncImageView {
-    static final String TAG = "_CircularImageView";
+
+    static final String TAG = CircularImageView.class.getSimpleName();
 
     private Bitmap mBitmap;
 

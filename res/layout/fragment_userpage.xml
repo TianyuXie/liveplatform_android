@@ -2,18 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/userpage_bg"
     android:orientation="vertical" >
-
-    <com.pplive.liveplatform.ui.widget.TopBarView
-        android:id="@+id/top_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height"
-        android:background="@color/app_bg" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="180dp"
+        android:layout_height="250dp"
         android:background="@drawable/userpage_bg" >
 
         <com.pplive.liveplatform.ui.widget.image.CircularImageView
@@ -42,6 +35,16 @@
             android:layout_marginBottom="4dp"
             android:background="@drawable/userpage_avatar_change"
             android:contentDescription="@null" />
+
+        <ImageButton
+            android:id="@+id/btn_settings"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_settings" />
     </RelativeLayout>
 
     <RelativeLayout

@@ -1,7 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.lang.ref.WeakReference;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,7 +16,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -38,7 +36,7 @@ import com.pplive.liveplatform.core.task.user.LoginTask;
 import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
 
-public class LoginActivity extends Activity implements ThirdpartyLoginListener {
+public class LoginActivity extends Activity implements Handler.Callback, ThirdpartyLoginListener {
 
     static final String TAG = LoginActivity.class.getSimpleName();
 
@@ -52,7 +50,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     private static final int DELAY_LOGIN = 3000;
 
-    private Handler mErrorHandler;
+    private Handler mHandler = new Handler(this);
 
     private TopBarView mTopBarView;
 
@@ -62,13 +60,15 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
 
     private Button mBtnLogin;
 
+    private TextView mTextError;
+
     private Dialog mRefreshDialog;
 
     private Context mContext;
 
     private UserManager mUserManager;
 
-    private View.OnKeyListener onFinalEnterListener = new View.OnKeyListener() {
+    private View.OnKeyListener mOnFinalEnterListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
@@ -85,7 +85,97 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
     private View.OnClickListener mOnClickBtnLoginListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startLogin(mEditUsername.getText().toString(), mEditPassword.getText().toString(), 0);
+            login(mEditUsername.getText().toString(), mEditPassword.getText().toString(), 0);
+        }
+    };
+
+    private TextWatcher mTextWatcher = new TextWatcher() {
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+            hideErrorMsg();
+
+            if (!TextUtils.isEmpty(mEditUsername.getText()) && !TextUtils.isEmpty(mEditPassword.getText())) {
+                mBtnLogin.setEnabled(true);
+            } else {
+                mBtnLogin.setEnabled(false);
+            }
+        }
+    };
+
+    private Task.OnTaskListener mOnLoginTaskListener = new Task.OnTaskListener() {
+
+        @Override
+        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+
+            mRefreshDialog.dismiss();
+
+            String plainUsername = event.getContext().getString(LoginTask.KEY_USERNAME);
+            String plainPassword = event.getContext().getString(LoginTask.KEY_PASSWORD);
+            String token = event.getContext().getString(LoginTask.KEY_TOKEN);
+            mUserManager.login(plainUsername, plainPassword, token);
+
+            User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
+            mUserManager.setUserinfo(userinfo);
+            String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
+            if (!TextUtils.isEmpty(targetClass)) {
+                try {
+                    Intent intent = new Intent(mContext, Class.forName(targetClass));
+                    intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
+                    intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
+                    intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
+
+                    setResult(999, intent);
+
+                    mContext.startActivity(intent);
+                } catch (ClassNotFoundException e) {
+                    Log.w(TAG, e.toString());
+                }
+            }
+
+            finish();
+        }
+
+        @Override
+        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+            Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
+
+            mRefreshDialog.dismiss();
+
+            String msg = event.getMessage();
+            if (TextUtils.isEmpty(msg)) {
+                msg = getString(R.string.login_failed);
+            }
+
+            showErrorMsg(msg);
+        }
+
+        @Override
+        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        }
+
+        @Override
+        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+
+            Log.d(TAG, "LoginTask onTimeout");
+            mRefreshDialog.dismiss();
+
+            showErrorMsg(getString(R.string.toast_login_timeout));
+        }
+
+        @Override
+        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+            Log.d(TAG, "LoginTask onTaskCancel");
+            mRefreshDialog.dismiss();
         }
     };
 
@@ -97,7 +187,6 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         setContentView(R.layout.activity_login);
 
         mContext = this;
-        mErrorHandler = new ErrorHandler(this);
 
         mTopBarView = (TopBarView) findViewById(R.id.top_bar);
         mTopBarView.setLeftBtnOnClickListener(new View.OnClickListener() {
@@ -117,17 +206,17 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             }
         });
 
-        mBtnLogin = (Button) findViewById(R.id.btn_login_register);
+        mBtnLogin = (Button) findViewById(R.id.btn_login);
         mBtnLogin.setOnClickListener(mOnClickBtnLoginListener);
-        // TODO
-        //        findViewById(R.id.btn_login_back).setOnClickListener(onBackBtnClickListener);
-        //        findViewById(R.id.text_login_register).setOnClickListener(onRegisterClickListener);
 
         mEditUsername = (EditText) findViewById(R.id.edit_login_username);
+        mEditUsername.addTextChangedListener(mTextWatcher);
+
         mEditPassword = (EditText) findViewById(R.id.edit_login_password);
-        mEditPassword.setOnKeyListener(onFinalEnterListener);
-        mEditUsername.addTextChangedListener(textWatcher);
-        mEditPassword.addTextChangedListener(textWatcher);
+        mEditPassword.setOnKeyListener(mOnFinalEnterListener);
+        mEditPassword.addTextChangedListener(mTextWatcher);
+
+        mTextError = (TextView) findViewById(R.id.text_error);
 
         mUserManager = UserManager.getInstance(this);
         mRefreshDialog = new RefreshDialog(this);
@@ -150,14 +239,15 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             String username = intent.getStringExtra(EXTRA_USERNAME);
             String password = intent.getStringExtra(EXTRA_PASSWORD);
 
-            startLogin(username, password, DELAY_LOGIN);
+            login(username, password, DELAY_LOGIN);
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mErrorHandler.removeCallbacksAndMessages(null);
+
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
@@ -166,10 +256,24 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
             String username = data.getStringExtra(EXTRA_USERNAME);
             String password = data.getStringExtra(EXTRA_PASSWORD);
 
-            startLogin(username, password, DELAY_LOGIN);
+            login(username, password, DELAY_LOGIN);
         } else if (WeiboPassport.getInstance().mSsoHandler != null) {
             WeiboPassport.getInstance().mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
         }
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        switch (msg.what) {
+        case MSG_THIRDPARTY_ERROR:
+            showErrorMsg(msg.obj.toString());
+            break;
+
+        default:
+            break;
+        }
+
+        return false;
     }
 
     public void loginByQQ(View v) {
@@ -185,7 +289,7 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         WeiboPassport.getInstance().login(this);
     }
 
-    private void startLogin(String username, String password, int dalay) {
+    private void login(String username, String password, int dalay) {
 
         if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
             return;
@@ -202,95 +306,17 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
         task.execute(taskContext);
     }
 
-    private TextWatcher textWatcher = new TextWatcher() {
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-            // TODO
-            if (!TextUtils.isEmpty(mEditUsername.getText()) && !TextUtils.isEmpty(mEditPassword.getText())) {
-                //                mConfirmButton.setEnabled(true);
-            } else {
-                //                mConfirmButton.setEnabled(false);
-            }
-        }
-    };
-
-    private Task.OnTaskListener mOnLoginTaskListener = new Task.OnTaskListener() {
-
-        @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            String plainUsername = event.getContext().getString(LoginTask.KEY_USERNAME);
-            String plainPassword = event.getContext().getString(LoginTask.KEY_PASSWORD);
-            String token = event.getContext().getString(LoginTask.KEY_TOKEN);
-            mUserManager.login(plainUsername, plainPassword, token);
-            User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
-            mUserManager.setUserinfo(userinfo);
-            mRefreshDialog.dismiss();
-            String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
-            if (!TextUtils.isEmpty(targetClass)) {
-                try {
-                    Intent intent = new Intent(mContext, Class.forName(targetClass));
-                    intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
-                    intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
-                    intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
-
-                    setResult(999, intent);
-
-                    mContext.startActivity(intent);
-                } catch (ClassNotFoundException e) {
-                    Log.w(TAG, e.toString());
-                }
-            }
-            finish();
-        }
-
-        @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
-            mRefreshDialog.dismiss();
-            String message = event.getMessage();
-            if (TextUtils.isEmpty(message)) {
-                message = getString(R.string.login_failed);
-            }
-            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
-
-        @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            Log.d(TAG, "LoginTask onTimeout");
-            mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_login_timeout, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            Log.d(TAG, "LoginTask onTaskCancel");
-            mRefreshDialog.dismiss();
-        }
-    };
-
     @Override
-    public void loginSuccess(LoginResult res) {
+    public void onLoginSuccess(LoginResult res) {
         Log.d(TAG, res.getUsername() + " | " + res.getToken() + " | " + res.getThirdPartyNickName() + " | " + res.getThirdPartyFaceUrl());
         mUserManager.login(res.getUsername(), "", res.getToken());
         mUserManager.setThirdParty(res.getThirdPartySource());
         mUserManager.setUserinfo(res.getNickName(), res.getFaceUrl());
 
         String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
+
         mRefreshDialog.dismiss();
+
         if (!TextUtils.isEmpty(targetClass)) {
             try {
                 Intent intent = new Intent(mContext, Class.forName(targetClass));
@@ -299,43 +325,32 @@ public class LoginActivity extends Activity implements ThirdpartyLoginListener {
                 intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(this).getNickname());
                 mContext.startActivity(intent);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                Log.w(TAG, e.toString());
             }
         }
+
         finish();
     }
 
     @Override
-    public void loginFailed(String info) {
+    public void onLoginFailed(String info) {
         mRefreshDialog.dismiss();
-        Message msg = new Message();
-        msg.what = MSG_THIRDPARTY_ERROR;
+        Message msg = mHandler.obtainMessage(MSG_THIRDPARTY_ERROR);
         msg.obj = TextUtils.isEmpty(info) ? getString(R.string.login_failed) : info;
-        mErrorHandler.sendMessage(msg);
+        mHandler.sendMessage(msg);
     }
 
     @Override
-    public void loginCanceled() {
+    public void onLoginCanceled() {
         mRefreshDialog.dismiss();
     }
 
-    static class ErrorHandler extends Handler {
-        private WeakReference<LoginActivity> mOuter;
-
-        public ErrorHandler(LoginActivity activity) {
-            mOuter = new WeakReference<LoginActivity>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            LoginActivity outer = mOuter.get();
-            if (outer != null) {
-                switch (msg.what) {
-                case MSG_THIRDPARTY_ERROR:
-                    Toast.makeText(outer, msg.obj.toString(), Toast.LENGTH_SHORT).show();
-                    break;
-                }
-            }
-        }
+    private void showErrorMsg(String msg) {
+        mTextError.setText(msg);
     }
+
+    private void hideErrorMsg() {
+        mTextError.setText("");
+    }
+
 }

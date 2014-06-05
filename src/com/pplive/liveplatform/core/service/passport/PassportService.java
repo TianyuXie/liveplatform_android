@@ -162,7 +162,7 @@ public class PassportService {
         }
     }
 
-    public boolean registerByPhoneNumSimple(String phoneNum, String password, String checkCode) throws LiveHttpException {
+    public boolean registerByPhoneNumSimple(String phoneNumber, String password, String checkCode) throws LiveHttpException {
 
         HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
 
@@ -172,7 +172,7 @@ public class PassportService {
         String index = String.format(Locale.getDefault(), "%02d", keyIndex);
 
         try {
-            infovalue = String.format("%s&%s&%s", URLUtil.encode(phoneNum), URLUtil.encode(password), URLUtil.encode(checkCode));
+            infovalue = String.format("%s&%s&%s", URLUtil.encode(phoneNumber), URLUtil.encode(password), URLUtil.encode(checkCode));
 
             infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
         } catch (EncryptException e) {
@@ -242,7 +242,7 @@ public class PassportService {
         return new CheckCode(guid, image_url);
     }
 
-    public boolean sendPhoneCheckCode(String phoneNum) throws LiveHttpException {
+    public boolean sendPhoneCheckCode(String phoneNumber) throws LiveHttpException {
         HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
 
         String infovalue = null;
@@ -251,7 +251,7 @@ public class PassportService {
         String index = String.format(Locale.getDefault(), "%02d", keyIndex);
 
         try {
-            infovalue = String.format("%s&%s", URLUtil.encode(phoneNum), URLUtil.encode(index));
+            infovalue = String.format("%s&%s", URLUtil.encode(phoneNumber), URLUtil.encode(index));
 
             infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
         } catch (EncryptException e) {
@@ -260,7 +260,7 @@ public class PassportService {
 
         Log.d(TAG, "infovalue: " + infovalue);
 
-        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE).buildAndExpand(phoneNum, index, infovalue);
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE).buildAndExpand(phoneNumber, index, infovalue);
 
         Log.d(TAG, components.toString());
 
