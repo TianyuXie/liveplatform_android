@@ -3,7 +3,9 @@
 
     <string name="blank"></string>
     <string name="number_and_letter">0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
-    <string name="btn_confirm">确定</string>
+    <string name="btn_login">登\u0020\u0020\u0020录</string>
+    <string name="btn_reg">注\u0020\u0020\u0020册</string>
+    <string name="btn_confirm">确\u0020\u0020\u0020定</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_delete">删除</string>
 

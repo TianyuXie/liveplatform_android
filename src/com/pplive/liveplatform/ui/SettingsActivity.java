@@ -22,7 +22,8 @@ import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.umeng.fb.FeedbackAgent;
 
 public class SettingsActivity extends Activity {
-    static final String TAG = "_SettingsActivity";
+
+    static final String TAG = SettingsActivity.class.getSimpleName();
 
     public static final int RESULT_LOGOUT = 5801;
 

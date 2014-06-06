@@ -17,9 +17,9 @@
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:paddingLeft="30dp"
-        android:paddingRight="30dp" >
+        android:paddingRight="30dp"
+        android:paddingTop="30dp" >
 
         <EditText
             android:id="@+id/edit_register_phone_number"
@@ -88,8 +88,8 @@
             android:layout_marginTop="10dp"
             android:background="@drawable/btn_confirm_bg"
             android:enabled="false"
-            android:text="@string/register2"
-            android:textColor="@color/btn_login_reigster_color"
+            android:text="@string/btn_reg"
+            android:textColor="@color/btn_confirm_color"
             android:textSize="22sp" />
     </RelativeLayout>
 

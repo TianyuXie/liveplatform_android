@@ -2,7 +2,6 @@
 <resources>
 
     <!-- String -->
-    <string name="login">登\u0020\u0020\u0020录</string>
     <string name="login_nav">使用PPTV帐号登录</string>
     <string name="login_username">PPTV账号</string>
     <string name="login_password">密码</string>

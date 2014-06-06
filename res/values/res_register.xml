@@ -2,7 +2,6 @@
 <resources>
 
     <string name="register">注册</string>
-    <string name="register2">注\u0020\u0020\u0020册</string>
     <string name="register_failed">注册失败</string>
     <string name="register_nav">注册PPTV帐号</string>
     <string name="register_username">用户名&#160;-&#160;由数字,字母,下划线组成</string>

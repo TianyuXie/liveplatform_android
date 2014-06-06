@@ -81,8 +81,8 @@
             android:layout_marginTop="20dp"
             android:background="@drawable/btn_confirm_bg"
             android:enabled="false"
-            android:text="@string/login"
-            android:textColor="@color/btn_login_reigster_color"
+            android:text="@string/btn_login"
+            android:textColor="@color/btn_confirm_color"
             android:textSize="22sp" />
 
         <TextView

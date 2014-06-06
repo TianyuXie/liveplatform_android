@@ -29,9 +29,9 @@ import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.ui.widget.SearchBarView;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
-public class ChannelListFragment extends Fragment {
+public class DiscoveryFragment extends Fragment {
 
-    static final String TAG = ChannelListFragment.class.getSimpleName();
+    static final String TAG = DiscoveryFragment.class.getSimpleName();
 
     private SearchBarView mSearchTopBarView;
 
@@ -44,7 +44,7 @@ public class ChannelListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View layout = inflater.inflate(R.layout.fragment_channel_list, container, false);
+        View layout = inflater.inflate(R.layout.fragment_discovery, container, false);
 
         mSearchTopBarView = (SearchBarView) layout.findViewById(R.id.search_top_bar);
         mSearchTopBarView.setTitle(R.string.navbar_discover);

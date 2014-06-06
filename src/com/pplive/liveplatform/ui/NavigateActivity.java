@@ -25,7 +25,7 @@ import com.pplive.liveplatform.core.location.LocatorActivity;
 import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.ui.navigate.BlankUserPageFragment;
 import com.pplive.liveplatform.ui.navigate.ChannelFragment;
-import com.pplive.liveplatform.ui.navigate.ChannelListFragment;
+import com.pplive.liveplatform.ui.navigate.DiscoveryFragment;
 import com.pplive.liveplatform.ui.navigate.HomeFragment;
 import com.pplive.liveplatform.ui.navigate.UserPageFragment;
 
@@ -45,7 +45,7 @@ public class NavigateActivity extends LocatorActivity {
 
     private BlankUserPageFragment mBlankUserPageFragment;
 
-    private ChannelListFragment mChannelListFragment;
+    private DiscoveryFragment mDiscoveryFragment;
 
     private ImageButton mBtnLiveRecord;
 
@@ -90,12 +90,12 @@ public class NavigateActivity extends LocatorActivity {
         mChannelFragment.setBackBtnOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchFragment(mChannelListFragment);
+                switchFragment(mDiscoveryFragment);
             }
         });
 
-        mChannelListFragment = new ChannelListFragment();
-        mChannelListFragment.setCallbackListener(new ChannelListFragment.CallbackListener() {
+        mDiscoveryFragment = new DiscoveryFragment();
+        mDiscoveryFragment.setCallbackListener(new DiscoveryFragment.CallbackListener() {
 
             @Override
             public void onSubjectSelected(Subject subject) {
@@ -187,7 +187,7 @@ public class NavigateActivity extends LocatorActivity {
             switchFragment(mHomeFragment);
             break;
         case R.id.navbar_channel_list:
-            switchFragment(mChannelListFragment);
+            switchFragment(mDiscoveryFragment);
             break;
         case R.id.navbar_personal:
             onCheckedNavBarPersonal();
