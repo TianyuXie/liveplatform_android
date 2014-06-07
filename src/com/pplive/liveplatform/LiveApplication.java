@@ -5,7 +5,6 @@ import java.io.File;
 import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
 import android.pplive.media.MeetSDK;
 
 import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;

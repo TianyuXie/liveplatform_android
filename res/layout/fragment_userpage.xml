@@ -6,35 +6,41 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="250dp"
+        android:layout_height="200dp"
         android:background="@drawable/userpage_bg" >
 
-        <com.pplive.liveplatform.ui.widget.image.CircularImageView
+        <com.pplive.liveplatform.ui.widget.image.RoundedImageView
             android:id="@+id/image_icon"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="30dp"
+            android:background="@drawable/rounded_bg"
+            android:scaleType="fitXY"
             android:src="@drawable/user_icon_default" />
 
         <TextView
             android:id="@+id/text_userpage_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/image_icon"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="3dp"
+            android:layout_alignTop="@+id/image_icon"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@+id/image_icon"
             android:textColor="@color/white"
-            android:textSize="13sp" />
+            android:textSize="14sp" />
 
         <ImageView
             android:id="@+id/image_userpage_camera"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignBottom="@id/image_icon"
-            android:layout_alignRight="@id/image_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image_icon"
+            android:layout_alignRight="@+id/image_icon"
             android:layout_marginBottom="4dp"
-            android:background="@drawable/userpage_avatar_change"
-            android:contentDescription="@null" />
+            android:contentDescription="@null"
+            android:src="@drawable/userpage_avatar_change" />
 
         <ImageButton
             android:id="@+id/btn_settings"

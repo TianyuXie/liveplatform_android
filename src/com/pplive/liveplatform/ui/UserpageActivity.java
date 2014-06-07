@@ -60,7 +60,8 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
 
 public class UserpageActivity extends Activity {
-    static final String TAG = "_UserpageActivity";
+
+    static final String TAG = UserpageActivity.class.getSimpleName();
 
     public static final String EXTRA_USER = "username";
 

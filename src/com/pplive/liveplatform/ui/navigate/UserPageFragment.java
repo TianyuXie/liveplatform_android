@@ -59,7 +59,7 @@ import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
 import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.ui.widget.image.CircularImageView;
+import com.pplive.liveplatform.ui.widget.image.RoundedImageView;
 import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
 import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
@@ -108,7 +108,7 @@ public class UserPageFragment extends Fragment {
 
     private ImageButton mBtnSettings;
 
-    private CircularImageView mUserIcon;
+    private RoundedImageView mUserIcon;
 
     private RefreshListView mListView;
 
@@ -172,7 +172,7 @@ public class UserPageFragment extends Fragment {
         mListView.setOnUpdateListener(onUpdateListener);
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_userpage_nickname);
-        mUserIcon = (CircularImageView) layout.findViewById(R.id.image_icon);
+        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_icon);
         mUserIcon.setOnClickListener(mOnIconClickListener);
 
         mNodataText = (TextView) layout.findViewById(R.id.text_userpage_nodata);
@@ -241,7 +241,7 @@ public class UserPageFragment extends Fragment {
         if (!TextUtils.isEmpty(mIconUrl)) {
             mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
         } else {
-            mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
+            //            mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
         }
     }
 
@@ -268,7 +268,6 @@ public class UserPageFragment extends Fragment {
     @Override
     public void onDestroy() {
         mPullHandler.removeCallbacksAndMessages(null);
-        mUserIcon.release();
         super.onDestroy();
     }
 
@@ -456,7 +455,7 @@ public class UserPageFragment extends Fragment {
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
             } else {
-                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
+                //                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }
         }
 
