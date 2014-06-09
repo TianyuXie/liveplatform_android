@@ -29,7 +29,7 @@
             android:layout_alignParentTop="true"
             android:hint="@string/register_phone_number"
             android:imeOptions="actionNext"
-            android:inputType="textVisiblePassword" />
+            android:inputType="number" />
 
         <EditText
             android:id="@+id/edit_register_password"
@@ -52,7 +52,7 @@
             android:layout_toLeftOf="@+id/btn_send_phone_checkcode"
             android:digits="@string/number_and_letter"
             android:hint="@string/register_checkcode"
-            android:inputType="textVisiblePassword" />
+            android:inputType="number" />
 
         <Button
             android:id="@+id/btn_send_phone_checkcode"

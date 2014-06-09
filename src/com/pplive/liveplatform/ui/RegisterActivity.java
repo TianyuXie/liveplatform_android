@@ -1,5 +1,8 @@
 package com.pplive.liveplatform.ui;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -31,8 +34,6 @@ public class RegisterActivity extends Activity {
 
     final static String TAG = RegisterActivity.class.getSimpleName();
 
-    public static final int FROM_LOGIN = 7101;
-
     public static final int REGISTER_SUCCESS = 8201;
 
     private TopBarView mTopBarView;
@@ -50,8 +51,6 @@ public class RegisterActivity extends Activity {
     private TextView mTextError;
 
     private Dialog mRefreshDialog;
-
-    //    private AsyncImageView mCheckCodeImage;
 
     private OnTaskListener mOnCheckcodeTaskListener = new OnTaskListener() {
 
@@ -82,12 +81,17 @@ public class RegisterActivity extends Activity {
     };
 
     private View.OnKeyListener mOnFinalEnterListener = new View.OnKeyListener() {
+
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                //                mConfirmButton.performClick();
+
+            if (mBtnRegister.isEnabled() && KeyEvent.KEYCODE_ENTER == keyCode && KeyEvent.ACTION_DOWN == event.getAction()) {
+
+                mBtnRegister.performClick();
+
                 return true;
             }
+
             return false;
         }
     };
@@ -145,27 +149,31 @@ public class RegisterActivity extends Activity {
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
 
-            Intent data = new Intent(getApplicationContext(), LoginActivity.class);
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
 
-            data.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_PHONE_NUMBER));
-            data.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
+            intent.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_PHONE_NUMBER));
+            intent.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
+            intent.putExtra(LoginActivity.EXTRA_FROM_REGISTER, true);
 
-            setResult(REGISTER_SUCCESS, data);
+            setResult(REGISTER_SUCCESS, intent);
 
-            RegisterActivity.this.startActivity(data);
+            startActivity(intent);
 
             finish();
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+
             mRefreshDialog.dismiss();
+
             String message = event.getMessage();
             if (TextUtils.isEmpty(message)) {
                 message = getString(R.string.register_failed);
             }
 
             showErrorMsg(message);
+
         }
 
         @Override
@@ -209,12 +217,9 @@ public class RegisterActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                String phone = mEditTextPhoneNumber.getText().toString();
-                if (TextUtils.isEmpty(phone)) {
-                    showErrorMsg("手机不能为空");
-                } else {
-                    sendCheckCode(phone);
-                }
+                String number = mEditTextPhoneNumber.getText().toString();
+
+                sendCheckCode(number);
             }
         });
 

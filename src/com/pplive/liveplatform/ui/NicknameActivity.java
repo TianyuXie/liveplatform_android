@@ -2,7 +2,6 @@ package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -10,10 +9,9 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -35,67 +33,42 @@ public class NicknameActivity extends Activity {
 
     public static final int RESULT_NICK_CHANGED = 5802;
 
-    private Context mContext;
-
     private TopBarView mTopBarView;
 
     private EditText mEditNickname;
 
-    private Button mConfirmButton;
+    private Button mBtnConfirm;
+
+    private TextView mTextError;
 
     private Dialog mRefreshDialog;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    private UserManager mUserManager = UserManager.getInstance(this);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_nickname);
-
-        mContext = this;
-
-        mTopBarView = (TopBarView) findViewById(R.id.top_bar);
-        mTopBarView.setLeftBtnOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-        mConfirmButton = (Button) findViewById(R.id.btn_confirm);
-        mConfirmButton.setOnClickListener(mOnConfirmBtnClickListener);
-
-        mEditNickname = (EditText) findViewById(R.id.edit_nickname);
-        mEditNickname.setText(UserManager.getInstance(mContext).getNickname());
-
-        mEditNickname.addTextChangedListener(textWatcher);
-        mEditNickname.setOnKeyListener(mOnNickEditEnterListener);
-
-        mRefreshDialog = new RefreshDialog(this);
-    }
-
-    private View.OnClickListener mOnConfirmBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnClickBtnConfirmListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mRefreshDialog.show();
             UpdateInfoTask task = new UpdateInfoTask();
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(UpdateInfoTask.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
+            taskContext.set(UpdateInfoTask.KEY_USERNAME, mUserManager.getUsernamePlain());
             taskContext.set(UpdateInfoTask.KEY_NICKNAME, mEditNickname.getText().toString());
-            taskContext.set(UpdateInfoTask.KEY_TOKEN, UserManager.getInstance(mContext).getToken());
+            taskContext.set(UpdateInfoTask.KEY_TOKEN, mUserManager.getToken());
             task.execute(taskContext);
         }
     };
 
-    private View.OnKeyListener mOnNickEditEnterListener = new View.OnKeyListener() {
+    private View.OnKeyListener mOnKeyEnterListener = new View.OnKeyListener() {
+
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN && mConfirmButton.isEnabled()) {
-                mConfirmButton.performClick();
+
+            if (mBtnConfirm.isEnabled() && KeyEvent.KEYCODE_ENTER == keyCode && KeyEvent.ACTION_DOWN == event.getAction()) {
+                mBtnConfirm.performClick();
                 return true;
             }
+
             return false;
         }
     };
@@ -106,8 +79,10 @@ public class NicknameActivity extends Activity {
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             Log.d(TAG, "onTaskFinished");
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_nickname_changed, Toast.LENGTH_SHORT).show();
-            UserManager.getInstance(mContext).setUserinfo((User) event.getContext().get(UpdateInfoTask.KEY_USERINFO));
+            mUserManager.setUserinfo((User) event.getContext().get(UpdateInfoTask.KEY_USERINFO));
+
+            //            Toast.makeText(mContext, R.string.toast_nickname_changed, Toast.LENGTH_SHORT).show();
+
             setResult(RESULT_NICK_CHANGED);
             finish();
         }
@@ -116,11 +91,14 @@ public class NicknameActivity extends Activity {
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
+
             String message = event.getMessage();
+
             if (TextUtils.isEmpty(message)) {
                 message = getString(R.string.toast_nickname_failed);
             }
-            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
+
+            mTextError.setText(message);
         }
 
         @Override
@@ -131,7 +109,8 @@ public class NicknameActivity extends Activity {
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             Log.d(TAG, "LoginTask onTimeout");
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+
+            mTextError.setText(R.string.toast_timeout);
         }
 
         @Override
@@ -141,7 +120,7 @@ public class NicknameActivity extends Activity {
         }
     };
 
-    private TextWatcher textWatcher = new TextWatcher() {
+    private TextWatcher mTextWatcher = new TextWatcher() {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -153,15 +132,45 @@ public class NicknameActivity extends Activity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            String oldNickName = UserManager.getInstance(mContext).getNickname();
+            String oldNickName = mUserManager.getNickname().trim();
             String newNickName = mEditNickname.getText().toString().trim();
 
             if (!TextUtils.isEmpty(newNickName)) {
-                mConfirmButton.setEnabled(!newNickName.equals(oldNickName));
+                mBtnConfirm.setEnabled(!newNickName.equals(oldNickName));
             } else {
-                mConfirmButton.setEnabled(false);
+                mBtnConfirm.setEnabled(false);
             }
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_nickname);
+
+        mTopBarView = (TopBarView) findViewById(R.id.top_bar);
+        mTopBarView.setLeftBtnOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        mBtnConfirm = (Button) findViewById(R.id.btn_confirm);
+        mBtnConfirm.setOnClickListener(mOnClickBtnConfirmListener);
+
+        mEditNickname = (EditText) findViewById(R.id.edit_nickname);
+        mEditNickname.setText(mUserManager.getNickname());
+        mEditNickname.setSelection(mEditNickname.length());
+
+        mEditNickname.addTextChangedListener(mTextWatcher);
+        mEditNickname.setOnKeyListener(mOnKeyEnterListener);
+
+        mTextError = (TextView) findViewById(R.id.text_error);
+
+        mRefreshDialog = new RefreshDialog(this);
+    }
 
 }

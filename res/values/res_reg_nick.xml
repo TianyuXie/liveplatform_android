@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="btn_skip">跳过</string>
+    <string name="reg_nick">填写昵称</string>
+
+</resources>

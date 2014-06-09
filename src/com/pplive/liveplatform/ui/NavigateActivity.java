@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.dac.info.LocationInfo;
@@ -72,7 +73,7 @@ public class NavigateActivity extends LocatorActivity {
                         startActivity(intent);
                     } else {
                         Intent intent = new Intent(NavigateActivity.this, LoginActivity.class);
-                        intent.putExtra(LoginActivity.EXTRA_TAGET, LiveRecordActivity.class.getName());
+                        intent.putExtra(Extra.KEY_REDIRECT, LiveRecordActivity.class);
                         startActivity(intent);
                     }
                 } else {

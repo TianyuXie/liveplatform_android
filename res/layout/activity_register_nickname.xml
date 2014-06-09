@@ -10,9 +10,9 @@
         android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        live:left_btn_src="@drawable/top_bar_close_btn"
-        live:show_left_btn="true"
-        live:text="@string/settings_change_nickname" />
+        live:layout="@layout/widget_nickname_top_bar"
+        live:show_right_btn="true"
+        live:text="@string/reg_nick" />
 
     <RelativeLayout
         android:layout_width="fill_parent"

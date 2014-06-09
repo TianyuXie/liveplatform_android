@@ -21,7 +21,7 @@ public class UserManager {
 
     private static UserManager instance;
 
-    private String mImei;
+    private String mIMEI;
 
     private String mUserPrivate;
 
@@ -43,7 +43,7 @@ public class UserManager {
 
     private UserManager(Context context) {
         mAppContext = context;
-        mImei = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+        mIMEI = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
         mUserPrivate = SettingsPreferences.getInstance(context).getUserPrivate();
         mTokenChecked = false;
         if (!TextUtils.isEmpty(mUserPrivate)) {
@@ -51,7 +51,7 @@ public class UserManager {
             mNickname = SettingsPreferences.getInstance(context).getNickname();
             mIcon = SettingsPreferences.getInstance(context).getIcon();
             mThirdPartySource = SettingsPreferences.getInstance(context).getThirdParty();
-            String[] infos = EncryptUtil.decrypt(mUserPrivate, mImei).split(String.valueOf((char) 0x01));
+            String[] infos = EncryptUtil.decrypt(mUserPrivate, mIMEI).split(String.valueOf((char) 0x01));
             mUsernamePlain = infos[0];
             if (infos.length > 1) {
                 mPasswordPlain = infos[1];
@@ -62,8 +62,10 @@ public class UserManager {
     }
 
     public static synchronized UserManager getInstance(Context context) {
-        if (instance == null)
+        if (instance == null) {
             instance = new UserManager(context.getApplicationContext());
+        }
+
         return instance;
     }
 
@@ -101,14 +103,14 @@ public class UserManager {
         return isThirdPartyLogin() && mThirdPartySource == LoginResult.FROM_TENCENT;
     }
 
-    public void login(String usrPlain, String pwdPlain, String token) {
+    public void login(String plainUsername, String plainPassword, String token) {
         StringBuffer sb = new StringBuffer();
-        sb.append(usrPlain).append((char) 0x01).append(pwdPlain);
-        String userPrivate = EncryptUtil.encrypt(sb.toString(), mImei);
+        sb.append(plainUsername).append((char) 0x01).append(plainPassword);
+        String userPrivate = EncryptUtil.encrypt(sb.toString(), mIMEI);
         SettingsPreferences.getInstance(mAppContext).setUserPrivate(userPrivate, token);
         mUserPrivate = userPrivate;
-        mUsernamePlain = usrPlain;
-        mPasswordPlain = pwdPlain;
+        mUsernamePlain = plainUsername;
+        mPasswordPlain = plainPassword;
         mToken = token;
         mTokenChecked = true;
         UserInfo.reset(mAppContext);

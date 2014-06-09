@@ -10,6 +10,7 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.network.QualityPreferences;
@@ -189,7 +190,7 @@ public class SettingsActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
-            intent.putExtra(LoginActivity.EXTRA_TAGET, UserpageActivity.class.getName());
+            intent.putExtra(Extra.KEY_REDIRECT, UserpageActivity.class);
             startActivity(intent);
             finish();
         }

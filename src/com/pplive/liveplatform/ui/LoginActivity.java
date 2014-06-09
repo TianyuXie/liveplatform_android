@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.ui;
 
+import java.io.Serializable;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -18,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.live.model.User;
@@ -40,17 +43,21 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
     static final String TAG = LoginActivity.class.getSimpleName();
 
-    public static final String EXTRA_TAGET = "target";
-
     public static final String EXTRA_USERNAME = "username";
 
     public static final String EXTRA_PASSWORD = "password";
+
+    public static final String EXTRA_FROM_REGISTER = "from_register";
 
     private static final int MSG_THIRDPARTY_ERROR = 2301;
 
     private static final int DELAY_LOGIN = 3000;
 
     private Handler mHandler = new Handler(this);
+
+    private Context mContext;
+
+    private UserManager mUserManager;
 
     private TopBarView mTopBarView;
 
@@ -64,16 +71,13 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
     private Dialog mRefreshDialog;
 
-    private Context mContext;
-
-    private UserManager mUserManager;
+    private Class<? extends Activity> mRedirectActivity;
 
     private View.OnKeyListener mOnFinalEnterListener = new View.OnKeyListener() {
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-            // TODO
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (mBtnLogin.isEnabled() && keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
                 mBtnLogin.performClick();
                 return true;
             }
@@ -83,6 +87,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
     };
 
     private View.OnClickListener mOnClickBtnLoginListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             login(mEditUsername.getText().toString(), mEditPassword.getText().toString(), 0);
@@ -122,24 +127,29 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
             String plainUsername = event.getContext().getString(LoginTask.KEY_USERNAME);
             String plainPassword = event.getContext().getString(LoginTask.KEY_PASSWORD);
             String token = event.getContext().getString(LoginTask.KEY_TOKEN);
+
             mUserManager.login(plainUsername, plainPassword, token);
 
             User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
             mUserManager.setUserinfo(userinfo);
-            String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
-            if (!TextUtils.isEmpty(targetClass)) {
-                try {
-                    Intent intent = new Intent(mContext, Class.forName(targetClass));
-                    intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
-                    intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
-                    intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
 
-                    setResult(999, intent);
+            boolean fromRegister = getIntent().getBooleanExtra(EXTRA_FROM_REGISTER, false);
 
-                    mContext.startActivity(intent);
-                } catch (ClassNotFoundException e) {
-                    Log.w(TAG, e.toString());
-                }
+            if (fromRegister) {
+                Intent intent = new Intent(mContext, RegisterNicknameActivity.class);
+                intent.putExtra(Extra.KEY_REDIRECT, mRedirectActivity);
+
+                mContext.startActivity(intent);
+
+            } else if (null != mRedirectActivity) {
+                Intent intent = new Intent(mContext, mRedirectActivity);
+                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
+                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
+                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
+
+                setResult(999, intent);
+
+                mContext.startActivity(intent);
             }
 
             finish();
@@ -202,7 +212,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivityForResult(intent, RegisterActivity.FROM_LOGIN);
+                startActivity(intent);
             }
         });
 
@@ -229,6 +239,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         setIntent(intent);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onStart() {
         super.onStart();
@@ -238,6 +249,14 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         if (null != intent) {
             String username = intent.getStringExtra(EXTRA_USERNAME);
             String password = intent.getStringExtra(EXTRA_PASSWORD);
+
+            Serializable obj = intent.getSerializableExtra(Extra.KEY_REDIRECT);
+            if (null != obj && obj instanceof Class<?>) {
+                mRedirectActivity = (Class<? extends Activity>) obj;
+            }
+
+            mEditUsername.setText(username);
+            mEditPassword.setText(password);
 
             login(username, password, DELAY_LOGIN);
         }
@@ -252,7 +271,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == RegisterActivity.FROM_LOGIN && resultCode == RegisterActivity.REGISTER_SUCCESS) {
+        if (resultCode == RegisterActivity.REGISTER_SUCCESS) {
             String username = data.getStringExtra(EXTRA_USERNAME);
             String password = data.getStringExtra(EXTRA_PASSWORD);
 
@@ -313,20 +332,14 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         mUserManager.setThirdParty(res.getThirdPartySource());
         mUserManager.setUserinfo(res.getNickName(), res.getFaceUrl());
 
-        String targetClass = getIntent().getStringExtra(EXTRA_TAGET);
-
         mRefreshDialog.dismiss();
 
-        if (!TextUtils.isEmpty(targetClass)) {
-            try {
-                Intent intent = new Intent(mContext, Class.forName(targetClass));
-                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(this).getUsernamePlain());
-                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(this).getIcon());
-                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(this).getNickname());
-                mContext.startActivity(intent);
-            } catch (ClassNotFoundException e) {
-                Log.w(TAG, e.toString());
-            }
+        if (null != mRedirectActivity) {
+            Intent intent = new Intent(mContext, mRedirectActivity);
+            intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(this).getUsernamePlain());
+            intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(this).getIcon());
+            intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(this).getNickname());
+            mContext.startActivity(intent);
         }
 
         finish();

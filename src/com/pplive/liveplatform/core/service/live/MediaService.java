@@ -39,8 +39,8 @@ public class MediaService extends RestService {
 
     private static final String TAG = MediaService.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_PUSH = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/publish")
-            .toString();
+    private static final String TEMPLATE_GET_PUSH = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
+            "/media/v1/pptv/program/{pid}/publish?coded=true").toString();
 
     private static final String TEMPLATE_GET_PLAY_V1 = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/media/v1/pptv/program/{pid}/watch")
             .toString();
