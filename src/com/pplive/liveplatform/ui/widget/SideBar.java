@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.ui.LoginActivity;
@@ -180,7 +181,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
                 getContext().startActivity(intent);
             } else {
                 Intent intent = new Intent(getContext(), LoginActivity.class);
-                intent.putExtra(LoginActivity.EXTRA_TAGET, UserpageActivity.class.getName());
+                intent.putExtra(Extra.KEY_REDIRECT, UserpageActivity.class);
                 getContext().startActivity(intent);
             }
         }

@@ -16,6 +16,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.dac.info.LocationInfo;
@@ -25,7 +26,7 @@ import com.pplive.liveplatform.core.location.LocatorActivity;
 import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.ui.navigate.BlankUserPageFragment;
 import com.pplive.liveplatform.ui.navigate.ChannelFragment;
-import com.pplive.liveplatform.ui.navigate.ChannelListFragment;
+import com.pplive.liveplatform.ui.navigate.DiscoveryFragment;
 import com.pplive.liveplatform.ui.navigate.HomeFragment;
 import com.pplive.liveplatform.ui.navigate.UserPageFragment;
 
@@ -45,7 +46,7 @@ public class NavigateActivity extends LocatorActivity {
 
     private BlankUserPageFragment mBlankUserPageFragment;
 
-    private ChannelListFragment mChannelListFragment;
+    private DiscoveryFragment mDiscoveryFragment;
 
     private ImageButton mBtnLiveRecord;
 
@@ -61,7 +62,6 @@ public class NavigateActivity extends LocatorActivity {
         setContentView(R.layout.activity_navigate);
 
         mNavigateBar = (RadioGroup) findViewById(R.id.nav_bar);
-
         mBtnLiveRecord = (ImageButton) findViewById(R.id.navbar_btn_createlive);
         mBtnLiveRecord.setOnClickListener(new OnClickListener() {
 
@@ -73,7 +73,7 @@ public class NavigateActivity extends LocatorActivity {
                         startActivity(intent);
                     } else {
                         Intent intent = new Intent(NavigateActivity.this, LoginActivity.class);
-                        intent.putExtra(LoginActivity.EXTRA_TAGET, LiveRecordActivity.class.getName());
+                        intent.putExtra(Extra.KEY_REDIRECT, LiveRecordActivity.class);
                         startActivity(intent);
                     }
                 } else {
@@ -91,12 +91,12 @@ public class NavigateActivity extends LocatorActivity {
         mChannelFragment.setBackBtnOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchFragment(mChannelListFragment);
+                switchFragment(mDiscoveryFragment);
             }
         });
 
-        mChannelListFragment = new ChannelListFragment();
-        mChannelListFragment.setCallbackListener(new ChannelListFragment.CallbackListener() {
+        mDiscoveryFragment = new DiscoveryFragment();
+        mDiscoveryFragment.setCallbackListener(new DiscoveryFragment.CallbackListener() {
 
             @Override
             public void onSubjectSelected(Subject subject) {
@@ -156,10 +156,14 @@ public class NavigateActivity extends LocatorActivity {
 
         FragmentTransaction transcation = mFragmentManager.beginTransaction();
 
+        if (null != from) {
+            transcation.hide(from);
+        }
+
         if (!to.isAdded()) {
-            transcation.hide(mCurrentFragment).add(R.id.layout_fragment_container, to);
+            transcation.add(R.id.layout_fragment_container, to);
         } else {
-            transcation.hide(mCurrentFragment).show(to);
+            transcation.show(to);
         }
 
         transcation.commit();
@@ -183,13 +187,8 @@ public class NavigateActivity extends LocatorActivity {
         case R.id.navbar_home:
             switchFragment(mHomeFragment);
             break;
-        case R.id.navbar_original:
-            switchFragment(mChannelFragment);
-            mChannelFragment.switchSubject(1);
-            mChannelFragment.hideBackBtn();
-            break;
         case R.id.navbar_channel_list:
-            switchFragment(mChannelListFragment);
+            switchFragment(mDiscoveryFragment);
             break;
         case R.id.navbar_personal:
             onCheckedNavBarPersonal();

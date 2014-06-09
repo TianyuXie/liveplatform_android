@@ -6,6 +6,7 @@
     <attr name="text" format="string" />
     <attr name="duration" format="integer" />
 
+    <!-- LoadingButton -->
     <declare-styleable name="LoadingButton">
         <attr name="textSize" />
         <attr name="text" />
@@ -16,6 +17,8 @@
         <attr name="anim_background" format="reference" />
         <attr name="animation" format="reference" />
     </declare-styleable>
+
+    <!-- AnimDoor -->
     <declare-styleable name="AnimDoor">
         <attr name="duration" />
         <attr name="left_src" format="reference" />
@@ -27,6 +30,8 @@
             <enum name="vertical" value="1" />
         </attr>
     </declare-styleable>
+
+    <!-- SideBar -->
     <declare-styleable name="SideBar">
         <attr name="anim_show" format="reference" />
         <attr name="anim_hide" format="reference" />
@@ -36,6 +41,8 @@
         <attr name="distance" format="dimension" />
         <attr name="scale_percent" format="float" />
     </declare-styleable>
+
+    <!-- ChatBox -->
     <declare-styleable name="ChatBox">
         <attr name="textSize" />
         <attr name="userColor" format="color" />
@@ -50,6 +57,8 @@
         <attr name="defaultText" format="string" />
         <attr name="background" format="reference" />
     </declare-styleable>
+
+    <!-- SlideListView -->
     <declare-styleable name="SlideListView">
         <attr name="extra_width" format="dimension" />
         <attr name="slideable" format="boolean" />
@@ -81,8 +90,16 @@
         <attr name="swipeDrawableChecked" format="reference" />
         <attr name="swipeDrawableUnchecked" format="reference" />
     </declare-styleable>
+
+    <!-- TopBarView -->
     <declare-styleable name="TopBarView">
         <attr name="text" />
+        <attr name="show_left_btn" format="boolean" />
+        <attr name="show_right_btn" format="boolean" />
+        <attr name="left_btn_src" format="reference" />
+        <attr name="right_btn_src" format="reference" />
+        <attr name="show_title" format="boolean" />
+        <attr name="layout" format="reference" />
     </declare-styleable>
 
 </resources>

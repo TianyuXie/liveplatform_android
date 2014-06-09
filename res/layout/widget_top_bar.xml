@@ -2,7 +2,7 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <TextView
-        android:id="@+id/top_bar_text_title"
+        android:id="@id/top_bar_text_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
@@ -11,10 +11,11 @@
         android:paddingRight="80dp"
         android:singleLine="true"
         android:textColor="@color/white"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:visibility="gone" />
 
     <ImageButton
-        android:id="@+id/top_bar_btn_left"
+        android:id="@id/top_bar_btn_left"
         style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -24,7 +25,7 @@
         android:visibility="gone" />
 
     <ImageButton
-        android:id="@+id/top_bar_btn_right"
+        android:id="@id/top_bar_btn_right"
         style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

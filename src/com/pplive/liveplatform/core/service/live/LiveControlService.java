@@ -68,7 +68,7 @@ public class LiveControlService extends RestService {
                             return true;
                         }
 
-                        TimeUnit.MILLISECONDS.sleep(i == 0 ? 6000 : 3000);
+                        TimeUnit.MILLISECONDS.sleep(500);
 
                     } catch (InterruptedException e) {
                         Log.w(TAG, e.toString());
@@ -106,7 +106,7 @@ public class LiveControlService extends RestService {
                             return true;
                         }
 
-                        TimeUnit.MILLISECONDS.sleep(i == 0 ? 6000 : 3000);
+                        TimeUnit.MILLISECONDS.sleep(500);
 
                     } catch (InterruptedException e) {
                         Log.w(TAG, e.toString());

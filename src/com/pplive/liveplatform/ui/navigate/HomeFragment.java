@@ -30,6 +30,7 @@ import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.util.TimeHelper;
 import com.pplive.liveplatform.util.TimeUtil;
 
 public class HomeFragment extends Fragment {
@@ -137,7 +138,9 @@ class ProgramAdapter extends BaseAdapter {
 
     static final String TAG = ProgramAdapter.class.getSimpleName();
 
-    static final float RATIO = 16f / 9f;
+    static final float RATIO = 4f / 3f;
+
+    private Context mContext;
 
     private LayoutInflater mInflater;
 
@@ -148,6 +151,7 @@ class ProgramAdapter extends BaseAdapter {
     public ProgramAdapter(Context context) {
         Log.d(TAG, "ProgramAdpater");
 
+        mContext = context;
         mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         mHeight = (int) (DisplayUtil.getWidthPx(context) / 2.0f / RATIO);
     }
@@ -230,8 +234,7 @@ class ProgramAdapter extends BaseAdapter {
         } else if (data.isVOD()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            holder.timedownTextView.setText(String.format("%s %s", TimeUtil.stamp2StringShort(data.getRealStartTime()),
-                    TimeUtil.stringForTimeMin(data.getLength())));
+            holder.timedownTextView.setText(TimeHelper.getAboutStartTime(mContext, data.getRealStartTime()));
             holder.liveImageView.setVisibility(View.GONE);
         } else {
             holder.liveImageView.setVisibility(View.VISIBLE);

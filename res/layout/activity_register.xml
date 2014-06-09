@@ -2,143 +2,95 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_bg"
+    android:background="@drawable/login_register_bg"
     android:orientation="vertical" >
+
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/top_bar_height"
+        live:left_btn_src="@drawable/top_bar_close_btn"
+        live:show_left_btn="true"
+        live:text="@string/blank" />
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/top_bar_height" >
-
-        <Button
-            android:id="@+id/btn_register_back"
-            android:layout_width="@dimen/top_bar_back_btn_size"
-            android:layout_height="@dimen/top_bar_back_btn_size"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/top_bar_back_btn" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:text="@string/register_title"
-            android:textColor="@color/white"
-            android:textSize="@dimen/top_bar_text_size" />
-
-        <Button
-            android:id="@+id/btn_register_confirm"
-            android:layout_width="@dimen/top_bar_back_btn_size"
-            android:layout_height="@dimen/top_bar_back_btn_size"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/titlebar_confirm_btn_bg"
-            android:enabled="false" />
-    </RelativeLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/navbar_bg"
-        android:orientation="horizontal"
-        android:padding="2dp" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:text="@string/register_nav"
-            android:textColor="@color/nav_text_bg"
-            android:textSize="14sp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:orientation="vertical"
-        android:padding="10dp" >
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:paddingTop="30dp" >
 
         <EditText
-            android:id="@+id/edit_register_username"
+            android:id="@+id/edit_register_phone_number"
+            style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@color/login_input_bg"
-            android:hint="@string/register_username"
+            android:layout_alignParentTop="true"
+            android:hint="@string/register_phone_number"
             android:imeOptions="actionNext"
-            android:inputType="textVisiblePassword"
-            android:padding="12dp"
-            android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
-            android:textSize="17sp" />
+            android:inputType="number" />
 
         <EditText
             android:id="@+id/edit_register_password"
+            style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:background="@color/login_input_bg"
+            android:layout_below="@+id/edit_register_phone_number"
+            android:layout_marginTop="10dp"
             android:hint="@string/register_password"
             android:imeOptions="actionNext"
-            android:inputType="textPassword"
-            android:padding="12dp"
-            android:singleLine="true"
-            android:textColor="@color/login_input_text_bg"
-            android:textSize="17sp" />
+            android:inputType="textPassword" />
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/edit_register_checkcode"
+            style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:orientation="horizontal" >
-
-            <EditText
-                android:id="@+id/edit_register_checkcode"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                android:background="@color/login_input_bg"
-                android:digits="@string/number_and_letter"
-                android:hint="@string/register_checkcode"
-                android:inputType="textVisiblePassword"
-                android:padding="12dp"
-                android:singleLine="true"
-                android:textColor="@color/login_input_text_bg"
-                android:textSize="17sp" />
-
-            <com.pplive.liveplatform.ui.widget.image.AsyncImageView
-                android:id="@+id/image_register_checkcode"
-                android:layout_width="120dp"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center_vertical"
-                android:contentDescription="@null"
-                android:scaleType="fitXY" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_register_password"
             android:layout_marginTop="10dp"
-            android:gravity="left"
-            android:orientation="horizontal" >
+            android:layout_toLeftOf="@+id/btn_send_phone_checkcode"
+            android:digits="@string/number_and_letter"
+            android:hint="@string/register_checkcode"
+            android:inputType="number" />
 
-            <CheckBox
-                android:id="@+id/check_register_agreement"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical" />
+        <Button
+            android:id="@+id/btn_send_phone_checkcode"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/edit_register_password"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_send_phone_checkcode"
+            android:padding="12dp"
+            android:text="@string/register_send_phone_checkcode"
+            android:textColor="#0092e2"
+            android:textSize="18sp" />
 
-            <TextView
-                android:id="@+id/text_register_agreement"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                android:text="@string/register_user_agreement"
-                android:textSize="16sp" />
-        </LinearLayout>
-    </LinearLayout>
+        <TextView
+            android:id="@+id/text_error"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/edit_register_checkcode"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/red"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btn_register"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_error"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_confirm_bg"
+            android:enabled="false"
+            android:text="@string/btn_reg"
+            android:textColor="@color/btn_confirm_color"
+            android:textSize="22sp" />
+    </RelativeLayout>
 
 </LinearLayout>

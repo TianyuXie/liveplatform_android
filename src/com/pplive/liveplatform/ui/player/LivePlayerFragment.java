@@ -39,7 +39,8 @@ import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback {
-    static final String TAG = "_LivePlayerFragment";
+
+    static final String TAG = LivePlayerFragment.class.getSimpleName();
 
     private static final int TIMER_DELAY = 1000;
 

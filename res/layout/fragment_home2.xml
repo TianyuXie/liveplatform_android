@@ -1,23 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <com.pplive.liveplatform.ui.widget.SearchBarView
-        android:id="@+id/search_top_bar"
+    <RadioGroup
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        android:layout_alignParentTop="true"
-        android:background="@color/app_bg" />
+        android:background="#0090e1"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/radio_btn_recommend"
+            style="@style/style_home_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radio_btn_left_bg"
+            android:checked="true"
+            android:text="@string/home_tab_recommend" />
+
+        <RadioButton
+            android:id="@+id/radio_btn_focuson"
+            style="@style/style_home_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radio_btn_right_bg"
+            android:text="@string/home_tab_focuson" />
+    </RadioGroup>
 
     <com.handmark.pulltorefresh.library.PullToRefreshGridView
         xmlns:ptr="http://schemas.android.com/apk/res-auto"
         android:id="@+id/program_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/search_top_bar"
         android:background="@color/app_bg"
         android:numColumns="2"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg" />
 
-</RelativeLayout>
+</LinearLayout>

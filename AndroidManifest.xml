@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.pplive.liveplatform"
-    android:versionCode="111"
-    android:versionName="1.1.1" >
+    android:versionCode="120"
+    android:versionName="1.2.0" >
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -41,7 +41,8 @@
         android:name="com.pplive.liveplatform.LiveApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" >
+        android:label="@string/app_name"
+        android:theme="@style/Theme.SlideInAndSlideOut" >
 
         <!-- MetaData -->
         <meta-data
@@ -87,6 +88,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:theme="@style/Theme.SlideOut"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
@@ -139,7 +141,8 @@
         <activity
             android:name="com.pplive.liveplatform.ui.NicknameActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
         <activity
             android:name="com.pplive.liveplatform.ui.WebviewActivity"
@@ -153,12 +156,19 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
         <activity
             android:name="com.pplive.liveplatform.ui.RegisterActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
+        </activity>
+        <activity
+            android:name="com.pplive.liveplatform.ui.RegisterNicknameActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
         <activity
             android:name="com.pplive.liveplatform.ui.UserpageActivity"
@@ -205,12 +215,12 @@
         <activity
             android:name="com.umeng.fb.ConversationActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar" >
         </activity>
         <activity
             android:name="com.umeng.fb.ContactActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar" >
         </activity>
 
         <!-- Getui Activity -->

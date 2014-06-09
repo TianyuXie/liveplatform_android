@@ -1,24 +1,21 @@
 package com.pplive.liveplatform.ui;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.task.Task.OnTaskListener;
@@ -30,113 +27,32 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.CheckCodeTask;
 import com.pplive.liveplatform.core.task.user.RegisterTask;
+import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
 public class RegisterActivity extends Activity {
-    final static String TAG = "_RegisterActivity";
 
-    public static final int FROM_LOGIN = 7101;
+    final static String TAG = RegisterActivity.class.getSimpleName();
 
     public static final int REGISTER_SUCCESS = 8201;
 
-    private EditText mUsrEditText;
+    private TopBarView mTopBarView;
 
-    private EditText mPwdEditText;
+    private EditText mEditTextPhoneNumber;
 
-    private EditText mCheckEditText;
+    private EditText mEditTextPassword;
 
-    private Button mConfirmButton;
+    private EditText mEditTextCheckCode;
 
-    private CheckBox mCheckBox;
+    private Button mBtnPhoneCheckCode;
+
+    private Button mBtnRegister;
+
+    private TextView mTextError;
 
     private Dialog mRefreshDialog;
 
-    private AsyncImageView mCheckCodeImage;
-
-    private String mGuid;
-
-    private Context mContext;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mContext = this;
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_register);
-
-        findViewById(R.id.btn_register_back).setOnClickListener(onBackBtnClickListener);
-
-        mCheckCodeImage = (AsyncImageView) findViewById(R.id.image_register_checkcode);
-        mCheckCodeImage.setOnClickListener(onImageClickListener);
-        mUsrEditText = (EditText) findViewById(R.id.edit_register_username);
-        mPwdEditText = (EditText) findViewById(R.id.edit_register_password);
-        mCheckEditText = (EditText) findViewById(R.id.edit_register_checkcode);
-        mCheckBox = (CheckBox) findViewById(R.id.check_register_agreement);
-        mCheckEditText.setOnKeyListener(onFinalEnterListener);
-        mUsrEditText.addTextChangedListener(textWatcher);
-        mPwdEditText.addTextChangedListener(textWatcher);
-        mCheckEditText.addTextChangedListener(textWatcher);
-
-        mConfirmButton = (Button) findViewById(R.id.btn_register_confirm);
-        mConfirmButton.setOnClickListener(onConfirmBtnClickListener);
-        mRefreshDialog = new RefreshDialog(this);
-
-        TextView agreementText = (TextView) findViewById(R.id.text_register_agreement);
-        agreementText.setText(Html.fromHtml("我已阅读并接受<font color='#19A0FF'>注册协议</font>"));
-        agreementText.setOnClickListener(onAgreeClickListener);
-        mCheckBox.setOnCheckedChangeListener(onAgreeCheckedChangeListener);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        refreshCheckCode();
-    }
-
-    private void refreshCheckCode() {
-        CheckCodeTask checkCodeTask = new CheckCodeTask();
-        checkCodeTask.addTaskListener(onCheckcodeTaskListener);
-        checkCodeTask.execute();
-    }
-
-    private View.OnClickListener onAgreeClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(mContext, WebviewActivity.class);
-            intent.putExtra("url", "file:///android_asset/user.html");
-            startActivity(intent);
-        }
-    };
-
-    private OnCheckedChangeListener onAgreeCheckedChangeListener = new OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked && !TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText())
-                    && !TextUtils.isEmpty(mCheckEditText.getText())) {
-                mConfirmButton.setEnabled(true);
-            } else {
-                mConfirmButton.setEnabled(false);
-            }
-        }
-    };
-
-    private View.OnClickListener onBackBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            finish();
-        }
-    };
-
-    private View.OnClickListener onImageClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            refreshCheckCode();
-        }
-    };
-
-    private OnTaskListener onCheckcodeTaskListener = new OnTaskListener() {
+    private OnTaskListener mOnCheckcodeTaskListener = new OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -146,13 +62,13 @@ public class RegisterActivity extends Activity {
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            mGuid = event.getContext().getString(CheckCodeTask.KEY_GUID);
-            mCheckCodeImage.setImageAsync(event.getContext().getString(CheckCodeTask.KEY_IMAGE));
+            //            mGuid = event.getContext().getString(CheckCodeTask.KEY_GUID);
+            //            mCheckCodeImage.setImageAsync(event.getContext().getString(CheckCodeTask.KEY_IMAGE));
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
+            showErrorMsg(event.getMessage());
         }
 
         @Override
@@ -164,18 +80,23 @@ public class RegisterActivity extends Activity {
         }
     };
 
-    private View.OnKeyListener onFinalEnterListener = new View.OnKeyListener() {
+    private View.OnKeyListener mOnFinalEnterListener = new View.OnKeyListener() {
+
         @Override
         public boolean onKey(View v, int keyCode, KeyEvent event) {
-            if (keyCode == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN) {
-                mConfirmButton.performClick();
+
+            if (mBtnRegister.isEnabled() && KeyEvent.KEYCODE_ENTER == keyCode && KeyEvent.ACTION_DOWN == event.getAction()) {
+
+                mBtnRegister.performClick();
+
                 return true;
             }
+
             return false;
         }
     };
 
-    private TextWatcher textWatcher = new TextWatcher() {
+    private TextWatcher mTextWatcher = new TextWatcher() {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -187,62 +108,72 @@ public class RegisterActivity extends Activity {
 
         @Override
         public void afterTextChanged(Editable s) {
-            if (mCheckBox.isChecked() && !TextUtils.isEmpty(mUsrEditText.getText()) && !TextUtils.isEmpty(mPwdEditText.getText())
-                    && !TextUtils.isEmpty(mCheckEditText.getText())) {
-                mConfirmButton.setEnabled(true);
+
+            hideErrorMsg();
+
+            if (!TextUtils.isEmpty(mEditTextPhoneNumber.getText()) && !TextUtils.isEmpty(mEditTextPassword.getText())
+                    && !TextUtils.isEmpty(mEditTextCheckCode.getText())) {
+                mBtnRegister.setEnabled(true);
             } else {
-                mConfirmButton.setEnabled(false);
+                mBtnRegister.setEnabled(false);
             }
         }
     };
 
-    private View.OnClickListener onConfirmBtnClickListener = new View.OnClickListener() {
+    private View.OnClickListener mOnClickBtnRegisterListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             mRefreshDialog.show();
+
             RegisterTask registerTask = new RegisterTask();
+
             TaskContext taskContext = new TaskContext();
-            taskContext.set(RegisterTask.KEY_USERNAME, mUsrEditText.getText().toString());
-            taskContext.set(RegisterTask.KEY_PASSWORD, mPwdEditText.getText().toString());
-            taskContext.set(RegisterTask.KEY_CHECKCODE, mCheckEditText.getText().toString());
-            taskContext.set(RegisterTask.KEY_GUID, mGuid);
-            registerTask.addTaskListener(onRegisterListener);
+            taskContext.set(RegisterTask.KEY_PHONE_NUMBER, mEditTextPhoneNumber.getText().toString());
+            taskContext.set(RegisterTask.KEY_PASSWORD, mEditTextPassword.getText().toString());
+            taskContext.set(RegisterTask.KEY_CHECK_CODE, mEditTextCheckCode.getText().toString());
+            registerTask.addTaskListener(mOnRegisterListener);
             registerTask.execute(taskContext);
         }
     };
 
-    private OnTaskListener onRegisterListener = new OnTaskListener() {
+    private OnTaskListener mOnRegisterListener = new OnTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
             mRefreshDialog.dismiss();
-            Toast.makeText(mContext, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
+
+            showErrorMsg(getString(R.string.toast_timeout));
         }
 
         @Override
         public void onTaskFinished(Object sender, TaskFinishedEvent event) {
             mRefreshDialog.dismiss();
-            Intent data = new Intent(getApplicationContext(), LoginActivity.class);
 
-            data.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_USERNAME));
-            data.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
 
-            //            setResult(REGISTER_SUCCESS, data);
+            intent.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_PHONE_NUMBER));
+            intent.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
+            intent.putExtra(LoginActivity.EXTRA_FROM_REGISTER, true);
 
-            RegisterActivity.this.startActivity(data);
+            setResult(REGISTER_SUCCESS, intent);
+
+            startActivity(intent);
 
             finish();
         }
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
+
             mRefreshDialog.dismiss();
+
             String message = event.getMessage();
             if (TextUtils.isEmpty(message)) {
                 message = getString(R.string.register_failed);
             }
-            Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
-            refreshCheckCode();
+
+            showErrorMsg(message);
+
         }
 
         @Override
@@ -255,4 +186,72 @@ public class RegisterActivity extends Activity {
         }
     };
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_register);
+
+        mTopBarView = (TopBarView) findViewById(R.id.top_bar);
+        mTopBarView.setLeftBtnOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
+        mEditTextPhoneNumber = (EditText) findViewById(R.id.edit_register_phone_number);
+        mEditTextPhoneNumber.addTextChangedListener(mTextWatcher);
+
+        mEditTextPassword = (EditText) findViewById(R.id.edit_register_password);
+        mEditTextPassword.addTextChangedListener(mTextWatcher);
+
+        mEditTextCheckCode = (EditText) findViewById(R.id.edit_register_checkcode);
+        mEditTextCheckCode.setOnKeyListener(mOnFinalEnterListener);
+        mEditTextCheckCode.addTextChangedListener(mTextWatcher);
+
+        mBtnPhoneCheckCode = (Button) findViewById(R.id.btn_send_phone_checkcode);
+        mBtnPhoneCheckCode.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String number = mEditTextPhoneNumber.getText().toString();
+
+                sendCheckCode(number);
+            }
+        });
+
+        mBtnRegister = (Button) findViewById(R.id.btn_register);
+        mBtnRegister.setOnClickListener(mOnClickBtnRegisterListener);
+
+        mTextError = (TextView) findViewById(R.id.text_error);
+
+        mRefreshDialog = new RefreshDialog(this);
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    private void sendCheckCode(String phone) {
+        CheckCodeTask checkCodeTask = new CheckCodeTask();
+        checkCodeTask.addTaskListener(mOnCheckcodeTaskListener);
+
+        TaskContext context = new TaskContext();
+        context.set(CheckCodeTask.KEY_PHONE_NUMBER, phone);
+
+        checkCodeTask.execute(context);
+    }
+
+    private void showErrorMsg(String msg) {
+        mTextError.setText(msg);
+    }
+
+    private void hideErrorMsg() {
+        mTextError.setText("");
+    }
 }

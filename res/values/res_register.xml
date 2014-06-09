@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="register">注册</string>
+    <string name="register_failed">注册失败</string>
+    <string name="register_nav">注册PPTV帐号</string>
+    <string name="register_username">用户名&#160;-&#160;由数字,字母,下划线组成</string>
+    <string name="register_checkcode">验证码</string>
+    <string name="register_email">邮箱</string>
+    <string name="register_token_fail">认证失败</string>
+    <string name="register_user_agreement">"我已阅读并接受<font color="#19A0FF">注册协议</font>"</string>
+    <string name="register_phone_number">输入手机号</string>
+    <string name="register_password">输入密码</string>
+    <string name="register_send_phone_checkcode">获取验证码</string>
+    <string name="register_phone_number_incorrect">手机号不正确, 请仔细核对</string>
+
+</resources>

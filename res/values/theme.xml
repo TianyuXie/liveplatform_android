@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SlideInAndSlideOut" parent="@android:style/Theme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/ActivitySlideInAndSlideOut</item>
+    </style>
+
+    <style name="ActivitySlideInAndSlideOut">
+        <item name="android:activityCloseEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/act_slide_out_right</item>
+        <item name="android:activityOpenEnterAnimation">@anim/act_slide_in_rignt</item>
+        <item name="android:activityOpenExitAnimation">@android:anim/fade_out</item>
+    </style>
+
+    <style name="Theme.SlideOut" parent="@android:style/Theme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/ActivitySlideOut</item>
+    </style>
+
+    <style name="ActivitySlideOut">
+        <item name="android:activityCloseEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:activityCloseExitAnimation">@anim/act_slide_out_right</item>
+    </style>
+
+    <style name="Theme.SlideInAndSlideOut.Translucent.NoTitleBar" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:windowAnimationStyle">@style/ActivitySlideInAndSlideOut</item>
+    </style>
+
+</resources>

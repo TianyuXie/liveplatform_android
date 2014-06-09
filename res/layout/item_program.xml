@@ -2,13 +2,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="10dp" >
+    android:padding="2dp" >
 
     <com.pplive.liveplatform.ui.widget.image.AsyncImageView
         android:id="@+id/image_program_preview"
         android:layout_width="fill_parent"
-        android:layout_height="200dp"
-        android:contentDescription="@string/blank"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:contentDescription="@null"
         android:scaleType="fitXY" />
 
     <TextView
@@ -17,15 +19,16 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/image_program_preview"
         android:layout_alignTop="@+id/image_program_preview"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/program_tag_bg"
+        android:layout_marginTop="5dp"
+        android:background="#099ede"
         android:drawablePadding="3dp"
         android:gravity="center_vertical"
-        android:paddingBottom="3dp"
+        android:paddingBottom="1dp"
         android:paddingLeft="6dp"
         android:paddingRight="6dp"
-        android:paddingTop="3dp"
+        android:paddingTop="1dp"
         android:text="@string/program_live"
+        android:textColor="@color/white"
         android:textSize="12sp" />
 
     <ImageView
@@ -34,66 +37,50 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/image_program_preview"
         android:layout_alignTop="@+id/image_program_preview"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:contentDescription="@null"
         android:src="@drawable/statebar_live"
         android:visibility="gone" />
 
-    <!--
-    <LinearLayout
-        android:id="@+id/divider_program_below_image"
-        android:layout_width="fill_parent"
-        android:layout_height="1.5dp"
-        android:layout_below="@id/image_program_preview"
-        android:background="@color/program_below_image_bg"
-        android:orientation="horizontal" />
-    -->
-
-    <RelativeLayout
-        android:id="@+id/layout_program_info"
-        android:layout_width="fill_parent"
+    <TextView
+        android:id="@+id/text_program_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/image_program_preview"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@+id/text_program_viewcount"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/text_program_owner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_below="@id/image_program_preview"
-        android:background="@color/home_program_item_bg"
-        android:padding="6dp" >
+        android:layout_marginLeft="5dp"
+        android:layout_toLeftOf="@id/text_program_viewcount"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/program_owner_text"
+        android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/text_program_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="5dp"
-            android:layout_toLeftOf="@+id/text_program_viewcount"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/text_program_owner"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/text_program_title"
-            android:layout_toLeftOf="@id/text_program_viewcount"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:textColor="@color/program_owner_text"
-            android:textSize="13sp" />
-
-        <TextView
-            android:id="@+id/text_program_viewcount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/text_program_title"
-            android:drawableLeft="@drawable/home_user_count_icon"
-            android:drawablePadding="4dp"
-            android:gravity="center_vertical"
-            android:textColor="@color/program_owner_text"
-            android:textSize="13sp" />
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/text_program_viewcount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/image_program_preview"
+        android:layout_marginRight="5dp"
+        android:drawableLeft="@drawable/home_user_count_icon"
+        android:drawablePadding="4dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/program_owner_text"
+        android:textSize="18sp" />
 
 </RelativeLayout>

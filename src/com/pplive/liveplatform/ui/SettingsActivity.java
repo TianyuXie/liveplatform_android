@@ -10,6 +10,7 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.network.QualityPreferences;
@@ -22,7 +23,8 @@ import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.umeng.fb.FeedbackAgent;
 
 public class SettingsActivity extends Activity {
-    static final String TAG = "_SettingsActivity";
+
+    static final String TAG = SettingsActivity.class.getSimpleName();
 
     public static final int RESULT_LOGOUT = 5801;
 
@@ -188,7 +190,7 @@ public class SettingsActivity extends Activity {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
-            intent.putExtra(LoginActivity.EXTRA_TAGET, UserpageActivity.class.getName());
+            intent.putExtra(Extra.KEY_REDIRECT, UserpageActivity.class);
             startActivity(intent);
             finish();
         }
