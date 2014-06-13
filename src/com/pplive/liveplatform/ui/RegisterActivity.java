@@ -1,8 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;

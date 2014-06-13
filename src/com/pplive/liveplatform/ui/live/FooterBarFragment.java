@@ -367,6 +367,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             }
 
             mEditLiveTitle.setText(liveTitle);
+            mEditLiveTitle.setSelection(mEditLiveTitle.length());
         }
 
         if (null != mEditLiveSchedule) {

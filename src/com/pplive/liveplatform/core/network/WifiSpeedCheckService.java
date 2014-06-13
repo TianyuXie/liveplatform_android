@@ -42,7 +42,7 @@ public class WifiSpeedCheckService extends IntentService {
             String oldIP = QualityPreferences.getInstance(getApplicationContext()).getIP();
             String ip = MediaService.getInstance().getClientIPAddress();
             if (!TextUtils.isEmpty(ip) && !oldIP.equals(ip)) {
-                Log.d(TAG, "check Wifi Speed");
+                Log.d(TAG, "Check Wifi Speed");
                 float speed = MediaService.getInstance().getAvgNetSpeed(256 * 1024, 5);
                 if (speed > 0) {
                     QualityPreferences.getInstance(getApplicationContext()).reset();
