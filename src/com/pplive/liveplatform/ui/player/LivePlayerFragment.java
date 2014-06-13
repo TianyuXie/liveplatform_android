@@ -296,10 +296,11 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         super.onStop();
     }
 
-    public void stopPlayback() {
-        PPBoxUtil.closeM3U8();
+    private void stopPlayback() {
         mVideoView.stopPlayback();
         mController.stop();
+
+        PPBoxUtil.closeM3U8();
     }
 
     @Override
