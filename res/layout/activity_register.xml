@@ -22,12 +22,12 @@
         android:paddingTop="30dp" >
 
         <EditText
-            android:id="@+id/edit_register_phone_number"
+            android:id="@+id/edit_phone_number"
             style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:hint="@string/register_phone_number"
+            android:hint="@string/phone_number"
             android:imeOptions="actionNext"
             android:inputType="number" />
 
@@ -36,14 +36,14 @@
             style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/edit_register_phone_number"
+            android:layout_below="@+id/edit_phone_number"
             android:layout_marginTop="10dp"
             android:hint="@string/register_password"
             android:imeOptions="actionNext"
             android:inputType="textPassword" />
 
         <EditText
-            android:id="@+id/edit_register_checkcode"
+            android:id="@+id/edit_checkcode"
             style="@style/Widget.EditText.Input"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
             android:id="@+id/text_error"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/edit_register_checkcode"
+            android:layout_below="@+id/edit_checkcode"
             android:layout_marginTop="10dp"
             android:textColor="@color/red"
             android:textSize="18sp" />

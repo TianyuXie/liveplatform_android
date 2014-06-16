@@ -20,11 +20,11 @@
         android:contentDescription="@null" />
 
     <TextView
+        android:id="@+id/text_app_version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:text="@string/app_version"
         android:textColor="@color/about_text"
         android:textSize="18sp" />
 

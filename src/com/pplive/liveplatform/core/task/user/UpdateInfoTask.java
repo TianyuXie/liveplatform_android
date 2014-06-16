@@ -47,10 +47,10 @@ public class UpdateInfoTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
@@ -63,14 +63,14 @@ public class UpdateInfoTask extends Task {
         try {
             userinfo = UserService.getInstance().getUserInfo(token, username);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, "UserService: Get current info error");
+            return new TaskResult(TaskStatus.FAILED, "UserService: Get current info error");
         }
         if (userinfo == null) {
-            return new TaskResult(TaskStatus.Failed, "No data");
+            return new TaskResult(TaskStatus.FAILED, "No data");
         }
         Log.d(TAG, "UserService OK!");
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
 
         boolean changeNick = !StringUtil.isNullOrEmpty(nickname) && !nickname.equals(userinfo.getNickname());
@@ -92,13 +92,13 @@ public class UpdateInfoTask extends Task {
                 if (e.getMessage().equals(StringManager.getRes(R.string.error_nickname_duplicated))) {
                     message = StringManager.getRes(R.string.toast_nickname_duplicated);
                 }
-                return new TaskResult(TaskStatus.Failed, message);
+                return new TaskResult(TaskStatus.FAILED, message);
             }
             if (!status) {
-                return new TaskResult(TaskStatus.Failed, "fail to update");
+                return new TaskResult(TaskStatus.FAILED, "fail to update");
             }
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_USERINFO, userinfo);
         result.setContext(context);
         return result;

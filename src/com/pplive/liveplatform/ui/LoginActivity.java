@@ -32,7 +32,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
@@ -66,6 +66,8 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
     private EditText mEditPassword;
 
     private Button mBtnLogin;
+
+    private TextView mTextForgetPWD;
 
     private TextView mTextError;
 
@@ -117,10 +119,10 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         }
     };
 
-    private Task.OnTaskListener mOnLoginTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener mOnLoginTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
 
             mRefreshDialog.dismiss();
 
@@ -225,6 +227,16 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         mEditPassword = (EditText) findViewById(R.id.edit_login_password);
         mEditPassword.setOnKeyListener(mOnFinalEnterListener);
         mEditPassword.addTextChangedListener(mTextWatcher);
+
+        mTextForgetPWD = (TextView) findViewById(R.id.text_forget_password);
+        mTextForgetPWD.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, PasswordResetStep1Activity.class);
+                startActivity(intent);
+            }
+        });
 
         mTextError = (TextView) findViewById(R.id.text_error);
 

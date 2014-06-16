@@ -47,29 +47,29 @@ public class LoadImageTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
         String url = context.getString(KEY_URL);
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         if (TextUtils.isEmpty(url)) {
-            result.setStatus(TaskStatus.Failed);
+            result.setStatus(TaskStatus.FAILED);
             result.setMessage("url is empty");
             result.setContext(context);
             return result;
         }
         Bitmap bitmap = ImageUtil.getBitmapFromUrl(url, 120.0f, 90.0f);
         if (bitmap == null) {
-            result.setStatus(TaskStatus.Failed);
+            result.setStatus(TaskStatus.FAILED);
             result.setMessage("No data");
             result.setContext(context);
             return result;
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         context.set(KEY_RESULT, bitmap);
         result.setContext(context);

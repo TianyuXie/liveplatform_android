@@ -44,14 +44,14 @@
 
     <TextView
         android:id="@+id/text_program_title"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/image_program_preview"
         android:layout_alignParentLeft="true"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
+        android:layout_alignRight="@+id/image_program_preview"
         android:layout_toLeftOf="@+id/text_program_viewcount"
         android:ellipsize="end"
+        android:padding="5dp"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="20sp"

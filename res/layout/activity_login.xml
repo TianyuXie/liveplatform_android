@@ -58,6 +58,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginTop="20dp"
             android:layout_toRightOf="@+id/text_forget_password"
+            android:padding="10dp"
             android:textColor="@color/red"
             android:textSize="18sp" />
 
@@ -68,7 +69,7 @@
             android:layout_above="@+id/btn_login"
             android:layout_alignParentRight="true"
             android:layout_marginTop="20dp"
-            android:text="@string/forget_password"
+            android:text="@string/pwd_forget"
             android:textColor="#2987a4"
             android:textSize="18sp" />
 

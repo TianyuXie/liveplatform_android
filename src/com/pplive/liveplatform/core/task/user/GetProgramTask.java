@@ -49,10 +49,10 @@ public class GetProgramTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
@@ -65,10 +65,10 @@ public class GetProgramTask extends Task {
                 data = ProgramService.getInstance().getProgramsByOwner(token, username);
             }
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, "ProgramService error");
+            return new TaskResult(TaskStatus.FAILED, "ProgramService error");
         }
         if (data == null) {
-            return new TaskResult(TaskStatus.Failed, "No data");
+            return new TaskResult(TaskStatus.FAILED, "No data");
         }
         Collection<Program> removePrograms = new ArrayList<Program>();
         if (TextUtils.isEmpty(token)) {
@@ -88,9 +88,9 @@ public class GetProgramTask extends Task {
         }
         data.removeAll(removePrograms);
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_RESULT, data);
         result.setContext(context);
         return result;

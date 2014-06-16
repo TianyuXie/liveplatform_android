@@ -1,20 +1,25 @@
-package com.pplive.liveplatform.core.task.player;
+package com.pplive.liveplatform.core.task.user;
 
-import com.pplive.liveplatform.core.service.live.MediaService;
-import com.pplive.liveplatform.core.service.live.model.WatchList;
+import com.pplive.liveplatform.core.service.exception.LiveHttpException;
+import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.service.passport.PassportService.CheckCodeType;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class GetMediaTask extends Task {
-    static final String TAG = "_GetMediaTask";
+public class GetCheckCodeTask extends Task {
 
-    public final static String KEY_RESULT = "play_media_result";
+    static final String TAG = GetCheckCodeTask.class.getSimpleName();
+
+    public final static String TYPE = "GetCheckCode";
+
+    public static final String KEY_PHONE_NUMBER = "phone_number";
+
+    public static final String KEY_CODE_TYPE = "code_type";
 
     private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "GetMedia";
 
     @Override
     public String getID() {
@@ -40,31 +45,29 @@ public class GetMediaTask extends Task {
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
-        if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
-        }
         if (isCancelled()) {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
+
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String username = (String) context.get(KEY_USERNAME);
-        String token = (String) context.get(KEY_TOKEN);
-        WatchList data = null;
+
+        String phoneNumber = context.getString(KEY_PHONE_NUMBER);
+        CheckCodeType type = (CheckCodeType) context.get(KEY_CODE_TYPE);
+
         try {
-            data = MediaService.getInstance().getPlayWatchListV3(token, pid, username);
-        } catch (Exception e) {
-            return new TaskResult(TaskStatus.FAILED, "MediaService error");
+            PassportService.getInstance().sendPhoneCheckCode(phoneNumber, type);
+        } catch (LiveHttpException e) {
+            return new TaskResult(TaskStatus.FAILED, StringUtil.safeString(e.getMessage()));
         }
-        if (data == null) {
-            return new TaskResult(TaskStatus.FAILED, "No data");
-        }
+
         if (isCancelled()) {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
+
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_RESULT, data);
+
         result.setContext(context);
+
         return result;
     }
 

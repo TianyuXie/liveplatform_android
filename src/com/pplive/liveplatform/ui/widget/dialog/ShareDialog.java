@@ -29,7 +29,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.other.LoadImageTask;
@@ -301,7 +301,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         bitmap.recycle();
     }
 
-    private Task.OnTaskListener taskListener = new Task.OnTaskListener() {
+    private Task.TaskListener taskListener = new Task.BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -311,7 +311,7 @@ public class ShareDialog extends Dialog implements View.OnClickListener {
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             int target = (Integer) event.getContext().get(LoadImageTask.KEY_TARGET);
             Bitmap bitmap = (Bitmap) event.getContext().get(LoadImageTask.KEY_RESULT);
             shareImage(target, bitmap);

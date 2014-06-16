@@ -23,10 +23,12 @@ import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.service.comment.model.FeedItem;
 import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
+import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetFeedTask;
@@ -143,7 +145,7 @@ public class ChatBox extends RelativeLayout {
         mAdapter.setTextSize(textSize);
     }
 
-    private Task.OnTaskListener onGetFeedListener = new Task.OnTaskListener() {
+    private TaskListener onGetFeedListener = new BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -152,7 +154,7 @@ public class ChatBox extends RelativeLayout {
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "FeedTask onTaskFinished");
             if (mStart) {
                 FeedDetailList feeds = (FeedDetailList) event.getContext().get(GetFeedTask.KEY_RESULT);

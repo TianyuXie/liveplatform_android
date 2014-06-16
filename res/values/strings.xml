@@ -6,6 +6,7 @@
     <string name="btn_login">登\u0020\u0020\u0020录</string>
     <string name="btn_reg">注\u0020\u0020\u0020册</string>
     <string name="btn_confirm">确\u0020\u0020\u0020定</string>
+    <string name="btn_next">下一步</string>
     <string name="btn_cancel">取消</string>
     <string name="btn_delete">删除</string>
 

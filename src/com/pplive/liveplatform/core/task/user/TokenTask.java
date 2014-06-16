@@ -52,7 +52,7 @@ public class TokenTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
@@ -73,13 +73,13 @@ public class TokenTask extends Task {
                 // token expired
                 if (isThirdParty) {
                     // must relogin manually
-                    return new TaskResult(TaskStatus.Failed, "thirdparty");
+                    return new TaskResult(TaskStatus.FAILED, "thirdparty");
                 } else {
                     mustUpdate = true;
                 }
             } else {
                 // will retry automatically
-                return new TaskResult(TaskStatus.Cancel, "programService error");
+                return new TaskResult(TaskStatus.CHANCEL, "programService error");
             }
         }
         if (mustUpdate) {
@@ -89,11 +89,11 @@ public class TokenTask extends Task {
                 token = PassportService.getInstance().login(username, pwd).getToken();
             } catch (LiveHttpException e) {
                 // must relogin manually
-                return new TaskResult(TaskStatus.Failed, "passportService failed");
+                return new TaskResult(TaskStatus.FAILED, "passportService failed");
             }
             if (TextUtils.isEmpty(token)) {
                 // must relogin manually
-                return new TaskResult(TaskStatus.Failed, "token == null");
+                return new TaskResult(TaskStatus.FAILED, "token == null");
             } else {
                 // token updated
                 context.set(KEY_NEED_UPDATE, false);
@@ -110,7 +110,7 @@ public class TokenTask extends Task {
                     case ERR_PWD_EMPTY:
                     case ERR_PWD_ERROR:
                         // Password is changed, must relogin manually
-                        return new TaskResult(TaskStatus.Failed, "password changed");
+                        return new TaskResult(TaskStatus.FAILED, "password changed");
                     }
                 }
                 if (!TextUtils.isEmpty(newToken)) {
@@ -123,10 +123,10 @@ public class TokenTask extends Task {
                 }
             } else {
                 // must relogin manually
-                return new TaskResult(TaskStatus.Failed, "thirdparty");
+                return new TaskResult(TaskStatus.FAILED, "thirdparty");
             }
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_TOKEN, token);
         result.setContext(context);
         return result;

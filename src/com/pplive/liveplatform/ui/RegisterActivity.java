@@ -15,14 +15,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.task.Task.OnTaskListener;
+import com.pplive.liveplatform.core.service.passport.PassportService.CheckCodeType;
+import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
+import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
-import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.user.CheckCodeTask;
+import com.pplive.liveplatform.core.task.user.GetCheckCodeTask;
 import com.pplive.liveplatform.core.task.user.RegisterTask;
 import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
@@ -35,11 +36,11 @@ public class RegisterActivity extends Activity {
 
     private TopBarView mTopBarView;
 
-    private EditText mEditTextPhoneNumber;
+    private EditText mEditPhoneNumber;
 
-    private EditText mEditTextPassword;
+    private EditText mEditPassword;
 
-    private EditText mEditTextCheckCode;
+    private EditText mEditCheckCode;
 
     private Button mBtnPhoneCheckCode;
 
@@ -49,31 +50,11 @@ public class RegisterActivity extends Activity {
 
     private Dialog mRefreshDialog;
 
-    private OnTaskListener mOnCheckcodeTaskListener = new OnTaskListener() {
-
-        @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            //            mGuid = event.getContext().getString(CheckCodeTask.KEY_GUID);
-            //            mCheckCodeImage.setImageAsync(event.getContext().getString(CheckCodeTask.KEY_IMAGE));
-        }
+    private BaseTaskListener mOnCheckcodeTaskListener = new BaseTaskListener() {
 
         @Override
         public void onTaskFailed(Object sender, TaskFailedEvent event) {
             showErrorMsg(event.getMessage());
-        }
-
-        @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
-        }
-
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
         }
     };
 
@@ -108,8 +89,7 @@ public class RegisterActivity extends Activity {
 
             hideErrorMsg();
 
-            if (!TextUtils.isEmpty(mEditTextPhoneNumber.getText()) && !TextUtils.isEmpty(mEditTextPassword.getText())
-                    && !TextUtils.isEmpty(mEditTextCheckCode.getText())) {
+            if (!TextUtils.isEmpty(mEditPhoneNumber.getText()) && !TextUtils.isEmpty(mEditPassword.getText()) && !TextUtils.isEmpty(mEditCheckCode.getText())) {
                 mBtnRegister.setEnabled(true);
             } else {
                 mBtnRegister.setEnabled(false);
@@ -118,6 +98,7 @@ public class RegisterActivity extends Activity {
     };
 
     private View.OnClickListener mOnClickBtnRegisterListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             mRefreshDialog.show();
@@ -125,15 +106,15 @@ public class RegisterActivity extends Activity {
             RegisterTask registerTask = new RegisterTask();
 
             TaskContext taskContext = new TaskContext();
-            taskContext.set(RegisterTask.KEY_PHONE_NUMBER, mEditTextPhoneNumber.getText().toString());
-            taskContext.set(RegisterTask.KEY_PASSWORD, mEditTextPassword.getText().toString());
-            taskContext.set(RegisterTask.KEY_CHECK_CODE, mEditTextCheckCode.getText().toString());
+            taskContext.set(RegisterTask.KEY_PHONE_NUMBER, mEditPhoneNumber.getText().toString());
+            taskContext.set(RegisterTask.KEY_PASSWORD, mEditPassword.getText().toString());
+            taskContext.set(RegisterTask.KEY_CHECK_CODE, mEditCheckCode.getText().toString());
             registerTask.addTaskListener(mOnRegisterListener);
             registerTask.execute(taskContext);
         }
     };
 
-    private OnTaskListener mOnRegisterListener = new OnTaskListener() {
+    private TaskListener mOnRegisterListener = new BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -143,7 +124,7 @@ public class RegisterActivity extends Activity {
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             mRefreshDialog.dismiss();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -178,9 +159,6 @@ public class RegisterActivity extends Activity {
             mRefreshDialog.dismiss();
         }
 
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
     };
 
     @Override
@@ -199,22 +177,22 @@ public class RegisterActivity extends Activity {
             }
         });
 
-        mEditTextPhoneNumber = (EditText) findViewById(R.id.edit_register_phone_number);
-        mEditTextPhoneNumber.addTextChangedListener(mTextWatcher);
+        mEditPhoneNumber = (EditText) findViewById(R.id.edit_phone_number);
+        mEditPhoneNumber.addTextChangedListener(mTextWatcher);
 
-        mEditTextPassword = (EditText) findViewById(R.id.edit_register_password);
-        mEditTextPassword.addTextChangedListener(mTextWatcher);
+        mEditPassword = (EditText) findViewById(R.id.edit_register_password);
+        mEditPassword.addTextChangedListener(mTextWatcher);
 
-        mEditTextCheckCode = (EditText) findViewById(R.id.edit_register_checkcode);
-        mEditTextCheckCode.setOnKeyListener(mOnFinalEnterListener);
-        mEditTextCheckCode.addTextChangedListener(mTextWatcher);
+        mEditCheckCode = (EditText) findViewById(R.id.edit_checkcode);
+        mEditCheckCode.addTextChangedListener(mTextWatcher);
+        mEditCheckCode.setOnKeyListener(mOnFinalEnterListener);
 
         mBtnPhoneCheckCode = (Button) findViewById(R.id.btn_send_phone_checkcode);
         mBtnPhoneCheckCode.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                String number = mEditTextPhoneNumber.getText().toString();
+                String number = mEditPhoneNumber.getText().toString();
 
                 sendCheckCode(number);
             }
@@ -229,17 +207,13 @@ public class RegisterActivity extends Activity {
 
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
     private void sendCheckCode(String phone) {
-        CheckCodeTask checkCodeTask = new CheckCodeTask();
+        GetCheckCodeTask checkCodeTask = new GetCheckCodeTask();
         checkCodeTask.addTaskListener(mOnCheckcodeTaskListener);
 
         TaskContext context = new TaskContext();
-        context.set(CheckCodeTask.KEY_PHONE_NUMBER, phone);
+        context.set(GetCheckCodeTask.KEY_PHONE_NUMBER, phone);
+        context.set(GetCheckCodeTask.KEY_CODE_TYPE, CheckCodeType.REGISTER);
 
         checkCodeTask.execute(context);
     }

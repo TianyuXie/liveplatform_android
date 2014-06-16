@@ -32,6 +32,8 @@ public class SearchActivity extends Activity {
 
     private EditText mEditSearchInput;
 
+    private ImageButton mBtnSearch;
+
     private ImageButton mBtnClose;
 
     private ExpandableListView mExpandableListView;
@@ -39,6 +41,18 @@ public class SearchActivity extends Activity {
     private SearchExpandableListAdapter mAdapter;
 
     private SearchCacheManager mCacheManager;
+
+    private View.OnClickListener mOnclickBtnSearch = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            String keyword = mEditSearchInput.getText().toString().trim();
+
+            mEditSearchInput.setText("");
+
+            search(keyword);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +67,8 @@ public class SearchActivity extends Activity {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
                 if (KeyEvent.KEYCODE_ENTER == keyCode && KeyEvent.ACTION_DOWN == event.getAction()) {
-                    String keyword = mEditSearchInput.getText().toString().trim();
 
-                    mEditSearchInput.setText("");
-
-                    search(keyword);
+                    mBtnSearch.performClick();
 
                     return true;
                 }
@@ -65,6 +76,9 @@ public class SearchActivity extends Activity {
                 return false;
             }
         });
+
+        mBtnSearch = (ImageButton) findViewById(R.id.search_input_bar_search_btn);
+        mBtnSearch.setOnClickListener(mOnclickBtnSearch);
 
         mBtnClose = (ImageButton) findViewById(R.id.search_input_bar_close_btn);
         mBtnClose.setOnClickListener(new View.OnClickListener() {

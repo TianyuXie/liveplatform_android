@@ -44,33 +44,33 @@ public class PutFeedTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
         String token = context.getString(KEY_TOKEN);
         String content = context.getString(KEY_CONTENT);
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         long feedId = -1;
         try {
             feedId = PbarService.getInstance().putFeed(token, pid, content);
         } catch (Exception e) {
-            result.setStatus(TaskStatus.Failed);
+            result.setStatus(TaskStatus.FAILED);
             result.setMessage("PbarService error");
             result.setContext(context);
             return result;
         }
         if (feedId <= 0) {
-            result.setStatus(TaskStatus.Failed);
+            result.setStatus(TaskStatus.FAILED);
             result.setMessage("Invalid feed id");
             result.setContext(context);
             return result;
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         Log.d(TAG, "feedId:" + feedId);
         context.set(KEY_FID, feedId);

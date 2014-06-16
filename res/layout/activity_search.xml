@@ -21,11 +21,19 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/search_input_bar_close_btn"
-            android:drawableEnd="@drawable/search_icon"
-            android:drawablePadding="10dp"
             android:hint="@string/search_hint_text"
             android:imeOptions="actionSearch"
             android:inputType="text" />
+
+        <ImageButton
+            android:id="@+id/search_input_bar_search_btn"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/search_input_bar_edit_view"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_search" />
 
         <ImageButton
             android:id="@+id/search_input_bar_close_btn"
@@ -34,10 +42,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
             android:contentDescription="@null"
-            android:padding="10dp"
-            android:src="@drawable/searchbar_close_btn" />
+            android:src="@drawable/btn_close" />
     </RelativeLayout>
 
     <ExpandableListView
