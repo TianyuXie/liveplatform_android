@@ -3,7 +3,7 @@ package com.pplive.liveplatform.core.task;
 public class TaskResult {
 
     public enum TaskStatus {
-        Finished, Failed, Cancel
+        SUCCEED, FAILED, CHANCEL
     }
 
     private TaskStatus status;

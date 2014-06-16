@@ -37,7 +37,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.TokenTask;
@@ -407,10 +407,10 @@ public class HomeActivity extends LocatorActivity implements HomeFragment.Callba
         }
     }
 
-    private Task.OnTaskListener onTokenTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener onTokenTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "checkToken: finished!!");
             String usrPlain = event.getContext().getString(TokenTask.KEY_USERNAME);
             String pwdPlain = event.getContext().getString(TokenTask.KEY_PASSWORD);

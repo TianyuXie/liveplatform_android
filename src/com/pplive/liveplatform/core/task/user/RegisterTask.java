@@ -44,10 +44,10 @@ public class RegisterTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
 
@@ -60,12 +60,12 @@ public class RegisterTask extends Task {
         try {
             status = PassportService.getInstance().registerByPhoneNumSimple(phoneNumber, password, checkCode);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, e.getMessage());
+            return new TaskResult(TaskStatus.FAILED, e.getMessage());
         }
         if (!status) {
-            return new TaskResult(TaskStatus.Failed);
+            return new TaskResult(TaskStatus.FAILED);
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         result.setContext(context);
         return result;
     }

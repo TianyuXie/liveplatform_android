@@ -24,6 +24,7 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.info.LocationInfo;
+import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.ui.widget.viewpager.AdvancedViewPager;
 
@@ -87,6 +88,8 @@ public class WelcomeActivity extends Activity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart");
+
+        NetworkManager.checkWifiSpeed(getApplicationContext());
     }
 
     @Override

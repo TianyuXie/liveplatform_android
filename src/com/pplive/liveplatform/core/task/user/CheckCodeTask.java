@@ -9,22 +9,22 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class CheckCodeTask extends Task {
-    final static String TAG = CheckCodeTask.class.getSimpleName();
 
-    public final static String TYPE = "CheckCode";
+    static final String TAG = CheckCodeTask.class.getSimpleName();
 
-    public static final String KEY_PHONE_NUMBER = "PhoneNumber";
+    public static final String KEY_PHONE_NUMBER = "phone_number";
 
-    private final String ID = StringUtil.newGuid();
+    public static final String KEY_CHECK_CODE = "check_code";
 
     @Override
     public String getID() {
-        return ID;
+        return StringUtil.newGuid();
     }
 
     @Override
     public String getType() {
-        return TYPE;
+        // TODO Auto-generated method stub
+        return "CheckCode";
     }
 
     @Override
@@ -42,24 +42,25 @@ public class CheckCodeTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
 
         TaskContext context = params[0];
 
         String phoneNumber = context.getString(KEY_PHONE_NUMBER);
+        String checkCode = context.getString(KEY_CHECK_CODE);
 
         try {
-            PassportService.getInstance().sendPhoneCheckCode(phoneNumber);
+            PassportService.getInstance().checkCode(phoneNumber, checkCode);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
+            return new TaskResult(TaskStatus.FAILED, StringUtil.safeString(e.getMessage()));
         }
 
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
 
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
 
         result.setContext(context);
 

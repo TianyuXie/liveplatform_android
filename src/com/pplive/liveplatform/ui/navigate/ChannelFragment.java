@@ -19,11 +19,12 @@ import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Subject;
-import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
+import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
@@ -278,11 +279,11 @@ public class ChannelFragment extends Fragment {
         }
     }
 
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+    private TaskListener onTaskListener = new BaseTaskListener() {
 
         @Override
         @SuppressWarnings("unchecked")
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "SearchTask onTaskFinished");
             if (getActivity() != null) {
                 mBusy = false;

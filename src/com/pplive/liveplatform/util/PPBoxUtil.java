@@ -24,6 +24,8 @@ public class PPBoxUtil {
 
     static final int PPBOX_HTTP_PORT = 9006;
 
+    static long sSerialNum = 0;
+
     public static void initPPBox(Context ctx) {
         File cacheDirFile = ctx.getCacheDir();
         String dataDir = cacheDirFile.getParentFile().getAbsolutePath();
@@ -35,7 +37,7 @@ public class PPBoxUtil {
         MediaSDK.libPath = libDir;
         MediaSDK.logPath = tmpDir;
         MediaSDK.logLevel = MediaSDK.LEVEL_EVENT;
-        
+
         MediaSDK.setConfig("", "HttpManager", "addr", "0.0.0.0:9006+");
         MediaSDK.setConfig("", "RtspManager", "addr", "0.0.0.0:5054+");
     }
@@ -43,7 +45,7 @@ public class PPBoxUtil {
     public static long startPPBox() {
         return MediaSDK.startP2PEngine("161", "12", "111");
     }
-    
+
     public static boolean isSDKRuning() {
         long ret = startPPBox();
         return -1 != ret && 9 != ret;
@@ -60,6 +62,7 @@ public class PPBoxUtil {
         url.addParameter("mux.M3U8.segment_duration", 5);
         url.addParameter("mux.M3U8.back_seek_time", 0);
         url.addParameter("realtime", "high");
+        url.addParameter("serialnum", sSerialNum);
 
         return url;
     }
@@ -74,12 +77,14 @@ public class PPBoxUtil {
         url.addParameter("type", "pplive3");
         url.addParameter("playlink", URLUtil.encode(playLink));
         url.addParameter("realtime", "low");
+        url.addParameter("serialnum", sSerialNum);
 
         return url;
     }
 
     public static void closeM3U8() {
         final URL url = new URL(Protocol.HTTP, PPBOX_HOST, MediaSDK.getPort("http"), "/close");
+        url.addParameter("serialnum", sSerialNum++);
 
         Thread t = new Thread(new Runnable() {
 

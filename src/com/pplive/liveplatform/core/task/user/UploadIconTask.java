@@ -48,10 +48,10 @@ public class UploadIconTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
@@ -65,13 +65,13 @@ public class UploadIconTask extends Task {
             userThread.join();
             uploadThread.join();
         } catch (InterruptedException e) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         if (mUserInfo == null || mIconUrl == null) {
-            return new TaskResult(TaskStatus.Failed, "Get or upload failed");
+            return new TaskResult(TaskStatus.FAILED, "Get or upload failed");
         }
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         Log.d(TAG, mIconUrl);
         mUserInfo.setIcon(mIconUrl);
@@ -79,12 +79,12 @@ public class UploadIconTask extends Task {
         try {
             status = UserService.getInstance().updateOrCreateUser(token, mUserInfo);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, "UserService: Update info error");
+            return new TaskResult(TaskStatus.FAILED, "UserService: Update info error");
         }
         if (!status) {
-            return new TaskResult(TaskStatus.Failed, "fail to update");
+            return new TaskResult(TaskStatus.FAILED, "fail to update");
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_USERINFO, mUserInfo);
         result.setContext(context);
         return result;

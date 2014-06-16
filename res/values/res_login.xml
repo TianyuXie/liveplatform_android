@@ -8,7 +8,6 @@
     <string name="login_no_pptv">还没有PPTV帐号?</string>
     <string name="login_failed">登录失败</string>
     <string name="login_third_party">使用合作网站账号登录</string>
-    <string name="forget_password"><u>忘记密码</u></string>
     <string name="error_weibo_auth">新浪微博授权错误</string>
     <string name="error_weibo_io">新浪微博网络错误</string>
     <string name="error_weibo_internal">新浪微博内部错误</string>
@@ -21,6 +20,8 @@
     <string name="error_pptv_data">数据错误</string>
     <string name="error_pptv_format">数据格式错误</string>
     <string name="error_pptv_passport">登录失败</string>
+    <string name="pwd_reset">重置密码</string>
+    <string name="pwd_forget"><u>忘记密码</u></string>
 
     <!-- Color -->
     <color name="input_text_color">#FF919191</color>

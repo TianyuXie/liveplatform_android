@@ -10,11 +10,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -24,13 +25,14 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.cache.SearchCacheManager;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.SearchService;
-import com.pplive.liveplatform.ui.widget.EnterSendEditText;
 
 public class SearchActivity extends Activity {
 
     static final String TAG = SearchActivity.class.getSimpleName();
 
-    private EnterSendEditText mEditSearchInput;
+    private EditText mEditSearchInput;
+
+    private ImageButton mBtnSearch;
 
     private ImageButton mBtnClose;
 
@@ -40,25 +42,43 @@ public class SearchActivity extends Activity {
 
     private SearchCacheManager mCacheManager;
 
+    private View.OnClickListener mOnclickBtnSearch = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            String keyword = mEditSearchInput.getText().toString().trim();
+
+            mEditSearchInput.setText("");
+
+            search(keyword);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_search);
 
-        mEditSearchInput = (EnterSendEditText) findViewById(R.id.search_input_bar_edit_view);
-        mEditSearchInput.setOnEnterListener(new EnterSendEditText.OnEnterListener() {
+        mEditSearchInput = (EditText) findViewById(R.id.search_input_bar_edit_view);
+        mEditSearchInput.setOnKeyListener(new View.OnKeyListener() {
 
             @Override
-            public boolean onEnter(View v) {
-                String keyword = mEditSearchInput.getText().toString().trim();
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                search(keyword);
+                if (KeyEvent.KEYCODE_ENTER == keyCode && KeyEvent.ACTION_DOWN == event.getAction()) {
 
-                return true;
+                    mBtnSearch.performClick();
+
+                    return true;
+                }
+
+                return false;
             }
         });
+
+        mBtnSearch = (ImageButton) findViewById(R.id.search_input_bar_search_btn);
+        mBtnSearch.setOnClickListener(mOnclickBtnSearch);
 
         mBtnClose = (ImageButton) findViewById(R.id.search_input_bar_close_btn);
         mBtnClose.setOnClickListener(new View.OnClickListener() {
@@ -244,7 +264,7 @@ public class SearchActivity extends Activity {
             }
 
             ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.mTextView.setText(groupPosition == 0 ? "热词推荐" : "搜索记录");
+            holder.mTextView.setText(groupPosition == 0 ? R.string.search_hot_keyword : R.string.search_history_keyword);
             holder.mImageButton.setVisibility(groupPosition == 0 ? View.GONE : View.VISIBLE);
             holder.mImageButton.setOnClickListener(new View.OnClickListener() {
 

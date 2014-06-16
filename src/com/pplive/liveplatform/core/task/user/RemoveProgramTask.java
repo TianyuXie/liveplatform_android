@@ -39,7 +39,7 @@ public class RemoveProgramTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         TaskContext context = params[0];
         long pid = (Long) context.get(KEY_PID);
@@ -48,12 +48,12 @@ public class RemoveProgramTask extends Task {
         try {
             response = ProgramService.getInstance().deleteProgramById(token, pid);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, "ProgramService error");
+            return new TaskResult(TaskStatus.FAILED, "ProgramService error");
         }
         if (response == false) {
-            return new TaskResult(TaskStatus.Failed, "Fail to delete");
+            return new TaskResult(TaskStatus.FAILED, "Fail to delete");
         }
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         result.setContext(context);
         return result;
     }

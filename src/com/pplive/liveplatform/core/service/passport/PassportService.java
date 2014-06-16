@@ -32,7 +32,27 @@ import com.pplive.liveplatform.util.URLUtil;
 
 public class PassportService {
 
-    private static final String TAG = PassportService.class.getSimpleName();
+    static final String TAG = PassportService.class.getSimpleName();
+
+    public enum CheckCodeType {
+        REGISTER("pptvzc"),
+
+        BIND("pptvbd"),
+
+        UNBIND("pptvjb"),
+
+        RESET_PWD("pptvzh");
+
+        private CheckCodeType(String name) {
+            this.name = name;
+        }
+
+        public String toString() {
+            return name;
+        };
+
+        String name;
+    }
 
     private static final String TEMPLATE_PASSPORT_LOGIN = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/login/login.do?username={username}&password={password}&format=json").toString();
@@ -53,7 +73,10 @@ public class PassportService {
             .toString();
 
     private static final String TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE = new BaseURL(Protocol.HTTP, Constants.PASSPORT_API_HOST,
-            "/v3/phonecode/send.do?phoneNum={phoneNum}&type=pptvzc&department=ibo&index={index}&infovalue={infovalue}&format=json").toString();
+            "/v3/phonecode/send.do?phoneNum={phoneNum}&type={type}&department=ibo&index={index}&infovalue={infovalue}&format=json").toString();
+
+    private static final String TEMPLATE_PASSPORT_CHECK_CODE = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
+            "/v3/android/checkcode.do?phoneNum={phoneNum}&code={code}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
 
@@ -242,7 +265,7 @@ public class PassportService {
         return new CheckCode(guid, image_url);
     }
 
-    public boolean sendPhoneCheckCode(String phoneNumber) throws LiveHttpException {
+    public boolean sendPhoneCheckCode(String phoneNumber, CheckCodeType type) throws LiveHttpException {
         HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
 
         String infovalue = null;
@@ -260,7 +283,8 @@ public class PassportService {
 
         Log.d(TAG, "infovalue: " + infovalue);
 
-        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE).buildAndExpand(phoneNumber, index, infovalue);
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_SEND_PHONE_CHECK_CODE).buildAndExpand(phoneNumber, type, index,
+                infovalue);
 
         Log.d(TAG, components.toString());
 
@@ -270,6 +294,29 @@ public class PassportService {
         try {
             HttpEntity<MessageResp> rep = mRestTemplate.exchange(uri, HttpMethod.GET, entity, MessageResp.class);
 
+            resp = rep.getBody();
+
+            if (0 == resp.getErrorCode()) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode(), URLUtil.decode(resp.getMessage()));
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public boolean checkCode(String phoneNumber, String code) throws LiveHttpException {
+        Log.d(TAG, "number: " + phoneNumber + "; code: " + code);
+        HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
+
+        MessageResp resp = null;
+        try {
+            HttpEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_PASSPORT_CHECK_CODE, HttpMethod.GET, entity, MessageResp.class, phoneNumber, code);
             resp = rep.getBody();
 
             if (0 == resp.getErrorCode()) {

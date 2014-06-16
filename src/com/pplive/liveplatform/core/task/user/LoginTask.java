@@ -49,13 +49,13 @@ public class LoginTask extends Task {
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {
-            return new TaskResult(TaskStatus.Failed, "TaskContext is null");
+            return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
 
         //Delay
         if (mDelay != 0) {
             if (isCancelled()) {
-                return new TaskResult(TaskStatus.Cancel, "Cancelled");
+                return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
             }
             try {
                 Log.d(TAG, "start sleep");
@@ -67,7 +67,7 @@ public class LoginTask extends Task {
 
         //Start PassportService
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
         String usr = context.getString(KEY_USERNAME);
@@ -77,22 +77,22 @@ public class LoginTask extends Task {
         try {
             loginResult = PassportService.getInstance().login(usr, pwd);
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.Failed, StringUtil.safeString(e.getMessage()));
+            return new TaskResult(TaskStatus.FAILED, StringUtil.safeString(e.getMessage()));
         }
         if (loginResult == null) {
-            return new TaskResult(TaskStatus.Failed, StringManager.getRes(R.string.register_token_fail));
+            return new TaskResult(TaskStatus.FAILED, StringManager.getRes(R.string.register_token_fail));
         } else {
             usr = loginResult.getUsername();
             token = loginResult.getToken();
         }
         if (TextUtils.isEmpty(token) || TextUtils.isEmpty(usr)) {
-            return new TaskResult(TaskStatus.Failed, StringManager.getRes(R.string.register_token_fail));
+            return new TaskResult(TaskStatus.FAILED, StringManager.getRes(R.string.register_token_fail));
         }
         Log.d(TAG, "PassportService OK");
 
         //Start UserService
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         User userinfo = null;
         try {
@@ -103,10 +103,10 @@ public class LoginTask extends Task {
 
         //Build TaskResult
         if (isCancelled()) {
-            return new TaskResult(TaskStatus.Cancel, "Cancelled");
+            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         
-        TaskResult result = new TaskResult(TaskStatus.Finished);
+        TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_USERNAME, usr);
         context.set(KEY_TOKEN, token);
         if (userinfo != null) {

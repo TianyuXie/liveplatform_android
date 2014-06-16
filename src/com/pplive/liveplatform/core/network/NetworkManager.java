@@ -23,10 +23,8 @@ public class NetworkManager extends BroadcastReceiver {
     public static void init(Context context) {
 
         sCurrentNetworkState = getNetworkState(context);
-
         Log.d(TAG, "Network State: " + sCurrentNetworkState);
-
-        checkWifiSpeed(context);
+        //        checkWifiSpeed(context);
     }
 
     private static NetworkState getNetworkState(Context context) {
@@ -77,24 +75,34 @@ public class NetworkManager extends BroadcastReceiver {
             if (sCurrentNetworkState != state) {
                 Log.d(TAG, "Network Type Changed!!!");
                 EventBus.getDefault().post(new EventNetworkChanged(state));
-
             }
 
             if (null != state) {
                 sCurrentNetworkState = state;
             }
 
-            if (NetworkState.WIFI == state) {
+            ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Service.CONNECTIVITY_SERVICE);
+            NetworkInfo wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+            Log.d(TAG, "Detail State: " + wifi.getDetailedState());
+
+            if (NetworkInfo.DetailedState.CONNECTED == wifi.getDetailedState()) {
+
                 checkWifiSpeed(context);
             }
 
-        } else if (WifiManager.WIFI_STATE_CHANGED_ACTION == intent.getAction()) {
+        } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION == intent.getAction()) {
 
         }
     }
 
-    private static void checkWifiSpeed(Context context) {
+    public static void checkWifiSpeed(Context context) {
+        if (NetworkState.WIFI != getCurrentNetworkState()) {
+            return;
+        }
+
         Log.d(TAG, "Check Wifi Speed");
+
         Intent serviceIntent = new Intent(context, WifiSpeedCheckService.class);
         serviceIntent.setAction(WifiSpeedCheckService.ACTION_CHECK_WIFI_SPEED);
         context.startService(serviceIntent);

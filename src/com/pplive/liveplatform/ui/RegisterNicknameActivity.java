@@ -24,7 +24,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.UpdateInfoTask;
@@ -75,10 +75,10 @@ public class RegisterNicknameActivity extends Activity {
         }
     };
 
-    private Task.OnTaskListener onTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener onTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "onTaskFinished");
 
             mRefreshDialog.dismiss();

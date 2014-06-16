@@ -47,7 +47,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
@@ -707,7 +707,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         feedTask.execute(taskContext);
     }
 
-    private Task.OnTaskListener onPutFeedListener = new Task.OnTaskListener() {
+    private Task.TaskListener onPutFeedListener = new Task.BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -716,7 +716,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
             Toast.makeText(mContext, R.string.player_comment_success, Toast.LENGTH_SHORT).show();
             mChatBox.refresh(0);
@@ -737,7 +737,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
     };
 
-    private Task.OnTaskListener onLiveStatusTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener onLiveStatusTaskListener = new Task.BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -745,7 +745,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
             mDelay = liveStatus.getDelayInSeconds();
             switch (liveStatus.getStatus()) {
@@ -786,7 +786,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
     };
 
-    private Task.OnTaskListener onGetMediaListener = new Task.OnTaskListener() {
+    private Task.TaskListener onGetMediaListener = new Task.BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -795,7 +795,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "MediaTask onTaskFinished");
             mUrl = null;
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);

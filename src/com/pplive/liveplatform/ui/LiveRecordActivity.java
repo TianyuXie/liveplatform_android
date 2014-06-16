@@ -71,7 +71,7 @@ import de.greenrobot.event.EventBus;
 
 public class LiveRecordActivity extends FragmentActivity implements View.OnClickListener, Handler.Callback {
 
-    static final String TAG = "_LiveRecordActivity";
+    static final String TAG = LiveRecordActivity.class.getSimpleName();
 
     public static final String EXTRA_PROGRAM = "extra_program";
 
@@ -195,7 +195,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private GetPushUrlTask mGetPushUrlTask;
 
-    private GetPausedProgramTask mGetPausedProgramTask;
+    private GetUnfinishedProgramTask mGetUnfinishedProgramTask;
 
     private KeepLiveAliveTask mKeepLiveAliveTask;
 
@@ -333,9 +333,9 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             startCountDown();
         }
 
-        if (null == mGetPausedProgramTask) {
-            mGetPausedProgramTask = new GetPausedProgramTask();
-            mGetPausedProgramTask.execute();
+        if (null == mGetUnfinishedProgramTask) {
+            mGetUnfinishedProgramTask = new GetUnfinishedProgramTask();
+            mGetUnfinishedProgramTask.execute();
         }
 
         selectQuality();
@@ -1048,7 +1048,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         }
     }
 
-    class GetPausedProgramTask extends AsyncTask<Void, Void, Program> {
+    class GetUnfinishedProgramTask extends AsyncTask<Void, Void, Program> {
 
         @Override
         protected Program doInBackground(Void... arg0) {
@@ -1056,7 +1056,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             String token = UserManager.getInstance(getApplicationContext()).getToken();
 
             try {
-                List<Program> programs = ProgramService.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.PAUSE);
+                List<Program> programs = ProgramService.getInstance().getUnfinishedPrograms(token, username);
 
                 if (null != programs && programs.size() > 0) {
                     return programs.get(0);
@@ -1070,7 +1070,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
         @Override
         protected void onPostExecute(final Program program) {
-            mGetPausedProgramTask = null;
+            mGetUnfinishedProgramTask = null;
 
             if (null == program) {
                 return;

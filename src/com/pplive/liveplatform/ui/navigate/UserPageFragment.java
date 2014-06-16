@@ -45,7 +45,7 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskFinishedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.GetProgramTask;
@@ -444,10 +444,10 @@ public class UserPageFragment extends Fragment {
         }
     };
 
-    private Task.OnTaskListener onIconTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener onIconTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mActivity, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
             UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
@@ -481,7 +481,7 @@ public class UserPageFragment extends Fragment {
         }
     };
 
-    private Task.OnTaskListener onRemoveTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener onRemoveTaskListener = new Task.BaseTaskListener() {
 
         @Override
         public void onTimeout(Object sender, TaskTimeoutEvent event) {
@@ -489,7 +489,7 @@ public class UserPageFragment extends Fragment {
         }
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Toast.makeText(mActivity, R.string.toast_userpage_delete_success, Toast.LENGTH_SHORT).show();
         }
 
@@ -508,11 +508,11 @@ public class UserPageFragment extends Fragment {
 
     };
 
-    private Task.OnTaskListener onGetTaskListener = new Task.OnTaskListener() {
+    private Task.TaskListener onGetTaskListener = new Task.BaseTaskListener() {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
+        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
             Log.d(TAG, "onTaskFinished");
 
             mRefreshDialog.dismiss();
