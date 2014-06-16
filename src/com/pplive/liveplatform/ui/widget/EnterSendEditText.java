@@ -10,7 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 public class EnterSendEditText extends EditText {
-    static final String TAG = "_EnterSendEditText";
+
+    static final String TAG = EnterSendEditText.class.getSimpleName();
 
     private OnEnterListener mOnEnterListener;
 

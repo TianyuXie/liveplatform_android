@@ -1,5 +1,7 @@
 package com.pplive.liveplatform.core.task.user;
 
+import org.springframework.http.HttpStatus;
+
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -67,7 +69,7 @@ public class TokenTask extends Task {
                 mustUpdate = true;
             }
         } catch (LiveHttpException e) {
-            if (e.getErrorCode() == ProgramService.ERR_UNAUTHORIZED) {
+            if (HttpStatus.UNAUTHORIZED.value() == e.getErrorCode()) {
                 // token expired
                 if (isThirdParty) {
                     // must relogin manually

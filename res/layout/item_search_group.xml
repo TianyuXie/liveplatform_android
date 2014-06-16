@@ -2,11 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/search_group_bg"
-    android:paddingBottom="5dp"
+    android:paddingBottom="10dp"
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
-    android:paddingTop="5dp" >
+    android:paddingTop="10dp" >
 
     <TextView
         android:id="@+id/group_text"
@@ -15,7 +14,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:textColor="@color/search_group_text_color"
-        android:textSize="14sp" />
+        android:textSize="24sp" />
 
     <ImageButton
         android:id="@+id/btn_clear_phase"
@@ -25,6 +24,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:contentDescription="@null"
-        android:src="@drawable/search_group_btn_clear_phase" />
+        android:padding="10dp"
+        android:src="@drawable/search_group_btn_clear" />
 
 </RelativeLayout>

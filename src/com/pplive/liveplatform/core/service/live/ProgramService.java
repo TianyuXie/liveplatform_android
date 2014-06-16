@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -32,6 +31,9 @@ public class ProgramService extends RestService {
     private static final String TEMPLATE_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
+    private static final String TEMPLATE_GET_UNFINISHED_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/ft/v1/owner/{owner}/programs/action/finished").toString();
+
     private static final String TEMPLATE_CDN_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
@@ -47,8 +49,6 @@ public class ProgramService extends RestService {
 
     private static final String TEMPLATE_GET_SUBJECTS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/bk/subject/v2/pptv/subjects")
             .toString();
-
-    public static final int ERR_UNAUTHORIZED = 401;
 
     private static ProgramService sInstance = new ProgramService();
 
@@ -101,8 +101,33 @@ public class ProgramService extends RestService {
             }
         } catch (HttpClientErrorException e) {
             Log.w(TAG, e.toString());
-            if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new LiveHttpException(ERR_UNAUTHORIZED);
+
+            throw new LiveHttpException(e.getStatusCode().value());
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public List<Program> getUnfinishedPrograms(String coToken, String owner) throws LiveHttpException {
+        Log.d(TAG, "owner: " + owner);
+
+        HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
+
+        ProgramListResp resp = null;
+        try {
+            HttpEntity<ProgramListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_UNFINISHED_PROGRAMS, HttpMethod.GET, req, ProgramListResp.class, owner);
+            resp = rep.getBody();
+
+            if (1 == resp.getError()) {
+                return resp.getList();
+            } else if (0 == resp.getError()) {
+                return null;
             }
         } catch (Exception e) {
             Log.w(TAG, e.toString());

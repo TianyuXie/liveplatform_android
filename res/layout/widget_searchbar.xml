@@ -30,7 +30,7 @@
                 android:id="@+id/btn_searchbar_search"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
-                android:background="@drawable/searchbar_icon"
+                android:background="@drawable/search_icon"
                 android:focusable="true"
                 android:focusableInTouchMode="true" />
 
