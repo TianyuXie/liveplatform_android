@@ -1,6 +1,7 @@
 package com.pplive.liveplatform.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,8 +12,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.PassportService.CheckCodeType;
+import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
@@ -40,18 +43,25 @@ public class PasswordResetStep1Activity extends Activity {
     private BaseTaskListener mOnGetCheckCodeTaskListener = new BaseTaskListener() {
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             showErrorMsg(event.getMessage());
         }
     };
 
     private BaseTaskListener mOnCheckCodeTaskListener = new BaseTaskListener() {
 
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
-            showErrorMsg("OK");
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
+            TaskContext context = event.getContext();
+
+            Intent intent = new Intent(PasswordResetStep1Activity.this, PasswordResetStep2Activity.class);
+            intent.putExtra(Extra.KEY_PHONE_NUMBER, context.getString(Extra.KEY_PHONE_NUMBER));
+
+            startActivity(intent);
+
+            finish();
         };
 
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             showErrorMsg(event.getMessage());
         };
     };
@@ -104,8 +114,8 @@ public class PasswordResetStep1Activity extends Activity {
             checkCodeTask.addTaskListener(mOnCheckCodeTaskListener);
 
             TaskContext context = new TaskContext();
-            context.set(CheckCodeTask.KEY_PHONE_NUMBER, mEditPhoneNumber.getText().toString());
-            context.set(CheckCodeTask.KEY_CHECK_CODE, mEditCheckCode.getText().toString());
+            context.set(Extra.KEY_PHONE_NUMBER, mEditPhoneNumber.getText().toString());
+            context.set(Extra.KEY_CHECK_CODE, mEditCheckCode.getText().toString());
 
             checkCodeTask.execute(context);
         }
@@ -155,8 +165,8 @@ public class PasswordResetStep1Activity extends Activity {
         checkCodeTask.addTaskListener(mOnGetCheckCodeTaskListener);
 
         TaskContext context = new TaskContext();
-        context.set(GetCheckCodeTask.KEY_PHONE_NUMBER, phone);
-        context.set(GetCheckCodeTask.KEY_CODE_TYPE, CheckCodeType.RESET_PWD);
+        context.set(Extra.KEY_PHONE_NUMBER, phone);
+        context.set(Extra.KEY_CODE_TYPE, CheckCodeType.RESET_PWD);
 
         checkCodeTask.execute(context);
     }

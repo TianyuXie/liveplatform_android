@@ -7,7 +7,6 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
-import com.pplive.liveplatform.util.StringUtil;
 
 public class PutFeedTask extends Task {
     static final String TAG = "_PutFeedTask";
@@ -16,30 +15,7 @@ public class PutFeedTask extends Task {
 
     public final static String KEY_FID = "fid";
 
-    private final String ID = StringUtil.newGuid();
     public final static String TYPE = "PutFeed";
-
-    @Override
-    public String getID() {
-        return ID;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
-    }
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {

@@ -150,7 +150,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         mContainer.stopTimer();
         super.onDestroy();
     }
-    
+
     public void switchSubject(int id) {
         mSubjectId = id;
         updateCatalogText();
@@ -260,7 +260,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
     private Task.TaskListener onTaskListener = new Task.BaseTaskListener() {
         @Override
         @SuppressWarnings("unchecked")
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "SearchTask onTaskFinished");
             if (getActivity() != null) {
                 mBusy = false;
@@ -318,7 +318,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             if (getActivity() != null) {
                 mContainer.clearData();
@@ -332,11 +332,11 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
         }
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "SearchTask onTimeout");
             if (getActivity() != null) {
                 mContainer.clearData();
@@ -350,7 +350,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "SearchTask onTaskCancel");
             if (getActivity() != null) {
                 mBusy = false;

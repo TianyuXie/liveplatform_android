@@ -38,7 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edit_phone_number"
             android:layout_marginTop="10dp"
-            android:hint="@string/register_password"
+            android:hint="@string/password"
             android:imeOptions="actionNext"
             android:inputType="textPassword" />
 

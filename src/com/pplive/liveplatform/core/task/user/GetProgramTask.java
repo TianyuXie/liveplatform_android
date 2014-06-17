@@ -13,38 +13,12 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
-import com.pplive.liveplatform.util.StringUtil;
 
 public class GetProgramTask extends Task {
     static final String TAG = "_GetProgramTask";
 
     public final static String KEY_RESULT = "program_result";
     public final static String KEY_TYPE = "search_task_type";
-
-    private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "GetProgramTask";
-
-    @Override
-    public String getID() {
-        return ID;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
-    }
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {

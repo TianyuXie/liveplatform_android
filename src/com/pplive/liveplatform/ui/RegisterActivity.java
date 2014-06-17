@@ -14,8 +14,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.passport.PassportService.CheckCodeType;
+import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
 import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
@@ -53,7 +55,7 @@ public class RegisterActivity extends Activity {
     private BaseTaskListener mOnCheckcodeTaskListener = new BaseTaskListener() {
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             showErrorMsg(event.getMessage());
         }
     };
@@ -117,14 +119,14 @@ public class RegisterActivity extends Activity {
     private TaskListener mOnRegisterListener = new BaseTaskListener() {
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             mRefreshDialog.dismiss();
 
             showErrorMsg(getString(R.string.toast_timeout));
         }
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             mRefreshDialog.dismiss();
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -141,7 +143,7 @@ public class RegisterActivity extends Activity {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
 
             mRefreshDialog.dismiss();
 
@@ -155,7 +157,7 @@ public class RegisterActivity extends Activity {
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             mRefreshDialog.dismiss();
         }
 
@@ -212,8 +214,8 @@ public class RegisterActivity extends Activity {
         checkCodeTask.addTaskListener(mOnCheckcodeTaskListener);
 
         TaskContext context = new TaskContext();
-        context.set(GetCheckCodeTask.KEY_PHONE_NUMBER, phone);
-        context.set(GetCheckCodeTask.KEY_CODE_TYPE, CheckCodeType.REGISTER);
+        context.set(Extra.KEY_PHONE_NUMBER, phone);
+        context.set(Extra.KEY_CODE_TYPE, CheckCodeType.REGISTER);
 
         checkCodeTask.execute(context);
     }

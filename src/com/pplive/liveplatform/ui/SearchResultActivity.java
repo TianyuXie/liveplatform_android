@@ -159,7 +159,7 @@ public class SearchResultActivity extends Activity {
     private Task.TaskListener onTaskListener = new Task.BaseTaskListener() {
         @Override
         @SuppressWarnings("unchecked")
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             mBusy = false;
             FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
             mNextToken = fallList.nextToken();
@@ -188,25 +188,25 @@ public class SearchResultActivity extends Activity {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             mBusy = false;
             Toast.makeText(SearchResultActivity.this, R.string.toast_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
         }
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "SearchTask onTimeout");
             mBusy = false;
             Toast.makeText(SearchResultActivity.this, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "SearchTask onTaskCancel");
             mBusy = false;
             Toast.makeText(SearchResultActivity.this, R.string.toast_cancel, Toast.LENGTH_SHORT).show();

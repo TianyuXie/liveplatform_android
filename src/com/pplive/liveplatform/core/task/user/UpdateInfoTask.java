@@ -19,31 +19,6 @@ public class UpdateInfoTask extends Task {
     public final static String KEY_NICKNAME = "nickname";
     public final static String KEY_ICON_URL = "iconurl";
 
-    private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "UpdateUser";
-
-    @Override
-    public String getID() {
-        return ID;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
-    }
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-
-    }
-
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
         if (params == null || params.length <= 0) {

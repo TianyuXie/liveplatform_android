@@ -78,7 +78,7 @@ public class RegisterNicknameActivity extends Activity {
     private Task.TaskListener onTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "onTaskFinished");
 
             mRefreshDialog.dismiss();
@@ -90,7 +90,7 @@ public class RegisterNicknameActivity extends Activity {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
 
@@ -104,11 +104,11 @@ public class RegisterNicknameActivity extends Activity {
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
         }
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "LoginTask onTimeout");
             mRefreshDialog.dismiss();
 
@@ -116,7 +116,7 @@ public class RegisterNicknameActivity extends Activity {
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
         }
