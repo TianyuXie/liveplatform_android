@@ -13,13 +13,14 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
 public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
+
     public final static String KEY_TOKEN = "token";
     public final static String KEY_PID = "pid";
     public final static String KEY_USERNAME = "username";
 
     private static final int DEFAULT_TIME_OUT = 20 * 1000;
 
-    private boolean mReturn;
+    private boolean mReturn = false;
 
     private int mTimeout;
 
@@ -79,6 +80,8 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
             result = new TaskResult(TaskStatus.FAILED, "TaskResult is null");
         }
 
+        onTaskFinished(this);
+
         if (result.getStatus() == TaskStatus.SUCCEED) {
             onTaskSucceed(this, new TaskSucceedEvent(result.getContext()));
         } else if (result.getStatus() == TaskStatus.CHANCEL) {
@@ -106,6 +109,12 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     public void removeTaskCancelListener(TaskListener listener) {
         mTaskListeners.remove(listener);
+    }
+
+    protected void onTaskFinished(Task sender) {
+        for (TaskListener listener : mTaskListeners) {
+            listener.onTaskFinished(sender);
+        }
     }
 
     protected void onTaskSucceed(Task sender, TaskSucceedEvent event) {
@@ -163,7 +172,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     public interface TaskListener {
 
-        void onTaskFinished(Task sender, TaskFinishedEvent event);
+        void onTaskFinished(Task sender);
 
         void onTaskSucceed(Task sender, TaskSucceedEvent event);
 
@@ -179,38 +188,32 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
     public abstract static class BaseTaskListener implements TaskListener {
 
         @Override
-        public void onTaskFinished(Task sender, TaskFinishedEvent event) {
-            // TODO Auto-generated method stub
+        public void onTaskFinished(Task sender) {
 
         }
 
         @Override
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            // TODO Auto-generated method stub
 
         }
 
         @Override
         public void onTaskFailed(Task sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
 
         }
 
         @Override
         public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
 
         }
 
         @Override
         public void onTimeout(Task sender, TaskTimeoutEvent event) {
-            // TODO Auto-generated method stub
 
         }
 
         @Override
         public void onTaskCancel(Task sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
 
         }
 

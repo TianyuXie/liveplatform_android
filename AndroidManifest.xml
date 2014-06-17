@@ -241,7 +241,7 @@
             android:name="com.igexin.sdk.SdkActivity"
             android:excludeFromRecents="true"
             android:exported="false"
-            android:process=":pushservice"
+            android:process=":service"
             android:taskAffinity="android.task.GexinSdkActivityTask"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
             <intent-filter>
@@ -277,13 +277,13 @@
             android:name="com.igexin.sdk.SdkMainService"
             android:exported="false"
             android:label="NotifyCenter"
-            android:process=":pushservice" >
+            android:process=":service" >
         </service>
         <service
             android:name="com.igexin.sdk.coordinator.SdkMsgService"
             android:exported="false"
             android:label="NotifyCenterAIDL"
-            android:process=":pushservice" >
+            android:process=":service" >
         </service>
 
         <!-- Receiver -->

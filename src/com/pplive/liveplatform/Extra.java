@@ -10,4 +10,8 @@ public interface Extra {
 
     public static final String KEY_CODE_TYPE = "code_type";
 
+    public static final String KEY_LOGIN_NAME = "login_name";
+
+    public static final String KEY_PASSWORD = "password";
+
 }

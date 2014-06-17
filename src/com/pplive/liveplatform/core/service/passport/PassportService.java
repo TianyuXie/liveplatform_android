@@ -79,7 +79,7 @@ public class PassportService {
             "/v3/android/checkcode.do?phoneNum={phoneNum}&code={code}&format=json").toString();
 
     private static final String TEMPLATE_PASSPORT_RESET_PASSWORD = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
-            "/v3/android/resetpassword?loginname={loginname}&password={password}&index={index}&infovalue={infovalue}&format=json").toString();
+            "/v3/android/resetpassword.do?loginname={loginname}&password={password}&index={index}&infovalue={infovalue}&format=json").toString();
 
     private static final PassportService sInstance = new PassportService();
 
@@ -346,9 +346,9 @@ public class PassportService {
         String index = String.format(Locale.getDefault(), "%02d", keyIndex);
 
         try {
-            infovalue = String.format("%s&%s", URLUtil.encode(loginname), URLUtil.encode(password));
+            infovalue = String.format("%s&%s", URLUtil.encode(loginname), URLUtil.encode(index));
 
-            infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex));
+            infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex, "0F86BF71C7329251"));
         } catch (EncryptException e) {
             Log.w(TAG, e.toString());
         }

@@ -54,7 +54,7 @@ public class PasswordResetStep1Activity extends Activity {
             TaskContext context = event.getContext();
 
             Intent intent = new Intent(PasswordResetStep1Activity.this, PasswordResetStep2Activity.class);
-            intent.putExtra(Extra.KEY_PHONE_NUMBER, context.getString(Extra.KEY_PHONE_NUMBER));
+            intent.putExtra(Extra.KEY_LOGIN_NAME, context.getString(Extra.KEY_PHONE_NUMBER));
 
             startActivity(intent);
 
