@@ -10,15 +10,17 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
+import com.pplive.liveplatform.util.StringUtil;
 
 public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
+
     public final static String KEY_TOKEN = "token";
     public final static String KEY_PID = "pid";
     public final static String KEY_USERNAME = "username";
 
     private static final int DEFAULT_TIME_OUT = 20 * 1000;
 
-    private boolean mReturn;
+    private boolean mReturn = false;
 
     private int mTimeout;
 
@@ -41,13 +43,9 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         this(DEFAULT_TIME_OUT);
     }
 
-    public abstract String getID();
-
-    public abstract String getType();
-
-    public abstract void pause();
-
-    public abstract void resume();
+    public final String getID() {
+        return StringUtil.newGuid();
+    }
 
     @Override
     protected final void onPreExecute() {
@@ -82,6 +80,8 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
             result = new TaskResult(TaskStatus.FAILED, "TaskResult is null");
         }
 
+        onTaskFinished(this);
+
         if (result.getStatus() == TaskStatus.SUCCEED) {
             onTaskSucceed(this, new TaskSucceedEvent(result.getContext()));
         } else if (result.getStatus() == TaskStatus.CHANCEL) {
@@ -111,7 +111,13 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         mTaskListeners.remove(listener);
     }
 
-    protected void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+    protected void onTaskFinished(Task sender) {
+        for (TaskListener listener : mTaskListeners) {
+            listener.onTaskFinished(sender);
+        }
+    }
+
+    protected void onTaskSucceed(Task sender, TaskSucceedEvent event) {
         if (!mReturn) {
             mReturn = true;
             for (TaskListener listener : mTaskListeners) {
@@ -120,7 +126,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         }
     }
 
-    protected void onTaskFailed(Object sender, TaskFailedEvent event) {
+    protected void onTaskFailed(Task sender, TaskFailedEvent event) {
         if (!mReturn) {
             mReturn = true;
             for (TaskListener listener : mTaskListeners) {
@@ -138,7 +144,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         onTaskCancel(this, new TaskCancelEvent("Cancelled"));
     }
 
-    protected void onTaskProgressChanged(Object sender, TaskProgressChangedEvent event) {
+    protected void onTaskProgressChanged(Task sender, TaskProgressChangedEvent event) {
         if (!mReturn) {
             for (TaskListener listener : mTaskListeners) {
                 listener.onProgressChanged(sender, event);
@@ -146,7 +152,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         }
     }
 
-    protected void onTaskTimeout(Object sender, TaskTimeoutEvent event) {
+    protected void onTaskTimeout(Task sender, TaskTimeoutEvent event) {
         if (!mReturn) {
             mReturn = true;
             for (TaskListener listener : mTaskListeners) {
@@ -155,7 +161,7 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         }
     }
 
-    protected void onTaskCancel(Object sender, TaskCancelEvent event) {
+    protected void onTaskCancel(Task sender, TaskCancelEvent event) {
         if (!mReturn) {
             mReturn = true;
             for (TaskListener listener : mTaskListeners) {
@@ -166,54 +172,48 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
     public interface TaskListener {
 
-        void onTaskFinished(Object sender, TaskFinishedEvent event);
+        void onTaskFinished(Task sender);
 
-        void onTaskSucceed(Object sender, TaskSucceedEvent event);
+        void onTaskSucceed(Task sender, TaskSucceedEvent event);
 
-        void onTaskFailed(Object sender, TaskFailedEvent event);
+        void onTaskFailed(Task sender, TaskFailedEvent event);
 
-        void onProgressChanged(Object sender, TaskProgressChangedEvent event);
+        void onProgressChanged(Task sender, TaskProgressChangedEvent event);
 
-        void onTimeout(Object sender, TaskTimeoutEvent event);
+        void onTimeout(Task sender, TaskTimeoutEvent event);
 
-        void onTaskCancel(Object sender, TaskCancelEvent event);
+        void onTaskCancel(Task sender, TaskCancelEvent event);
     }
 
     public abstract static class BaseTaskListener implements TaskListener {
 
         @Override
-        public void onTaskFinished(Object sender, TaskFinishedEvent event) {
-            // TODO Auto-generated method stub
+        public void onTaskFinished(Task sender) {
 
         }
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
-            // TODO Auto-generated method stub
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
 
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
-            // TODO Auto-generated method stub
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
 
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-            // TODO Auto-generated method stub
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
 
         }
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
-            // TODO Auto-generated method stub
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
 
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
-            // TODO Auto-generated method stub
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
 
         }
 

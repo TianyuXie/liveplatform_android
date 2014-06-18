@@ -9,9 +9,7 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 import com.pplive.liveplatform.util.StringUtil;
 
-public class CheckCodeTask extends Task {
-
-    static final String TAG = CheckCodeTask.class.getSimpleName();
+public class ResetPasswordTask extends Task {
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
@@ -21,11 +19,11 @@ public class CheckCodeTask extends Task {
 
         TaskContext context = params[0];
 
-        String phoneNumber = context.getString(Extra.KEY_PHONE_NUMBER);
-        String checkCode = context.getString(Extra.KEY_CHECK_CODE);
+        String loginname = context.getString(Extra.KEY_LOGIN_NAME);
+        String password = context.getString(Extra.KEY_PASSWORD);
 
         try {
-            PassportService.getInstance().checkCode(phoneNumber, checkCode);
+            PassportService.getInstance().resetPassword(loginname, password);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, StringUtil.safeString(e.getMessage()));
         }

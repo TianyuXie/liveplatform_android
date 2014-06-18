@@ -7,7 +7,6 @@ import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
-import com.pplive.liveplatform.util.StringUtil;
 
 public class SearchTask extends Task {
     static final String TAG = "_SearchTask";
@@ -21,29 +20,6 @@ public class SearchTask extends Task {
     public final static String KEY_NEXT_TK = "nextTk";
     public final static String KEY_FALL_COUNT = "fallCount";
     public final static String KEY_KEYWORD = "key";
-
-    private final String ID = StringUtil.newGuid();
-    public final static String TYPE = "SearchTask";
-
-    @Override
-    public String getID() {
-        return ID;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
-    }
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-    }
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {

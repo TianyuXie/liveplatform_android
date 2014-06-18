@@ -19,13 +19,14 @@ import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Subject;
+import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
 import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
+import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
@@ -283,7 +284,7 @@ public class ChannelFragment extends Fragment {
 
         @Override
         @SuppressWarnings("unchecked")
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "SearchTask onTaskFinished");
             if (getActivity() != null) {
                 mBusy = false;
@@ -335,7 +336,7 @@ public class ChannelFragment extends Fragment {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
             if (getActivity() != null) {
                 mContainer.clearData();
@@ -346,11 +347,11 @@ public class ChannelFragment extends Fragment {
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
         }
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "SearchTask onTimeout");
             if (getActivity() != null) {
                 mContainer.clearData();
@@ -361,7 +362,7 @@ public class ChannelFragment extends Fragment {
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "SearchTask onTaskCancel");
             if (getActivity() != null) {
                 mBusy = false;

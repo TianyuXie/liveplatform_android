@@ -78,6 +78,9 @@ public class PassportService {
     private static final String TEMPLATE_PASSPORT_CHECK_CODE = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
             "/v3/android/checkcode.do?phoneNum={phoneNum}&code={code}&format=json").toString();
 
+    private static final String TEMPLATE_PASSPORT_RESET_PASSWORD = new BaseURL(Protocol.HTTPS, Constants.PASSPORT_API_HOST,
+            "/v3/android/resetpassword.do?loginname={loginname}&password={password}&index={index}&infovalue={infovalue}&format=json").toString();
+
     private static final PassportService sInstance = new PassportService();
 
     public static PassportService getInstance() {
@@ -317,6 +320,51 @@ public class PassportService {
         MessageResp resp = null;
         try {
             HttpEntity<MessageResp> rep = mRestTemplate.exchange(TEMPLATE_PASSPORT_CHECK_CODE, HttpMethod.GET, entity, MessageResp.class, phoneNumber, code);
+            resp = rep.getBody();
+
+            if (0 == resp.getErrorCode()) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getErrorCode(), URLUtil.decode(resp.getMessage()));
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public boolean resetPassword(String loginname, String password) throws LiveHttpException {
+
+        HttpEntity<String> entity = new HttpEntity<String>(mHttpHeaders);
+
+        String infovalue = null;
+        Random random = new Random();
+        int keyIndex = random.nextInt(10) + 1;
+        String index = String.format(Locale.getDefault(), "%02d", keyIndex);
+
+        try {
+            infovalue = String.format("%s&%s", URLUtil.encode(loginname), URLUtil.encode(index));
+
+            infovalue = URLUtil.encode(ThreeDESUtil.encode(infovalue, keyIndex, "0F86BF71C7329251"));
+        } catch (EncryptException e) {
+            Log.w(TAG, e.toString());
+        }
+
+        Log.d(TAG, "infovalue: " + infovalue);
+
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_RESET_PASSWORD).buildAndExpand(loginname, password, index, infovalue);
+
+        Log.d(TAG, components.toString());
+
+        URI uri = URI.create(components.toString());
+
+        MessageResp resp = null;
+        try {
+            HttpEntity<MessageResp> rep = mRestTemplate.exchange(uri, HttpMethod.GET, entity, MessageResp.class);
+
             resp = rep.getBody();
 
             if (0 == resp.getErrorCode()) {

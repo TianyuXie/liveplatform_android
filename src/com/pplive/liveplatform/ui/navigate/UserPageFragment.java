@@ -447,7 +447,7 @@ public class UserPageFragment extends Fragment {
     private Task.TaskListener onIconTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mActivity, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
             UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
@@ -460,23 +460,19 @@ public class UserPageFragment extends Fragment {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mActivity, R.string.toast_icon_failed, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
-
-        @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mActivity, R.string.toast_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             mRefreshDialog.dismiss();
         }
     };
@@ -484,26 +480,18 @@ public class UserPageFragment extends Fragment {
     private Task.TaskListener onRemoveTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Toast.makeText(mActivity, R.string.toast_userpage_delete_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Toast.makeText(mActivity, R.string.toast_userpage_delete_success, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Toast.makeText(mActivity, R.string.toast_userpage_delete_fail, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
-
-        @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
         }
 
     };
@@ -512,7 +500,7 @@ public class UserPageFragment extends Fragment {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "onTaskFinished");
 
             mRefreshDialog.dismiss();
@@ -540,7 +528,7 @@ public class UserPageFragment extends Fragment {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "onTaskFailed");
 
             mRefreshDialog.dismiss();
@@ -554,16 +542,16 @@ public class UserPageFragment extends Fragment {
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
         }
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             onTaskFailed(sender, null);
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             mRefreshDialog.dismiss();
         }
     };

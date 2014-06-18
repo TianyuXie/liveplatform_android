@@ -29,23 +29,27 @@ public class ThreeDESUtil {
     private static final char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     public static String encode(String param, int keyIndex) throws EncryptException {
+        return encode(param, keyIndex, KEY[0]);
+    }
+
+    public static String encode(String param, int keyIndex, String hexIv) throws EncryptException {
         if (keyIndex <= 0 || keyIndex >= KEY.length) {
             throw new InvalidParameterException();
         }
 
         try {
             String key = KEY[keyIndex];
-            byte[] byteIV = hex2byte(KEY[0]);
+            byte[] byteIV = hex2byte(hexIv);
             byte input[] = Hex.decode(key);
             Cipher cipher = Cipher.getInstance(CRYPT_ALGORITHM);
             DESedeKeySpec desKeySpec = new DESedeKeySpec(input);
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
             SecretKey secretKey = keyFactory.generateSecret(desKeySpec);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivGenerator(byteIV));
-    
+
             byte[] output = cipher.doFinal(param.getBytes(ENCODING_TYPE));
             String strDesEnc = new String(Base64.encode(output), ENCODING_TYPE);
-            
+
             return strDesEnc;
         } catch (Exception e) {
             throw new EncryptException();
@@ -102,7 +106,7 @@ public class ThreeDESUtil {
         if (hex.length() % 2 != 0) {
             throw new IllegalArgumentException();
         }
-        
+
         char[] arr = hex.toCharArray();
         byte[] b = new byte[hex.length() / 2];
         for (int i = 0, j = 0, l = hex.length(); i < l; i++, j++) {
@@ -116,11 +120,11 @@ public class ThreeDESUtil {
     public static class EncryptException extends Exception {
 
         private static final long serialVersionUID = -8079168419396497666L;
-        
+
         public EncryptException() {
             super();
         }
-        
+
         public EncryptException(Throwable t) {
             super(t);
         }

@@ -1,6 +1,5 @@
 package com.pplive.liveplatform.core.task;
 
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class TaskContext {
@@ -10,7 +9,7 @@ public class TaskContext {
     public Object get(String key) {
         return map.get(key);
     }
-    
+
     public Object get(String key, Object defaultVal) {
         Object result = map.get(key);
         if (result == null) {
@@ -33,7 +32,4 @@ public class TaskContext {
         return map.put(key, value);
     }
 
-    public Set<String> getKeySet() {
-        return map.keySet();
-    }
 }

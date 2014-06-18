@@ -33,7 +33,6 @@ import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
 import com.pplive.liveplatform.ui.widget.TopBarView;
@@ -122,7 +121,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
     private Task.TaskListener mOnLoginTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
 
             mRefreshDialog.dismiss();
 
@@ -158,7 +157,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
 
             mRefreshDialog.dismiss();
@@ -172,20 +171,16 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
-
-        @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
-
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "LoginTask onTimeout");
+
             mRefreshDialog.dismiss();
 
             showErrorMsg(getString(R.string.toast_login_timeout));
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
         }

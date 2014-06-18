@@ -21,7 +21,6 @@ import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.UpdateInfoTask;
 import com.pplive.liveplatform.ui.widget.TopBarView;
@@ -76,7 +75,7 @@ public class NicknameActivity extends Activity {
     private Task.TaskListener onTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "onTaskFinished");
             mRefreshDialog.dismiss();
             mUserManager.setUserinfo((User) event.getContext().get(UpdateInfoTask.KEY_USERINFO));
@@ -88,7 +87,7 @@ public class NicknameActivity extends Activity {
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "LoginTask onTaskFailed: " + event.getMessage());
             mRefreshDialog.dismiss();
 
@@ -102,11 +101,7 @@ public class NicknameActivity extends Activity {
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
-
-        @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "LoginTask onTimeout");
             mRefreshDialog.dismiss();
 
@@ -114,7 +109,7 @@ public class NicknameActivity extends Activity {
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "LoginTask onTaskCancel");
             mRefreshDialog.dismiss();
         }

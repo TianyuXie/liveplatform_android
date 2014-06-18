@@ -21,30 +21,7 @@ public class LoginTask extends Task {
     public final static String KEY_USERINFO = "userinfo";
     public final static String KEY_PASSWORD = "password";
 
-    private final String ID = StringUtil.newGuid();
     public final static String TYPE = "Login";
-
-    @Override
-    public String getID() {
-        return ID;
-    }
-
-    @Override
-    public String getType() {
-        return TYPE;
-    }
-
-    @Override
-    public void pause() {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void resume() {
-        // TODO Auto-generated method stub
-
-    }
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
@@ -105,7 +82,7 @@ public class LoginTask extends Task {
         if (isCancelled()) {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
-        
+
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_USERNAME, usr);
         context.set(KEY_TOKEN, token);

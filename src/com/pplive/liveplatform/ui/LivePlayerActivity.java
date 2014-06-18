@@ -710,42 +710,35 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
     private Task.TaskListener onPutFeedListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTimeout");
             Toast.makeText(mContext, R.string.player_comment_timeout, Toast.LENGTH_SHORT).show();
         }
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFinished");
             Toast.makeText(mContext, R.string.player_comment_success, Toast.LENGTH_SHORT).show();
             mChatBox.refresh(0);
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "onPutFeedTaskListener onTaskFailed:" + event.getMessage());
             Toast.makeText(mContext, R.string.player_comment_fail, Toast.LENGTH_SHORT).show();
         }
 
-        @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
-        }
-
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
     };
 
     private Task.TaskListener onLiveStatusTaskListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             keepAliveDelay(0);
         }
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             LiveStatus liveStatus = (LiveStatus) event.getContext().get(LiveStatusTask.KEY_RESULT);
             mDelay = liveStatus.getDelayInSeconds();
             switch (liveStatus.getStatus()) {
@@ -772,30 +765,27 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             keepAliveDelay(KEEP_ALIVE_DELAY_TIME);
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             keepAliveDelay(KEEP_ALIVE_DELAY_TIME);
         }
 
-        @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
-        }
     };
 
     private Task.TaskListener onGetMediaListener = new Task.BaseTaskListener() {
 
         @Override
-        public void onTimeout(Object sender, TaskTimeoutEvent event) {
+        public void onTimeout(Task sender, TaskTimeoutEvent event) {
             Log.d(TAG, "MediaTask onTimeout");
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
         }
 
         @Override
-        public void onTaskSucceed(Object sender, TaskSucceedEvent event) {
+        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "MediaTask onTaskFinished");
             mUrl = null;
             WatchList watchList = (WatchList) event.getContext().get(GetMediaTask.KEY_RESULT);
@@ -820,19 +810,19 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
         }
 
         @Override
-        public void onTaskFailed(Object sender, TaskFailedEvent event) {
+        public void onTaskFailed(Task sender, TaskFailedEvent event) {
             Log.d(TAG, "MediaTask onTaskFailed: " + event.getMessage());
             mHandler.sendEmptyMessage(MSG_MEDIA_FINISH);
             mWatchDacStat.onMediaServerResponse();
         }
 
         @Override
-        public void onTaskCancel(Object sender, TaskCancelEvent event) {
+        public void onTaskCancel(Task sender, TaskCancelEvent event) {
             Log.d(TAG, "MediaTask onTaskCancel");
         }
 
         @Override
-        public void onProgressChanged(Object sender, TaskProgressChangedEvent event) {
+        public void onProgressChanged(Task sender, TaskProgressChangedEvent event) {
         }
     };
 
