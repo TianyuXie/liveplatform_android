@@ -1,6 +1,10 @@
 package com.pplive.liveplatform.core.service.live.model;
 
-public class Subject {
+import java.io.Serializable;
+
+public class Subject implements Serializable {
+
+    private static final long serialVersionUID = 8851682563347303969L;
 
     String subject;
 

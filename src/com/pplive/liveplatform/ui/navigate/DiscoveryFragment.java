@@ -4,8 +4,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,9 +25,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.Subject;
+import com.pplive.liveplatform.ui.ChannelActivity;
 import com.pplive.liveplatform.ui.widget.SearchBarView;
 import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 
@@ -33,13 +37,27 @@ public class DiscoveryFragment extends Fragment {
 
     static final String TAG = DiscoveryFragment.class.getSimpleName();
 
+    private Activity mActivity;
+
     private SearchBarView mSearchTopBarView;
 
     private PullToRefreshListView mListViewChannel;
 
-    private CallbackListener mCallbackListener;
-
     private SubjectAdapter mAdapter;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        mActivity = activity;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        mActivity = null;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,10 +82,9 @@ public class DiscoveryFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                if (null != mCallbackListener) {
-                    mCallbackListener.onSubjectSelected((mAdapter.getItem(position)));
-                }
+                Intent intent = new Intent(mActivity, ChannelActivity.class);
+                intent.putExtra(Extra.KEY_SUBJECT, mAdapter.getItem(position));
+                startActivity(intent);
             }
         });
 
@@ -89,14 +106,6 @@ public class DiscoveryFragment extends Fragment {
 
         AsyncTaskGetSubjects task = new AsyncTaskGetSubjects();
         task.execute();
-    }
-
-    public void setCallbackListener(CallbackListener listener) {
-        mCallbackListener = listener;
-    }
-
-    public interface CallbackListener {
-        void onSubjectSelected(Subject subject);
     }
 
     class AsyncTaskGetSubjects extends AsyncTask<Void, Void, List<Subject>> {

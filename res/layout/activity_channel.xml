@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/app_bg" >
+    android:background="@color/app_bg"
+    android:orientation="vertical" >
 
-    <com.pplive.liveplatform.ui.widget.SearchBarView
-        android:id="@+id/search_top_bar"
+    <com.pplive.liveplatform.ui.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        android:background="@color/app_bg"
-        android:layout_alignParentTop="true" />
+        android:background="@color/top_bar_bg"
+        live:left_btn_src="@drawable/btn_back"
+        live:show_left_btn="true"
+        live:show_title="true" />
 
-    <com.pplive.liveplatform.ui.home.ProgramContainer
+    <com.handmark.pulltorefresh.library.PullToRefreshGridView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/program_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:numColumns="2"
+        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
+        ptr:ptrMode="both" />
+
+    <!--
+         <com.pplive.liveplatform.ui.home.ProgramContainer
         android:id="@+id/layout_channel_body"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -46,5 +60,6 @@
             android:textColor="@color/true_gray"
             android:textSize="18sp" />
     </LinearLayout>
+    -->
 
-</RelativeLayout>
+</LinearLayout>

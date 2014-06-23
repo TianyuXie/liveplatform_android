@@ -58,7 +58,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/text_program_owner"
+        android:id="@+id/text_program_tags"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

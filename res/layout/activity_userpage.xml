@@ -16,7 +16,7 @@
             android:layout_height="@dimen/top_bar_back_btn_size"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:background="@drawable/top_bar_back_btn" />
+            android:background="@drawable/btn_back" />
 
         <TextView
             android:id="@+id/text_userpage_title"

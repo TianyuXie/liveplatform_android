@@ -59,7 +59,7 @@ public class GridViewProgramAdapter extends BaseAdapter {
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
             holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
-            holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_owner);
+            holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_tags);
             holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewcount);
             holder.liveImageView = (ImageView) convertView.findViewById(R.id.image_live);
 
