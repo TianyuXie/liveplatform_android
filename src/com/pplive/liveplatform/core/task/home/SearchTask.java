@@ -12,7 +12,7 @@ public class SearchTask extends Task {
     static final String TAG = "_SearchTask";
 
     public final static String KEY_RESULT = "search_task_result";
-    public final static String KEY_TYPE = "search_task_type";
+    public final static String KEY_LOAD_MODE = "search_task_type";
 
     public final static String KEY_SUBJECT_ID = "subjectId";
     public final static String KEY_SORT = "sort";

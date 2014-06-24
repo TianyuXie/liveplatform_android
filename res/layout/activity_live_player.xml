@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pplive.liveplatform.ui.widget.DetectableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pplive.liveplatform.widget.DetectableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -24,7 +24,7 @@
         android:scaleType="fitStart"
         android:src="@drawable/player_loading_bg" />
 
-    <com.pplive.liveplatform.ui.widget.LoadingButton
+    <com.pplive.liveplatform.widget.LoadingButton
         android:id="@+id/btn_player_loading"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -38,7 +38,7 @@
         live:text="@string/blank"
         live:textSize="12sp" />
 
-    <com.pplive.liveplatform.ui.widget.chat.ChatBox
+    <com.pplive.liveplatform.widget.chat.ChatBox
         android:id="@+id/layout_player_chatbox"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -78,7 +78,7 @@
             android:contentDescription="@null"
             android:src="@drawable/emoji_board_emoji" />
 
-        <com.pplive.liveplatform.ui.widget.EnterSendEditText
+        <com.pplive.liveplatform.widget.EnterSendEditText
             android:id="@+id/edit_player_comment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -147,4 +147,4 @@
         android:background="@drawable/player_btn_write"
         android:visibility="gone" />
 
-</com.pplive.liveplatform.ui.widget.DetectableRelativeLayout>
+</com.pplive.liveplatform.widget.DetectableRelativeLayout>

@@ -44,11 +44,11 @@ import com.pplive.liveplatform.core.update.Update;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.home.HomeFragment;
-import com.pplive.liveplatform.ui.widget.AnimDoor;
-import com.pplive.liveplatform.ui.widget.LoadingButton;
-import com.pplive.liveplatform.ui.widget.SideBar;
-import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.widget.AnimDoor;
+import com.pplive.liveplatform.widget.LoadingButton;
+import com.pplive.liveplatform.widget.SideBar;
+import com.pplive.liveplatform.widget.slide.SlidableContainer;
 
 public class HomeActivity extends LocatorActivity implements HomeFragment.Callback, SlidableContainer.OnSlideListener {
 

@@ -4,31 +4,43 @@
     android:layout_height="fill_parent"
     android:background="@drawable/blank_userpage_bg" >
 
-    <View
+    <ImageView
+        android:id="@+id/img_panda"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_above="@+id/anchor_view"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@null"
+        android:src="@drawable/panda" />
+
+    <ImageView
         android:id="@+id/anchor_view"
-        android:layout_width="1dp"
-        android:layout_height="1dp"
-        android:layout_centerInParent="true" />
+        android:layout_width="184dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/no_login" />
 
     <ImageButton
         android:id="@+id/btn_login"
         style="@style/Widget.Button.Transparent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="510dp"
+        android:layout_height="90dp"
         android:layout_below="@+id/anchor_view"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="25dp"
         android:contentDescription="@null"
         android:src="@drawable/userpage_landed_button" />
 
     <ImageButton
         android:id="@+id/btn_register"
         style="@style/Widget.Button.Transparent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="510dp"
+        android:layout_height="90dp"
         android:layout_below="@+id/btn_login"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="1dp"
         android:contentDescription="@null"
         android:src="@drawable/userpage_registration_button" />
 

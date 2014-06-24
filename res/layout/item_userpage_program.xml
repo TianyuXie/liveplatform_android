@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp" >
 
-        <com.pplive.liveplatform.ui.widget.image.AsyncImageView
+        <com.pplive.liveplatform.widget.image.AsyncImageView
             android:id="@+id/image_userpage_program_preview"
             android:layout_width="140dp"
             android:layout_height="106dp"

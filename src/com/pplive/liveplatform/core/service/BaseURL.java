@@ -18,5 +18,8 @@ public class BaseURL extends URL {
         this.addParameter("_coname", Constants.DEFAULT_CONAME_PPTV);
         this.addParameter("from", Constants.PLATFORM_ANDROID_PHONE);
         this.addParameter("version", AppInfo.getVersionName());
+        this.addParameter("appplt", Constants.PLATFORM_ANDROID_PHONE);
+        this.addParameter("appid", Constants.APP_ID);
+        this.addParameter("appver", AppInfo.getVersionName());
     }
 }

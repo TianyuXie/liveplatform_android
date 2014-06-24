@@ -49,15 +49,15 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.GetProgramTask;
 import com.pplive.liveplatform.core.task.user.RemoveProgramTask;
 import com.pplive.liveplatform.core.task.user.UploadIconTask;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
-import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
-import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.ui.widget.image.CircularImageView;
-import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
 import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
+import com.pplive.liveplatform.widget.dialog.IconDialog;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.widget.image.CircularImageView;
+import com.pplive.liveplatform.widget.refresh.RefreshListView;
 
 public class UserpageActivity extends Activity {
 

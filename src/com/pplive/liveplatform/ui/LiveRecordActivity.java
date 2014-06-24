@@ -51,21 +51,21 @@ import com.pplive.liveplatform.core.service.live.model.LiveAlive;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Push;
+import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.live.FooterBarFragment;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
-import com.pplive.liveplatform.ui.widget.AnimDoor;
-import com.pplive.liveplatform.ui.widget.LoadingButton;
-import com.pplive.liveplatform.ui.widget.chat.ChatBox;
-import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.TimeUtil;
+import com.pplive.liveplatform.widget.AnimDoor;
+import com.pplive.liveplatform.widget.LoadingButton;
+import com.pplive.liveplatform.widget.chat.ChatBox;
+import com.pplive.liveplatform.widget.dialog.ShareDialog;
 
 import de.greenrobot.event.EventBus;
 

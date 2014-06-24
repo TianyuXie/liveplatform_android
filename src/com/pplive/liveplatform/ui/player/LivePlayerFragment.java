@@ -32,11 +32,11 @@ import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
-import com.pplive.liveplatform.ui.widget.VerticalSeekBar;
-import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
+import com.pplive.liveplatform.widget.VerticalSeekBar;
+import com.pplive.liveplatform.widget.image.CircularImageView;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback {
 

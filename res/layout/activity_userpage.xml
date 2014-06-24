@@ -41,7 +41,7 @@
         android:layout_height="180dp"
         android:background="@drawable/userpage_bg" >
 
-        <com.pplive.liveplatform.ui.widget.image.CircularImageView
+        <com.pplive.liveplatform.widget.image.CircularImageView
             android:id="@+id/image_icon"
             android:layout_width="60dp"
             android:layout_height="60dp"
@@ -84,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <com.pplive.liveplatform.ui.widget.refresh.RefreshListView
+            <com.pplive.liveplatform.widget.refresh.RefreshListView
                 android:id="@+id/list_userpage_program"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

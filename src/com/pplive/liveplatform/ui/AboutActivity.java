@@ -8,8 +8,8 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.dac.info.AppInfo;
-import com.pplive.liveplatform.ui.widget.TopBarView;
 import com.pplive.liveplatform.util.DisplayUtil;
+import com.pplive.liveplatform.widget.TopBarView;
 
 public class AboutActivity extends Activity {
 

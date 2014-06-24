@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.ui.widget.image.AsyncImageView;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeUtil;
+import com.pplive.liveplatform.widget.image.AsyncImageView;
 
 public class GridViewProgramAdapter extends BaseAdapter {
 

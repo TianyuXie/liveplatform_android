@@ -10,7 +10,7 @@
         android:layout_height="200dp"
         android:background="@drawable/userpage_bg" >
 
-        <com.pplive.liveplatform.ui.widget.image.RoundedImageView
+        <com.pplive.liveplatform.widget.image.RoundedImageView
             android:id="@+id/image_icon"
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
 
-            <com.pplive.liveplatform.ui.widget.refresh.RefreshListView
+            <com.pplive.liveplatform.widget.refresh.RefreshListView
                 xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
                 android:id="@+id/list_userpage_program"
                 android:layout_width="fill_parent"

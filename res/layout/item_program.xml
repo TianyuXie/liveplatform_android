@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:padding="2dp" >
 
-    <com.pplive.liveplatform.ui.widget.image.AsyncImageView
+    <com.pplive.liveplatform.widget.image.AsyncImageView
         android:id="@+id/image_program_preview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

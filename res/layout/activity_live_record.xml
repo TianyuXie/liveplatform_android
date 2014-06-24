@@ -118,7 +118,7 @@
         android:layout_margin="20dp"
         android:visibility="gone" >
 
-        <com.pplive.liveplatform.ui.widget.chat.ChatBox
+        <com.pplive.liveplatform.widget.chat.ChatBox
             android:id="@+id/layout_record_chatbox"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -153,7 +153,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 
-    <com.pplive.liveplatform.ui.widget.AnimDoor
+    <com.pplive.liveplatform.widget.AnimDoor
         android:id="@+id/live_animdoor"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -171,7 +171,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true" >
 
-        <com.pplive.liveplatform.ui.widget.LoadingButton
+        <com.pplive.liveplatform.widget.LoadingButton
             android:id="@+id/btn_live_status"
             android:layout_width="75dp"
             android:layout_height="75dp"

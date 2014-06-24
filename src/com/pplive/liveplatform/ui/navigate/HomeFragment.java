@@ -17,12 +17,12 @@ import android.widget.GridView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.SearchService;
 import com.pplive.liveplatform.core.service.live.model.FallList;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
-import com.pplive.liveplatform.ui.adpater.ProgramAdapter;
 
 public class HomeFragment extends Fragment {
 

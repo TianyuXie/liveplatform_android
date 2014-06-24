@@ -5,7 +5,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <com.pplive.liveplatform.ui.widget.LoadingButton
+    <com.pplive.liveplatform.widget.LoadingButton
         android:id="@+id/btn_loading_status"
         android:layout_width="70dp"
         android:layout_height="70dp"

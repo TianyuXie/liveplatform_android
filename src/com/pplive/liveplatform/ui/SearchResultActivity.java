@@ -25,8 +25,8 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.home.ProgramContainer;
-import com.pplive.liveplatform.ui.widget.TopBarView;
-import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
+import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.widget.refresh.RefreshGridView;
 
 public class SearchResultActivity extends Activity {
 
@@ -131,7 +131,7 @@ public class SearchResultActivity extends Activity {
             SearchTask task = new SearchTask();
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(SearchTask.KEY_TYPE, type);
+            taskContext.set(SearchTask.KEY_LOAD_MODE, type);
             taskContext.set(SearchTask.KEY_SUBJECT_ID, -1);
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
@@ -165,7 +165,7 @@ public class SearchResultActivity extends Activity {
             mNextToken = fallList.nextToken();
             Log.d(TAG, mNextToken);
             LiveStatusKeyword status = (LiveStatusKeyword) event.getContext().get(SearchTask.KEY_LIVE_STATUS);
-            int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
+            int type = (Integer) event.getContext().get(SearchTask.KEY_LOAD_MODE);
             switch (type) {
             case REFRESH:
                 if (status == mLiveStatus) {

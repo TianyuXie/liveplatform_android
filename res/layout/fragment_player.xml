@@ -23,7 +23,7 @@
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
-        <com.pplive.liveplatform.ui.widget.VerticalSeekBar
+        <com.pplive.liveplatform.widget.VerticalSeekBar
             android:id="@+id/seekbar_player_volume"
             style="@style/player_progressBarStyleVertical"
             android:layout_width="18dp"
@@ -187,7 +187,7 @@
         android:layout_margin="10dp"
         android:visibility="invisible" >
 
-        <com.pplive.liveplatform.ui.widget.image.CircularImageView
+        <com.pplive.liveplatform.widget.image.CircularImageView
             android:id="@+id/btn_player_user_icon"
             android:layout_width="70dp"
             android:layout_height="70dp"

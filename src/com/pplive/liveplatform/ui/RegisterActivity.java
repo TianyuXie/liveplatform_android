@@ -27,8 +27,8 @@ import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.GetCheckCodeTask;
 import com.pplive.liveplatform.core.task.user.RegisterTask;
-import com.pplive.liveplatform.ui.widget.TopBarView;
-import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class RegisterActivity extends Activity {
 

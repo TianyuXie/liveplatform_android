@@ -19,7 +19,7 @@ import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.user.ResetPasswordTask;
-import com.pplive.liveplatform.ui.widget.TopBarView;
+import com.pplive.liveplatform.widget.TopBarView;
 
 public class PasswordResetStep2Activity extends Activity {
 

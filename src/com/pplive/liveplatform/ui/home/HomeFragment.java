@@ -31,11 +31,11 @@ import com.pplive.liveplatform.core.task.TaskProgressChangedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.ui.SearchResultActivity;
-import com.pplive.liveplatform.ui.widget.intercept.InterceptDetector;
-import com.pplive.liveplatform.ui.widget.intercept.InterceptableRelativeLayout;
-import com.pplive.liveplatform.ui.widget.refresh.RefreshGridView;
-import com.pplive.liveplatform.ui.widget.slide.SlidableContainer;
 import com.pplive.liveplatform.util.ViewUtil;
+import com.pplive.liveplatform.widget.intercept.InterceptDetector;
+import com.pplive.liveplatform.widget.intercept.InterceptableRelativeLayout;
+import com.pplive.liveplatform.widget.refresh.RefreshGridView;
+import com.pplive.liveplatform.widget.slide.SlidableContainer;
 
 public class HomeFragment extends Fragment implements SlidableContainer.OnSlideListener {
 
@@ -238,7 +238,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
             taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
-            taskContext.set(SearchTask.KEY_TYPE, type);
+            taskContext.set(SearchTask.KEY_LOAD_MODE, type);
             taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
             taskContext.set(SearchTask.KEY_KEYWORD, keyword);
             taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatus);
@@ -267,7 +267,7 @@ public class HomeFragment extends Fragment implements SlidableContainer.OnSlideL
                 mContainer.setUpdateTime(System.currentTimeMillis());
                 FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
                 mNextToken = fallList.nextToken();
-                int type = (Integer) event.getContext().get(SearchTask.KEY_TYPE);
+                int type = (Integer) event.getContext().get(SearchTask.KEY_LOAD_MODE);
                 int subject = (Integer) event.getContext().get(SearchTask.KEY_SUBJECT_ID);
                 LiveStatusKeyword status = (LiveStatusKeyword) event.getContext().get(SearchTask.KEY_LIVE_STATUS);
                 switch (type) {
