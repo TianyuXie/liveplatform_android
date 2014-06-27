@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="260dp"
+        android:background="@drawable/userpage_bg" >
+
+        <com.pplive.liveplatform.widget.image.RoundedImageView
+            android:id="@+id/image_user_icon"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="30dp"
+            android:layout_marginLeft="50dp"
+            android:background="@drawable/rounded_bg"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/text_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/image_user_icon"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@+id/image_user_icon"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/image_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image_user_icon"
+            android:layout_alignRight="@+id/image_user_icon"
+            android:layout_marginBottom="4dp"
+            android:contentDescription="@null"
+            android:src="@drawable/userpage_avatar_change" />
+
+        <ImageButton
+            android:id="@+id/btn_settings"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_settings" />
+    </RelativeLayout>
+
+    <com.pplive.android.pulltorefresh.PullToRefreshSwipeListView
+        xmlns:swipe="http://schemas.android.com/apk/res-auto"
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/program_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:listSelector="@android:color/transparent"
+        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
+        swipe:swipeActionLeft="reveal"
+        swipe:swipeBackView="@+id/back"
+        swipe:swipeCloseAllItemsWhenMoveList="true"
+        swipe:swipeFrontView="@+id/front"
+        swipe:swipeMode="left"
+        swipe:swipeOffsetLeft="360dp" />
+
+</LinearLayout>

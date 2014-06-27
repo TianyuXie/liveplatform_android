@@ -16,4 +16,10 @@ public interface Extra {
 
     public static final String KEY_SUBJECT = "subject";
 
+    public static final String KEY_ICON_URL = "icon_url";
+
+    public static final String KEY_NICKNAME = "nickname";
+    
+    public static final String KEY_USER_TYPE = "user_type";
+
 }

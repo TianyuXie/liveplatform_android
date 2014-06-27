@@ -11,6 +11,7 @@
         android:layout_above="@+id/anchor_view"
         android:layout_centerHorizontal="true"
         android:contentDescription="@null"
+        android:scaleType="fitXY"
         android:src="@drawable/panda" />
 
     <ImageView

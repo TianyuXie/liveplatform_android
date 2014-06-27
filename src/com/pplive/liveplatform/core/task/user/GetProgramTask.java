@@ -25,9 +25,11 @@ public class GetProgramTask extends Task {
         if (params == null || params.length <= 0) {
             return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
+
         if (isCancelled()) {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
+
         TaskContext context = params[0];
         String username = context.getString(KEY_USERNAME);
         String token = context.getString(KEY_TOKEN);
@@ -41,9 +43,11 @@ public class GetProgramTask extends Task {
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, "ProgramService error");
         }
+
         if (data == null) {
             return new TaskResult(TaskStatus.FAILED, "No data");
         }
+
         Collection<Program> removePrograms = new ArrayList<Program>();
         if (TextUtils.isEmpty(token)) {
             // User
@@ -60,10 +64,13 @@ public class GetProgramTask extends Task {
                 }
             }
         }
+
         data.removeAll(removePrograms);
+
         if (isCancelled()) {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
+
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         context.set(KEY_RESULT, data);
         result.setContext(context);

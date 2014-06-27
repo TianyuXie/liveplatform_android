@@ -2,13 +2,13 @@ package com.pplive.liveplatform.util;
 
 import java.util.Calendar;
 
-import android.content.Context;
+import android.content.res.Resources;
 
 import com.pplive.liveplatform.R;
 
 public class TimeHelper {
 
-    public static String getAboutStartTime(Context context, long startTime) {
+    public static String getAboutStartTime(Resources res, long startTime) {
         Calendar calendar = Calendar.getInstance();
 
         int yearOfNow = calendar.get(Calendar.YEAR);
@@ -29,19 +29,19 @@ public class TimeHelper {
 
         String result = null;
         if (yearOfNow - yearOfStart > 0) {
-            result = context.getResources().getString(R.string.fmt_start_time_year, (yearOfNow - yearOfStart));
+            result = res.getString(R.string.fmt_start_time_year, (yearOfNow - yearOfStart));
         } else if (monthOfNow - monthOfStart > 0) {
-            result = context.getResources().getString(R.string.fmt_start_time_month, (monthOfNow - monthOfStart));
+            result = res.getString(R.string.fmt_start_time_month, (monthOfNow - monthOfStart));
         } else if (dayOfNow - dayOfStart > 0) {
-            result = context.getResources().getString(R.string.fmt_start_time_day, (dayOfNow - dayOfStart));
+            result = res.getString(R.string.fmt_start_time_day, (dayOfNow - dayOfStart));
         } else if (hourOfNow - hourOfStart > 0) {
-            result = context.getResources().getString(R.string.fmt_start_time_hour, (hourOfNow - hourOfStart));
+            result = res.getString(R.string.fmt_start_time_hour, (hourOfNow - hourOfStart));
         } else if (minuteOfNow - minuteOfStart > 0) {
-            result = context.getResources().getString(R.string.fmt_start_time_minute, (minuteOfNow - minuteOfStart));
+            result = res.getString(R.string.fmt_start_time_minute, (minuteOfNow - minuteOfStart));
         } else if (secondOfNow - secondOfStart > 0) {
-            result = context.getResources().getString(R.string.fmt_start_time_second, (secondOfNow - secondOfStart));
+            result = res.getString(R.string.fmt_start_time_second, (secondOfNow - secondOfStart));
         } else {
-            result = context.getResources().getString(R.string.fmt_start_time_second, 1);
+            result = res.getString(R.string.fmt_start_time_second, 1);
         }
 
         return result;

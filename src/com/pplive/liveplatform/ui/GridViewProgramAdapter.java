@@ -57,10 +57,10 @@ public class GridViewProgramAdapter extends BaseAdapter {
             convertView = mInflater.inflate(R.layout.item_program, null);
             holder = new ViewHolder();
             holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
-            holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_program_timedown);
+            holder.timedownTextView = (TextView) convertView.findViewById(R.id.text_date);
             holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
             holder.ownerTextView = (TextView) convertView.findViewById(R.id.text_program_tags);
-            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewcount);
+            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewer);
             holder.liveImageView = (ImageView) convertView.findViewById(R.id.image_live);
 
             convertView.setTag(holder);
@@ -76,7 +76,7 @@ public class GridViewProgramAdapter extends BaseAdapter {
         lp.height = mHeight;
         holder.ownerTextView.setText(data.getOwnerNickname());
         holder.titleTextView.setText(data.getTitle());
-        holder.viewcountTextView.setText(String.valueOf(data.getViews()));
+        holder.viewcountTextView.setText(String.valueOf(data.getViewers()));
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
         if (data.isPrelive()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);

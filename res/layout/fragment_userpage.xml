@@ -11,7 +11,7 @@
         android:background="@drawable/userpage_bg" >
 
         <com.pplive.liveplatform.widget.image.RoundedImageView
-            android:id="@+id/image_icon"
+            android:id="@+id/image_user_icon"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_alignParentBottom="true"
@@ -22,22 +22,22 @@
             android:scaleType="fitXY" />
 
         <TextView
-            android:id="@+id/text_userpage_nickname"
+            android:id="@+id/text_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/image_icon"
+            android:layout_alignTop="@+id/image_user_icon"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="30dp"
-            android:layout_toRightOf="@+id/image_icon"
+            android:layout_toRightOf="@+id/image_user_icon"
             android:textColor="@color/white"
             android:textSize="14sp" />
 
         <ImageView
-            android:id="@+id/image_userpage_camera"
+            android:id="@+id/image_camera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/image_icon"
-            android:layout_alignRight="@+id/image_icon"
+            android:layout_alignBottom="@+id/image_user_icon"
+            android:layout_alignRight="@+id/image_user_icon"
             android:layout_marginBottom="4dp"
             android:contentDescription="@null"
             android:src="@drawable/userpage_avatar_change" />

@@ -60,15 +60,15 @@ public class UserpageProgramAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.item_userpage_program, parent, false);
+            convertView = mInflater.inflate(R.layout.item_personal_program, parent, false);
 
             holder = new ViewHolder();
-            holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_userpage_program_preview);
-            holder.titleTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_title);
-            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_vv);
-            holder.timeTextView = (TextView) convertView.findViewById(R.id.text_userpage_program_time);
+            holder.previewImageView = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
+            holder.titleTextView = (TextView) convertView.findViewById(R.id.text_program_title);
+            holder.viewcountTextView = (TextView) convertView.findViewById(R.id.text_program_viewer);
+            holder.timeTextView = (TextView) convertView.findViewById(R.id.text_date);
             holder.liveImageView = (ImageView) convertView.findViewById(R.id.image_live);
-            holder.deleteBtn = convertView.findViewById(R.id.btn_userpage_delete_item);
+            holder.deleteBtn = convertView.findViewById(R.id.btn_delete);
 
             convertView.setTag(holder);
         } else {
@@ -92,11 +92,11 @@ public class UserpageProgramAdapter extends BaseAdapter {
     private void updateView(ViewHolder holder, Program data) {
         holder.titleTextView.setText(data.getTitle());
         holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
-        holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext, data.getStartTime()));
+        holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getStartTime()));
         holder.liveImageView.setVisibility(data.isLiving() ? View.VISIBLE : View.GONE);
         switch (data.getLiveStatus()) {
         case LIVING:
-            holder.viewcountTextView.setText(String.valueOf(data.getViews()));
+            holder.viewcountTextView.setText(String.valueOf(data.getViewers()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_watch, 0, 0, 0);
             break;
         case NOT_START:
@@ -106,7 +106,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             break;
         case STOPPED:
-            holder.viewcountTextView.setText(String.valueOf(data.getViews()));
+            holder.viewcountTextView.setText(String.valueOf(data.getViewers()));
             holder.viewcountTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.userpage_status_play, 0, 0, 0);
             break;
         default:

@@ -18,6 +18,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
+import com.pplive.liveplatform.core.network.NetworkManager;
+import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
 import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.SearchService;
 import com.pplive.liveplatform.core.service.live.model.FallList;
@@ -31,6 +33,8 @@ public class HomeFragment extends Fragment {
     private PullToRefreshGridView mContainer;
 
     private ProgramAdapter mAdapter;
+
+    private View mEmptyNoNetwork;
 
     private boolean mInited = false;
 
@@ -63,6 +67,8 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+
+        mEmptyNoNetwork = View.inflate(getActivity(), R.layout.empty_no_network, null);
 
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.home_gridview_flyin);
         mContainer.getRefreshableView().setLayoutAnimation(glac);
@@ -119,6 +125,12 @@ public class HomeFragment extends Fragment {
 
             if (null != programs) {
                 mAdapter.refreshData(programs);
+            } else {
+                if (NetworkState.DISCONNECTED == NetworkManager.getCurrentNetworkState()) {
+                    mContainer.setEmptyView(mEmptyNoNetwork);
+                } else {
+                    mContainer.setEmptyView(null);
+                }
             }
         }
     }

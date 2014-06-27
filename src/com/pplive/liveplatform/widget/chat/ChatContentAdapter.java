@@ -92,7 +92,7 @@ public class ChatContentAdapter extends BaseAdapter {
 
     private void updateView(ViewHolder holder, FeedItem data) {
         holder.contentTextView.setText(Html.fromHtml(data.formatedContent, mImageGetter, null));
-        holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext, data.time));
+        holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.time));
     }
 
     static class ViewHolder {

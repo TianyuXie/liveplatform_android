@@ -25,7 +25,9 @@
         android:layout_alignParentBottom="true"
         android:background="@drawable/nav_bar_bg"
         android:gravity="center"
-        android:orientation="horizontal" >
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp" >
 
         <RadioButton
             android:id="@+id/navbar_home"

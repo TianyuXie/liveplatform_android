@@ -171,12 +171,12 @@ public class UserPageFragment extends Fragment {
         mListView.setOnItemClickListener(onItemClickListener);
         mListView.setOnUpdateListener(onUpdateListener);
 
-        mTextNickName = (TextView) layout.findViewById(R.id.text_userpage_nickname);
-        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_icon);
+        mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
+        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_user_icon);
         mUserIcon.setOnClickListener(mOnIconClickListener);
 
         mNodataText = (TextView) layout.findViewById(R.id.text_userpage_nodata);
-        mCameraIcon = layout.findViewById(R.id.image_userpage_camera);
+        mCameraIcon = layout.findViewById(R.id.image_camera);
         //init views
 
         mNoDataView = layout.findViewById(R.id.layout_userpage_nodata);

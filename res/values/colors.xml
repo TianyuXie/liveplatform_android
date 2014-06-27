@@ -21,8 +21,9 @@
     <color name="intro_bg">#FF1a1a1a</color>
 
     <!-- Program -->
+        <color name="gray">#FF919191</color>
+    
     <color name="program_below_image_bg">#FF19A0FF</color>
-    <color name="program_owner_text">#FF919191</color>
     <color name="program_views_text">#FF5AC7FF</color>
     <color name="program_views_bg">#FF001E33</color>
     <color name="program_tag_bg">#BB191919</color>

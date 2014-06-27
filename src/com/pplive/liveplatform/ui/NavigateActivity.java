@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
@@ -19,16 +20,14 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.dac.info.LocationInfo;
 import com.pplive.liveplatform.core.dac.info.SessionInfo;
-import com.pplive.liveplatform.core.location.Locator.LocationData;
-import com.pplive.liveplatform.core.location.LocatorActivity;
+import com.pplive.liveplatform.fragment.PersonalFragment;
+import com.pplive.liveplatform.fragment.PersonalFragment.UserType;
 import com.pplive.liveplatform.ui.navigate.BlankUserPageFragment;
 import com.pplive.liveplatform.ui.navigate.DiscoveryFragment;
 import com.pplive.liveplatform.ui.navigate.HomeFragment;
-import com.pplive.liveplatform.ui.navigate.UserPageFragment;
 
-public class NavigateActivity extends LocatorActivity {
+public class NavigateActivity extends FragmentActivity {
 
     static final String TAG = NavigateActivity.class.getSimpleName();
 
@@ -38,7 +37,7 @@ public class NavigateActivity extends LocatorActivity {
 
     private HomeFragment mHomeFragment;
 
-    private UserPageFragment mUserPageFragment;
+    private PersonalFragment mPersonalFragment;
 
     private BlankUserPageFragment mBlankUserPageFragment;
 
@@ -85,7 +84,10 @@ public class NavigateActivity extends LocatorActivity {
 
         mDiscoveryFragment = new DiscoveryFragment();
 
-        mUserPageFragment = new UserPageFragment();
+        mPersonalFragment = new PersonalFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(Extra.KEY_USER_TYPE, UserType.OWNER);
+        mPersonalFragment.setArguments(args);
 
         mBlankUserPageFragment = new BlankUserPageFragment();
 
@@ -180,28 +182,14 @@ public class NavigateActivity extends LocatorActivity {
     private void onCheckedNavBarPersonal() {
         Context context = this;
 
-        if (UserManager.getInstance(context).isLoginSafely()) {
+        UserManager manager = UserManager.getInstance(context);
 
-            switchFragment(mUserPageFragment);
+        if (manager.isLoginSafely()) {
+
+            switchFragment(mPersonalFragment);
         } else {
 
             switchFragment(mBlankUserPageFragment);
         }
     }
-
-    @Override
-    public void onLocationUpdate(LocationData location) {
-        if (location == null) {
-            return;
-        }
-
-        LocationInfo.updateData(location);
-    }
-
-    @Override
-    public void onLocationError(String message) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

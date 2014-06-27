@@ -15,9 +15,9 @@ import android.widget.GridView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
+import com.pplive.android.pulltorefresh.RefreshMode;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.adapter.LoadDataInterface.LoadMode;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
 import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
@@ -145,24 +145,24 @@ public class ChannelActivity extends Activity {
         mSortKeyword = SortKeyword.ONLINE;
         mNextToken = "";
 
-        startLoadTask(LoadMode.REFRESH);
+        startLoadTask(RefreshMode.REFRESH);
     }
 
     private void startAppendTask() {
         Log.d(TAG, "appendTask");
-        startLoadTask(LoadMode.APPEND);
+        startLoadTask(RefreshMode.APPEND);
     }
 
     private void startAppendTask(int count) {
         Log.d(TAG, "appendTask");
-        startLoadTask(LoadMode.APPEND, count);
+        startLoadTask(RefreshMode.APPEND, count);
     }
 
-    private void startLoadTask(LoadMode mode) {
+    private void startLoadTask(RefreshMode mode) {
         startLoadTask(mode, DEFAULT_FALL_COUNT);
     }
 
-    private void startLoadTask(LoadMode mode, int count) {
+    private void startLoadTask(RefreshMode mode, int count) {
         SearchTask task = new SearchTask();
         task.addTaskListener(mLoadTaskListener);
         TaskContext taskContext = new TaskContext();
@@ -203,7 +203,7 @@ public class ChannelActivity extends Activity {
 
                 startAppendTask(DEFAULT_FALL_COUNT - tempPrograms.size());
             } else if (mLoadedPrograms.size() >= DEFAULT_FALL_COUNT || LiveStatusKeyword.VOD == mLiveStatusKeyword) {
-                LoadMode mode = (LoadMode) event.getContext().get(SearchTask.KEY_LOAD_MODE);
+                RefreshMode mode = (RefreshMode) event.getContext().get(SearchTask.KEY_LOAD_MODE);
                 mode.loadData(mAdapter, mLoadedPrograms);
                 mLoadedPrograms.clear();
             }

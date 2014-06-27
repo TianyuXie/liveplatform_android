@@ -67,7 +67,7 @@ public class Program implements Serializable {
         this.mode = mode;
         this.title = title;
         this.starttime = starttime;
-        this.subject_id = SUBJECT_ID_ORIGIN;
+        this.subject_id = 3;
         this.coname = Constants.DEFAULT_CONAME_PPTV;
     }
 
@@ -180,7 +180,7 @@ public class Program implements Serializable {
         return null == record ? 0 : record.online;
     }
 
-    public int getViews() {
+    public int getViewers() {
         if (isLiving()) {
             return getOnline();
         } else {

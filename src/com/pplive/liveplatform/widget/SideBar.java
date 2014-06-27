@@ -13,12 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.ui.LoginActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
-import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.widget.attr.IHidable;
 import com.pplive.liveplatform.widget.image.CircularImageView;
 import com.pplive.liveplatform.widget.slide.SlidableContainer;
@@ -79,7 +76,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         mNicknameText = (TextView) mRoot.findViewById(R.id.text_sidebar_user);
         mUserIcon = (CircularImageView) mRoot.findViewById(R.id.btn_sidebar_user_icon);
         mBlockLayer = mRoot.findViewById(R.id.layout_block_layer);
-        mUserIcon.setOnClickListener(onUserBtnClickListener);
+        //        mUserIcon.setOnClickListener(onUserBtnClickListener);
         mRoot.findViewById(R.id.btn_sidebar_settings).setOnClickListener(onSettingsBtnClickListener);
     }
 
@@ -170,22 +167,22 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
         }
     };
 
-    private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (UserManager.getInstance(getContext()).isLoginSafely()) {
-                Intent intent = new Intent(getContext(), UserpageActivity.class);
-                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(getContext()).getUsernamePlain());
-                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(getContext()).getIcon());
-                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(getContext()).getNickname());
-                getContext().startActivity(intent);
-            } else {
-                Intent intent = new Intent(getContext(), LoginActivity.class);
-                intent.putExtra(Extra.KEY_REDIRECT, UserpageActivity.class);
-                getContext().startActivity(intent);
-            }
-        }
-    };
+    //    private View.OnClickListener onUserBtnClickListener = new View.OnClickListener() {
+    //        @Override
+    //        public void onClick(View v) {
+    //            if (UserManager.getInstance(getContext()).isLoginSafely()) {
+    //                Intent intent = new Intent(getContext(), UserpageActivity.class);
+    //                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(getContext()).getUsernamePlain());
+    //                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(getContext()).getIcon());
+    //                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(getContext()).getNickname());
+    //                getContext().startActivity(intent);
+    //            } else {
+    //                Intent intent = new Intent(getContext(), LoginActivity.class);
+    //                intent.putExtra(Extra.KEY_REDIRECT, UserpageActivity.class);
+    //                getContext().startActivity(intent);
+    //            }
+    //        }
+    //    };
 
     public void release() {
         mUserIcon.release();
