@@ -14,7 +14,7 @@
             style="@style/Widget.Button.Transparent"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="360dp"
+            android:layout_marginLeft="@dimen/swipe_offset_left"
             android:background="#8d1d1c"
             android:gravity="center"
             android:text="@string/btn_delete"

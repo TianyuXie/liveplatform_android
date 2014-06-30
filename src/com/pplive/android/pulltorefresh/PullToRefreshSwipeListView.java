@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -271,6 +272,14 @@ public class PullToRefreshSwipeListView extends PullToRefreshAdapterViewBase<Swi
         getRefreshableView().dismissSelected();
     }
 
+    public void setOffsetLeft(float offsetLeft) {
+        getRefreshableView().setOffsetLeft(offsetLeft);
+    }
+
+    public void setOffsetRight(float offsetRight) {
+        getRefreshableView().setOffsetRight(offsetRight);
+    }
+
     @TargetApi(9)
     final class InternalSwipeListViewSDK9 extends InternalSwipeListView {
 
@@ -422,8 +431,9 @@ public class PullToRefreshSwipeListView extends PullToRefreshAdapterViewBase<Swi
 
         @Override
         public void onStartOpen(int position, int action, boolean right) {
+            Log.d("SwipeListView", "onStartOpen");
             if (null != mSwipeListViewListener) {
-                mSwipeListViewListener.onStartClose(position - 1, right);
+                mSwipeListViewListener.onStartOpen(position - 1, action, right);
             }
         }
 

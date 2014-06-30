@@ -28,7 +28,7 @@
             android:layout_centerVertical="true"
             android:text="@string/home_title"
             android:textColor="@color/white"
-            android:textSize="@dimen/top_bar_text_size" />
+            android:textSize="22sp" />
 
         <Button
             android:id="@+id/btn_home_search"

@@ -31,11 +31,11 @@ public class ProgramService extends RestService {
     private static final String TEMPLATE_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
 
-    private static final String TEMPLATE_GET_UNFINISHED_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
-            "/ft/v1/owner/{owner}/programs/action/finished").toString();
-
     private static final String TEMPLATE_CDN_GET_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/ft/v2/owner/{owner}/programs?livestatus={livestatus}").toString();
+
+    private static final String TEMPLATE_GET_UNFINISHED_PROGRAMS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/ft/v1/owner/{owner}/programs/action/finished").toString();
 
     private static final String TEMPLATE_CREATE_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/program").toString();
 
@@ -59,12 +59,12 @@ public class ProgramService extends RestService {
     private ProgramService() {
     }
 
-    public List<Program> getProgramsByUser(String owner) throws LiveHttpException {
-        return getProgramsByUser(owner, null);
+    public List<Program> getProgramsByUser(String user) throws LiveHttpException {
+        return getProgramsByUser(user, null);
     }
 
-    public List<Program> getProgramsByUser(String owner, LiveStatusEnum livestatus) throws LiveHttpException {
-        return getPrograms("", owner, livestatus, false /* isOwner */);
+    public List<Program> getProgramsByUser(String user, LiveStatusEnum livestatus) throws LiveHttpException {
+        return getPrograms("", user, livestatus, false /* isOwner */);
     }
 
     public List<Program> getProgramsByOwner(String coToken, String owner) throws LiveHttpException {

@@ -1,11 +1,8 @@
 <resources>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="top_bar_text_size">23sp</dimen>
-    <dimen name="top_bar_back_btn_size">50dp</dimen>
     <dimen name="top_bar_height">60dp</dimen>
-    <dimen name="top_bar_confirm_btn_size">50dp</dimen>
+    <dimen name="swipe_offset_left">360dp</dimen>
+    <dimen name="personal_view_height">260dp</dimen>
 
 </resources>

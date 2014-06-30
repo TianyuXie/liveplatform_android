@@ -27,9 +27,7 @@ import android.widget.Toast;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.fortysevendeg.swipelistview.SwipeListViewListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.pplive.android.pulltorefresh.PullToRefreshSwipeListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
@@ -50,6 +48,7 @@ import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.util.DirManager;
+import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.widget.dialog.IconDialog;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
@@ -136,6 +135,7 @@ public class PersonalFragment extends Fragment {
 
         @Override
         public void onStartOpen(int position, int action, boolean right) {
+            Log.d(TAG, "onStartOpen");
             mProgramContainer.closeOpenedItem();
         }
 
@@ -255,9 +255,7 @@ public class PersonalFragment extends Fragment {
         public void onTaskFinished(Task sender) {
             mRefreshDialog.dismiss();
 
-            if (mProgramContainer.isRefreshing()) {
-                mProgramContainer.onRefreshComplete();
-            }
+            mProgramContainer.onRefreshComplete();
         };
 
         @SuppressWarnings("unchecked")
@@ -291,10 +289,9 @@ public class PersonalFragment extends Fragment {
         mAdapter.setOnItemDeleteListener(mOnItemDeleteListener);
         mProgramContainer.setAdapter(mAdapter);
         mProgramContainer.setSwipeListViewListener(mSwipeListViewListener);
-        mProgramContainer.setOnPullEventListener(new OnPullEventListener<SwipeListView>() {
-
+        mProgramContainer.setOnRefreshListener(new OnRefreshListener<SwipeListView>() {
             @Override
-            public void onPullEvent(PullToRefreshBase<SwipeListView> refreshView, State state, Mode direction) {
+            public void onRefresh(PullToRefreshBase<SwipeListView> refreshView) {
                 refreshData();
             }
         });

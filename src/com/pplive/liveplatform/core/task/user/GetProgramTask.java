@@ -2,6 +2,8 @@ package com.pplive.liveplatform.core.task.user;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.text.TextUtils;
@@ -15,7 +17,7 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 
 public class GetProgramTask extends Task {
-    static final String TAG = "_GetProgramTask";
+    static final String TAG = GetProgramTask.class.getSimpleName();
 
     public final static String KEY_RESULT = "program_result";
     public final static String KEY_TYPE = "search_task_type";
@@ -66,6 +68,15 @@ public class GetProgramTask extends Task {
         }
 
         data.removeAll(removePrograms);
+
+        Collections.sort(data, new Comparator<Program>() {
+
+            @Override
+            public int compare(Program lhs, Program rhs) {
+
+                return (int) (rhs.getStartTime() - lhs.getStartTime());
+            }
+        });
 
         if (isCancelled()) {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
