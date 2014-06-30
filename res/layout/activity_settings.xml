@@ -5,12 +5,16 @@
     android:background="@color/app_bg"
     android:orientation="vertical" >
 
-    <com.pplive.liveplatform.ui.widget.TopBarView
+    <com.pplive.liveplatform.widget.TopBarView
         xmlns:live="http://schemas.android.com/apk/res-auto"
         android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        live:text="@string/settings_title" />
+        android:background="@color/top_bar_bg"
+        live:left_btn_src="@drawable/btn_back"
+        live:show_left_btn="true"
+        live:show_title="true"
+        live:text="@string/settings" />
 
     <ScrollView
         android:layout_width="fill_parent"
@@ -24,6 +28,7 @@
             android:id="@+id/layout_settings_user"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:orientation="vertical" >
 
             <TableLayout style="@style/settings_tablelayout" >
@@ -160,18 +165,18 @@
                 </TableRow>
             </TableLayout>
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_settings_logout"
+                style="@style/Widget.Button.Transparent"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/settings_btn_logout_bg"
-                android:padding="15dp"
-                android:text="@string/settings_logout"
-                android:textSize="17sp" >
-            </Button>
+                android:background="@drawable/btn_login_out"
+                android:contentDescription="@null" >
+            </ImageButton>
 
             <Button
                 android:id="@+id/btn_settings_login"
+                style="@style/Widget.Button.Transparent"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/settings_btn_login_bg"

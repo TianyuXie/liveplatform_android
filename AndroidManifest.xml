@@ -30,13 +30,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!-- Getui Permission -->
-    <uses-permission android:name="getui.permission.GetuiService" />
-
-    <permission
-        android:name="getui.permission.GetuiService"
-        android:protectionLevel="normal" />
-
     <application
         android:name="com.pplive.liveplatform.LiveApplication"
         android:allowBackup="true"
@@ -56,20 +49,6 @@
         <meta-data
             android:name="UMENG_CHANNEL"
             android:value="dev" />
-
-        <!-- Getui MetaData -->
-        <meta-data
-            android:name="appid"
-            android:value="cA4KWvhoie9biY260Sqgj8" />
-        <meta-data
-            android:name="appsecret"
-            android:value="ONwgcrdpqYAj3MwcD9dpg1" />
-        <meta-data
-            android:name="appkey"
-            android:value="d6gKZ7VxeI85DMOVKyF0H8" />
-        <meta-data
-            android:name="groupid"
-            android:value="" />
 
         <!-- Activity -->
         <activity
@@ -92,6 +71,12 @@
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
+            android:name="com.pplive.liveplatform.ui.ChannelActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" >
+        </activity>
+        <activity
             android:name="com.pplive.liveplatform.ui.LivePlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="false"
@@ -104,12 +89,6 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="landscape" >
-        </activity>
-        <activity
-            android:name="com.pplive.liveplatform.ui.HomeActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
             android:name="com.pplive.liveplatform.ui.SearchActivity"
@@ -236,21 +215,6 @@
             android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar" >
         </activity>
 
-        <!-- Getui Activity -->
-        <activity
-            android:name="com.igexin.sdk.SdkActivity"
-            android:excludeFromRecents="true"
-            android:exported="false"
-            android:process=":service"
-            android:taskAffinity="android.task.GexinSdkActivityTask"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-            <intent-filter>
-                <action android:name="com.igexin.action.popupact.com.pplive.liveplatform" />
-                <!-- com.igexin.action.popupact.{package} -->
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
         <!-- Service -->
         <service
             android:name="com.pplive.liveplatform.core.dac.DacReportService"
@@ -272,40 +236,10 @@
             android:process=":service" >
         </service>
 
-        <!-- GeTui Service -->
-        <service
-            android:name="com.igexin.sdk.SdkMainService"
-            android:exported="false"
-            android:label="NotifyCenter"
-            android:process=":service" >
-        </service>
-        <service
-            android:name="com.igexin.sdk.coordinator.SdkMsgService"
-            android:exported="false"
-            android:label="NotifyCenterAIDL"
-            android:process=":service" >
-        </service>
-
         <!-- Receiver -->
         <receiver android:name="com.pplive.liveplatform.core.network.NetworkManager" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
-
-        <!-- Getui Receiver -->
-        <receiver android:name="com.igexin.sdk.SdkReceiver" >
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-            </intent-filter>
-        </receiver>
-        <receiver
-            android:name="com.igexin.sdk.coordinator.NotificationCenterAIDLReceiver"
-            android:permission="getui.permission.GetuiService" >
-            <intent-filter>
-                <action android:name="com.igexin.sdk.action.refreshls" />
             </intent-filter>
         </receiver>
     </application>

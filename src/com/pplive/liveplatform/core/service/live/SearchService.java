@@ -22,10 +22,11 @@ public class SearchService extends RestService {
             "/search/v2/pptv/searchcommon?key={keywords}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}")
             .toString();
 
-    private static final String TEMPLATE_GET_RECOMMEND_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/search/v2/c/pptv/recommend/program")
-            .toString();
-    
-    private static final String TEMPLATE_GET_SEARCH_WORD = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/search/v2/c/pptv/recommend/searchwords").toString();
+    private static final String TEMPLATE_GET_RECOMMEND_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/search/v2/c/pptv/recommend/program").toString();
+
+    private static final String TEMPLATE_GET_SEARCH_WORD = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/search/v2/c/pptv/recommend/searchwords").toString();
 
     public static SearchService getInstance() {
         return sInstance;
@@ -101,20 +102,20 @@ public class SearchService extends RestService {
             throw new LiveHttpException();
         }
     }
-    
+
     public java.util.List<String> getSearchWordsList() throws LiveHttpException {
-        
-        SearchWordsListResp resp = null; 
+
+        SearchWordsListResp resp = null;
         try {
             resp = mRestTemplate.getForObject(TEMPLATE_GET_SEARCH_WORD, SearchWordsListResp.class);
-            
+
             if (0 == resp.getError()) {
                 return resp.getList();
             }
         } catch (Exception e) {
-            
+
         }
-        
+
         if (null != resp) {
             throw new LiveHttpException(resp.getError());
         } else {
@@ -124,54 +125,50 @@ public class SearchService extends RestService {
 
     public enum SortKeyword {
         @SerializedName("starttime")
-        START_TIME {
-            @Override
-            public String toString() {
-                return "starttime";
-            }
-        },
+        START_TIME("starttime"),
 
         @SerializedName("vv")
-        VV {
-            @Override
-            public String toString() {
-                return "vv";
-            }
-        };
+        VV("vv"),
+
+        @SerializedName("online")
+        ONLINE("online");
+
+        private String name;
+
+        private SortKeyword(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     public enum LiveStatusKeyword {
 
         @SerializedName("coming")
-        COMING {
-            @Override
-            public String toString() {
-                return "coming";
-            }
-        },
+        COMING("coming"),
 
         @SerializedName("living")
-        LIVING {
-            @Override
-            public String toString() {
-                return "living";
-            }
+        LIVING("living") {
         },
 
         @SerializedName("VOD")
-        VOD {
-            @Override
-            public String toString() {
-                return "vod";
-            }
-        },
+        VOD("vod"),
 
         @SerializedName("nodel")
-        NO_DEL {
-            @Override
-            public String toString() {
-                return "nodel";
-            };
-        };
+        NO_DEL("nodel");
+
+        private String name;
+
+        private LiveStatusKeyword(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 }

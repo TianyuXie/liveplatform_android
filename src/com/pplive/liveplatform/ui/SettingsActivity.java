@@ -18,8 +18,8 @@ import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.liveplatform.core.settings.AppPrefs;
 import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.core.update.Update;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
-import com.pplive.liveplatform.ui.widget.TopBarView;
+import com.pplive.liveplatform.dialog.DialogManager;
+import com.pplive.liveplatform.widget.TopBarView;
 import com.umeng.fb.FeedbackAgent;
 
 public class SettingsActivity extends Activity {

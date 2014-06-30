@@ -53,18 +53,18 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.player.GetMediaTask;
 import com.pplive.liveplatform.core.task.player.LiveStatusTask;
 import com.pplive.liveplatform.core.task.player.PutFeedTask;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.player.EmojiView;
 import com.pplive.liveplatform.ui.player.LivePlayerFragment;
-import com.pplive.liveplatform.ui.widget.DetectableRelativeLayout;
-import com.pplive.liveplatform.ui.widget.EnterSendEditText;
-import com.pplive.liveplatform.ui.widget.LoadingButton;
-import com.pplive.liveplatform.ui.widget.chat.ChatBox;
-import com.pplive.liveplatform.ui.widget.dialog.ShareDialog;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.StringUtil;
 import com.pplive.liveplatform.util.ViewUtil;
+import com.pplive.liveplatform.widget.DetectableRelativeLayout;
+import com.pplive.liveplatform.widget.EnterSendEditText;
+import com.pplive.liveplatform.widget.LoadingButton;
+import com.pplive.liveplatform.widget.chat.ChatBox;
+import com.pplive.liveplatform.widget.dialog.ShareDialog;
 
 import de.greenrobot.event.EventBus;
 

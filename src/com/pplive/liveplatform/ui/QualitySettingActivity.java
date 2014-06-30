@@ -9,7 +9,7 @@ import android.widget.RadioGroup;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.network.QualityPreferences;
 import com.pplive.liveplatform.core.record.Quality;
-import com.pplive.liveplatform.ui.widget.TopBarView;
+import com.pplive.liveplatform.widget.TopBarView;
 
 public class QualitySettingActivity extends Activity {
 

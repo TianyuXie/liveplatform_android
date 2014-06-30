@@ -6,7 +6,7 @@
     android:layout_height="fill_parent"
     android:background="@drawable/home_bg" >
 
-    <com.pplive.liveplatform.ui.widget.SideBar
+    <com.pplive.liveplatform.widget.SideBar
         android:id="@+id/home_sidebar"
         android:layout_width="70dp"
         android:layout_height="fill_parent"
@@ -19,7 +19,7 @@
         live:anim_hide="@anim/sidebar_hide"
         live:anim_show="@anim/sidebar_show" />
 
-    <com.pplive.liveplatform.ui.widget.slide.SuperSlidableContainer
+    <com.pplive.liveplatform.widget.slide.SuperSlidableContainer
         android:id="@+id/layout_home_fragment_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -28,7 +28,7 @@
         live:duration="250"
         live:scale_percent="0.95" />
 
-    <com.pplive.liveplatform.ui.widget.AnimDoor
+    <com.pplive.liveplatform.widget.AnimDoor
         android:id="@+id/home_animdoor"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -48,7 +48,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="30dp" >
 
-        <com.pplive.liveplatform.ui.widget.LoadingButton
+        <com.pplive.liveplatform.widget.LoadingButton
             android:id="@+id/btn_home_status"
             android:layout_width="75dp"
             android:layout_height="75dp"

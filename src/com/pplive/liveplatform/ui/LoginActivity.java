@@ -35,8 +35,8 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.LoginTask;
-import com.pplive.liveplatform.ui.widget.TopBarView;
-import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class LoginActivity extends Activity implements Handler.Callback, ThirdpartyLoginListener {
 
@@ -144,9 +144,9 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
             } else if (null != mRedirectActivity) {
                 Intent intent = new Intent(mContext, mRedirectActivity);
-                intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(mContext).getUsernamePlain());
-                intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(mContext).getIcon());
-                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(mContext).getNickname());
+                intent.putExtra(Extra.KEY_LOGIN_NAME, UserManager.getInstance(mContext).getUsernamePlain());
+                intent.putExtra(Extra.KEY_ICON_URL, UserManager.getInstance(mContext).getIcon());
+                intent.putExtra(Extra.KEY_NICKNAME, UserManager.getInstance(mContext).getNickname());
 
                 setResult(999, intent);
 
@@ -343,9 +343,9 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
         if (null != mRedirectActivity) {
             Intent intent = new Intent(mContext, mRedirectActivity);
-            intent.putExtra(UserpageActivity.EXTRA_USER, UserManager.getInstance(this).getUsernamePlain());
-            intent.putExtra(UserpageActivity.EXTRA_ICON, UserManager.getInstance(this).getIcon());
-            intent.putExtra(UserpageActivity.EXTRA_NICKNAME, UserManager.getInstance(this).getNickname());
+            intent.putExtra(Extra.KEY_LOGIN_NAME, UserManager.getInstance(this).getUsernamePlain());
+            intent.putExtra(Extra.KEY_ICON_URL, UserManager.getInstance(this).getIcon());
+            intent.putExtra(Extra.KEY_NICKNAME, UserManager.getInstance(this).getNickname());
             mContext.startActivity(intent);
         }
 

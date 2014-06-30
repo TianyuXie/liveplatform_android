@@ -19,7 +19,7 @@
     <string name="about_copyright">Copyright&#169;产品预留版权声明</string>
     <string name="settings_logout">退出登录</string>
     <string name="settings_login">登&#160;&#160;录</string>
-    <string name="settings_title">设置</string>
+    <string name="settings">设置</string>
     <string name="settings_logout_title">退出登录</string>
     <string name="settings_logout_text">确定要退出吗?</string>
     <string name="settings_quality">当前Wifi拍摄</string>

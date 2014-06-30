@@ -11,6 +11,8 @@ public interface Constants {
     public static final boolean LARGER_THAN_OR_EQUAL_HONEYCOMB = Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
 
     public static final String PLATFORM_ANDROID_PHONE = "aph";
+    
+    public static final String APP_ID = "PPTVIBOBO";
 
     public static final String DEFAULT_CONAME_PPTV = "pptv";
 

@@ -23,8 +23,8 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.UpdateInfoTask;
-import com.pplive.liveplatform.ui.widget.TopBarView;
-import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class NicknameActivity extends Activity {
 

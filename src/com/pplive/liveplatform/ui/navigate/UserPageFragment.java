@@ -51,18 +51,18 @@ import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.core.task.user.GetProgramTask;
 import com.pplive.liveplatform.core.task.user.RemoveProgramTask;
 import com.pplive.liveplatform.core.task.user.UploadIconTask;
+import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.LiveRecordActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter;
 import com.pplive.liveplatform.ui.userpage.UserpageProgramAdapter.OnItemRightClickListener;
-import com.pplive.liveplatform.ui.widget.dialog.IconDialog;
-import com.pplive.liveplatform.ui.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.ui.widget.image.RoundedImageView;
-import com.pplive.liveplatform.ui.widget.refresh.RefreshListView;
 import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
+import com.pplive.liveplatform.widget.dialog.IconDialog;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.widget.image.RoundedImageView;
+import com.pplive.liveplatform.widget.refresh.RefreshListView;
 
 public class UserPageFragment extends Fragment {
 
@@ -171,12 +171,12 @@ public class UserPageFragment extends Fragment {
         mListView.setOnItemClickListener(onItemClickListener);
         mListView.setOnUpdateListener(onUpdateListener);
 
-        mTextNickName = (TextView) layout.findViewById(R.id.text_userpage_nickname);
-        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_icon);
+        mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
+        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_user_icon);
         mUserIcon.setOnClickListener(mOnIconClickListener);
 
         mNodataText = (TextView) layout.findViewById(R.id.text_userpage_nodata);
-        mCameraIcon = layout.findViewById(R.id.image_userpage_camera);
+        mCameraIcon = layout.findViewById(R.id.image_camera);
         //init views
 
         mNoDataView = layout.findViewById(R.id.layout_userpage_nodata);

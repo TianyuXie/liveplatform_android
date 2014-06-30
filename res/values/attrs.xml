@@ -63,7 +63,8 @@
         <attr name="extra_width" format="dimension" />
         <attr name="slideable" format="boolean" />
     </declare-styleable>
-    <declare-styleable name="SwipeListView">
+    <!--
+         <declare-styleable name="SwipeListView">
         <attr name="swipeOpenOnLongPress" format="boolean" />
         <attr name="swipeAnimationTime" format="integer" />
         <attr name="swipeOffsetLeft" format="dimension" />
@@ -90,6 +91,8 @@
         <attr name="swipeDrawableChecked" format="reference" />
         <attr name="swipeDrawableUnchecked" format="reference" />
     </declare-styleable>
+    -->
+
 
     <!-- TopBarView -->
     <declare-styleable name="TopBarView">

@@ -24,11 +24,11 @@ import com.pplive.liveplatform.core.service.exception.LiveHttpException;
 import com.pplive.liveplatform.core.service.live.ProgramService;
 import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
 import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.ui.dialog.DialogManager;
+import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.live.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
-import com.pplive.liveplatform.ui.widget.HorizontalListView;
+import com.pplive.liveplatform.widget.HorizontalListView;
 
 import de.greenrobot.event.EventBus;
 

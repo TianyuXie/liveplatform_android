@@ -4,7 +4,7 @@
     android:layout_height="fill_parent"
     android:background="@color/app_bg" >
 
-    <com.pplive.liveplatform.ui.widget.TopBarView
+    <com.pplive.liveplatform.widget.TopBarView
         android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height" />

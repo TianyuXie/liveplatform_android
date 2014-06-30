@@ -14,7 +14,7 @@ import com.pplive.liveplatform.util.TimeUtil;
 
 public class Program implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -6974240710468812996L;
 
     private static final int SUBJECT_ID_ORIGIN = 1;
 
@@ -56,6 +56,8 @@ public class Program implements Serializable {
 
     StreamStatus streamstatus;
 
+    String[] tags;
+
     public Program(String owner, String title, long starttime) {
         this(owner, LiveModeEnum.CAMERA, title, starttime);
     }
@@ -65,7 +67,7 @@ public class Program implements Serializable {
         this.mode = mode;
         this.title = title;
         this.starttime = starttime;
-        this.subject_id = SUBJECT_ID_ORIGIN;
+        this.subject_id = 3;
         this.coname = Constants.DEFAULT_CONAME_PPTV;
     }
 
@@ -83,6 +85,20 @@ public class Program implements Serializable {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getTags() {
+        if (null != tags && tags.length > 0) {
+            StringBuilder sb = new StringBuilder(tags[0]);
+
+            for (int i = 1; i < tags.length; ++i) {
+                sb.append(" ").append(tags[i]);
+            }
+
+            return sb.toString();
+        }
+
+        return "";
     }
 
     public int getSubjectId() {
@@ -164,7 +180,7 @@ public class Program implements Serializable {
         return null == record ? 0 : record.online;
     }
 
-    public int getViews() {
+    public int getViewers() {
         if (isLiving()) {
             return getOnline();
         } else {

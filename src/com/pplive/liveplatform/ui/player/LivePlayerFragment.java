@@ -26,17 +26,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
-import com.pplive.liveplatform.ui.widget.VerticalSeekBar;
-import com.pplive.liveplatform.ui.widget.image.CircularImageView;
 import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
+import com.pplive.liveplatform.widget.VerticalSeekBar;
+import com.pplive.liveplatform.widget.image.CircularImageView;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback {
 
@@ -240,9 +241,9 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             if (getActivity() != null) {
                 Program program = (Program) getActivity().getIntent().getSerializableExtra(LivePlayerActivity.EXTRA_PROGRAM);
                 Intent intent = new Intent(getActivity(), UserpageActivity.class);
-                intent.putExtra(UserpageActivity.EXTRA_USER, program.getOwner());
-                intent.putExtra(UserpageActivity.EXTRA_ICON, program.getOwnerIcon());
-                intent.putExtra(UserpageActivity.EXTRA_NICKNAME, program.getOwnerNickname());
+                intent.putExtra(Extra.KEY_LOGIN_NAME, program.getOwner());
+                intent.putExtra(Extra.KEY_ICON_URL, program.getOwnerIcon());
+                intent.putExtra(Extra.KEY_NICKNAME, program.getOwnerNickname());
                 getActivity().startActivity(intent);
             }
         }

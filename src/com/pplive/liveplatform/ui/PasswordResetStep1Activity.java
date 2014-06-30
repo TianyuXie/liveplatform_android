@@ -22,7 +22,7 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.user.CheckCodeTask;
 import com.pplive.liveplatform.core.task.user.GetCheckCodeTask;
-import com.pplive.liveplatform.ui.widget.TopBarView;
+import com.pplive.liveplatform.widget.TopBarView;
 
 public class PasswordResetStep1Activity extends Activity {
 

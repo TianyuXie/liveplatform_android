@@ -86,7 +86,7 @@ public class NetworkManager extends BroadcastReceiver {
 
             Log.d(TAG, "Detail State: " + wifi.getDetailedState());
 
-            if (NetworkInfo.DetailedState.CONNECTED == wifi.getDetailedState()) {
+            if (NetworkState.WIFI == getCurrentNetworkState() && NetworkInfo.DetailedState.CONNECTED == wifi.getDetailedState()) {
 
                 checkWifiSpeed(context);
             }

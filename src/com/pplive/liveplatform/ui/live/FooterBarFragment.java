@@ -27,9 +27,9 @@ import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.live.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
-import com.pplive.liveplatform.ui.widget.DateTimePicker;
-import com.pplive.liveplatform.ui.widget.DateTimePicker.OnDateTimeChangedListener;
 import com.pplive.liveplatform.util.ViewUtil;
+import com.pplive.liveplatform.widget.DateTimePicker;
+import com.pplive.liveplatform.widget.DateTimePicker.OnDateTimeChangedListener;
 
 import de.greenrobot.event.EventBus;
 

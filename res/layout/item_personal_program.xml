@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@+id/back"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:tag="back" >
+
+        <Button
+            android:id="@+id/btn_delete"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="360dp"
+            android:background="#8d1d1c"
+            android:gravity="center"
+            android:text="@string/btn_delete"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/front"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFFFF"
+        android:padding="10dp"
+        android:tag="front" >
+
+        <com.pplive.liveplatform.widget.image.AsyncImageView
+            android:id="@+id/image_program_preview"
+            android:layout_width="140dp"
+            android:layout_height="106dp"
+            android:layout_marginRight="20dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/blank"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/text_program_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/image_program_preview"
+            android:layout_toRightOf="@id/image_program_preview"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/black"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image_program_preview"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/gray"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/text_program_viewer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/text_program_tags"
+            android:layout_toRightOf="@+id/image_program_preview"
+            android:drawableLeft="@drawable/icon_viewer"
+            android:drawablePadding="5dp"
+            android:gravity="center_vertical"
+            android:text="@string/userpage_default_vv"
+            android:textColor="@color/gray"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/text_program_tags"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/image_program_preview"
+            android:layout_toLeftOf="@+id/text_date"
+            android:layout_toRightOf="@+id/image_program_preview"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/gray"
+            android:textSize="18sp" />
+
+        <ImageView
+            android:id="@+id/image_live"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/image_program_preview"
+            android:layout_alignTop="@+id/image_program_preview"
+            android:layout_marginTop="10dp"
+            android:contentDescription="@null"
+            android:src="@drawable/statebar_live" />
+    </RelativeLayout>
+
+</FrameLayout>
