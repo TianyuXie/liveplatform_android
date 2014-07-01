@@ -48,7 +48,6 @@ import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.util.DirManager;
-import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.widget.dialog.IconDialog;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;

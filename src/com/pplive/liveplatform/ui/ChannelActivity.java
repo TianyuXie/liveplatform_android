@@ -1,8 +1,5 @@
 package com.pplive.liveplatform.ui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,29 +12,18 @@ import android.widget.GridView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
-import com.pplive.android.pulltorefresh.RefreshMode;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
-import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
-import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
-import com.pplive.liveplatform.core.service.live.model.FallList;
+import com.pplive.liveplatform.core.search.ProgramLoader;
+import com.pplive.liveplatform.core.search.ProgramLoader.LoadListener;
 import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.core.service.live.model.Subject;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
-import com.pplive.liveplatform.core.task.Task.TaskListener;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.home.SearchTask;
 import com.pplive.liveplatform.widget.TopBarView;
 
 public class ChannelActivity extends Activity {
 
     static final String TAG = ChannelActivity.class.getSimpleName();
-
-    private final static int DEFAULT_FALL_COUNT = 16;
 
     private TopBarView mTopBarView;
 
@@ -45,15 +31,9 @@ public class ChannelActivity extends Activity {
 
     private ProgramAdapter mAdapter;
 
+    private ProgramLoader mProgramLoader;
+
     private Subject mSubject;
-
-    private LiveStatusKeyword mLiveStatusKeyword = LiveStatusKeyword.LIVING;
-
-    private SortKeyword mSortKeyword = SortKeyword.ONLINE;
-
-    private String mNextToken;
-
-    private List<Program> mLoadedPrograms = new ArrayList<Program>(DEFAULT_FALL_COUNT);
 
     private boolean mInit;
 
@@ -79,19 +59,38 @@ public class ChannelActivity extends Activity {
             public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
                 Log.d(TAG, "onPullDownToRefresh");
 
-                startRefreshTask();
+                mProgramLoader.refresh();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
                 Log.d(TAG, "onPullUpToRefresh");
 
-                startAppendTask();
+                mProgramLoader.append();
             }
         });
 
         mAdapter = new ProgramAdapter(getApplicationContext());
         mContainer.setAdapter(mAdapter);
+
+        mProgramLoader = new ProgramLoader(mAdapter);
+        mProgramLoader.setLoadListener(new LoadListener() {
+
+            @Override
+            public void onLoadStart() {
+            }
+
+            @Override
+            public void onLoadSucceed() {
+                mContainer.onRefreshComplete();
+
+            }
+
+            @Override
+            public void onLoadFailed() {
+                mContainer.onRefreshComplete();
+            }
+        });
 
         mContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -126,7 +125,8 @@ public class ChannelActivity extends Activity {
 
         if (!mInit) {
             mInit = true;
-            startRefreshTask();
+
+            mProgramLoader.searchBySubjectId(mSubject.getId());
         }
     }
 
@@ -137,83 +137,5 @@ public class ChannelActivity extends Activity {
             mTopBarView.setTitle(mSubject.getSubjectName());
         }
     }
-
-    private void startRefreshTask() {
-        Log.d(TAG, "refreshTask");
-
-        mLiveStatusKeyword = LiveStatusKeyword.LIVING;
-        mSortKeyword = SortKeyword.ONLINE;
-        mNextToken = "";
-
-        startLoadTask(RefreshMode.REFRESH);
-    }
-
-    private void startAppendTask() {
-        Log.d(TAG, "appendTask");
-        startLoadTask(RefreshMode.APPEND);
-    }
-
-    private void startAppendTask(int count) {
-        Log.d(TAG, "appendTask");
-        startLoadTask(RefreshMode.APPEND, count);
-    }
-
-    private void startLoadTask(RefreshMode mode) {
-        startLoadTask(mode, DEFAULT_FALL_COUNT);
-    }
-
-    private void startLoadTask(RefreshMode mode, int count) {
-        SearchTask task = new SearchTask();
-        task.addTaskListener(mLoadTaskListener);
-        TaskContext taskContext = new TaskContext();
-        taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubject.getId());
-        taskContext.set(SearchTask.KEY_LOAD_MODE, mode);
-        taskContext.set(SearchTask.KEY_NEXT_TK, mNextToken);
-        taskContext.set(SearchTask.KEY_KEYWORD, "");
-        taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatusKeyword);
-        taskContext.set(SearchTask.KEY_SORT, mSortKeyword);
-        taskContext.set(SearchTask.KEY_FALL_COUNT, count);
-        task.execute(taskContext);
-    }
-
-    private TaskListener mLoadTaskListener = new BaseTaskListener() {
-
-        public void onTaskFinished(Task sender) {
-            mContainer.onRefreshComplete();
-        };
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            Log.d(TAG, "SearchTask onTaskFinished");
-
-            FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
-            List<Program> tempPrograms = fallList.getList();
-
-            mNextToken = fallList.nextToken();
-            mLoadedPrograms.addAll(tempPrograms);
-
-            if (LiveStatusKeyword.VOD == mLiveStatusKeyword) {
-            }
-
-            if (mLoadedPrograms.size() < DEFAULT_FALL_COUNT && LiveStatusKeyword.LIVING == mLiveStatusKeyword) {
-                mLiveStatusKeyword = LiveStatusKeyword.VOD;
-                mSortKeyword = SortKeyword.VV;
-                mNextToken = "";
-
-                startAppendTask(DEFAULT_FALL_COUNT - tempPrograms.size());
-            } else if (mLoadedPrograms.size() >= DEFAULT_FALL_COUNT || LiveStatusKeyword.VOD == mLiveStatusKeyword) {
-                RefreshMode mode = (RefreshMode) event.getContext().get(SearchTask.KEY_LOAD_MODE);
-                mode.loadData(mAdapter, mLoadedPrograms);
-                mLoadedPrograms.clear();
-            }
-        }
-
-        @Override
-        public void onTaskFailed(Task sender, TaskFailedEvent event) {
-            Log.d(TAG, "SearchTask onTaskFailed: " + event.getMessage());
-        }
-
-    };
 
 }

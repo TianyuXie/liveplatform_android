@@ -39,7 +39,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edit_password"
             android:layout_marginTop="10dp"
-            android:digits="@string/number_and_letter"
             android:hint="@string/password"
             android:inputType="textPassword" />
 
