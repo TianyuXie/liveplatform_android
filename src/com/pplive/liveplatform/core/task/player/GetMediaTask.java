@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.task.player;
 
-import com.pplive.liveplatform.core.service.live.MediaService;
-import com.pplive.liveplatform.core.service.live.model.WatchList;
+import com.pplive.liveplatform.core.api.live.MediaAPI;
+import com.pplive.liveplatform.core.api.live.model.WatchList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -26,7 +26,7 @@ public class GetMediaTask extends Task {
         String token = (String) context.get(KEY_TOKEN);
         WatchList data = null;
         try {
-            data = MediaService.getInstance().getPlayWatchListV3(token, pid, username);
+            data = MediaAPI.getInstance().getPlayWatchListV3(token, pid, username);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.FAILED, "MediaService error");
         }

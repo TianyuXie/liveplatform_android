@@ -1,8 +1,8 @@
 package com.pplive.liveplatform.core.task.home;
 
-import com.pplive.liveplatform.core.service.live.SearchService;
-import com.pplive.liveplatform.core.service.live.model.FallList;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.SearchAPI;
+import com.pplive.liveplatform.core.api.live.model.FallList;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -32,8 +32,8 @@ public class SearchTask extends Task {
         }
         TaskContext context = params[0];
         int subjectId = (Integer) context.get(KEY_SUBJECT_ID);
-        SearchService.SortKeyword sort = (SearchService.SortKeyword) context.get(KEY_SORT);
-        SearchService.LiveStatusKeyword liveStatus = (SearchService.LiveStatusKeyword) context.get(KEY_LIVE_STATUS);
+        SearchAPI.SortKeyword sort = (SearchAPI.SortKeyword) context.get(KEY_SORT);
+        SearchAPI.LiveStatusKeyword liveStatus = (SearchAPI.LiveStatusKeyword) context.get(KEY_LIVE_STATUS);
         String nextTk = context.getString(KEY_NEXT_TOKEN);
         int fallCount = (Integer) context.get(KEY_FALL_COUNT);
         String keyword = context.getString(KEY_KEYWORD);
@@ -41,7 +41,7 @@ public class SearchTask extends Task {
 
         FallList<Program> data = null;
         try {
-            data = SearchService.getInstance().searchProgram(keyword, tag, subjectId, sort, liveStatus, nextTk, fallCount);
+            data = SearchAPI.getInstance().searchProgram(keyword, tag, subjectId, sort, liveStatus, nextTk, fallCount);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.FAILED, "SearchService Error");
         }

@@ -2,10 +2,10 @@ package com.pplive.liveplatform.core.task.user;
 
 import android.util.Log;
 
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.FileUploadService;
-import com.pplive.liveplatform.core.service.live.UserService;
-import com.pplive.liveplatform.core.service.live.model.User;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.FileUploadAPI;
+import com.pplive.liveplatform.core.api.live.UserAPI;
+import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -52,7 +52,7 @@ public class UploadIconTask extends Task {
         mUserInfo.setIcon(mIconUrl);
         boolean status = false;
         try {
-            status = UserService.getInstance().updateOrCreateUser(token, mUserInfo);
+            status = UserAPI.getInstance().updateOrCreateUser(token, mUserInfo);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, "UserService: Update info error");
         }
@@ -77,7 +77,7 @@ public class UploadIconTask extends Task {
         @Override
         public void run() {
             try {
-                mUserInfo = UserService.getInstance().getUserInfo(token, username);
+                mUserInfo = UserAPI.getInstance().getUserInfo(token, username);
             } catch (LiveHttpException e) {
             }
         }
@@ -97,7 +97,7 @@ public class UploadIconTask extends Task {
         @Override
         public void run() {
             try {
-                mIconUrl = FileUploadService.getInstance().uploadFile(token, username, icon);
+                mIconUrl = FileUploadAPI.getInstance().uploadFile(token, username, icon);
             } catch (LiveHttpException e) {
             }
         }

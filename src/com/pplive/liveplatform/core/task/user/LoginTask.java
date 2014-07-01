@@ -4,11 +4,11 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.UserService;
-import com.pplive.liveplatform.core.service.live.model.User;
-import com.pplive.liveplatform.core.service.passport.PassportService;
-import com.pplive.liveplatform.core.service.passport.model.LoginResult;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.UserAPI;
+import com.pplive.liveplatform.core.api.live.model.User;
+import com.pplive.liveplatform.core.api.passport.PassportAPI;
+import com.pplive.liveplatform.core.api.passport.model.LoginResult;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -52,7 +52,7 @@ public class LoginTask extends Task {
         String token = null;
         LoginResult loginResult = null;
         try {
-            loginResult = PassportService.getInstance().login(usr, pwd);
+            loginResult = PassportAPI.getInstance().login(usr, pwd);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, StringUtil.safeString(e.getMessage()));
         }
@@ -73,7 +73,7 @@ public class LoginTask extends Task {
         }
         User userinfo = null;
         try {
-            userinfo = UserService.getInstance().getUserInfo(token, usr);
+            userinfo = UserAPI.getInstance().getUserInfo(token, usr);
         } catch (Exception e) {
             Log.w(TAG, "UserService error");
         }

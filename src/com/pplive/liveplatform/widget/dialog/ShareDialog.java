@@ -21,10 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.passport.thirdparty.TencentPassport;
-import com.pplive.liveplatform.core.service.passport.thirdparty.ThirdpartyShareListener;
-import com.pplive.liveplatform.core.service.passport.thirdparty.WeChatShare;
-import com.pplive.liveplatform.core.service.passport.thirdparty.WeiboPassport;
+import com.pplive.liveplatform.core.api.passport.thirdparty.TencentPassport;
+import com.pplive.liveplatform.core.api.passport.thirdparty.ThirdpartyShareListener;
+import com.pplive.liveplatform.core.api.passport.thirdparty.WeChatShare;
+import com.pplive.liveplatform.core.api.passport.thirdparty.WeiboPassport;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;

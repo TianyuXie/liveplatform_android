@@ -14,9 +14,9 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.api.live.UpdateAPI;
+import com.pplive.liveplatform.core.api.live.model.Packet;
 import com.pplive.liveplatform.core.dac.info.AppInfo;
-import com.pplive.liveplatform.core.service.live.UpdateService;
-import com.pplive.liveplatform.core.service.live.model.Packet;
 import com.pplive.liveplatform.util.DirManager;
 
 public class Update {
@@ -262,10 +262,10 @@ public class Update {
         try {
             Packet result = null;
             if(ifmanual){
-                result = UpdateService.getInstance().checkManUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                result = UpdateAPI.getInstance().checkManUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
                         AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
             }else {
-                result = UpdateService.getInstance().checkUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
+                result = UpdateAPI.getInstance().checkUpdate(AppInfo.getChannel(), AppInfo.getPlatform(), Build.VERSION.RELEASE,
                         AppInfo.getVersionName(), Build.MANUFACTURER + "|" + Build.MODEL + "|" + Build.DEVICE);
             }
 

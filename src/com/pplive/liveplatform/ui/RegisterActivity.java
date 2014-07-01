@@ -16,7 +16,7 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.passport.PassportService.CheckCodeType;
+import com.pplive.liveplatform.core.api.passport.PassportAPI.CheckCodeType;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
 import com.pplive.liveplatform.core.task.Task.TaskListener;

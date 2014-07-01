@@ -19,7 +19,7 @@ import android.widget.TextView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.service.live.model.User;
+import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;

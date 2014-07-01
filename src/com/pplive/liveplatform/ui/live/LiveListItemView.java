@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;

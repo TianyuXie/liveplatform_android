@@ -6,7 +6,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.pplive.liveplatform.core.service.live.MediaService;
+import com.pplive.liveplatform.core.api.live.MediaAPI;
 
 public class WifiSpeedCheckService extends IntentService {
 
@@ -40,10 +40,10 @@ public class WifiSpeedCheckService extends IntentService {
         if (ACTION_CHECK_WIFI_SPEED.equals(intent.getAction())) {
 
             String oldIP = QualityPreferences.getInstance(getApplicationContext()).getIP();
-            String ip = MediaService.getInstance().getClientIPAddress();
+            String ip = MediaAPI.getInstance().getClientIPAddress();
             if (!TextUtils.isEmpty(ip) && !oldIP.equals(ip)) {
                 Log.d(TAG, "Check Wifi Speed");
-                float speed = MediaService.getInstance().getAvgNetSpeed(256 * 1024, 5);
+                float speed = MediaAPI.getInstance().getAvgNetSpeed(256 * 1024, 5);
                 if (speed > 0) {
                     QualityPreferences.getInstance(getApplicationContext()).reset();
                     QualityPreferences.getInstance(getApplicationContext()).setIP(ip);

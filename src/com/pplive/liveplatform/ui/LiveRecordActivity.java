@@ -32,6 +32,15 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.LiveControlAPI;
+import com.pplive.liveplatform.core.api.live.MediaAPI;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.live.TokenAPI;
+import com.pplive.liveplatform.core.api.live.model.LiveAlive;
+import com.pplive.liveplatform.core.api.live.model.LiveStatusEnum;
+import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Push;
 import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.stat.PublishDacStat;
 import com.pplive.liveplatform.core.network.NetworkManager;
@@ -42,15 +51,6 @@ import com.pplive.liveplatform.core.record.CameraManager;
 import com.pplive.liveplatform.core.record.MediaRecorderListener;
 import com.pplive.liveplatform.core.record.MediaRecorderView;
 import com.pplive.liveplatform.core.record.Quality;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.LiveControlService;
-import com.pplive.liveplatform.core.service.live.MediaService;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.TokenService;
-import com.pplive.liveplatform.core.service.live.model.LiveAlive;
-import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
-import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.core.service.live.model.Push;
 import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
@@ -234,7 +234,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 if (null != mLivingProgram) {
                     if (LiveStatusEnum.INIT == mLivingProgram.getLiveStatus() || LiveStatusEnum.PAUSE == mLivingProgram.getLiveStatus()) {
-                        LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram);
+                        LiveControlAPI.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram);
                     } else if (LiveStatusEnum.LIVING == mLivingProgram.getLiveStatus()) {
                         mPublishDacStat.onPauseEnd();
                     }
@@ -756,7 +756,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             }
 
             if (null != mLivingProgram) {
-                LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram, LiveStatusEnum.PAUSE);
+                LiveControlAPI.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), mLivingProgram, LiveStatusEnum.PAUSE);
             }
         }
 
@@ -774,7 +774,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
     private void stopLivingProgram(final Program program) {
         if (null != program && LiveStatusEnum.LIVING == program.getLiveStatus() || LiveStatusEnum.PAUSE == program.getLiveStatus()) {
-            LiveControlService.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program, LiveStatusEnum.STOPPED);
+            LiveControlAPI.getInstance().updateLiveStatusByCoTokenAsync(getApplicationContext(), program, LiveStatusEnum.STOPPED);
         }
     }
 
@@ -977,7 +977,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
                 program = new Program(username, mLiveTitle, System.currentTimeMillis());
                 try {
-                    program = ProgramService.getInstance().createProgram(usertoken, program);
+                    program = ProgramAPI.getInstance().createProgram(usertoken, program);
                     mLivingProgram = program;
                 } catch (LiveHttpException e) {
                     Log.w(TAG, e.toString());
@@ -997,20 +997,20 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
                 String liveToken = program.getLiveToken();
                 if (TextUtils.isEmpty(liveToken)) {
                     Log.d(TAG, "getLiveToken");
-                    liveToken = TokenService.getInstance().getLiveToken(usertoken, program.getId(), username);
+                    liveToken = TokenAPI.getInstance().getLiveToken(usertoken, program.getId(), username);
                 }
 
                 if (LiveStatusEnum.NOT_START == program.getLiveStatus()) {
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program);
+                    LiveControlAPI.getInstance().updateLiveStatusByLiveToken(liveToken, program);
                 }
 
                 if (LiveStatusEnum.PAUSE == program.getLiveStatus()) {
-                    LiveControlService.getInstance().updateLiveStatusByLiveToken(liveToken, program);
+                    LiveControlAPI.getInstance().updateLiveStatusByLiveToken(liveToken, program);
                 }
 
                 Log.d(TAG, "status: " + mLivingProgram.getLiveStatus());
 
-                Push push = MediaService.getInstance().getPushByLiveToken(program.getId(), liveToken);
+                Push push = MediaAPI.getInstance().getPushByLiveToken(program.getId(), liveToken);
 
                 mPublishDacStat.setPlayStartTime(push.getNowTime());
                 mPublishDacStat.setServerAddress(push.getAddress());
@@ -1056,7 +1056,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
             String token = UserManager.getInstance(getApplicationContext()).getToken();
 
             try {
-                List<Program> programs = ProgramService.getInstance().getUnfinishedPrograms(token, username);
+                List<Program> programs = ProgramAPI.getInstance().getUnfinishedPrograms(token, username);
 
                 if (null != programs && programs.size() > 0) {
                     return programs.get(0);
@@ -1095,7 +1095,7 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
 
             if (null != program && !TextUtils.isEmpty(coToken)) {
                 try {
-                    LiveAlive liveAlive = LiveControlService.getInstance().keepLiveAlive(coToken, program.getId());
+                    LiveAlive liveAlive = LiveControlAPI.getInstance().keepLiveAlive(coToken, program.getId());
 
                     return liveAlive;
                 } catch (LiveHttpException e) {

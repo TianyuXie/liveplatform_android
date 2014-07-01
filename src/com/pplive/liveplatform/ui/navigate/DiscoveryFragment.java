@@ -27,8 +27,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.model.Subject;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.live.model.Subject;
 import com.pplive.liveplatform.ui.ChannelActivity;
 import com.pplive.liveplatform.widget.SearchBarView;
 import com.pplive.liveplatform.widget.image.AsyncImageView;
@@ -115,7 +115,7 @@ public class DiscoveryFragment extends Fragment {
             List<Subject> list = null;
 
             try {
-                list = ProgramService.getInstance().getSubjects();
+                list = ProgramAPI.getInstance().getSubjects();
             } catch (Exception e) {
 
             }

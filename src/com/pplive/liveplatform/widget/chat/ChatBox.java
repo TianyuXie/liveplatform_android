@@ -20,8 +20,8 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
-import com.pplive.liveplatform.core.service.comment.model.FeedItem;
+import com.pplive.liveplatform.core.api.comment.model.FeedDetailList;
+import com.pplive.liveplatform.core.api.comment.model.FeedItem;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
 import com.pplive.liveplatform.core.task.Task.TaskListener;

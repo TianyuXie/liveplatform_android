@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.widget.image.AsyncImageView;

@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.task.user;
 
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.passport.PassportAPI;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -34,7 +34,7 @@ public class RegisterTask extends Task {
 
         boolean status = false;
         try {
-            status = PassportService.getInstance().registerByPhoneNumSimple(phoneNumber, password, checkCode);
+            status = PassportAPI.getInstance().registerByPhoneNumSimple(phoneNumber, password, checkCode);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, e.getMessage());
         }

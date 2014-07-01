@@ -8,9 +8,9 @@ import java.util.List;
 
 import android.text.TextUtils;
 
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -38,9 +38,9 @@ public class GetProgramTask extends Task {
         List<Program> data = null;
         try {
             if (TextUtils.isEmpty(token)) {
-                data = ProgramService.getInstance().getProgramsByUser(username);
+                data = ProgramAPI.getInstance().getProgramsByUser(username);
             } else {
-                data = ProgramService.getInstance().getProgramsByOwner(token, username);
+                data = ProgramAPI.getInstance().getProgramsByOwner(token, username);
             }
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, "ProgramService error");

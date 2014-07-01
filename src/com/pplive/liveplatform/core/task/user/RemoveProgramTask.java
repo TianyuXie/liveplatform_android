@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.task.user;
 
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.ProgramService;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -22,7 +22,7 @@ public class RemoveProgramTask extends Task {
         String token = context.getString(KEY_TOKEN);
         boolean response = false;
         try {
-            response = ProgramService.getInstance().deleteProgramById(token, pid);
+            response = ProgramAPI.getInstance().deleteProgramById(token, pid);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, "ProgramService error");
         }

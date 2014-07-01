@@ -15,11 +15,12 @@ import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
+import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Subject;
 import com.pplive.liveplatform.core.search.ProgramLoader;
 import com.pplive.liveplatform.core.search.ProgramLoader.LoadListener;
-import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.core.service.live.model.Subject;
 import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class ChannelActivity extends Activity {
 
@@ -36,6 +37,8 @@ public class ChannelActivity extends Activity {
     private Subject mSubject;
 
     private boolean mInit;
+
+    private RefreshDialog mRefreshDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,16 +81,18 @@ public class ChannelActivity extends Activity {
 
             @Override
             public void onLoadStart() {
+                mRefreshDialog.show();
             }
 
             @Override
             public void onLoadSucceed() {
+                mRefreshDialog.hide();
                 mContainer.onRefreshComplete();
-
             }
 
             @Override
             public void onLoadFailed() {
+                mRefreshDialog.hide();
                 mContainer.onRefreshComplete();
             }
         });
@@ -110,6 +115,7 @@ public class ChannelActivity extends Activity {
                 R.anim.home_gridview_flyin);
         mContainer.getRefreshableView().setLayoutAnimation(glac);
 
+        mRefreshDialog = new RefreshDialog(this);
     }
 
     @Override

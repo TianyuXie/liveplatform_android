@@ -15,7 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 
 public class AlarmCenter {
     static final String TAG = "_AlarmCenter";

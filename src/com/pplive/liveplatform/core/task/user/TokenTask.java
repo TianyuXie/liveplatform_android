@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.passport.PassportAPI;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -38,7 +38,7 @@ public class TokenTask extends Task {
         try {
             // check the token
             if (!TextUtils.isEmpty(token)) {
-                ProgramService.getInstance().getProgramsByOwner(token, username);
+                ProgramAPI.getInstance().getProgramsByOwner(token, username);
             } else {
                 mustUpdate = true;
             }
@@ -60,7 +60,7 @@ public class TokenTask extends Task {
             Log.d(TAG, "mustUpdate...");
             token = null;
             try {
-                token = PassportService.getInstance().login(username, pwd).getToken();
+                token = PassportAPI.getInstance().login(username, pwd).getToken();
             } catch (LiveHttpException e) {
                 // must relogin manually
                 return new TaskResult(TaskStatus.FAILED, "passportService failed");
@@ -77,7 +77,7 @@ public class TokenTask extends Task {
             if (!isThirdParty) {
                 String newToken = null;
                 try {
-                    newToken = PassportService.getInstance().login(username, pwd).getToken();
+                    newToken = PassportAPI.getInstance().login(username, pwd).getToken();
                 } catch (LiveHttpException e) {
                     Log.w(TAG, e.getErrorCode() + "|" + e.getMessage());
                     switch (e.getErrorCode()) {

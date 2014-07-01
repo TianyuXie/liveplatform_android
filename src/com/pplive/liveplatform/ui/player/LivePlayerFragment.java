@@ -28,7 +28,7 @@ import android.widget.ToggleButton;
 
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;

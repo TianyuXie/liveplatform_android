@@ -2,7 +2,7 @@ package com.pplive.liveplatform.core.task.player;
 
 import android.util.Log;
 
-import com.pplive.liveplatform.core.service.comment.PbarService;
+import com.pplive.liveplatform.core.api.comment.PbarAPI;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -32,7 +32,7 @@ public class PutFeedTask extends Task {
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         long feedId = -1;
         try {
-            feedId = PbarService.getInstance().putFeed(token, pid, content);
+            feedId = PbarAPI.getInstance().putFeed(token, pid, content);
         } catch (Exception e) {
             result.setStatus(TaskStatus.FAILED);
             result.setMessage("PbarService error");

@@ -5,10 +5,10 @@ import java.util.List;
 
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
-import com.pplive.liveplatform.core.service.live.SearchService.LiveStatusKeyword;
-import com.pplive.liveplatform.core.service.live.SearchService.SortKeyword;
-import com.pplive.liveplatform.core.service.live.model.FallList;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.SearchAPI.LiveStatusKeyword;
+import com.pplive.liveplatform.core.api.live.SearchAPI.SortKeyword;
+import com.pplive.liveplatform.core.api.live.model.FallList;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskContext;

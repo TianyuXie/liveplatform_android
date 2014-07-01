@@ -21,9 +21,9 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.ui.live.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.live.event.EventProgramSelected;
 import com.pplive.liveplatform.ui.live.event.EventReset;
@@ -249,7 +249,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
                         String token = UserManager.getInstance(mAttachedActivity).getToken();
                         Program program = new Program(username, title, starttime);
 
-                        program = ProgramService.getInstance().createProgram(token, program);
+                        program = ProgramAPI.getInstance().createProgram(token, program);
 
                         return program;
                     } catch (LiveHttpException e) {
