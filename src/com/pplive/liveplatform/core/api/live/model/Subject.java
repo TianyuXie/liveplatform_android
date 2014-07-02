@@ -14,7 +14,11 @@ public class Subject implements Serializable {
 
     int subject_id;
 
+    String href;
+
     int hasvod;
+
+    int isactivity;
 
     public String getSubjectName() {
         return subject;
@@ -32,8 +36,16 @@ public class Subject implements Serializable {
         return subject_id;
     }
 
+    public String getHyperlink() {
+        return href;
+    };
+
     public boolean hasVod() {
         return 1 == hasvod;
+    }
+
+    public boolean isActivity() {
+        return 1 == isactivity;
     }
 
 }

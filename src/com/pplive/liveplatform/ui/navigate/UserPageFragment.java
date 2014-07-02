@@ -35,6 +35,7 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pplive.android.image.CircularImageView;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
@@ -61,7 +62,6 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.widget.dialog.IconDialog;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.widget.image.RoundedImageView;
 import com.pplive.liveplatform.widget.refresh.RefreshListView;
 
 public class UserPageFragment extends Fragment {
@@ -108,7 +108,7 @@ public class UserPageFragment extends Fragment {
 
     private ImageButton mBtnSettings;
 
-    private RoundedImageView mUserIcon;
+    private CircularImageView mUserIcon;
 
     private RefreshListView mListView;
 
@@ -172,7 +172,7 @@ public class UserPageFragment extends Fragment {
         mListView.setOnUpdateListener(onUpdateListener);
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
-        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_user_icon);
+        mUserIcon = (CircularImageView) layout.findViewById(R.id.image_user_icon);
         mUserIcon.setOnClickListener(mOnIconClickListener);
 
         mNodataText = (TextView) layout.findViewById(R.id.text_userpage_nodata);

@@ -13,11 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.pplive.android.image.CircularImageView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.widget.attr.IHidable;
-import com.pplive.liveplatform.widget.image.CircularImageView;
 import com.pplive.liveplatform.widget.slide.SlidableContainer;
 
 public class SideBar extends LinearLayout implements SlidableContainer.OnSlideListener, IHidable {
@@ -87,11 +87,11 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
             } else {
-                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
+                //                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }
         } else {
             mNicknameText.setText("");
-            mUserIcon.setLocalImage(R.drawable.user_icon_login, true);
+            //            mUserIcon.setLocalImage(R.drawable.user_icon_login, true);
         }
     }
 
@@ -185,6 +185,5 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
     //    };
 
     public void release() {
-        mUserIcon.release();
     }
 }

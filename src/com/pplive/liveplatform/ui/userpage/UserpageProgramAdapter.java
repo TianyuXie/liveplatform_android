@@ -11,10 +11,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pplive.android.image.AsyncImageView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.util.TimeHelper;
-import com.pplive.liveplatform.widget.image.AsyncImageView;
 
 public class UserpageProgramAdapter extends BaseAdapter {
 

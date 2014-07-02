@@ -221,9 +221,12 @@ public class MediaAPI extends RESTfulAPI {
 
         int count = 0;
         float sum = 0;
+
+        String url = getNetSpeedUrl();
+
         for (int i = 0; i < num; ++i) {
 
-            float speed = getNetSpeed(data);
+            float speed = getNetSpeed(url, data);
             if (speed > 0) {
                 sum += speed;
                 count++;
@@ -237,9 +240,7 @@ public class MediaAPI extends RESTfulAPI {
         }
     }
 
-    public float getNetSpeed(final byte[] data) {
-
-        String url = getNetSpeedUrl();
+    public float getNetSpeed(String url, final byte[] data) {
 
         if (!TextUtils.isEmpty(url)) {
             String content = testNetSpeed(url, data);

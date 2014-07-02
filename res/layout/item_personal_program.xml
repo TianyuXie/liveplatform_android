@@ -30,7 +30,7 @@
         android:padding="10dp"
         android:tag="front" >
 
-        <com.pplive.liveplatform.widget.image.AsyncImageView
+        <com.pplive.android.image.AsyncImageView
             android:id="@+id/image_program_preview"
             android:layout_width="140dp"
             android:layout_height="106dp"

@@ -28,6 +28,7 @@ import com.fortysevendeg.swipelistview.SwipeListView;
 import com.fortysevendeg.swipelistview.SwipeListViewListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.pplive.android.image.CircularImageView;
 import com.pplive.android.pulltorefresh.PullToRefreshSwipeListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
@@ -51,7 +52,6 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.widget.dialog.IconDialog;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.widget.image.RoundedImageView;
 
 public class PersonalFragment extends Fragment {
 
@@ -69,7 +69,7 @@ public class PersonalFragment extends Fragment {
 
     private Activity mActivity;
 
-    private RoundedImageView mImageUserIcon;
+    private CircularImageView mImageUserIcon;
 
     private TextView mTextNickName;
 
@@ -303,7 +303,7 @@ public class PersonalFragment extends Fragment {
         mBtnSettings.setOnClickListener(mOnSettingsBtnClickListener);
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
-        mImageUserIcon = (RoundedImageView) layout.findViewById(R.id.image_user_icon);
+        mImageUserIcon = (CircularImageView) layout.findViewById(R.id.image_user_icon);
 
         mCameraIcon = layout.findViewById(R.id.image_camera);
         mCameraIcon.setOnClickListener(mOnIconClickListener);

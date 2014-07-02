@@ -17,8 +17,8 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.api.live.model.Subject;
-import com.pplive.liveplatform.core.search.ProgramLoader;
-import com.pplive.liveplatform.core.search.ProgramLoader.LoadListener;
+import com.pplive.liveplatform.core.search.ProgramSearchHelper;
+import com.pplive.liveplatform.core.search.ProgramSearchHelper.LoadListener;
 import com.pplive.liveplatform.widget.TopBarView;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
@@ -32,7 +32,7 @@ public class ChannelActivity extends Activity {
 
     private ProgramAdapter mAdapter;
 
-    private ProgramLoader mProgramLoader;
+    private ProgramSearchHelper mProgramLoader;
 
     private Subject mSubject;
 
@@ -76,7 +76,7 @@ public class ChannelActivity extends Activity {
         mAdapter = new ProgramAdapter(getApplicationContext());
         mContainer.setAdapter(mAdapter);
 
-        mProgramLoader = new ProgramLoader(mAdapter);
+        mProgramLoader = new ProgramSearchHelper(mAdapter);
         mProgramLoader.setLoadListener(new LoadListener() {
 
             @Override
@@ -128,6 +128,11 @@ public class ChannelActivity extends Activity {
 
         Subject subject = (Subject) intent.getSerializableExtra(Extra.KEY_SUBJECT);
         updateSubject(subject);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         if (!mInit) {
             mInit = true;

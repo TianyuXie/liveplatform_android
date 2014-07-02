@@ -13,8 +13,8 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
-import com.pplive.liveplatform.core.search.ProgramLoader;
-import com.pplive.liveplatform.core.search.ProgramLoader.LoadListener;
+import com.pplive.liveplatform.core.search.ProgramSearchHelper;
+import com.pplive.liveplatform.core.search.ProgramSearchHelper.LoadListener;
 import com.pplive.liveplatform.widget.TopBarView;
 
 public class SearchResultActivity extends Activity {
@@ -25,11 +25,11 @@ public class SearchResultActivity extends Activity {
 
     private TopBarView mTopBarView;
 
-    private PullToRefreshGridView mContainer;
+    private PullToRefreshGridView mProgramContainer;
 
-    private ProgramAdapter mAdapter;
+    private ProgramAdapter mProgramAdapter;
 
-    private ProgramLoader mProgramLoader;
+    private ProgramSearchHelper mProgramSearchHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,25 +46,25 @@ public class SearchResultActivity extends Activity {
             }
         });
 
-        mContainer = (PullToRefreshGridView) findViewById(R.id.program_container);
-        mContainer.setOnRefreshListener(new OnRefreshListener2<GridView>() {
+        mProgramContainer = (PullToRefreshGridView) findViewById(R.id.program_container);
+        mProgramContainer.setOnRefreshListener(new OnRefreshListener2<GridView>() {
 
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
-                mProgramLoader.refresh();
+                mProgramSearchHelper.refresh();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
-                mProgramLoader.append();
+                mProgramSearchHelper.append();
             }
         });
 
-        mAdapter = new ProgramAdapter(this);
-        mContainer.setAdapter(mAdapter);
+        mProgramAdapter = new ProgramAdapter(this);
+        mProgramContainer.setAdapter(mProgramAdapter);
 
-        mProgramLoader = new ProgramLoader(mAdapter);
-        mProgramLoader.setLoadListener(new LoadListener() {
+        mProgramSearchHelper = new ProgramSearchHelper(mProgramAdapter);
+        mProgramSearchHelper.setLoadListener(new LoadListener() {
 
             @Override
             public void onLoadStart() {
@@ -73,18 +73,18 @@ public class SearchResultActivity extends Activity {
 
             @Override
             public void onLoadSucceed() {
-                mContainer.onRefreshComplete();
+                mProgramContainer.onRefreshComplete();
             }
 
             @Override
             public void onLoadFailed() {
-                mContainer.onRefreshComplete();
+                mProgramContainer.onRefreshComplete();
             }
         });
 
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getApplicationContext(),
                 R.anim.home_gridview_flyin);
-        mContainer.getRefreshableView().setLayoutAnimation(glac);
+        mProgramContainer.getRefreshableView().setLayoutAnimation(glac);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SearchResultActivity extends Activity {
 
         mTopBarView.setTitle(getString(R.string.search_program_title_fmt, keyword));
 
-        mProgramLoader.searchByKeyword(keyword);
+        mProgramSearchHelper.searchByKeyword(keyword);
     }
 
 }

@@ -50,7 +50,7 @@ public class ProgramAPI extends RESTfulAPI {
     private static final String TEMPLATE_GET_SUBJECTS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/bk/subject/v2/pptv/subjects")
             .toString();
 
-    private static ProgramAPI sInstance = new ProgramAPI();
+    private static final ProgramAPI sInstance = new ProgramAPI();
 
     public static ProgramAPI getInstance() {
         return sInstance;

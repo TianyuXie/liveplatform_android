@@ -6,7 +6,7 @@
     android:paddingLeft="5dp"
     android:paddingRight="5dp" >
 
-    <com.pplive.liveplatform.widget.image.AsyncImageView
+    <com.pplive.android.image.AsyncImageView
         android:id="@+id/image_prelive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -4,13 +4,12 @@ import java.io.File;
 
 import android.app.Application;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.pplive.media.MeetSDK;
 
-import com.nostra13.universalimageloader.cache.disc.DiscCacheAware;
-import com.nostra13.universalimageloader.cache.disc.impl.FileCountLimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.DiskCache;
+import com.nostra13.universalimageloader.cache.disc.impl.ext.LruDiscCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
-import com.nostra13.universalimageloader.cache.memory.MemoryCacheAware;
+import com.nostra13.universalimageloader.cache.memory.MemoryCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LimitedAgeMemoryCache;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -62,10 +61,10 @@ public class LiveApplication extends Application {
     }
 
     private void initImageLoader(Context context) {
-        MemoryCacheAware<String, Bitmap> memoryCache = new LimitedAgeMemoryCache<String, Bitmap>(new LruMemoryCache(2 * 1024 * 1024), 5 * 60);
-        DiscCacheAware discCache = new FileCountLimitedDiscCache(new File(DirManager.getImageCachePath()), new Md5FileNameGenerator(), 200);
+        MemoryCache memoryCache = new LimitedAgeMemoryCache(new LruMemoryCache(2 * 1024 * 1024), 5 * 60);
+        DiskCache diskCache = new LruDiscCache(new File(DirManager.getImageCachePath()), new Md5FileNameGenerator(), 200);
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(4)
-                .denyCacheImageMultipleSizesInMemory().tasksProcessingOrder(QueueProcessingType.LIFO).memoryCache(memoryCache).discCache(discCache).build();
+                .denyCacheImageMultipleSizesInMemory().tasksProcessingOrder(QueueProcessingType.LIFO).memoryCache(memoryCache).diskCache(diskCache).build();
         ImageLoader.getInstance().init(config);
     }
 

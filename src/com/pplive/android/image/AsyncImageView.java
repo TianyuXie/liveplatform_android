@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.widget.image;
+package com.pplive.android.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageLoadingListener;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.pplive.liveplatform.Constants;
 
 public class AsyncImageView extends ImageView {
@@ -18,8 +18,6 @@ public class AsyncImageView extends ImageView {
     protected static final DisplayImageOptions DEFALUT_DISPLAY_OPTIONS = new DisplayImageOptions.Builder().bitmapConfig(Bitmap.Config.RGB_565).build();
 
     protected ImageLoader mImageLoader = ImageLoader.getInstance();
-
-    protected String mUrl;
 
     public AsyncImageView(Context context, AttributeSet attrs) {
         this(context, attrs, 0 /* defStyle */);
@@ -42,11 +40,11 @@ public class AsyncImageView extends ImageView {
     }
 
     public void setImageAsync(String imageUri, int defaultImage, ImageLoadingListener listener) {
-        boolean cacheOnDisc = imageUri != null && !imageUri.startsWith(Constants.LIVE_IMGAE_PREFIX);
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(DEFALUT_DISPLAY_OPTIONS).cacheInMemory(true).cacheOnDisc(cacheOnDisc);
+        boolean cacheOnDisk = imageUri != null && !imageUri.startsWith(Constants.LIVE_IMGAE_PREFIX);
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(DEFALUT_DISPLAY_OPTIONS).cacheInMemory(true).cacheOnDisk(cacheOnDisk);
 
         if (defaultImage > 0) {
-            builder.showStubImage(defaultImage).showImageForEmptyUri(defaultImage).showImageOnFail(defaultImage);
+            builder.showImageOnLoading(defaultImage).showImageForEmptyUri(defaultImage).showImageOnFail(defaultImage);
         }
 
         setImageAsync(imageUri, builder.build(), listener);
@@ -60,15 +58,13 @@ public class AsyncImageView extends ImageView {
 
     public void setLocalImage(int resid) {
         setImageResource(resid);
-        mUrl = null;
     }
 
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
         if (imageUri == null) {
-            setLocalImage(options.getImageForEmptyUri());
-        } else if (!imageUri.equals(mUrl)) {
+
+        } else {
             Log.d(TAG, "imageUri:" + imageUri);
-            mUrl = imageUri;
             mImageLoader.displayImage(imageUri, this, options, listener);
         }
     }

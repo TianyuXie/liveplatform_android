@@ -25,13 +25,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pplive.android.image.AsyncImageView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.live.model.Subject;
 import com.pplive.liveplatform.ui.ChannelActivity;
 import com.pplive.liveplatform.widget.SearchBarView;
-import com.pplive.liveplatform.widget.image.AsyncImageView;
 
 public class DiscoveryFragment extends Fragment {
 

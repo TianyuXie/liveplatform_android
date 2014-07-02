@@ -16,7 +16,7 @@ import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 import com.pplive.liveplatform.core.task.home.SearchTask;
 
-public class ProgramLoader {
+public class ProgramSearchHelper {
 
     private static final int DEFAULT_FALL_COUNT = 16;
 
@@ -80,7 +80,7 @@ public class ProgramLoader {
 
     };
 
-    public ProgramLoader(RefreshAdapter<Program> adapter) {
+    public ProgramSearchHelper(RefreshAdapter<Program> adapter) {
         mAdapter = adapter;
     }
 
