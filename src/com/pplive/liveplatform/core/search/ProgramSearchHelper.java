@@ -163,6 +163,10 @@ public class ProgramSearchHelper {
         task.execute(taskContext);
     }
 
+    public String getKeyword() {
+        return mKeyword;
+    }
+
     private void onLoadStart() {
         if (null != mLoadListener) {
             mLoadListener.onLoadStart();

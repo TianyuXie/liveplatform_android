@@ -136,6 +136,15 @@ public class ChannelActivity extends Activity {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (mRefreshDialog.isShowing()) {
+            mRefreshDialog.dismiss();
+        }
+    }
+
     public void updateSubject(Subject subject) {
         if (null != subject) {
 

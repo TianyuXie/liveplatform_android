@@ -102,6 +102,15 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (mRefreshDialog.isShowing()) {
+            mRefreshDialog.dismiss();
+        }
+    }
+
     class AsyncTaskGetRecommendProgramList extends AsyncTask<Void, Void, List<Program>> {
 
         @Override

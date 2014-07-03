@@ -335,15 +335,6 @@ public class PersonalFragment extends Fragment {
         init();
     }
 
-    private void init() {
-        mOwner = isLogin(mUsername);
-
-        mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
-        mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
-        mTextNickName.setText(mNickName);
-        mImageUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -352,6 +343,24 @@ public class PersonalFragment extends Fragment {
 
         mProgramContainer.closeOpenedItem();
         refreshData();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (mRefreshDialog.isShowing()) {
+            mRefreshDialog.dismiss();
+        }
+    }
+
+    private void init() {
+        mOwner = isLogin(mUsername);
+
+        mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
+        mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
+        mTextNickName.setText(mNickName);
+        mImageUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
     }
 
     private void refreshData() {

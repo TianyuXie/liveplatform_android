@@ -33,7 +33,6 @@ import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.live.model.Subject;
 import com.pplive.liveplatform.ui.ChannelActivity;
 import com.pplive.liveplatform.ui.SearchActivity;
-import com.pplive.liveplatform.widget.SearchBarView;
 
 public class DiscoveryFragment extends Fragment {
 

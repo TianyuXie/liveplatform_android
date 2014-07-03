@@ -73,7 +73,7 @@ public class SearchAPI extends RESTfulAPI {
 
     private FallList<Program> searchProgram(String keyword, String tag, String subjectId, String sort, String liveStatus, String nextToken, int fallCount)
             throws LiveHttpException {
-        Log.d(TAG, "keywords: " + keyword + ";tag: " + tag + ";subjectId: " + subjectId + "; sort: " + sort + "; liveStatus: " + liveStatus + "; nextToken: "
+        Log.d(TAG, "keywords: " + keyword + "; tag: " + tag + "; subjectId: " + subjectId + "; sort: " + sort + "; liveStatus: " + liveStatus + "; nextToken: "
                 + nextToken + "; fallCount: " + fallCount);
 
         ProgramFallListResp resp = null;

@@ -21,5 +21,8 @@
     <string name="search_history_keyword">搜索记录</string>
     <string name="search_program_title_fmt"><![CDATA[\"%s\"相关内容的搜索结果]]></string>
     <string name="search_user_title_fmt"><![CDATA[\"%s\"相关用户的搜索结果]]></string>
+    
+    <string name="search_program">内容</string>
+    <string name="search_user">用户</string>
 
 </resources>

@@ -3,10 +3,12 @@ package com.pplive.liveplatform.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.GridLayoutAnimationController;
 import android.widget.GridView;
+import android.widget.RadioGroup;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
@@ -32,6 +34,8 @@ public class SearchResultActivity extends Activity {
 
     private ProgramSearchHelper mProgramSearchHelper;
 
+    private RadioGroup mRadioGroup;
+
     private RefreshDialog mRefreshDialog;
 
     @Override
@@ -54,12 +58,12 @@ public class SearchResultActivity extends Activity {
 
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
-                mProgramSearchHelper.refresh();
+                refreshProgram();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
-                mProgramSearchHelper.append();
+                appendProgram();
             }
         });
 
@@ -87,6 +91,17 @@ public class SearchResultActivity extends Activity {
             }
         });
 
+        mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Log.d(TAG, "checkedId: " + checkedId);
+
+                updateTitle();
+            }
+        });
+
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getApplicationContext(),
                 R.anim.home_gridview_flyin);
         mProgramContainer.getRefreshableView().setLayoutAnimation(glac);
@@ -108,9 +123,53 @@ public class SearchResultActivity extends Activity {
         Intent intent = getIntent();
         String keyword = intent.getStringExtra(KEY_SEARCH_KEY_WORD);
 
-        mTopBarView.setTitle(getString(R.string.search_program_title_fmt, keyword));
+        updateTitle(mRadioGroup.getCheckedRadioButtonId(), keyword);
+        searchProgramByKeyword(keyword);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mRefreshDialog.isShowing()) {
+            mRefreshDialog.dismiss();
+        }
+    }
+
+    private void updateTitle() {
+        updateTitle(mProgramSearchHelper.getKeyword());
+    }
+
+    private void updateTitle(String keyword) {
+        updateTitle(mRadioGroup.getCheckedRadioButtonId(), keyword);
+    }
+
+    private void updateTitle(int checkedId, String keyword) {
+        int resId = mapViewIdToResId(checkedId);
+
+        mTopBarView.setTitle(getString(resId, keyword));
+    }
+
+    private void searchProgramByKeyword(String keyword) {
         mProgramSearchHelper.searchByKeyword(keyword);
+    }
+
+    private void refreshProgram() {
+        mProgramSearchHelper.refresh();
+    }
+
+    private void appendProgram() {
+        mProgramSearchHelper.append();
+    }
+
+    private int mapViewIdToResId(int id) {
+        if (R.id.radio_btn_program == id) {
+            return R.string.search_program_title_fmt;
+        } else if (R.id.radio_btn_user == id) {
+            return R.string.search_user_title_fmt;
+        }
+
+        return R.string.search_program_title_fmt;
     }
 
 }

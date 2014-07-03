@@ -25,21 +25,21 @@
         android:orientation="horizontal" >
 
         <RadioButton
-            android:id="@+id/radio_btn_recommend"
+            android:id="@+id/radio_btn_program"
             style="@style/Widget.RadioButton.Transparent.Home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/search_radio_btn_left_bg"
             android:checked="true"
-            android:text="@string/home_tab_recommend" />
+            android:text="@string/search_program" />
 
         <RadioButton
-            android:id="@+id/radio_btn_focuson"
+            android:id="@+id/radio_btn_user"
             style="@style/Widget.RadioButton.Transparent.Home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/search_radio_btn_right_bg"
-            android:text="@string/home_tab_focuson" />
+            android:text="@string/search_user" />
     </RadioGroup>
 
     <com.handmark.pulltorefresh.library.PullToRefreshGridView
