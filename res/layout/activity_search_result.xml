@@ -50,7 +50,6 @@
         android:layout_below="@+id/radio_group"
         android:listSelector="@android:color/transparent"
         android:numColumns="2"
-        android:visibility="gone"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         ptr:ptrMode="both" />
 
@@ -60,6 +59,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/radio_group"
+        android:visibility="gone"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         ptr:ptrMode="both" />
 

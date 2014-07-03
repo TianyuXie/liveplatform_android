@@ -7,8 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.pplive.liveplatform.core.api.RestTemplateFactory;
 
 public abstract class RESTfulAPI {

@@ -2,26 +2,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/app_bg"
+    android:background="#DBDBDB"
     tools:context=".ConversationActivity" >
 
     <RelativeLayout
         android:id="@+id/umeng_fb_conversation_header"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/top_bar_height"
         android:layout_alignParentTop="true"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp" >
+        android:background="@color/top_bar_bg" >
 
         <Button
             android:id="@+id/umeng_fb_back"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignParentRight="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/umeng_fb_btn_back_bg"
-            android:padding="10dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/btn_back"
             android:visibility="visible" />
 
         <TextView
@@ -30,33 +28,37 @@
             android:layout_centerInParent="true"
             android:text="@string/umeng_fb_title"
             android:textColor="#ffffff"
-            android:textSize="25sp" />
+            android:textSize="24sp" />
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/umeng_fb_conversation_contact_entry"
         android:layout_width="fill_parent"
-        android:layout_height="40dp"
-        android:layout_below="@id/umeng_fb_conversation_header"
-        android:background="@color/umeng_fb_color_btn_pressed" >
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/umeng_fb_conversation_header"
+        android:layout_marginBottom="1dp"
+        android:background="#FFFFFF"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp" >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:paddingLeft="5dp"
+            android:layout_marginLeft="20dp"
             android:text="@string/umeng_fb_contact_info"
-            android:textColor="#ffffff"
-            android:textSize="18sp" />
+            android:textColor="#018FE1"
+            android:textSize="20sp" />
 
         <ImageView
-            android:layout_width="20dp"
-            android:layout_height="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
+            android:layout_marginRight="10dp"
             android:contentDescription="@null"
+            android:padding="10dp"
             android:src="@drawable/umeng_fb_arrow_right" />
     </RelativeLayout>
 
@@ -65,7 +67,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/umeng_fb_conversation_contact_entry"
-        android:background="#272727" >
+        android:background="#DBDBDB" >
 
         <ListView
             android:id="@+id/umeng_fb_reply_list"
@@ -73,8 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_above="@+id/umeng_fb_reply_content_wrapper"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/transparent"
+            android:background="#FAFAFA"
             android:cacheColorHint="@android:color/transparent"
             android:choiceMode="none"
             android:divider="@null"
@@ -88,28 +89,24 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="#222222"
+            android:layout_marginTop="1dp"
+            android:background="#FFFFFF"
             android:padding="10dp" >
 
             <Button
                 android:id="@+id/umeng_fb_send"
                 style="@android:style/Widget.Button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:background="#222222"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="5dp"
-                android:text="@string/umeng_fb_send"
-                android:textColor="#1495F7" />
+                android:background="@drawable/btn_fb_send" />
 
             <EditText
                 android:id="@+id/umeng_fb_reply_content"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@id/umeng_fb_send"
                 android:background="@drawable/umeng_fb_reply_content_bg"
@@ -118,7 +115,7 @@
                 android:paddingLeft="25dp"
                 android:paddingRight="5dp"
                 android:paddingTop="5dp"
-                android:textColor="@color/white" />
+                android:textColor="#000000" />
         </RelativeLayout>
     </RelativeLayout>
 

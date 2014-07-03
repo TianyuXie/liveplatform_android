@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/app_bg"
+    android:background="@color/settings_bg"
     android:orientation="vertical" >
 
     <com.pplive.liveplatform.widget.TopBarView
@@ -10,33 +10,36 @@
         android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
+        android:background="@color/top_bar_bg"
+        live:left_btn_src="@drawable/btn_back"
+        live:show_left_btn="true"
+        live:show_title="true"
         live:text="@string/settings_quality" />
 
     <RadioGroup
         android:id="@+id/group_quality"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" >
+        android:background="@color/border_bg"
+        android:orientation="vertical" >
 
         <RadioButton
             android:id="@+id/quality_low"
-            style="@style/settings_quality_setting"
+            style="@style/Widget.RadioButton.Transparent.Setting.Quality"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_quality_low" />
 
         <RadioButton
             android:id="@+id/quality_normal"
-            style="@style/settings_quality_setting"
+            style="@style/Widget.RadioButton.Transparent.Setting.Quality"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_quality_normal" />
 
         <RadioButton
             android:id="@+id/quality_high"
-            style="@style/settings_quality_setting"
+            style="@style/Widget.RadioButton.Transparent.Setting.Quality"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/settings_quality_high" />

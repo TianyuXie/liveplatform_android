@@ -2,6 +2,7 @@ package com.pplive.android.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.ImageView;
@@ -50,21 +51,9 @@ public class AsyncImageView extends ImageView {
         setImageAsync(imageUri, builder.build(), listener);
     }
 
-    @Override
-    @Deprecated
-    public void setImageResource(int resId) {
-        super.setImageResource(resId);
-    }
-
-    public void setLocalImage(int resid) {
-        setImageResource(resid);
-    }
-
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
-        if (imageUri == null) {
 
-        } else {
-            Log.d(TAG, "imageUri:" + imageUri);
+        if (!TextUtils.isEmpty(imageUri)) {
             mImageLoader.displayImage(imageUri, this, options, listener);
         }
     }

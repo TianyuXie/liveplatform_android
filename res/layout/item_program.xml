@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:padding="5dp" >
 
     <com.pplive.android.image.AsyncImageView
         android:id="@+id/image_program_preview"
@@ -10,7 +11,8 @@
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:contentDescription="@null"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/program_default_image" />
 
     <TextView
         android:id="@+id/text_date"

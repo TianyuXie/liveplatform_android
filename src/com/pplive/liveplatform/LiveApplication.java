@@ -62,7 +62,7 @@ public class LiveApplication extends Application {
 
     private void initImageLoader(Context context) {
         MemoryCache memoryCache = new LimitedAgeMemoryCache(new LruMemoryCache(2 * 1024 * 1024), 5 * 60);
-        DiskCache diskCache = new LruDiscCache(new File(DirManager.getImageCachePath()), new Md5FileNameGenerator(), 200);
+        DiskCache diskCache = new LruDiscCache(new File(DirManager.getImageCachePath()), new Md5FileNameGenerator(), 1000);
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(context).threadPriority(Thread.NORM_PRIORITY - 1).threadPoolSize(4)
                 .denyCacheImageMultipleSizesInMemory().tasksProcessingOrder(QueueProcessingType.LIFO).memoryCache(memoryCache).diskCache(diskCache).build();
         ImageLoader.getInstance().init(config);

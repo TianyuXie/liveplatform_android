@@ -16,6 +16,7 @@ import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.search.ProgramSearchHelper;
 import com.pplive.liveplatform.core.search.ProgramSearchHelper.LoadListener;
 import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class SearchResultActivity extends Activity {
 
@@ -30,6 +31,8 @@ public class SearchResultActivity extends Activity {
     private ProgramAdapter mProgramAdapter;
 
     private ProgramSearchHelper mProgramSearchHelper;
+
+    private RefreshDialog mRefreshDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +71,18 @@ public class SearchResultActivity extends Activity {
 
             @Override
             public void onLoadStart() {
-
+                mRefreshDialog.show();
             }
 
             @Override
             public void onLoadSucceed() {
+                mRefreshDialog.hide();
                 mProgramContainer.onRefreshComplete();
             }
 
             @Override
             public void onLoadFailed() {
+                mRefreshDialog.hide();
                 mProgramContainer.onRefreshComplete();
             }
         });
@@ -85,6 +90,8 @@ public class SearchResultActivity extends Activity {
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getApplicationContext(),
                 R.anim.home_gridview_flyin);
         mProgramContainer.getRefreshableView().setLayoutAnimation(glac);
+
+        mRefreshDialog = new RefreshDialog(this);
     }
 
     @Override

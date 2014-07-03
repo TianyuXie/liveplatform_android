@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -31,6 +32,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.live.model.Subject;
 import com.pplive.liveplatform.ui.ChannelActivity;
+import com.pplive.liveplatform.ui.SearchActivity;
 import com.pplive.liveplatform.widget.SearchBarView;
 
 public class DiscoveryFragment extends Fragment {
@@ -38,8 +40,6 @@ public class DiscoveryFragment extends Fragment {
     static final String TAG = DiscoveryFragment.class.getSimpleName();
 
     private Activity mActivity;
-
-    private SearchBarView mSearchTopBarView;
 
     private PullToRefreshListView mListViewChannel;
 
@@ -64,9 +64,6 @@ public class DiscoveryFragment extends Fragment {
 
         View layout = inflater.inflate(R.layout.fragment_discovery, container, false);
 
-        mSearchTopBarView = (SearchBarView) layout.findViewById(R.id.search_top_bar);
-        mSearchTopBarView.setTitle(R.string.navbar_discover);
-
         mListViewChannel = (PullToRefreshListView) layout.findViewById(R.id.listview_channel);
 
         mListViewChannel.setOnPullEventListener(new OnPullEventListener<ListView>() {
@@ -84,6 +81,16 @@ public class DiscoveryFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(mActivity, ChannelActivity.class);
                 intent.putExtra(Extra.KEY_SUBJECT, mAdapter.getItem(position));
+                startActivity(intent);
+            }
+        });
+
+        EditText searchInput = (EditText) layout.findViewById(R.id.search_input_bar_edit_view);
+        searchInput.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, SearchActivity.class);
                 startActivity(intent);
             }
         });

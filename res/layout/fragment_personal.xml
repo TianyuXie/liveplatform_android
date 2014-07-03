@@ -59,6 +59,7 @@
         android:id="@+id/program_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:divider="@null"
         android:listSelector="@android:color/transparent"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         swipe:swipeActionLeft="reveal"

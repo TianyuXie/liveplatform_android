@@ -28,7 +28,7 @@
     <string name="settings_quality_high">高清</string>
 
     <color name="settings_table_bg">#FF151515</color>
-    <color name="settings_text">#FF919191</color>
+    <color name="settings_text_color">#FF919191</color>
     <color name="settings_logout_bg">#FFD92B2B</color>
     <color name="settings_version">#FF676767</color>
     <color name="settings_user">#FF1A1A1A</color>
@@ -39,7 +39,7 @@
         <item name="android:layout_height">fill_parent</item>
         <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">12dp</item>
-        <item name="android:textColor">@color/settings_text</item>
+        <item name="android:textColor">@color/settings_text_color</item>
         <item name="android:textSize">16sp</item>
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">middle</item>
@@ -48,14 +48,16 @@
     <style name="settings_tablelayout">
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">15dp</item>
+        <item name="android:layout_marginBottom">30dp</item>
+        <item name="android:paddingTop">1dp</item>
+        <item name="android:background">@color/border_bg</item>
         <item name="android:shrinkColumns">0</item>
         <item name="android:stretchColumns">0</item>
     </style>
 
     <style name="settings_tablerow">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:background">@color/settings_table_bg</item>
+        <item name="android:background">@color/white</item>
         <item name="android:layout_marginBottom">2dp</item>
         <item name="android:paddingBottom">15dp</item>
         <item name="android:paddingTop">15dp</item>
@@ -63,7 +65,7 @@
 
     <style name="settings_tablerow_switcher">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:background">@color/settings_table_bg</item>
+        <item name="android:background">@color/white</item>
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingTop">8dp</item>
@@ -84,16 +86,16 @@
         <item name="android:src">@drawable/settings_arrow_right</item>
     </style>
 
-    <style name="settings_quality_setting" parent="@style/Widget.RadioButton.Transparent">
-        <item name="android:layout_marginBottom">2dp</item>
+    <style name="Widget.RadioButton.Transparent.Setting.Quality" parent="@style/Widget.RadioButton.Transparent">
+        <item name="android:layout_marginBottom">1dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:paddingRight">10dp</item>
-        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingLeft">30dp</item>
         <item name="android:gravity">left</item>
         <item name="android:textSize">20sp</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@color/settings_table_bg</item>
+        <item name="android:textColor">@color/settings_text_color</item>
+        <item name="android:background">@color/white</item>
     </style>
 
 </resources>

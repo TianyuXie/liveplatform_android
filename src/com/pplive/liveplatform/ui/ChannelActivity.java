@@ -128,11 +128,6 @@ public class ChannelActivity extends Activity {
 
         Subject subject = (Subject) intent.getSerializableExtra(Extra.KEY_SUBJECT);
         updateSubject(subject);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
 
         if (!mInit) {
             mInit = true;

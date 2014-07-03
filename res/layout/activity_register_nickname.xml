@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_error"
             android:layout_marginTop="10dp"
-            android:background="@drawable/btn_confirm_bg"
+            android:background="@drawable/btn_confirm"
             android:enabled="false"
             android:text="@string/btn_confirm"
             android:textColor="@color/btn_confirm_color"

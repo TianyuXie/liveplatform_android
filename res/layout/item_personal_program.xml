@@ -37,7 +37,8 @@
             android:layout_marginRight="20dp"
             android:adjustViewBounds="true"
             android:contentDescription="@string/blank"
-            android:scaleType="fitXY" />
+            android:scaleType="fitXY"
+            android:src="@drawable/program_default_image" />
 
         <TextView
             android:id="@+id/text_program_title"

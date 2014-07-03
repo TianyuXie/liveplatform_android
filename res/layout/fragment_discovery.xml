@@ -4,12 +4,35 @@
     android:layout_height="fill_parent"
     android:background="@color/home_fragment_body_bg" >
 
-    <com.pplive.liveplatform.widget.SearchBarView
+    <RelativeLayout
         android:id="@+id/search_top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
-        android:layout_alignParentTop="true"
-        android:background="@color/app_bg" />
+        android:background="@color/top_bar_bg"
+        android:padding="10dp" >
+
+        <EditText
+            android:id="@+id/search_input_bar_edit_view"
+            style="@style/Widget.EditText.Input.Search"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:focusable="false"
+            android:hint="@string/search_hint_text"
+            android:imeOptions="actionSearch"
+            android:inputType="none" />
+
+        <ImageButton
+            android:id="@+id/search_input_bar_search_btn"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/search_input_bar_edit_view"
+            android:layout_centerVertical="true"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_search" />
+    </RelativeLayout>
 
     <com.handmark.pulltorefresh.library.PullToRefreshListView
         xmlns:ptr="http://schemas.android.com/apk/res-auto"

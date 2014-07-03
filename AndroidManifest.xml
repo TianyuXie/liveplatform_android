@@ -212,7 +212,8 @@
         <activity
             android:name="com.umeng.fb.ContactActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar" >
+            android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
 
         <!-- Service -->
