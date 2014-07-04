@@ -7,16 +7,22 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.GridLayoutAnimationController;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
-import com.pplive.liveplatform.core.search.ProgramSearchHelper;
-import com.pplive.liveplatform.core.search.ProgramSearchHelper.LoadListener;
+import com.pplive.liveplatform.adapter.UserAdapter;
+import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.search.BaseSearchHelper.LoadListener;
+import com.pplive.liveplatform.core.search.SearchProgramHelper;
+import com.pplive.liveplatform.core.search.SearchUserHelper;
 import com.pplive.liveplatform.widget.TopBarView;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
@@ -32,11 +38,19 @@ public class SearchResultActivity extends Activity {
 
     private ProgramAdapter mProgramAdapter;
 
-    private ProgramSearchHelper mProgramSearchHelper;
+    private SearchProgramHelper mSearchProgramHelper;
+
+    private PullToRefreshListView mUserContainer;
+
+    private UserAdapter mUserAdapter;
+
+    private SearchUserHelper mSearchUserHelper;
 
     private RadioGroup mRadioGroup;
 
     private RefreshDialog mRefreshDialog;
+
+    private String mKeyword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,25 +67,51 @@ public class SearchResultActivity extends Activity {
             }
         });
 
+        mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
+        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Log.d(TAG, "checkedId: " + checkedId);
+
+                updateTitle();
+                search();
+            }
+        });
+
         mProgramContainer = (PullToRefreshGridView) findViewById(R.id.program_container);
         mProgramContainer.setOnRefreshListener(new OnRefreshListener2<GridView>() {
 
             @Override
             public void onPullDownToRefresh(PullToRefreshBase<GridView> refreshView) {
-                refreshProgram();
+                mSearchProgramHelper.refresh();
             }
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
-                appendProgram();
+                mSearchUserHelper.append();
+            }
+        });
+
+        mProgramContainer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (null != mProgramAdapter) {
+                    Program program = mProgramAdapter.getItem(position);
+
+                    Intent intent = new Intent(getApplicationContext(), LivePlayerActivity.class);
+                    intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
+                    startActivity(intent);
+                }
             }
         });
 
         mProgramAdapter = new ProgramAdapter(this);
         mProgramContainer.setAdapter(mProgramAdapter);
 
-        mProgramSearchHelper = new ProgramSearchHelper(mProgramAdapter);
-        mProgramSearchHelper.setLoadListener(new LoadListener() {
+        mSearchProgramHelper = new SearchProgramHelper(mProgramAdapter);
+        mSearchProgramHelper.setLoadListener(new LoadListener() {
 
             @Override
             public void onLoadStart() {
@@ -91,20 +131,47 @@ public class SearchResultActivity extends Activity {
             }
         });
 
-        mRadioGroup = (RadioGroup) findViewById(R.id.radio_group);
-        mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                Log.d(TAG, "checkedId: " + checkedId);
-
-                updateTitle();
-            }
-        });
-
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getApplicationContext(),
                 R.anim.home_gridview_flyin);
         mProgramContainer.getRefreshableView().setLayoutAnimation(glac);
+
+        mUserContainer = (PullToRefreshListView) findViewById(R.id.user_container);
+        mUserContainer.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+
+            @Override
+            public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
+                mSearchUserHelper.refresh();
+            }
+
+            @Override
+            public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
+                mSearchUserHelper.append();
+            }
+        });
+
+        mUserAdapter = new UserAdapter(this);
+        mUserContainer.setAdapter(mUserAdapter);
+
+        mSearchUserHelper = new SearchUserHelper(mUserAdapter);
+        mSearchUserHelper.setLoadListener(new LoadListener() {
+
+            @Override
+            public void onLoadStart() {
+                mRefreshDialog.show();
+            }
+
+            @Override
+            public void onLoadSucceed() {
+                mRefreshDialog.hide();
+                mUserContainer.onRefreshComplete();
+            }
+
+            @Override
+            public void onLoadFailed() {
+                mRefreshDialog.hide();
+                mUserContainer.onRefreshComplete();
+            }
+        });
 
         mRefreshDialog = new RefreshDialog(this);
     }
@@ -121,10 +188,10 @@ public class SearchResultActivity extends Activity {
         super.onResume();
 
         Intent intent = getIntent();
-        String keyword = intent.getStringExtra(KEY_SEARCH_KEY_WORD);
+        mKeyword = intent.getStringExtra(KEY_SEARCH_KEY_WORD);
 
-        updateTitle(mRadioGroup.getCheckedRadioButtonId(), keyword);
-        searchProgramByKeyword(keyword);
+        updateTitle();
+        search();
     }
 
     @Override
@@ -137,29 +204,9 @@ public class SearchResultActivity extends Activity {
     }
 
     private void updateTitle() {
-        updateTitle(mProgramSearchHelper.getKeyword());
-    }
+        int resId = mapViewIdToResId(mRadioGroup.getCheckedRadioButtonId());
 
-    private void updateTitle(String keyword) {
-        updateTitle(mRadioGroup.getCheckedRadioButtonId(), keyword);
-    }
-
-    private void updateTitle(int checkedId, String keyword) {
-        int resId = mapViewIdToResId(checkedId);
-
-        mTopBarView.setTitle(getString(resId, keyword));
-    }
-
-    private void searchProgramByKeyword(String keyword) {
-        mProgramSearchHelper.searchByKeyword(keyword);
-    }
-
-    private void refreshProgram() {
-        mProgramSearchHelper.refresh();
-    }
-
-    private void appendProgram() {
-        mProgramSearchHelper.append();
+        mTopBarView.setTitle(getString(resId, mKeyword));
     }
 
     private int mapViewIdToResId(int id) {
@@ -170,6 +217,24 @@ public class SearchResultActivity extends Activity {
         }
 
         return R.string.search_program_title_fmt;
+    }
+
+    private void search() {
+        int checkedId = mRadioGroup.getCheckedRadioButtonId();
+        if (R.id.radio_btn_program == checkedId) {
+            mUserContainer.setVisibility(View.GONE);
+
+            mProgramContainer.setVisibility(View.VISIBLE);
+
+            mSearchProgramHelper.searchByKeyword(mKeyword);
+        } else if (R.id.radio_btn_user == checkedId) {
+
+            mProgramContainer.setVisibility(View.GONE);
+
+            mUserContainer.setVisibility(View.VISIBLE);
+
+            mSearchUserHelper.searchByKeyword(mKeyword);
+        }
     }
 
 }

@@ -19,7 +19,7 @@ public class User implements IUser {
     }
     
     @Override
-    public String getNickname() {
+    public String getDisplayName() {
         
         return nickName;
     }

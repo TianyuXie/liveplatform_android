@@ -48,7 +48,7 @@ public class UpdateInfoTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
 
-        boolean changeNick = !StringUtil.isNullOrEmpty(nickname) && !nickname.equals(userinfo.getNickname());
+        boolean changeNick = !StringUtil.isNullOrEmpty(nickname) && !nickname.equals(userinfo.getDisplayName());
         boolean changeIcon = !StringUtil.isNullOrEmpty(iconurl) && !iconurl.equals(userinfo.getIcon());
         if (changeNick) {
             Log.d(TAG, "setNickname");

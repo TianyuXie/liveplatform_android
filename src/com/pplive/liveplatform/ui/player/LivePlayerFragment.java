@@ -253,7 +253,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mProgram = program;
         ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
         mIconWrapper.setVisibility(View.INVISIBLE);
-        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default);
+        mUserIcon.setImageAsync(program.getOwnerIcon());
     }
 
     @Override
@@ -557,7 +557,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onRotateMiddle() {
             mFinishText.setText("");
-            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default);
+            mUserIcon.setImageAsync(mProgram.getOwnerIcon());
         }
     };
 

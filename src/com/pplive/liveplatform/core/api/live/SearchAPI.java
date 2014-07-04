@@ -27,7 +27,7 @@ public class SearchAPI extends RESTfulAPI {
             .toString();
 
     private static final String TEMPLATE_SEARCH_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
-            "/search/user/v2/pptv/usersearch?key={key}&fallcount={fallcount}&nexttk={nexttk}").toString();
+            "/search/user/v2/pptv/usersearch?key={key}&nexttk={nexttk}&fallcount={fallcount}").toString();
 
     private static final String TEMPLATE_GET_RECOMMEND_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/search/v2/c/pptv/recommend/program").toString();

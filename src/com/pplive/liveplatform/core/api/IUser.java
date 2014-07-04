@@ -4,7 +4,7 @@ public interface IUser {
 
     String getUsername();
     
-    String getNickname();
+    String getDisplayName();
     
     String getIcon();
 }

@@ -85,7 +85,7 @@ public class SideBar extends LinearLayout implements SlidableContainer.OnSlideLi
             mNicknameText.setText(UserManager.getInstance(getContext()).getNickname());
             String iconUrl = UserManager.getInstance(getContext()).getIcon();
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
+                mUserIcon.setImageAsync(iconUrl);
             } else {
                 //                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }

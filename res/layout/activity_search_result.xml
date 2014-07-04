@@ -59,7 +59,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/radio_group"
-        android:visibility="gone"
+        android:divider="@drawable/list_divider"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         ptr:ptrMode="both" />
 

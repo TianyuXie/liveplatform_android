@@ -1,10 +1,10 @@
 package com.pplive.android.image;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 
 public class CircularImageView extends AsyncImageView {
 
@@ -21,14 +21,10 @@ public class CircularImageView extends AsyncImageView {
     }
 
     @Override
-    public void setImageAsync(String imageUri, int defaultImage) {
-        if (TextUtils.isEmpty(imageUri)) {
-            return;
-        }
+    public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
 
-        DisplayImageOptions options = new DisplayImageOptions.Builder().cloneFrom(DEFALUT_DISPLAY_OPTIONS).cacheOnDisk(true).cacheInMemory(true)
-                .displayer(new CircularBitmapDisplayer()).build();
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).displayer(new CircularBitmapDisplayer());
 
-        super.setImageAsync(imageUri, options, null);
+        super.setImageAsync(imageUri, builder.build(), listener);
     }
 }

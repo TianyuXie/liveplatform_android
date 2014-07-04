@@ -14,9 +14,8 @@ import com.pplive.liveplatform.core.task.Task.TaskListener;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.home.SearchTask;
 
-public class ProgramSearchHelper {
+public class SearchProgramHelper extends BaseSearchHelper<Program> {
 
     private static final int DEFAULT_FALL_COUNT = 16;
 
@@ -30,29 +29,21 @@ public class ProgramSearchHelper {
 
     private SortKeyword mSortKeyword = SortKeyword.START_TIME;
 
-    private int mFallCount = DEFAULT_FALL_COUNT;
-
-    private String mNextToken = "";
-
-    private RefreshAdapter<Program> mAdapter;
-
-    private List<Program> mLoadedPrograms = new ArrayList<Program>(mFallCount);
-
-    private LoadListener mLoadListener;
+    private List<Program> mLoadedData = new ArrayList<Program>(mFallCount);
 
     private TaskListener mLoadTaskListener = new Task.BaseTaskListener() {
 
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchTask.KEY_RESULT);
+            FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchProgramTask.KEY_RESULT);
             List<Program> tempPrograms = fallList.getList();
-            RefreshMode mode = (RefreshMode) event.getContext().get(SearchTask.KEY_LOAD_MODE);
+            RefreshMode mode = (RefreshMode) event.getContext().get(SearchProgramTask.KEY_LOAD_MODE);
 
             mNextToken = fallList.nextToken();
-            mLoadedPrograms.addAll(tempPrograms);
+            mLoadedData.addAll(tempPrograms);
 
-            if (mLoadedPrograms.size() < DEFAULT_FALL_COUNT && LiveStatusKeyword.LIVING == mLiveStatusKeyword) {
+            if (mLoadedData.size() < DEFAULT_FALL_COUNT && LiveStatusKeyword.LIVING == mLiveStatusKeyword) {
                 mLiveStatusKeyword = LiveStatusKeyword.VOD;
                 mSortKeyword = SortKeyword.VV;
                 mNextToken = "";
@@ -65,9 +56,9 @@ public class ProgramSearchHelper {
                     append(count);
                 }
 
-            } else if (mLoadedPrograms.size() >= DEFAULT_FALL_COUNT || LiveStatusKeyword.VOD == mLiveStatusKeyword) {
-                mode.loadData(mAdapter, mLoadedPrograms);
-                mLoadedPrograms.clear();
+            } else if (mLoadedData.size() >= DEFAULT_FALL_COUNT || LiveStatusKeyword.VOD == mLiveStatusKeyword) {
+                mode.loadData(mAdapter, mLoadedData);
+                mLoadedData.clear();
 
                 onLoadSucceed();
             }
@@ -80,12 +71,8 @@ public class ProgramSearchHelper {
 
     };
 
-    public ProgramSearchHelper(RefreshAdapter<Program> adapter) {
-        mAdapter = adapter;
-    }
-
-    public void setLoadListener(LoadListener listener) {
-        mLoadListener = listener;
+    public SearchProgramHelper(RefreshAdapter<Program> adapter) {
+        super(adapter);
     }
 
     public void searchBySubjectId(int subjectId) {
@@ -118,6 +105,19 @@ public class ProgramSearchHelper {
         refresh();
     }
 
+    public String getKeyword() {
+        return mKeyword;
+    }
+
+    public String getTag() {
+        return mTag;
+    }
+
+    public int getSubjectId() {
+        return mSubjectId;
+    }
+
+    @Override
     public void refresh() {
 
         mLiveStatusKeyword = LiveStatusKeyword.LIVING;
@@ -128,69 +128,28 @@ public class ProgramSearchHelper {
         refresh(DEFAULT_FALL_COUNT);
     }
 
-    public void refresh(int count) {
-        load(RefreshMode.REFRESH, count);
-    }
-
-    public void append() {
-        append(DEFAULT_FALL_COUNT);
-    }
-
-    public void append(int count) {
-        load(RefreshMode.APPEND, count);
-    }
-
-    private void load(RefreshMode mode, int count) {
+    @Override
+    void load(RefreshMode mode, int count) {
 
         onLoadStart();
 
-        SearchTask task = new SearchTask();
+        SearchProgramTask task = new SearchProgramTask();
         task.addTaskListener(mLoadTaskListener);
-        TaskContext taskContext = new TaskContext();
+        TaskContext context = new TaskContext();
 
-        taskContext.set(SearchTask.KEY_LOAD_MODE, mode);
+        context.set(SearchProgramTask.KEY_LOAD_MODE, mode);
 
-        taskContext.set(SearchTask.KEY_SUBJECT_ID, mSubjectId);
-        taskContext.set(SearchTask.KEY_KEYWORD, mKeyword);
-        taskContext.set(SearchTask.KEY_TAG, mTag);
+        context.set(SearchProgramTask.KEY_SUBJECT_ID, mSubjectId);
+        context.set(SearchProgramTask.KEY_KEYWORD, mKeyword);
+        context.set(SearchProgramTask.KEY_TAG, mTag);
 
-        taskContext.set(SearchTask.KEY_LIVE_STATUS, mLiveStatusKeyword);
-        taskContext.set(SearchTask.KEY_SORT, mSortKeyword);
+        context.set(SearchProgramTask.KEY_LIVE_STATUS, mLiveStatusKeyword);
+        context.set(SearchProgramTask.KEY_SORT, mSortKeyword);
 
-        taskContext.set(SearchTask.KEY_FALL_COUNT, count);
-        taskContext.set(SearchTask.KEY_NEXT_TOKEN, mNextToken);
+        context.set(SearchProgramTask.KEY_FALL_COUNT, count);
+        context.set(SearchProgramTask.KEY_NEXT_TOKEN, mNextToken);
 
-        task.execute(taskContext);
+        task.execute(context);
     }
 
-    public String getKeyword() {
-        return mKeyword;
-    }
-
-    private void onLoadStart() {
-        if (null != mLoadListener) {
-            mLoadListener.onLoadStart();
-        }
-    }
-
-    private void onLoadSucceed() {
-        if (null != mLoadListener) {
-            mLoadListener.onLoadSucceed();
-        }
-    }
-
-    private void onLoadFailed() {
-        if (null != mLoadListener) {
-            mLoadListener.onLoadFailed();
-        }
-    }
-
-    public interface LoadListener {
-
-        void onLoadStart();
-
-        void onLoadSucceed();
-
-        void onLoadFailed();
-    }
 }

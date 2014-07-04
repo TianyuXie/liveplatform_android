@@ -138,7 +138,7 @@ public class UserManager {
 
     public void setUserinfo(User userinfo) {
         if (isLogin() && userinfo != null) {
-            mNickname = userinfo.getNickname();
+            mNickname = userinfo.getDisplayName();
             mIcon = userinfo.getIcon();
             SettingsPreferences.getInstance(mAppContext).setUserInfo(mNickname, mIcon);
         }

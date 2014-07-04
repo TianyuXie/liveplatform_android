@@ -91,6 +91,17 @@ public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
         }
     }
 
+    @Override
+    protected void onCancelled(TaskResult result) {
+        if (mReturn) {
+            return;
+        }
+
+        onTaskFinished(this);
+
+        onTaskCancel(this, new TaskCancelEvent("Task cancelled"));
+    }
+
     public void setTimeout(int timeout) {
         this.mTimeout = timeout;
     }

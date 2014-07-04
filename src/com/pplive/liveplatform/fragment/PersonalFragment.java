@@ -233,7 +233,7 @@ public class PersonalFragment extends Fragment {
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
 
             if (!TextUtils.isEmpty(iconUrl)) {
-                mImageUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
+                mImageUserIcon.setImageAsync(iconUrl);
             }
         }
 
@@ -360,7 +360,7 @@ public class PersonalFragment extends Fragment {
         mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
         mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
         mTextNickName.setText(mNickName);
-        mImageUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
+        mImageUserIcon.setImageAsync(mIconUrl);
     }
 
     private void refreshData() {
