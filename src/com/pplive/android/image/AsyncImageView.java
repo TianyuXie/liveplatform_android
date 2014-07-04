@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -29,32 +28,23 @@ public class AsyncImageView extends ImageView {
     }
 
     public void setImageAsync(String imageUri) {
-        setImageAsync(imageUri, null);
-    }
-
-    public void setImageAsync(String imageUri, int defaultImage) {
-        setImageAsync(imageUri, defaultImage, null);
+        setImageAsync(imageUri, DEFALUT_DISPLAY_OPTIONS);
     }
 
     public void setImageAsync(String imageUri, DisplayImageOptions options) {
         setImageAsync(imageUri, options, null);
     }
 
-    public void setImageAsync(String imageUri, int defaultImage, ImageLoadingListener listener) {
-        boolean cacheOnDisk = imageUri != null && !imageUri.startsWith(Constants.LIVE_IMGAE_PREFIX);
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(DEFALUT_DISPLAY_OPTIONS).cacheInMemory(true).cacheOnDisk(cacheOnDisk);
-
-        if (defaultImage > 0) {
-            builder.showImageOnLoading(defaultImage).showImageForEmptyUri(defaultImage).showImageOnFail(defaultImage);
-        }
-
-        setImageAsync(imageUri, builder.build(), listener);
+    public void setImageAsync(String imageUri, ImageLoadingListener listener) {
+        setImageAsync(imageUri, DEFALUT_DISPLAY_OPTIONS, listener);
     }
 
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
+        boolean cacheOnDisk = imageUri != null && !imageUri.startsWith(Constants.LIVE_IMGAE_PREFIX);
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).cacheInMemory(true).cacheOnDisk(cacheOnDisk);
 
         if (!TextUtils.isEmpty(imageUri)) {
-            mImageLoader.displayImage(imageUri, this, options, listener);
+            mImageLoader.displayImage(imageUri, this, builder.build(), listener);
         }
     }
 }

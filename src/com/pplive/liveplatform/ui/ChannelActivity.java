@@ -17,8 +17,8 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.api.live.model.Subject;
-import com.pplive.liveplatform.core.search.ProgramSearchHelper;
-import com.pplive.liveplatform.core.search.ProgramSearchHelper.LoadListener;
+import com.pplive.liveplatform.core.search.BaseSearchHelper.LoadListener;
+import com.pplive.liveplatform.core.search.SearchProgramHelper;
 import com.pplive.liveplatform.widget.TopBarView;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
@@ -32,7 +32,7 @@ public class ChannelActivity extends Activity {
 
     private ProgramAdapter mAdapter;
 
-    private ProgramSearchHelper mProgramLoader;
+    private SearchProgramHelper mProgramLoader;
 
     private Subject mSubject;
 
@@ -76,7 +76,7 @@ public class ChannelActivity extends Activity {
         mAdapter = new ProgramAdapter(getApplicationContext());
         mContainer.setAdapter(mAdapter);
 
-        mProgramLoader = new ProgramSearchHelper(mAdapter);
+        mProgramLoader = new SearchProgramHelper(mAdapter);
         mProgramLoader.setLoadListener(new LoadListener() {
 
             @Override

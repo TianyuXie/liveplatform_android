@@ -57,7 +57,7 @@ public class User implements IUser, Serializable {
     }
 
     @Override
-    public String getNickname() {
+    public String getDisplayName() {
         if (StringUtil.isNullOrEmpty(nickname)) {
             return username;
         } else {

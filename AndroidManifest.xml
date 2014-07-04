@@ -93,6 +93,7 @@
         <activity
             android:name="com.pplive.liveplatform.ui.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.SlideInAndSlideOut.Translucent"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >

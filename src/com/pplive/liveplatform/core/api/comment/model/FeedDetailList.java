@@ -76,7 +76,7 @@ public class FeedDetailList {
         ownerColor -= 0xff000000;
         String username = feed.getUserName();
         String content = feed.getContent();
-        String nickname = mapUser.get(username).getNickname();
+        String nickname = mapUser.get(username).getDisplayName();
         if (TextUtils.isEmpty(nickname)) {
             nickname = username;
         } else {

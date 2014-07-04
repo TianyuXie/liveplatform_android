@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:padding="15dp" >
+
+    <com.pplive.android.image.AsyncImageView
+        android:id="@+id/image_user_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        android:src="@drawable/navbar_personal_act" />
+
+    <TextView
+        android:id="@+id/text_nickname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/image_user_icon"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/image_user_icon"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
 
 </RelativeLayout>

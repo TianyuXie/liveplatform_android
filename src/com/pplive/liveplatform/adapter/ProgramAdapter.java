@@ -71,7 +71,7 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
         holder.textTags.setText(data.getTags());
         holder.textTitle.setText(data.getTitle());
         holder.textCount.setText(String.valueOf(data.getViewers()));
-        holder.imagePreview.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.imagePreview.setImageAsync(data.getRecommendCover());
 
         if (data.isPrelive()) {
             holder.textDate.setVisibility(View.VISIBLE);

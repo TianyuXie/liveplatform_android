@@ -91,7 +91,7 @@ public class UserpageProgramAdapter extends BaseAdapter {
 
     private void updateView(ViewHolder holder, Program data) {
         holder.titleTextView.setText(data.getTitle());
-        holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.previewImageView.setImageAsync(data.getRecommendCover());
         holder.timeTextView.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getStartTime()));
         holder.liveImageView.setVisibility(data.isLiving() ? View.VISIBLE : View.GONE);
         switch (data.getLiveStatus()) {

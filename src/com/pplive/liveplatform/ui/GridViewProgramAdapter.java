@@ -77,7 +77,7 @@ public class GridViewProgramAdapter extends BaseAdapter {
         holder.ownerTextView.setText(data.getOwnerNickname());
         holder.titleTextView.setText(data.getTitle());
         holder.viewcountTextView.setText(String.valueOf(data.getViewers()));
-        holder.previewImageView.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.previewImageView.setImageAsync(data.getRecommendCover());
         if (data.isPrelive()) {
             holder.timedownTextView.setVisibility(View.VISIBLE);
             holder.timedownTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.program_coming_icon, 0, 0, 0);

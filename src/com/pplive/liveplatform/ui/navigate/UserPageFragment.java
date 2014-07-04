@@ -239,7 +239,7 @@ public class UserPageFragment extends Fragment {
     private void initUserinfo() {
         mTextNickName.setText(mNickName);
         if (!TextUtils.isEmpty(mIconUrl)) {
-            mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
+            mUserIcon.setImageAsync(mIconUrl);
         } else {
             //            mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
         }
@@ -453,7 +453,7 @@ public class UserPageFragment extends Fragment {
             UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
+                mUserIcon.setImageAsync(iconUrl);
             } else {
                 //                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }

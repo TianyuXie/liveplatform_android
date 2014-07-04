@@ -251,7 +251,7 @@ public class TencentPassport {
                 }
                 if (userinfo != null) {
                     mLoginResult.setFaceUrl(userinfo.getIcon());
-                    mLoginResult.setNickName(userinfo.getNickname());
+                    mLoginResult.setNickName(userinfo.getDisplayName());
                 }
             } else {
                 if (mLoginListener != null) {

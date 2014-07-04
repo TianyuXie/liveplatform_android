@@ -81,7 +81,7 @@ public class PersonalProgramAdapter extends RefreshAdapter<Program> {
 
     private void updateView(ViewHolder holder, Program data) {
         holder.textTitle.setText(data.getTitle());
-        holder.imagePreview.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.imagePreview.setImageAsync(data.getRecommendCover());
         holder.textTime.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getStartTime()));
         holder.imageLive.setVisibility(data.isLiving() ? View.VISIBLE : View.GONE);
         holder.textTags.setText(data.getTags());

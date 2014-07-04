@@ -62,7 +62,7 @@ public class UserAPI extends RESTfulAPI {
     }
 
     public boolean updateOrCreateUser(String coToken, User user) throws LiveHttpException {
-        Log.d(TAG, "username: " + user.getUsername() + "; nickname: " + user.getNickname());
+        Log.d(TAG, "username: " + user.getUsername() + "; nickname: " + user.getDisplayName());
 
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mHttpHeaders.setAuthorization(coTokenAuthentication);
