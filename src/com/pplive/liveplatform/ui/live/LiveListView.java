@@ -20,10 +20,10 @@ import android.widget.BaseAdapter;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.model.LiveStatusEnum;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.live.model.LiveStatusEnum;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.dialog.DialogManager;
 import com.pplive.liveplatform.ui.live.event.EventProgramAdded;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
@@ -92,7 +92,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
             protected Boolean doInBackground(Void... params) {
                 String token = UserManager.getInstance(getContext()).getToken();
                 try {
-                    return ProgramService.getInstance().deleteProgramById(token, program.getId());
+                    return ProgramAPI.getInstance().deleteProgramById(token, program.getId());
                 } catch (LiveHttpException e) {
                     
                 }
@@ -187,7 +187,7 @@ public class LiveListView extends HorizontalListView implements OnItemClickListe
                 String token = UserManager.getInstance(getContext()).getToken();
                 
                 try {
-                    List<Program> programs = ProgramService.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.NOT_START);
+                    List<Program> programs = ProgramAPI.getInstance().getProgramsByOwner(token, username, LiveStatusEnum.NOT_START);
     
                     return programs;
                 } catch (LiveHttpException e) {

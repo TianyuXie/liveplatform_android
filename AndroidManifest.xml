@@ -93,6 +93,7 @@
         <activity
             android:name="com.pplive.liveplatform.ui.SearchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.SlideInAndSlideOut.Translucent"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
@@ -212,7 +213,8 @@
         <activity
             android:name="com.umeng.fb.ContactActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar" >
+            android:theme="@style/Theme.SlideInAndSlideOut.Translucent.NoTitleBar"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden" >
         </activity>
 
         <!-- Service -->

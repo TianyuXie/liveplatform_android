@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.settings.SettingsPreferences;
 import com.pplive.liveplatform.ui.LiveRecordActivity;
 

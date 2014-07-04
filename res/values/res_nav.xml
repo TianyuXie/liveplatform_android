@@ -14,16 +14,8 @@
     <string name="home_tab_focuson">关注</string>
 
     <!-- Style -->
-    <style name="style_live_state_btn" parent="@style/Widget.Button.Transparent">
-        <item name="android:layout_weight">1</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/home_livestate_text_color</item>
-        <item name="android:button">@null</item>
-    </style>
 
-    <style name="style_home_tab" parent="@style/Widget.RadioButton.Transparent">
+    <style name="Widget.RadioButton.Transparent.Home" parent="@style/Widget.RadioButton.Transparent">
         <item name="android:textColor">@color/radio_btn_text_color</item>
         <item name="android:textSize">20sp</item>
         <item name="android:paddingTop">10dp</item>

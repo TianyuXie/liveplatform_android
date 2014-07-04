@@ -22,9 +22,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.SearchAPI;
 import com.pplive.liveplatform.core.cache.SearchCacheManager;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.SearchService;
 
 public class SearchActivity extends Activity {
 
@@ -131,7 +131,7 @@ public class SearchActivity extends Activity {
 
                 List<String> searchKeyWords = null;
                 try {
-                    searchKeyWords = SearchService.getInstance().getSearchWordsList();
+                    searchKeyWords = SearchAPI.getInstance().recommendKeyword();
                 } catch (LiveHttpException e) {
                     Log.w(TAG, e.toString());
                 }

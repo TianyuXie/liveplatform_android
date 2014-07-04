@@ -35,14 +35,14 @@ import android.widget.Toast;
 
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
+import com.pplive.liveplatform.core.api.live.model.LiveStatus;
+import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Watch;
+import com.pplive.liveplatform.core.api.live.model.WatchList;
 import com.pplive.liveplatform.core.dac.DacReportService;
 import com.pplive.liveplatform.core.dac.stat.WatchDacStat;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
-import com.pplive.liveplatform.core.service.live.model.LiveStatus;
-import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.core.service.live.model.Watch;
-import com.pplive.liveplatform.core.service.live.model.WatchList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;

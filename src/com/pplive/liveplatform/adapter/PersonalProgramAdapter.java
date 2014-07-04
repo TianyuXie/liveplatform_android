@@ -9,12 +9,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pplive.android.image.AsyncImageView;
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeHelper;
-import com.pplive.liveplatform.widget.image.AsyncImageView;
 
 public class PersonalProgramAdapter extends RefreshAdapter<Program> {
 
@@ -81,7 +81,7 @@ public class PersonalProgramAdapter extends RefreshAdapter<Program> {
 
     private void updateView(ViewHolder holder, Program data) {
         holder.textTitle.setText(data.getTitle());
-        holder.imagePreview.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.imagePreview.setImageAsync(data.getRecommendCover());
         holder.textTime.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getStartTime()));
         holder.imageLive.setVisibility(data.isLiving() ? View.VISIBLE : View.GONE);
         holder.textTags.setText(data.getTags());

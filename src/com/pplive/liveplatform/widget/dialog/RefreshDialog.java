@@ -17,5 +17,6 @@ public class RefreshDialog extends Dialog {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dialog_refresh);
         setCanceledOnTouchOutside(false);
+        setCancelable(false);
     }
 }

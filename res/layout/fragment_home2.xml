@@ -13,19 +13,19 @@
 
         <RadioButton
             android:id="@+id/radio_btn_recommend"
-            style="@style/style_home_tab"
+            style="@style/Widget.RadioButton.Transparent.Home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/radio_btn_left_bg"
+            android:background="@drawable/home_radio_btn_left_bg"
             android:checked="true"
             android:text="@string/home_tab_recommend" />
 
         <RadioButton
             android:id="@+id/radio_btn_focuson"
-            style="@style/style_home_tab"
+            style="@style/Widget.RadioButton.Transparent.Home"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/radio_btn_right_bg"
+            android:background="@drawable/home_radio_btn_right_bg"
             android:text="@string/home_tab_focuson" />
     </RadioGroup>
 

@@ -1,8 +1,8 @@
 package com.pplive.liveplatform.core.task.user;
 
 import com.pplive.liveplatform.Extra;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.passport.PassportService;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.passport.PassportAPI;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -23,7 +23,7 @@ public class ResetPasswordTask extends Task {
         String password = context.getString(Extra.KEY_PASSWORD);
 
         try {
-            PassportService.getInstance().resetPassword(loginname, password);
+            PassportAPI.getInstance().resetPassword(loginname, password);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, StringUtil.safeString(e.getMessage()));
         }

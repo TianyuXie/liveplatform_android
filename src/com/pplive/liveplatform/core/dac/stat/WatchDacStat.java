@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.dac.stat;
 
+import com.pplive.liveplatform.core.api.live.model.Watch;
 import com.pplive.liveplatform.core.dac.data.WatchData;
-import com.pplive.liveplatform.core.service.live.model.Watch;
 
 public class WatchDacStat extends MediaDacStat implements WatchData {
 

@@ -7,10 +7,10 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="260dp"
+        android:layout_height="@dimen/personal_view_height"
         android:background="@drawable/userpage_bg" >
 
-        <com.pplive.liveplatform.widget.image.RoundedImageView
+        <com.pplive.android.image.CircularImageView
             android:id="@+id/image_user_icon"
             android:layout_width="120dp"
             android:layout_height="120dp"
@@ -59,6 +59,7 @@
         android:id="@+id/program_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:divider="@null"
         android:listSelector="@android:color/transparent"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         swipe:swipeActionLeft="reveal"
@@ -66,6 +67,6 @@
         swipe:swipeCloseAllItemsWhenMoveList="true"
         swipe:swipeFrontView="@+id/front"
         swipe:swipeMode="left"
-        swipe:swipeOffsetLeft="360dp" />
+        swipe:swipeOffsetLeft="@dimen/swipe_offset_left" />
 
 </LinearLayout>

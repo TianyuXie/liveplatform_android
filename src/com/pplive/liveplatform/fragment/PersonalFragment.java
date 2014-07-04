@@ -27,17 +27,16 @@ import android.widget.Toast;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.fortysevendeg.swipelistview.SwipeListViewListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
+import com.pplive.android.image.CircularImageView;
 import com.pplive.android.pulltorefresh.PullToRefreshSwipeListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.PersonalProgramAdapter;
 import com.pplive.liveplatform.adapter.PersonalProgramAdapter.OnItemDeleteListener;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.core.service.live.model.User;
+import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
@@ -53,7 +52,6 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.widget.dialog.IconDialog;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.widget.image.RoundedImageView;
 
 public class PersonalFragment extends Fragment {
 
@@ -71,7 +69,7 @@ public class PersonalFragment extends Fragment {
 
     private Activity mActivity;
 
-    private RoundedImageView mImageUserIcon;
+    private CircularImageView mImageUserIcon;
 
     private TextView mTextNickName;
 
@@ -136,6 +134,7 @@ public class PersonalFragment extends Fragment {
 
         @Override
         public void onStartOpen(int position, int action, boolean right) {
+            Log.d(TAG, "onStartOpen");
             mProgramContainer.closeOpenedItem();
         }
 
@@ -234,7 +233,7 @@ public class PersonalFragment extends Fragment {
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
 
             if (!TextUtils.isEmpty(iconUrl)) {
-                mImageUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
+                mImageUserIcon.setImageAsync(iconUrl);
             }
         }
 
@@ -255,9 +254,7 @@ public class PersonalFragment extends Fragment {
         public void onTaskFinished(Task sender) {
             mRefreshDialog.dismiss();
 
-            if (mProgramContainer.isRefreshing()) {
-                mProgramContainer.onRefreshComplete();
-            }
+            mProgramContainer.onRefreshComplete();
         };
 
         @SuppressWarnings("unchecked")
@@ -291,10 +288,9 @@ public class PersonalFragment extends Fragment {
         mAdapter.setOnItemDeleteListener(mOnItemDeleteListener);
         mProgramContainer.setAdapter(mAdapter);
         mProgramContainer.setSwipeListViewListener(mSwipeListViewListener);
-        mProgramContainer.setOnPullEventListener(new OnPullEventListener<SwipeListView>() {
-
+        mProgramContainer.setOnRefreshListener(new OnRefreshListener<SwipeListView>() {
             @Override
-            public void onPullEvent(PullToRefreshBase<SwipeListView> refreshView, State state, Mode direction) {
+            public void onRefresh(PullToRefreshBase<SwipeListView> refreshView) {
                 refreshData();
             }
         });
@@ -307,7 +303,7 @@ public class PersonalFragment extends Fragment {
         mBtnSettings.setOnClickListener(mOnSettingsBtnClickListener);
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
-        mImageUserIcon = (RoundedImageView) layout.findViewById(R.id.image_user_icon);
+        mImageUserIcon = (CircularImageView) layout.findViewById(R.id.image_user_icon);
 
         mCameraIcon = layout.findViewById(R.id.image_camera);
         mCameraIcon.setOnClickListener(mOnIconClickListener);
@@ -339,15 +335,6 @@ public class PersonalFragment extends Fragment {
         init();
     }
 
-    private void init() {
-        mOwner = isLogin(mUsername);
-
-        mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
-        mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
-        mTextNickName.setText(mNickName);
-        mImageUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -356,6 +343,24 @@ public class PersonalFragment extends Fragment {
 
         mProgramContainer.closeOpenedItem();
         refreshData();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (mRefreshDialog.isShowing()) {
+            mRefreshDialog.dismiss();
+        }
+    }
+
+    private void init() {
+        mOwner = isLogin(mUsername);
+
+        mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
+        mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
+        mTextNickName.setText(mNickName);
+        mImageUserIcon.setImageAsync(mIconUrl);
     }
 
     private void refreshData() {

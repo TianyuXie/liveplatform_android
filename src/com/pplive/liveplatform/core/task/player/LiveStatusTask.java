@@ -1,8 +1,8 @@
 package com.pplive.liveplatform.core.task.player;
 
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.ProgramService;
-import com.pplive.liveplatform.core.service.live.model.LiveStatus;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.core.api.live.model.LiveStatus;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -27,7 +27,7 @@ public class LiveStatusTask extends Task {
         long pid = (Long) context.get(KEY_PID);
         LiveStatus data = null;
         try {
-            data = ProgramService.getInstance().getLiveStatus(pid);
+            data = ProgramAPI.getInstance().getLiveStatus(pid);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, "ProgramService error");
         }

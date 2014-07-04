@@ -26,9 +26,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.pplive.android.image.CircularImageView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.UserpageActivity;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
@@ -37,7 +38,6 @@ import com.pplive.liveplatform.util.PPBoxUtil;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
 import com.pplive.liveplatform.widget.VerticalSeekBar;
-import com.pplive.liveplatform.widget.image.CircularImageView;
 
 public class LivePlayerFragment extends Fragment implements View.OnTouchListener, View.OnClickListener, LivePlayerController.Callback {
 
@@ -253,7 +253,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         mProgram = program;
         ((TextView) mRoot.findViewById(R.id.text_player_title)).setText(program.getTitle());
         mIconWrapper.setVisibility(View.INVISIBLE);
-        mUserIcon.setImageAsync(program.getOwnerIcon(), R.drawable.user_icon_default);
+        mUserIcon.setImageAsync(program.getOwnerIcon());
     }
 
     @Override
@@ -307,7 +307,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
-        mUserIcon.release();
         mHandler.removeCallbacksAndMessages(null);
         super.onDestroy();
     }
@@ -522,7 +521,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     public void onStartPlay() {
-        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_finish);
         mRoot.findViewById(R.id.image_player_loading).setVisibility(View.GONE);
@@ -530,7 +528,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     }
 
     public void onStartPrelive() {
-        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         mIconWrapper.setVisibility(View.VISIBLE);
         mFinishText.setText(R.string.player_prelive);
         rotateIcon();
@@ -539,7 +536,6 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
     public void initIcon() {
         mIconWrapper.setVisibility(View.INVISIBLE);
         mUserIcon.clearAnimation();
-        mUserIcon.setLocalImage(R.drawable.home_status_btn_loading, false);
         showBars(0);
     }
 
@@ -561,7 +557,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
         @Override
         public void onRotateMiddle() {
             mFinishText.setText("");
-            mUserIcon.setImageAsync(mProgram.getOwnerIcon(), R.drawable.user_icon_default);
+            mUserIcon.setImageAsync(mProgram.getOwnerIcon());
         }
     };
 

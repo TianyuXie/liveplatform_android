@@ -3,9 +3,9 @@ package com.pplive.liveplatform.core.task.user;
 import android.util.Log;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.UserService;
-import com.pplive.liveplatform.core.service.live.model.User;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.UserAPI;
+import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -36,7 +36,7 @@ public class UpdateInfoTask extends Task {
         //Get current info
         User userinfo = null;
         try {
-            userinfo = UserService.getInstance().getUserInfo(token, username);
+            userinfo = UserAPI.getInstance().getUserInfo(token, username);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, "UserService: Get current info error");
         }
@@ -48,7 +48,7 @@ public class UpdateInfoTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
 
-        boolean changeNick = !StringUtil.isNullOrEmpty(nickname) && !nickname.equals(userinfo.getNickname());
+        boolean changeNick = !StringUtil.isNullOrEmpty(nickname) && !nickname.equals(userinfo.getDisplayName());
         boolean changeIcon = !StringUtil.isNullOrEmpty(iconurl) && !iconurl.equals(userinfo.getIcon());
         if (changeNick) {
             Log.d(TAG, "setNickname");
@@ -61,7 +61,7 @@ public class UpdateInfoTask extends Task {
         if (changeIcon || changeNick) {
             boolean status = false;
             try {
-                status = UserService.getInstance().updateOrCreateUser(token, userinfo);
+                status = UserAPI.getInstance().updateOrCreateUser(token, userinfo);
             } catch (LiveHttpException e) {
                 String message = null;
                 if (e.getMessage().equals(StringManager.getRes(R.string.error_nickname_duplicated))) {

@@ -35,12 +35,13 @@ import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.pplive.android.image.CircularImageView;
 import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
-import com.pplive.liveplatform.core.service.live.model.Program;
-import com.pplive.liveplatform.core.service.live.model.User;
+import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskCancelEvent;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -61,7 +62,6 @@ import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
 import com.pplive.liveplatform.widget.dialog.IconDialog;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
-import com.pplive.liveplatform.widget.image.RoundedImageView;
 import com.pplive.liveplatform.widget.refresh.RefreshListView;
 
 public class UserPageFragment extends Fragment {
@@ -108,7 +108,7 @@ public class UserPageFragment extends Fragment {
 
     private ImageButton mBtnSettings;
 
-    private RoundedImageView mUserIcon;
+    private CircularImageView mUserIcon;
 
     private RefreshListView mListView;
 
@@ -172,7 +172,7 @@ public class UserPageFragment extends Fragment {
         mListView.setOnUpdateListener(onUpdateListener);
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
-        mUserIcon = (RoundedImageView) layout.findViewById(R.id.image_user_icon);
+        mUserIcon = (CircularImageView) layout.findViewById(R.id.image_user_icon);
         mUserIcon.setOnClickListener(mOnIconClickListener);
 
         mNodataText = (TextView) layout.findViewById(R.id.text_userpage_nodata);
@@ -239,7 +239,7 @@ public class UserPageFragment extends Fragment {
     private void initUserinfo() {
         mTextNickName.setText(mNickName);
         if (!TextUtils.isEmpty(mIconUrl)) {
-            mUserIcon.setImageAsync(mIconUrl, R.drawable.user_icon_default);
+            mUserIcon.setImageAsync(mIconUrl);
         } else {
             //            mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
         }
@@ -453,7 +453,7 @@ public class UserPageFragment extends Fragment {
             UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
             if (!TextUtils.isEmpty(iconUrl)) {
-                mUserIcon.setImageAsync(iconUrl, R.drawable.user_icon_default);
+                mUserIcon.setImageAsync(iconUrl);
             } else {
                 //                mUserIcon.setLocalImage(R.drawable.user_icon_default, true);
             }

@@ -14,7 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.comment.model.FeedItem;
+import com.pplive.liveplatform.core.api.comment.model.FeedItem;
 import com.pplive.liveplatform.ui.player.Emoji;
 import com.pplive.liveplatform.util.TimeHelper;
 

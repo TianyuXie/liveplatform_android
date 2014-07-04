@@ -36,6 +36,12 @@ public abstract class RefreshAdapter<T> extends BaseAdapter implements Refreshab
         notifyDataSetChanged();
     }
 
+    public final void clear() {
+        mData.clear();
+
+        notifyDataSetChanged();
+    }
+
     @Override
     public final int getCount() {
         return mData.size();

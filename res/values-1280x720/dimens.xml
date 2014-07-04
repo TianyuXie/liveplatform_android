@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="swipe_offset_left">260dp</dimen>
+    <dimen name="personal_view_height">200dp</dimen>
+
+</resources>

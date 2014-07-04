@@ -20,46 +20,10 @@
         android:id="@+id/program_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:background="@color/app_bg"
+        android:listSelector="@android:color/transparent"
         android:numColumns="2"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         ptr:ptrMode="both" />
-
-    <!--
-         <com.pplive.liveplatform.ui.home.ProgramContainer
-        android:id="@+id/layout_channel_body"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/search_top_bar"
-        android:background="@color/home_fragment_body_bg" />
-
-    <LinearLayout
-        android:id="@+id/layout_channel_retry"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignTop="@id/layout_channel_body"
-        android:layout_marginTop="80dp"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:visibility="gone" >
-
-        <Button
-            android:id="@+id/btn_channel_retry"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="50dp"
-            android:background="@drawable/home_empty_btn_bg" />
-
-        <TextView
-            android:id="@+id/text_channel_retry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:gravity="center_horizontal"
-            android:lineSpacingMultiplier="1.2"
-            android:text="@string/home_nodata_text"
-            android:textColor="@color/true_gray"
-            android:textSize="18sp" />
-    </LinearLayout>
-    -->
 
 </LinearLayout>

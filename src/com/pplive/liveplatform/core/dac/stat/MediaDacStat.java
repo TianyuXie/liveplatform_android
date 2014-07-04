@@ -4,9 +4,9 @@ import java.util.UUID;
 
 import android.util.Log;
 
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.dac.data.MediaData;
 import com.pplive.liveplatform.core.network.NetworkManager;
-import com.pplive.liveplatform.core.service.live.model.Program;
 
 public abstract class MediaDacStat extends BaseDacStat implements MediaData {
 

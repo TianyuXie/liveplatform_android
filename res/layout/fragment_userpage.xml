@@ -10,7 +10,7 @@
         android:layout_height="200dp"
         android:background="@drawable/userpage_bg" >
 
-        <com.pplive.liveplatform.widget.image.RoundedImageView
+        <com.pplive.android.image.CircularImageView
             android:id="@+id/image_user_icon"
             android:layout_width="100dp"
             android:layout_height="100dp"

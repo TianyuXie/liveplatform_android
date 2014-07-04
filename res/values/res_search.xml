@@ -8,13 +8,9 @@
     <color name="search_group_text_color">#FF199FFE</color>
     <color name="search_keyword_bg_hover">#FF001E33</color>
     <color name="search_keyword_divider_color">#FF151515</color>
-    <color name="searchbar_body_bg">#AA000000</color>
-    <color name="searchbar_clear_text">#FFAAAAAA</color>
     <color name="searchbar_list_text_select">#FF5AC7FF</color>
-    <color name="searchbar_list_text_normal">#FFCCCCCC</color>
     <color name="searchbar_list_normal">#CC222222</color>
     <color name="searchbar_list_select">#CC001E33</color>
-    <color name="searchbar_list_divider">#FF080808</color>
 
     <!-- String -->
     <string name="search_hint_text">搜点什么好呢</string>
@@ -23,5 +19,10 @@
     <string name="search_keyword_empty">关键字不能为空</string>
     <string name="search_hot_keyword">热词推荐</string>
     <string name="search_history_keyword">搜索记录</string>
+    <string name="search_program_title_fmt"><![CDATA[\"%s\"相关内容的搜索结果]]></string>
+    <string name="search_user_title_fmt"><![CDATA[\"%s\"相关用户的搜索结果]]></string>
+    
+    <string name="search_program">内容</string>
+    <string name="search_user">用户</string>
 
 </resources>

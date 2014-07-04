@@ -10,8 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
         android:background="@color/top_bar_bg"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp" >
+        android:padding="10dp" >
 
         <EditText
             android:id="@+id/search_input_bar_edit_view"

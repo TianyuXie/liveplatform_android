@@ -9,13 +9,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.pplive.android.image.AsyncImageView;
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeHelper;
 import com.pplive.liveplatform.util.TimeUtil;
-import com.pplive.liveplatform.widget.image.AsyncImageView;
 
 public class ProgramAdapter extends RefreshAdapter<Program> {
 
@@ -44,7 +44,7 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
         Log.d(TAG, "getView position: " + position);
 
         if (convertView == null) {
-            convertView = mInflater.inflate(R.layout.item_program, null);
+            convertView = mInflater.inflate(R.layout.item_program, parent, false);
             ViewHolder holder = new ViewHolder();
             holder.imagePreview = (AsyncImageView) convertView.findViewById(R.id.image_program_preview);
             holder.textDate = (TextView) convertView.findViewById(R.id.text_date);
@@ -71,7 +71,7 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
         holder.textTags.setText(data.getTags());
         holder.textTitle.setText(data.getTitle());
         holder.textCount.setText(String.valueOf(data.getViewers()));
-        holder.imagePreview.setImageAsync(data.getRecommendCover(), R.drawable.program_default_image);
+        holder.imagePreview.setImageAsync(data.getRecommendCover());
 
         if (data.isPrelive()) {
             holder.textDate.setVisibility(View.VISIBLE);

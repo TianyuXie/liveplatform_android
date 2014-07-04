@@ -1,7 +1,7 @@
 package com.pplive.liveplatform.core.task.player;
 
-import com.pplive.liveplatform.core.service.comment.PbarService;
-import com.pplive.liveplatform.core.service.comment.model.FeedDetailList;
+import com.pplive.liveplatform.core.api.comment.PbarAPI;
+import com.pplive.liveplatform.core.api.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskResult;
@@ -27,7 +27,7 @@ public class GetFeedTask extends Task {
         String token = context.getString(KEY_TOKEN);
         FeedDetailList data = null;
         try {
-            data = PbarService.getInstance().getFeeds(token, pid);
+            data = PbarAPI.getInstance().getFeeds(token, pid);
         } catch (Exception e) {
             return new TaskResult(TaskStatus.FAILED, "PbarService error");
         }

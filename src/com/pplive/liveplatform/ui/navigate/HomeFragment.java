@@ -18,13 +18,13 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
+import com.pplive.liveplatform.core.api.exception.LiveHttpException;
+import com.pplive.liveplatform.core.api.live.SearchAPI;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
-import com.pplive.liveplatform.core.service.exception.LiveHttpException;
-import com.pplive.liveplatform.core.service.live.SearchService;
-import com.pplive.liveplatform.core.service.live.model.FallList;
-import com.pplive.liveplatform.core.service.live.model.Program;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
+import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class HomeFragment extends Fragment {
 
@@ -37,6 +37,8 @@ public class HomeFragment extends Fragment {
     private View mEmptyNoNetwork;
 
     private boolean mInited = false;
+
+    private RefreshDialog mRefreshDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +75,8 @@ public class HomeFragment extends Fragment {
         GridLayoutAnimationController glac = (GridLayoutAnimationController) AnimationUtils.loadLayoutAnimation(getActivity(), R.anim.home_gridview_flyin);
         mContainer.getRefreshableView().setLayoutAnimation(glac);
 
+        mRefreshDialog = new RefreshDialog(getActivity());
+
         return layout;
     }
 
@@ -86,8 +90,8 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onStart() {
+        super.onStart();
 
         if (!mInited) {
             AsyncTaskGetRecommendProgramList task = new AsyncTaskGetRecommendProgramList();
@@ -98,28 +102,39 @@ public class HomeFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        if (mRefreshDialog.isShowing()) {
+            mRefreshDialog.dismiss();
+        }
+    }
+
     class AsyncTaskGetRecommendProgramList extends AsyncTask<Void, Void, List<Program>> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
-            mContainer.setRefreshing();
+            mRefreshDialog.show();
         }
 
         @Override
         protected List<Program> doInBackground(Void... params) {
-            FallList<Program> programs = null;
+            List<Program> programs = null;
             try {
-                programs = SearchService.getInstance().getRecommandedProgram();
+                programs = SearchAPI.getInstance().recommendProgram();
             } catch (LiveHttpException e) {
             }
 
-            return null != programs ? programs.getList() : null;
+            return programs;
         }
 
         @Override
         protected void onPostExecute(List<Program> programs) {
+
+            mRefreshDialog.hide();
 
             mContainer.onRefreshComplete();
 

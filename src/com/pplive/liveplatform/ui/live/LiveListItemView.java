@@ -12,12 +12,12 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pplive.android.image.AsyncImageView;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.service.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.ui.live.event.EventProgramDeleted;
 import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.util.ViewUtil;
-import com.pplive.liveplatform.widget.image.AsyncImageView;
 
 import de.greenrobot.event.EventBus;
 
@@ -80,7 +80,7 @@ public class LiveListItemView extends RelativeLayout {
         mProgram = program;
 
         if (null != program) {
-            mImagePrelive.setImageAsync(program.getRecommendCover(), R.drawable.live_record_default_prelive_image);
+            mImagePrelive.setImageAsync(program.getRecommendCover());
             mTextLiveTitle.setText(program.getTitle());
             
             Date date = new Date(program.getStartTime());
