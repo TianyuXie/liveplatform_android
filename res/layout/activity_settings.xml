@@ -45,6 +45,9 @@
                     <TextView
                         android:id="@+id/text_settings_nickname"
                         android:layout_marginRight="10dp"
+                        android:ellipsize="end"
+                        android:maxWidth="100dp"
+                        android:singleLine="true"
                         android:textColor="@color/settings_text_color"
                         android:textSize="18sp" />
                 </TableRow>

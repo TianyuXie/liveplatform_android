@@ -22,6 +22,7 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
             FallList<User> fallList = (FallList<User>) event.getContext().get(SearchProgramTask.KEY_RESULT);
             RefreshMode mode = (RefreshMode) event.getContext().get(SearchProgramTask.KEY_LOAD_MODE);
 
+            mNextToken = fallList.nextToken();
             mode.loadData(mAdapter, fallList.getList());
 
             onLoadSucceed();
@@ -43,6 +44,13 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
     }
 
     @Override
+    public void refresh() {
+        mNextToken = "";
+
+        super.refresh();
+    }
+
+    @Override
     void load(RefreshMode mode, int count) {
         onLoadStart();
 
@@ -54,7 +62,7 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
         context.set(SearchUserTask.KEY_LOAD_MODE, mode);
 
         context.set(SearchUserTask.KEY_FALL_COUNT, mFallCount);
-        context.set(SearchUserTask.KEY_TOKEN, mNextToken);
+        context.set(SearchUserTask.KEY_NEXT_TOKEN, mNextToken);
         context.set(SearchUserTask.KEY_KEYWORD, mKeyword);
 
         task.execute(context);

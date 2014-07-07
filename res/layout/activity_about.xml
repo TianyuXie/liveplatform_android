@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/app_bg"
+    android:background="@drawable/intro_welcome"
     android:orientation="vertical" >
 
     <com.pplive.liveplatform.widget.TopBarView
@@ -10,22 +10,10 @@
         android:id="@+id/top_bar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
+        android:background="@color/top_bar_bg"
+        live:left_btn_src="@drawable/btn_back"
+        live:show_left_btn="true"
+        live:show_title="true"
         live:text="@string/settings_about" />
-
-    <ImageView
-        android:id="@+id/image_about_icon"
-        android:layout_width="fill_parent"
-        android:layout_height="250dp"
-        android:background="@drawable/about_icon"
-        android:contentDescription="@null" />
-
-    <TextView
-        android:id="@+id/text_app_version"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:textColor="@color/about_text"
-        android:textSize="18sp" />
 
 </LinearLayout>
