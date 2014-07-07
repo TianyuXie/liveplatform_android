@@ -89,7 +89,7 @@ public class SearchResultActivity extends Activity {
 
             @Override
             public void onPullUpToRefresh(PullToRefreshBase<GridView> refreshView) {
-                mSearchUserHelper.append();
+                mSearchProgramHelper.append();
             }
         });
 

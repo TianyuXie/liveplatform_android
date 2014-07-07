@@ -23,7 +23,8 @@ public class CircularImageView extends AsyncImageView {
     @Override
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
 
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).displayer(new CircularBitmapDisplayer());
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).resetViewBeforeLoading(true)
+                .displayer(new CircularBitmapDisplayer());
 
         super.setImageAsync(imageUri, builder.build(), listener);
     }

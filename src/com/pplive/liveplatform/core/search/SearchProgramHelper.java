@@ -125,7 +125,7 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
 
         mNextToken = "";
 
-        refresh(DEFAULT_FALL_COUNT);
+        super.refresh();
     }
 
     @Override
