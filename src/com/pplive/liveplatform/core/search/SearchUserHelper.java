@@ -1,8 +1,11 @@
 package com.pplive.liveplatform.core.search;
 
+import android.content.Context;
+
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
 import com.pplive.liveplatform.Extra;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.FallList;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
@@ -34,8 +37,8 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
         }
     };
 
-    public SearchUserHelper(RefreshAdapter<User> adapter) {
-        super(adapter);
+    public SearchUserHelper(Context context, RefreshAdapter<User> adapter) {
+        super(context, adapter);
     }
 
     public void searchByKeyword(String keyword) {
@@ -65,6 +68,12 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
         context.set(Extra.KEY_FALL_COUNT, mFallCount);
         context.set(Extra.KEY_NEXT_TOKEN, mNextToken);
         context.set(Extra.KEY_KEYWORD, mKeyword);
+
+        UserManager mananger = UserManager.getInstance(mContext);
+        if (mananger.isLogin()) {
+            context.set(Extra.KEY_USERNAME, mananger.getUsernamePlain());
+            context.set(Extra.KEY_TOKEN, mananger.getToken());
+        }
 
         task.execute(context);
     }

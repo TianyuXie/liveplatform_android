@@ -451,7 +451,7 @@ public class UserPageFragment extends Fragment {
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             mRefreshDialog.dismiss();
             Toast.makeText(mActivity, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
-            UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
+            UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(Extra.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
             if (!TextUtils.isEmpty(iconUrl)) {
                 mUserIcon.setImageAsync(iconUrl);

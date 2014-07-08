@@ -3,6 +3,8 @@ package com.pplive.liveplatform.core.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
 import com.pplive.liveplatform.Extra;
@@ -72,8 +74,8 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
 
     };
 
-    public SearchProgramHelper(RefreshAdapter<Program> adapter) {
-        super(adapter);
+    public SearchProgramHelper(Context context, RefreshAdapter<Program> adapter) {
+        super(context, adapter);
     }
 
     public void searchBySubjectId(int subjectId) {

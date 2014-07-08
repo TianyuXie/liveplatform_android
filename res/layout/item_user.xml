@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="15dp" >
+    android:paddingBottom="15dp"
+    android:paddingLeft="15dp"
+    android:paddingTop="15dp" >
 
     <com.pplive.android.image.RoundedImageView
         xmlns:live="http://schemas.android.com/apk/res-auto"
@@ -28,12 +30,13 @@
         android:textSize="18sp" />
 
     <ImageButton
+        android:id="@+id/btn_follow"
         style="@style/Widget.Button.Transparent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:contentDescription="@null"
-        android:src="@drawable/btn_plus" />
+        android:src="@drawable/btn_follow" />
 
 </RelativeLayout>

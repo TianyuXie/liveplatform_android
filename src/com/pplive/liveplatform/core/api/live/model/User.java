@@ -23,19 +23,6 @@ public class User implements IUser, Serializable {
         UNKNOWN;
     }
 
-    public enum Relation {
-
-        SELF,
-
-        FOLLOW,
-
-        FAN,
-
-        FOLLOW_FAN,
-
-        UNKNOWN
-    }
-
     long id = -1;
 
     String username;
@@ -58,7 +45,7 @@ public class User implements IUser, Serializable {
 
     long last_update_time;
 
-    Relation relation = Relation.UNKNOWN;
+    int relation = -1;
 
     public void setIcon(String icon) {
         this.icon = icon;
@@ -68,8 +55,12 @@ public class User implements IUser, Serializable {
         this.nickname = nickname;
     }
 
-    public void setRelation(Relation relation) {
+    public void setRelation(int relation) {
         this.relation = relation;
+    }
+
+    public int getRelation() {
+        return relation;
     }
 
     public long getId() {

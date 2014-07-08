@@ -15,9 +15,8 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 public class UploadIconTask extends Task {
     final static String TAG = "_UpdateIconTask";
 
-    public final static String KEY_USERINFO = "userinfo";
-
     private User mUserInfo;
+
     private String mIconUrl;
 
     @Override
@@ -60,7 +59,7 @@ public class UploadIconTask extends Task {
             return new TaskResult(TaskStatus.FAILED, "fail to update");
         }
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_USERINFO, mUserInfo);
+        context.set(Extra.KEY_USERINFO, mUserInfo);
         result.setContext(context);
         return result;
     }

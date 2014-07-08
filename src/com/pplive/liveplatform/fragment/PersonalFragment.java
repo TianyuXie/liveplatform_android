@@ -229,7 +229,7 @@ public class PersonalFragment extends Fragment {
 
             Toast.makeText(mActivity, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
 
-            UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
+            UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(Extra.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
 
             if (!TextUtils.isEmpty(iconUrl)) {
