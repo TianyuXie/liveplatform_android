@@ -11,7 +11,7 @@ public class User implements IUser, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    enum Sex {
+    public enum Sex {
 
         @SerializedName("female")
         FEMALE,
@@ -22,6 +22,21 @@ public class User implements IUser, Serializable {
         @SerializedName("unknown")
         UNKNOWN;
     }
+
+    public enum Relation {
+
+        SELF,
+
+        FOLLOW,
+
+        FAN,
+
+        FOLLOW_FAN,
+
+        UNKNOWN
+    }
+
+    long id = -1;
 
     String username;
 
@@ -42,13 +57,23 @@ public class User implements IUser, Serializable {
     long insert_time;
 
     long last_update_time;
-    
-    public void setIcon(String icon){
+
+    Relation relation = Relation.UNKNOWN;
+
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void setRelation(Relation relation) {
+        this.relation = relation;
+    }
+
+    public long getId() {
+        return id;
     }
 
     @Override
@@ -68,5 +93,22 @@ public class User implements IUser, Serializable {
     @Override
     public String getIcon() {
         return icon;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o instanceof User) {
+            User that = (User) o;
+
+            return this.id >= 0 && this.id == that.id;
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) this.id;
     }
 }

@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.pplive.android.image.CircularImageView;
 import com.pplive.liveplatform.Constants;
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.alarm.AlarmCenter;
@@ -252,9 +253,9 @@ public class UserPageFragment extends Fragment {
         GetProgramTask task = new GetProgramTask();
         task.addTaskListener(onGetTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetProgramTask.KEY_USERNAME, mUsername);
+        taskContext.set(Extra.KEY_USERNAME, mUsername);
         if (isLogin(mUsername)) {
-            taskContext.set(GetProgramTask.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
+            taskContext.set(Extra.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
         }
         if (isPull) {
             taskContext.set(GetProgramTask.KEY_TYPE, PULL);
@@ -341,8 +342,8 @@ public class UserPageFragment extends Fragment {
                         task.addTaskListener(onRemoveTaskListener);
 
                         TaskContext taskContext = new TaskContext();
-                        taskContext.set(RemoveProgramTask.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
-                        taskContext.set(RemoveProgramTask.KEY_PID, pid);
+                        taskContext.set(Extra.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
+                        taskContext.set(Extra.KEY_PROGRAM_ID, pid);
 
                         task.execute(taskContext);
 
@@ -403,9 +404,9 @@ public class UserPageFragment extends Fragment {
         UploadIconTask task = new UploadIconTask();
         task.addTaskListener(onIconTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mActivity).getUsernamePlain());
-        taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
-        taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
+        taskContext.set(Extra.KEY_USERNAME, UserManager.getInstance(mActivity).getUsernamePlain());
+        taskContext.set(Extra.KEY_ICON_PATH, imagePath);
+        taskContext.set(Extra.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
         task.execute(taskContext);
     }
 

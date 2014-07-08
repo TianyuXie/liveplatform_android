@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.task.player;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.live.model.LiveStatus;
@@ -24,7 +25,7 @@ public class LiveStatusTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
+        long pid = (Long) context.get(Extra.KEY_PROGRAM_ID);
         LiveStatus data = null;
         try {
             data = ProgramAPI.getInstance().getLiveStatus(pid);

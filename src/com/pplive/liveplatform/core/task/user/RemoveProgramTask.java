@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.task.user;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.task.Task;
@@ -18,8 +19,8 @@ public class RemoveProgramTask extends Task {
             return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String token = context.getString(KEY_TOKEN);
+        long pid = (Long) context.get(Extra.KEY_PROGRAM_ID);
+        String token = context.getString(Extra.KEY_TOKEN);
         boolean response = false;
         try {
             response = ProgramAPI.getInstance().deleteProgramById(token, pid);

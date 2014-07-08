@@ -54,9 +54,9 @@ public class RegisterNicknameActivity extends Activity {
             UpdateInfoTask task = new UpdateInfoTask();
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(UpdateInfoTask.KEY_USERNAME, mUserManager.getUsernamePlain());
-            taskContext.set(UpdateInfoTask.KEY_NICKNAME, mEditNickname.getText().toString());
-            taskContext.set(UpdateInfoTask.KEY_TOKEN, mUserManager.getToken());
+            taskContext.set(Extra.KEY_USERNAME, mUserManager.getUsernamePlain());
+            taskContext.set(Extra.KEY_NICKNAME, mEditNickname.getText().toString());
+            taskContext.set(Extra.KEY_TOKEN, mUserManager.getToken());
             task.execute(taskContext);
         }
     };
@@ -82,7 +82,7 @@ public class RegisterNicknameActivity extends Activity {
             Log.d(TAG, "onTaskFinished");
 
             mRefreshDialog.dismiss();
-            mUserManager.setUserinfo((User) event.getContext().get(UpdateInfoTask.KEY_USERINFO));
+            mUserManager.setUserinfo((User) event.getContext().get(Extra.KEY_USERINFO));
 
             //            Toast.makeText(mContext, R.string.toast_nickname_changed, Toast.LENGTH_SHORT).show();
 

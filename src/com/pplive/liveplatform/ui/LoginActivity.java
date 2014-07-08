@@ -125,13 +125,13 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
             mRefreshDialog.dismiss();
 
-            String plainUsername = event.getContext().getString(LoginTask.KEY_USERNAME);
-            String plainPassword = event.getContext().getString(LoginTask.KEY_PASSWORD);
-            String token = event.getContext().getString(LoginTask.KEY_TOKEN);
+            String plainUsername = event.getContext().getString(Extra.KEY_USERNAME);
+            String plainPassword = event.getContext().getString(Extra.KEY_PASSWORD);
+            String token = event.getContext().getString(Extra.KEY_TOKEN);
 
             mUserManager.login(plainUsername, plainPassword, token);
 
-            User userinfo = (User) event.getContext().get(LoginTask.KEY_USERINFO);
+            User userinfo = (User) event.getContext().get(Extra.KEY_USERINFO);
             mUserManager.setUserinfo(userinfo);
 
             boolean fromRegister = getIntent().getBooleanExtra(EXTRA_FROM_REGISTER, false);
@@ -144,7 +144,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
             } else if (null != mRedirectActivity) {
                 Intent intent = new Intent(mContext, mRedirectActivity);
-                intent.putExtra(Extra.KEY_LOGIN_NAME, UserManager.getInstance(mContext).getUsernamePlain());
+                intent.putExtra(Extra.KEY_USERNAME, UserManager.getInstance(mContext).getUsernamePlain());
                 intent.putExtra(Extra.KEY_ICON_URL, UserManager.getInstance(mContext).getIcon());
                 intent.putExtra(Extra.KEY_NICKNAME, UserManager.getInstance(mContext).getNickname());
 
@@ -327,8 +327,8 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         task.addTaskListener(mOnLoginTaskListener);
         task.setDelay(dalay);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(LoginTask.KEY_USERNAME, username);
-        taskContext.set(LoginTask.KEY_PASSWORD, password);
+        taskContext.set(Extra.KEY_USERNAME, username);
+        taskContext.set(Extra.KEY_PASSWORD, password);
         task.execute(taskContext);
     }
 
@@ -343,7 +343,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
         if (null != mRedirectActivity) {
             Intent intent = new Intent(mContext, mRedirectActivity);
-            intent.putExtra(Extra.KEY_LOGIN_NAME, UserManager.getInstance(this).getUsernamePlain());
+            intent.putExtra(Extra.KEY_USERNAME, UserManager.getInstance(this).getUsernamePlain());
             intent.putExtra(Extra.KEY_ICON_URL, UserManager.getInstance(this).getIcon());
             intent.putExtra(Extra.KEY_NICKNAME, UserManager.getInstance(this).getNickname());
             mContext.startActivity(intent);

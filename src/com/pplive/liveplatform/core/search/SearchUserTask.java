@@ -1,5 +1,8 @@
 package com.pplive.liveplatform.core.search;
 
+import android.util.Log;
+
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.live.SearchAPI;
 import com.pplive.liveplatform.core.api.live.model.FallList;
 import com.pplive.liveplatform.core.api.live.model.User;
@@ -9,14 +12,8 @@ import com.pplive.liveplatform.core.task.TaskResult;
 import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 
 public class SearchUserTask extends Task {
-    
-    public final static String KEY_RESULT = "search_task_result";
-    public final static String KEY_LOAD_MODE = "search_task_type";
 
-    public final static String KEY_KEYWORD = "keyword";
-
-    public final static String KEY_NEXT_TOKEN = "next_token";
-    public final static String KEY_FALL_COUNT = "fall_count";
+    static final String TAG = SearchUserTask.class.getSimpleName();
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
@@ -25,15 +22,15 @@ public class SearchUserTask extends Task {
         }
 
         TaskContext context = params[0];
-        String keyword = context.getString(KEY_KEYWORD);
-        String nextToken = context.getString(KEY_NEXT_TOKEN);
-        int fallCount = (Integer) context.get(KEY_FALL_COUNT);
+        String keyword = context.getString(Extra.KEY_KEYWORD);
+        String nextToken = context.getString(Extra.KEY_NEXT_TOKEN);
+        int fallCount = (Integer) context.get(Extra.KEY_FALL_COUNT);
 
         FallList<User> data = null;
         try {
             data = SearchAPI.getInstance().searchUser(keyword, nextToken, fallCount);
         } catch (Exception e) {
-
+            Log.w(TAG, "");
         }
 
         if (null == data) {
@@ -41,9 +38,8 @@ public class SearchUserTask extends Task {
         }
 
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_RESULT, data);
+        context.set(Extra.KEY_RESULT, data);
         result.setContext(context);
         return result;
     }
-
 }

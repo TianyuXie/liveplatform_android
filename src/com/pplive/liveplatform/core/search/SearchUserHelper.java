@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.search;
 
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.live.model.FallList;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.task.Task;
@@ -19,8 +20,8 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            FallList<User> fallList = (FallList<User>) event.getContext().get(SearchProgramTask.KEY_RESULT);
-            RefreshMode mode = (RefreshMode) event.getContext().get(SearchProgramTask.KEY_LOAD_MODE);
+            FallList<User> fallList = (FallList<User>) event.getContext().get(Extra.KEY_RESULT);
+            RefreshMode mode = (RefreshMode) event.getContext().get(Extra.KEY_LOAD_MODE);
 
             mNextToken = fallList.nextToken();
             mode.loadData(mAdapter, fallList.getList());
@@ -59,11 +60,11 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
 
         TaskContext context = new TaskContext();
 
-        context.set(SearchUserTask.KEY_LOAD_MODE, mode);
+        context.set(Extra.KEY_LOAD_MODE, mode);
 
-        context.set(SearchUserTask.KEY_FALL_COUNT, mFallCount);
-        context.set(SearchUserTask.KEY_NEXT_TOKEN, mNextToken);
-        context.set(SearchUserTask.KEY_KEYWORD, mKeyword);
+        context.set(Extra.KEY_FALL_COUNT, mFallCount);
+        context.set(Extra.KEY_NEXT_TOKEN, mNextToken);
+        context.set(Extra.KEY_KEYWORD, mKeyword);
 
         task.execute(context);
     }

@@ -18,6 +18,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.comment.model.FeedDetailList;
@@ -239,7 +240,7 @@ public class ChatBox extends RelativeLayout implements Handler.Callback {
         mFeedHandler.removeMessages(MSG_GET_FEED);
         GetFeedTask feedTask = new GetFeedTask();
         feedTask.addTaskListener(mOnGetFeedListener);
-        mFeedContext.set(Task.KEY_PID, pid);
+        mFeedContext.set(Extra.KEY_PROGRAM_ID, pid);
         feedTask.execute(mFeedContext);
     }
 

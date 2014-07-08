@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.task.user;
 
 import android.util.Log;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.UserAPI;
@@ -15,9 +16,6 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public class UpdateInfoTask extends Task {
     final static String TAG = "_UpdateInfoTask";
-    public final static String KEY_USERINFO = "userinfo";
-    public final static String KEY_NICKNAME = "nickname";
-    public final static String KEY_ICON_URL = "iconurl";
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
@@ -28,10 +26,10 @@ public class UpdateInfoTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        String username = context.getString(KEY_USERNAME);
-        String token = context.getString(KEY_TOKEN);
-        String nickname = context.getString(KEY_NICKNAME);
-        String iconurl = context.getString(KEY_ICON_URL);
+        String username = context.getString(Extra.KEY_USERNAME);
+        String token = context.getString(Extra.KEY_TOKEN);
+        String nickname = context.getString(Extra.KEY_NICKNAME);
+        String iconurl = context.getString(Extra.KEY_ICON_URL);
 
         //Get current info
         User userinfo = null;
@@ -74,7 +72,7 @@ public class UpdateInfoTask extends Task {
             }
         }
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_USERINFO, userinfo);
+        context.set(Extra.KEY_USERINFO, userinfo);
         result.setContext(context);
         return result;
     }

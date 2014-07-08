@@ -19,7 +19,7 @@ public class ResetPasswordTask extends Task {
 
         TaskContext context = params[0];
 
-        String loginname = context.getString(Extra.KEY_LOGIN_NAME);
+        String loginname = context.getString(Extra.KEY_USERNAME);
         String password = context.getString(Extra.KEY_PASSWORD);
 
         try {

@@ -14,10 +14,6 @@ import com.pplive.liveplatform.util.StringUtil;
 
 public abstract class Task extends AsyncTask<TaskContext, Integer, TaskResult> {
 
-    public final static String KEY_TOKEN = "token";
-    public final static String KEY_PID = "pid";
-    public final static String KEY_USERNAME = "username";
-
     private static final int DEFAULT_TIME_OUT = 20 * 1000;
 
     private boolean mReturn = false;

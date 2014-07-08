@@ -50,7 +50,7 @@ public class UserAdapter extends RefreshAdapter<User> {
                 User user = getItem(position);
 
                 Intent intent = new Intent(mContext, UserpageActivity.class);
-                intent.putExtra(Extra.KEY_LOGIN_NAME, user.getUsername());
+                intent.putExtra(Extra.KEY_USERNAME, user.getUsername());
                 intent.putExtra(Extra.KEY_ICON_URL, user.getIcon());
                 intent.putExtra(Extra.KEY_NICKNAME, user.getDisplayName());
                 mContext.startActivity(intent);

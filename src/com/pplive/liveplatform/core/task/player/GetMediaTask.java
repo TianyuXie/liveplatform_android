@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.task.player;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.live.MediaAPI;
 import com.pplive.liveplatform.core.api.live.model.WatchList;
 import com.pplive.liveplatform.core.task.Task;
@@ -21,9 +22,9 @@ public class GetMediaTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String username = (String) context.get(KEY_USERNAME);
-        String token = (String) context.get(KEY_TOKEN);
+        long pid = (Long) context.get(Extra.KEY_PROGRAM_ID);
+        String username = (String) context.get(Extra.KEY_USERNAME);
+        String token = (String) context.get(Extra.KEY_TOKEN);
         WatchList data = null;
         try {
             data = MediaAPI.getInstance().getPlayWatchListV3(token, pid, username);

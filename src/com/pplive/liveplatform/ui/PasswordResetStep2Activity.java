@@ -99,7 +99,7 @@ public class PasswordResetStep2Activity extends Activity {
                 task.addTaskListener(mRestPasswordTaskListener);
 
                 TaskContext context = new TaskContext();
-                context.set(Extra.KEY_LOGIN_NAME, loginName);
+                context.set(Extra.KEY_USERNAME, loginName);
                 context.set(Extra.KEY_PASSWORD, password);
 
                 task.execute(context);
@@ -145,7 +145,7 @@ public class PasswordResetStep2Activity extends Activity {
     protected void onResume() {
         super.onResume();
 
-        mLoginName = getIntent().getStringExtra(Extra.KEY_LOGIN_NAME);
+        mLoginName = getIntent().getStringExtra(Extra.KEY_USERNAME);
     }
 
     private void showErrorMsg(String msg) {
