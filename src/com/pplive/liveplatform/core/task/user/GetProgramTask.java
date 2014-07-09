@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.text.TextUtils;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.live.model.Program;
@@ -33,8 +34,8 @@ public class GetProgramTask extends Task {
         }
 
         TaskContext context = params[0];
-        String username = context.getString(KEY_USERNAME);
-        String token = context.getString(KEY_TOKEN);
+        String username = context.getString(Extra.KEY_USERNAME);
+        String token = context.getString(Extra.KEY_TOKEN);
         List<Program> data = null;
         try {
             if (TextUtils.isEmpty(token)) {

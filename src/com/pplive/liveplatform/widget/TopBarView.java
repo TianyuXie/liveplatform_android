@@ -46,30 +46,24 @@ public class TopBarView extends RelativeLayout {
         super(context, attrs, defStyle);
 
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TopBarView);
-        for (int i = 0; i < a.length(); ++i) {
-            int attr = a.getIndex(i);
 
-            if (R.styleable.TopBarView_text == attr) {
-                mTitle = a.getString(attr);
-            } else if (R.styleable.TopBarView_show_left_btn == attr) {
-                mShowLeftBtn = a.getBoolean(attr, false);
-            } else if (R.styleable.TopBarView_show_right_btn == attr) {
-                mShowRightBtn = a.getBoolean(attr, false);
-            } else if (R.styleable.TopBarView_left_btn_src == attr) {
-                mLeftBtnResId = a.getResourceId(attr, 0);
-            } else if (R.styleable.TopBarView_right_btn_src == attr) {
-                mRightBtnResId = a.getResourceId(attr, 0);
-            } else if (R.styleable.TopBarView_show_title == attr) {
-                mShowTitle = a.getBoolean(attr, false);
-            } else if (R.styleable.TopBarView_layout == attr) {
-                mLayoutResId = a.getResourceId(attr, R.layout.widget_top_bar);
-            }
-        }
+        mShowLeftBtn = a.getBoolean(R.styleable.TopBarView_show_left_btn, false);
+        mShowRightBtn = a.getBoolean(R.styleable.TopBarView_show_right_btn, false);
+
+        mLeftBtnResId = a.getResourceId(R.styleable.TopBarView_left_btn_src, 0);
+        mRightBtnResId = a.getResourceId(R.styleable.TopBarView_right_btn_src, 0);
+
+        mTitle = a.getString(R.styleable.TopBarView_text);
+        mShowTitle = a.getBoolean(R.styleable.TopBarView_show_title, false);
+
+        mLayoutResId = a.getResourceId(R.styleable.TopBarView_layout, R.layout.widget_top_bar);
 
         a.recycle();
 
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(mLayoutResId, this, true);
+
+        isInEditMode();
     }
 
     @Override
@@ -146,7 +140,14 @@ public class TopBarView extends RelativeLayout {
         if (btn instanceof ImageButton) {
             ((ImageButton) btn).setImageResource(resId);
         }
+    }
 
+    public View getLeftBtn() {
+        return mBtnLeft;
+    }
+
+    public View getRightBtn() {
+        return mBtnRight;
     }
 
     public void hideLeftBtn() {
@@ -178,6 +179,22 @@ public class TopBarView extends RelativeLayout {
             mBtnLeft.setVisibility(View.VISIBLE);
         } else {
             mBtnRight.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setLeftBtnEnabled(boolean enabled) {
+        setBtnEnabled(true, enabled);
+    }
+
+    public void setRightBtnEnabled(boolean enabled) {
+        setBtnEnabled(false, enabled);
+    }
+
+    private void setBtnEnabled(boolean left, boolean enabled) {
+        if (left) {
+            mBtnLeft.setEnabled(enabled);
+        } else {
+            mBtnRight.setEnabled(enabled);
         }
     }
 

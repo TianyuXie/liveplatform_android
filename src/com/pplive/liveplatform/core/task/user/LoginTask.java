@@ -3,6 +3,7 @@ package com.pplive.liveplatform.core.task.user;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.UserAPI;
@@ -17,9 +18,8 @@ import com.pplive.liveplatform.util.StringManager;
 import com.pplive.liveplatform.util.StringUtil;
 
 public class LoginTask extends Task {
-    final static String TAG = "_LoginTask";
-    public final static String KEY_USERINFO = "userinfo";
-    public final static String KEY_PASSWORD = "password";
+
+    final static String TAG = LoginTask.class.getSimpleName();
 
     public final static String TYPE = "Login";
 
@@ -47,8 +47,8 @@ public class LoginTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        String usr = context.getString(KEY_USERNAME);
-        String pwd = context.getString(KEY_PASSWORD);
+        String usr = context.getString(Extra.KEY_USERNAME);
+        String pwd = context.getString(Extra.KEY_PASSWORD);
         String token = null;
         LoginResult loginResult = null;
         try {
@@ -84,11 +84,11 @@ public class LoginTask extends Task {
         }
 
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_USERNAME, usr);
-        context.set(KEY_TOKEN, token);
+        context.set(Extra.KEY_USERNAME, usr);
+        context.set(Extra.KEY_TOKEN, token);
         if (userinfo != null) {
             Log.d(TAG, "UserService OK");
-            context.set(KEY_USERINFO, userinfo);
+            context.set(Extra.KEY_USERINFO, userinfo);
         } else {
             Log.w(TAG, "userinfo == null");
         }

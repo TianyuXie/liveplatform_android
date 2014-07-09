@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.passport.PassportAPI;
@@ -29,9 +30,9 @@ public class TokenTask extends Task {
             return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
         TaskContext context = params[0];
-        String username = context.getString(KEY_USERNAME);
-        String pwd = context.getString(KEY_PASSWORD);
-        String token = context.getString(KEY_TOKEN);
+        String username = context.getString(Extra.KEY_USERNAME);
+        String pwd = context.getString(Extra.KEY_PASSWORD);
+        String token = context.getString(Extra.KEY_TOKEN);
         boolean needUpdate = (Boolean) context.get(KEY_NEED_UPDATE, true);
         boolean isThirdParty = (Boolean) context.get(KEY_THIRDPARTY, false);
         boolean mustUpdate = false;
@@ -101,7 +102,7 @@ public class TokenTask extends Task {
             }
         }
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_TOKEN, token);
+        context.set(Extra.KEY_TOKEN, token);
         result.setContext(context);
         return result;
     }

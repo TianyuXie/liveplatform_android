@@ -110,7 +110,7 @@ public class SearchResultActivity extends Activity {
         mProgramAdapter = new ProgramAdapter(this);
         mProgramContainer.setAdapter(mProgramAdapter);
 
-        mSearchProgramHelper = new SearchProgramHelper(mProgramAdapter);
+        mSearchProgramHelper = new SearchProgramHelper(this, mProgramAdapter);
         mSearchProgramHelper.setLoadListener(new LoadListener() {
 
             @Override
@@ -152,7 +152,7 @@ public class SearchResultActivity extends Activity {
         mUserAdapter = new UserAdapter(this);
         mUserContainer.setAdapter(mUserAdapter);
 
-        mSearchUserHelper = new SearchUserHelper(mUserAdapter);
+        mSearchUserHelper = new SearchUserHelper(this, mUserAdapter);
         mSearchUserHelper.setLoadListener(new LoadListener() {
 
             @Override

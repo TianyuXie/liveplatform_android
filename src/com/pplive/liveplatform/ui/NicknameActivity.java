@@ -9,10 +9,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.User;
@@ -36,7 +37,7 @@ public class NicknameActivity extends Activity {
 
     private EditText mEditNickname;
 
-    private Button mBtnConfirm;
+    private ImageButton mBtnConfirm;
 
     private TextView mTextError;
 
@@ -51,9 +52,9 @@ public class NicknameActivity extends Activity {
             UpdateInfoTask task = new UpdateInfoTask();
             task.addTaskListener(onTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(UpdateInfoTask.KEY_USERNAME, mUserManager.getUsernamePlain());
-            taskContext.set(UpdateInfoTask.KEY_NICKNAME, mEditNickname.getText().toString());
-            taskContext.set(UpdateInfoTask.KEY_TOKEN, mUserManager.getToken());
+            taskContext.set(Extra.KEY_USERNAME, mUserManager.getUsernamePlain());
+            taskContext.set(Extra.KEY_NICKNAME, mEditNickname.getText().toString());
+            taskContext.set(Extra.KEY_TOKEN, mUserManager.getToken());
             task.execute(taskContext);
         }
     };
@@ -78,7 +79,7 @@ public class NicknameActivity extends Activity {
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
             Log.d(TAG, "onTaskFinished");
             mRefreshDialog.dismiss();
-            mUserManager.setUserinfo((User) event.getContext().get(UpdateInfoTask.KEY_USERINFO));
+            mUserManager.setUserinfo((User) event.getContext().get(Extra.KEY_USERINFO));
 
             //            Toast.makeText(mContext, R.string.toast_nickname_changed, Toast.LENGTH_SHORT).show();
 
@@ -153,7 +154,8 @@ public class NicknameActivity extends Activity {
             }
         });
 
-        mBtnConfirm = (Button) findViewById(R.id.btn_confirm);
+        mBtnConfirm = (ImageButton) mTopBarView.getRightBtn();
+        mBtnConfirm.setEnabled(false);
         mBtnConfirm.setOnClickListener(mOnClickBtnConfirmListener);
 
         mEditNickname = (EditText) findViewById(R.id.edit_nickname);

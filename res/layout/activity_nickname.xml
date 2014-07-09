@@ -12,6 +12,7 @@
         android:layout_height="@dimen/top_bar_height"
         android:background="@color/top_bar_bg"
         live:left_btn_src="@drawable/btn_back"
+        live:right_btn_src="@drawable/btn_ok"
         live:show_left_btn="true"
         live:show_right_btn="true"
         live:show_title="true"
@@ -41,19 +42,6 @@
             android:layout_marginTop="10dp"
             android:textColor="@color/red"
             android:textSize="18sp" />
-
-        <Button
-            android:id="@+id/btn_confirm"
-            style="@style/Widget.Button.Transparent"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/text_error"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/btn_confirm"
-            android:enabled="false"
-            android:text="@string/btn_confirm"
-            android:textColor="@color/btn_confirm_color"
-            android:textSize="22sp" />
     </RelativeLayout>
 
 </LinearLayout>

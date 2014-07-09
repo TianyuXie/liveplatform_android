@@ -114,8 +114,8 @@ public class PersonalFragment extends Fragment {
                         });
 
                         TaskContext taskContext = new TaskContext();
-                        taskContext.set(RemoveProgramTask.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
-                        taskContext.set(RemoveProgramTask.KEY_PID, pid);
+                        taskContext.set(Extra.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
+                        taskContext.set(Extra.KEY_PROGRAM_ID, pid);
 
                         task.execute(taskContext);
 
@@ -229,7 +229,7 @@ public class PersonalFragment extends Fragment {
 
             Toast.makeText(mActivity, R.string.toast_icon_changed, Toast.LENGTH_SHORT).show();
 
-            UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(UploadIconTask.KEY_USERINFO));
+            UserManager.getInstance(mActivity).setUserinfo((User) event.getContext().get(Extra.KEY_USERINFO));
             String iconUrl = UserManager.getInstance(mActivity).getIcon();
 
             if (!TextUtils.isEmpty(iconUrl)) {
@@ -327,7 +327,7 @@ public class PersonalFragment extends Fragment {
         } else {
             Intent intent = getActivity().getIntent();
 
-            mUsername = intent.getStringExtra(Extra.KEY_LOGIN_NAME);
+            mUsername = intent.getStringExtra(Extra.KEY_USERNAME);
             mIconUrl = intent.getStringExtra(Extra.KEY_ICON_URL);
             mNickName = intent.getStringExtra(Extra.KEY_NICKNAME);
         }
@@ -371,9 +371,9 @@ public class PersonalFragment extends Fragment {
         GetProgramTask task = new GetProgramTask();
         task.addTaskListener(mGetProgramTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(GetProgramTask.KEY_USERNAME, mUsername);
+        taskContext.set(Extra.KEY_USERNAME, mUsername);
         if (isLogin(mUsername)) {
-            taskContext.set(GetProgramTask.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
+            taskContext.set(Extra.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
         }
 
         task.execute(taskContext);
@@ -438,9 +438,9 @@ public class PersonalFragment extends Fragment {
         UploadIconTask task = new UploadIconTask();
         task.addTaskListener(mUploadIconTaskListener);
         TaskContext taskContext = new TaskContext();
-        taskContext.set(UploadIconTask.KEY_USERNAME, UserManager.getInstance(mActivity).getUsernamePlain());
-        taskContext.set(UploadIconTask.KEY_ICON_PATH, imagePath);
-        taskContext.set(UploadIconTask.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
+        taskContext.set(Extra.KEY_USERNAME, UserManager.getInstance(mActivity).getUsernamePlain());
+        taskContext.set(Extra.KEY_ICON_PATH, imagePath);
+        taskContext.set(Extra.KEY_TOKEN, UserManager.getInstance(mActivity).getToken());
         task.execute(taskContext);
     }
 

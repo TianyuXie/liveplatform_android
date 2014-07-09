@@ -3,8 +3,11 @@ package com.pplive.liveplatform.core.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.live.SearchAPI.LiveStatusKeyword;
 import com.pplive.liveplatform.core.api.live.SearchAPI.SortKeyword;
 import com.pplive.liveplatform.core.api.live.model.FallList;
@@ -36,9 +39,9 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            FallList<Program> fallList = (FallList<Program>) event.getContext().get(SearchProgramTask.KEY_RESULT);
+            FallList<Program> fallList = (FallList<Program>) event.getContext().get(Extra.KEY_RESULT);
             List<Program> tempPrograms = fallList.getList();
-            RefreshMode mode = (RefreshMode) event.getContext().get(SearchProgramTask.KEY_LOAD_MODE);
+            RefreshMode mode = (RefreshMode) event.getContext().get(Extra.KEY_LOAD_MODE);
 
             mNextToken = fallList.nextToken();
             mLoadedData.addAll(tempPrograms);
@@ -71,8 +74,8 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
 
     };
 
-    public SearchProgramHelper(RefreshAdapter<Program> adapter) {
-        super(adapter);
+    public SearchProgramHelper(Context context, RefreshAdapter<Program> adapter) {
+        super(context, adapter);
     }
 
     public void searchBySubjectId(int subjectId) {
@@ -137,17 +140,17 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
         task.addTaskListener(mLoadTaskListener);
         TaskContext context = new TaskContext();
 
-        context.set(SearchProgramTask.KEY_LOAD_MODE, mode);
+        context.set(Extra.KEY_LOAD_MODE, mode);
 
-        context.set(SearchProgramTask.KEY_SUBJECT_ID, mSubjectId);
-        context.set(SearchProgramTask.KEY_KEYWORD, mKeyword);
-        context.set(SearchProgramTask.KEY_TAG, mTag);
+        context.set(Extra.KEY_SUBJECT_ID, mSubjectId);
+        context.set(Extra.KEY_KEYWORD, mKeyword);
+        context.set(Extra.KEY_TAG, mTag);
 
-        context.set(SearchProgramTask.KEY_LIVE_STATUS, mLiveStatusKeyword);
-        context.set(SearchProgramTask.KEY_SORT, mSortKeyword);
+        context.set(Extra.KEY_LIVE_STATUS, mLiveStatusKeyword);
+        context.set(Extra.KEY_SORT, mSortKeyword);
 
-        context.set(SearchProgramTask.KEY_FALL_COUNT, count);
-        context.set(SearchProgramTask.KEY_NEXT_TOKEN, mNextToken);
+        context.set(Extra.KEY_FALL_COUNT, count);
+        context.set(Extra.KEY_NEXT_TOKEN, mNextToken);
 
         task.execute(context);
     }

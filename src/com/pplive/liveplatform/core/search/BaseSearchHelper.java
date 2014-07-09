@@ -1,11 +1,15 @@
 package com.pplive.liveplatform.core.search;
 
+import android.content.Context;
+
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
 
 public abstract class BaseSearchHelper<T> {
 
     private static final int DEFAULT_FALL_COUNT = 16;
+
+    protected Context mContext;
 
     protected int mFallCount = DEFAULT_FALL_COUNT;
 
@@ -15,7 +19,8 @@ public abstract class BaseSearchHelper<T> {
 
     private LoadListener mLoadListener;
 
-    public BaseSearchHelper(RefreshAdapter<T> adapter) {
+    public BaseSearchHelper(Context context, RefreshAdapter<T> adapter) {
+        mContext = context;
         mAdapter = adapter;
     }
 

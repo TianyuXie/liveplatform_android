@@ -1,5 +1,6 @@
 package com.pplive.liveplatform.core.task.player;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.comment.PbarAPI;
 import com.pplive.liveplatform.core.api.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.task.Task;
@@ -23,8 +24,8 @@ public class GetFeedTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String token = context.getString(KEY_TOKEN);
+        long pid = (Long) context.get(Extra.KEY_PROGRAM_ID);
+        String token = context.getString(Extra.KEY_TOKEN);
         FeedDetailList data = null;
         try {
             data = PbarAPI.getInstance().getFeeds(token, pid);

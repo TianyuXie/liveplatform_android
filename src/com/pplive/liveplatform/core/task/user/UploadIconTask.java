@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.task.user;
 
 import android.util.Log;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.FileUploadAPI;
 import com.pplive.liveplatform.core.api.live.UserAPI;
@@ -14,10 +15,8 @@ import com.pplive.liveplatform.core.task.TaskResult.TaskStatus;
 public class UploadIconTask extends Task {
     final static String TAG = "_UpdateIconTask";
 
-    public final static String KEY_USERINFO = "userinfo";
-    public final static String KEY_ICON_PATH = "iconpath";
-
     private User mUserInfo;
+
     private String mIconUrl;
 
     @Override
@@ -29,9 +28,9 @@ public class UploadIconTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        String username = context.getString(KEY_USERNAME);
-        String token = context.getString(KEY_TOKEN);
-        String icon = context.getString(KEY_ICON_PATH);
+        String username = context.getString(Extra.KEY_USERNAME);
+        String token = context.getString(Extra.KEY_TOKEN);
+        String icon = context.getString(Extra.KEY_ICON_PATH);
         GetUserInfoThread userThread = new GetUserInfoThread(username, token);
         userThread.start();
         UploadThread uploadThread = new UploadThread(username, token, icon);
@@ -60,7 +59,7 @@ public class UploadIconTask extends Task {
             return new TaskResult(TaskStatus.FAILED, "fail to update");
         }
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(KEY_USERINFO, mUserInfo);
+        context.set(Extra.KEY_USERINFO, mUserInfo);
         result.setContext(context);
         return result;
     }

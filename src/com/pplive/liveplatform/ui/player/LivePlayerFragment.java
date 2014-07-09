@@ -241,7 +241,7 @@ public class LivePlayerFragment extends Fragment implements View.OnTouchListener
             if (getActivity() != null) {
                 Program program = (Program) getActivity().getIntent().getSerializableExtra(LivePlayerActivity.EXTRA_PROGRAM);
                 Intent intent = new Intent(getActivity(), UserpageActivity.class);
-                intent.putExtra(Extra.KEY_LOGIN_NAME, program.getOwner());
+                intent.putExtra(Extra.KEY_USERNAME, program.getOwner());
                 intent.putExtra(Extra.KEY_ICON_URL, program.getOwnerIcon());
                 intent.putExtra(Extra.KEY_NICKNAME, program.getOwnerNickname());
                 getActivity().startActivity(intent);

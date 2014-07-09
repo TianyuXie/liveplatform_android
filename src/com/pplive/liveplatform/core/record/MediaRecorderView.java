@@ -35,11 +35,13 @@ public class MediaRecorderView extends SurfaceView implements SurfaceHolder.Call
     private MediaRecorderListener mMediaRecorderListener;
 
     public MediaRecorderView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0 /* defStyle */);
     }
 
-    public MediaRecorderView(Context context, AttributeSet attrs, int style) {
-        super(context, attrs, style);
+    public MediaRecorderView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+
+        isInEditMode();
     }
 
     @Override

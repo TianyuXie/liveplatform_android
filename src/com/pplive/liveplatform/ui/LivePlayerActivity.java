@@ -33,6 +33,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.Toast;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.LiveStatus;
@@ -321,9 +322,9 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
             GetMediaTask mediaTask = new GetMediaTask();
             mediaTask.addTaskListener(onGetMediaListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(Task.KEY_PID, pid);
-            taskContext.set(Task.KEY_USERNAME, username);
-            taskContext.set(Task.KEY_TOKEN, token);
+            taskContext.set(Extra.KEY_PROGRAM_ID, pid);
+            taskContext.set(Extra.KEY_USERNAME, username);
+            taskContext.set(Extra.KEY_TOKEN, token);
             mediaTask.execute(taskContext);
         }
     }
@@ -551,9 +552,9 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
 
                 String token = UserManager.getInstance(mContext).getToken();
                 TaskContext taskContext = new TaskContext();
-                taskContext.set(PutFeedTask.KEY_PID, pid);
+                taskContext.set(Extra.KEY_PROGRAM_ID, pid);
                 taskContext.set(PutFeedTask.KEY_CONTENT, content);
-                taskContext.set(PutFeedTask.KEY_TOKEN, token);
+                taskContext.set(Extra.KEY_TOKEN, token);
                 postFeed(taskContext);
             } else if (content.length() > 20) {
                 Toast.makeText(this, R.string.player_comment_warn, Toast.LENGTH_SHORT).show();
@@ -921,7 +922,7 @@ public class LivePlayerActivity extends FragmentActivity implements View.OnClick
             LiveStatusTask task = new LiveStatusTask();
             task.addTaskListener(onLiveStatusTaskListener);
             TaskContext taskContext = new TaskContext();
-            taskContext.set(LiveStatusTask.KEY_PID, pid);
+            taskContext.set(Extra.KEY_PROGRAM_ID, pid);
             task.execute(taskContext);
         }
     }

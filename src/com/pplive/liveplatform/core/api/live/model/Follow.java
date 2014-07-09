@@ -2,11 +2,11 @@ package com.pplive.liveplatform.core.api.live.model;
 
 public class Follow {
 
-    int[] add;
+    long[] add;
 
-    int[] del;
+    long[] del;
 
-    public Follow(int[] add, int[] del) {
+    public Follow(long[] add, long[] del) {
         this.add = add;
         this.del = del;
     }

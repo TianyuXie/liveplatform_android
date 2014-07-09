@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.task.player;
 
 import android.util.Log;
 
+import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.comment.PbarAPI;
 import com.pplive.liveplatform.core.task.Task;
 import com.pplive.liveplatform.core.task.TaskContext;
@@ -26,8 +27,8 @@ public class PutFeedTask extends Task {
             return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
         }
         TaskContext context = params[0];
-        long pid = (Long) context.get(KEY_PID);
-        String token = context.getString(KEY_TOKEN);
+        long pid = (Long) context.get(Extra.KEY_PROGRAM_ID);
+        String token = context.getString(Extra.KEY_TOKEN);
         String content = context.getString(KEY_CONTENT);
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         long feedId = -1;

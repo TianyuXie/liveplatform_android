@@ -76,7 +76,7 @@ public class ChannelActivity extends Activity {
         mAdapter = new ProgramAdapter(getApplicationContext());
         mContainer.setAdapter(mAdapter);
 
-        mProgramLoader = new SearchProgramHelper(mAdapter);
+        mProgramLoader = new SearchProgramHelper(this, mAdapter);
         mProgramLoader.setLoadListener(new LoadListener() {
 
             @Override
