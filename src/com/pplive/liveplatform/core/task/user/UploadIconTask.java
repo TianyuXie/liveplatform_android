@@ -59,7 +59,7 @@ public class UploadIconTask extends Task {
             return new TaskResult(TaskStatus.FAILED, "fail to update");
         }
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(Extra.KEY_USERINFO, mUserInfo);
+        context.set(Extra.KEY_USER_INFO, mUserInfo);
         result.setContext(context);
         return result;
     }

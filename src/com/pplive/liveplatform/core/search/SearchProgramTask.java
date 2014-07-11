@@ -41,9 +41,8 @@ public class SearchProgramTask extends Task {
         }
 
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(Extra.KEY_RESULT, data);
+        context.set(Extra.KEY_SEARCH_RESULT, data);
         result.setContext(context);
         return result;
     }
-
 }

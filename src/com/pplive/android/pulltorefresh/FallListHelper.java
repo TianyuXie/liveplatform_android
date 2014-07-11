@@ -1,11 +1,12 @@
-package com.pplive.liveplatform.core.search;
+package com.pplive.android.pulltorefresh;
 
 import android.content.Context;
 
-import com.pplive.android.pulltorefresh.RefreshAdapter;
-import com.pplive.android.pulltorefresh.RefreshMode;
+import com.pplive.liveplatform.Extra;
+import com.pplive.liveplatform.core.task.Task;
+import com.pplive.liveplatform.core.task.TaskContext;
 
-public abstract class BaseSearchHelper<T> {
+public abstract class FallListHelper<T> {
 
     private static final int DEFAULT_FALL_COUNT = 16;
 
@@ -19,28 +20,53 @@ public abstract class BaseSearchHelper<T> {
 
     private LoadListener mLoadListener;
 
-    public BaseSearchHelper(Context context, RefreshAdapter<T> adapter) {
+    public FallListHelper(Context context, RefreshAdapter<T> adapter) {
         mContext = context;
         mAdapter = adapter;
     }
 
-    public void refresh() {
+    public final void refresh() {
+        reset();
         refresh(DEFAULT_FALL_COUNT);
     }
 
-    public void refresh(int count) {
+    protected final void refresh(int count) {
         load(RefreshMode.REFRESH, count);
     }
 
-    public void append() {
+    public final void append() {
         append(DEFAULT_FALL_COUNT);
     }
 
-    public void append(int count) {
+    protected final void append(int count) {
         load(RefreshMode.APPEND, count);
     }
 
-    abstract void load(RefreshMode mode, int count);
+    protected final void load(RefreshMode mode, int count) {
+
+        onLoadStart();
+
+        Task task = createTask();
+        TaskContext context = new TaskContext();
+
+        context.set(Extra.KEY_NEXT_TOKEN, mNextToken);
+        context.set(Extra.KEY_FALL_COUNT, count);
+        context.set(Extra.KEY_REFRESH_MODE, mode);
+
+        onLoad(task, context);
+
+        task.execute(context);
+    }
+
+    protected abstract Task createTask();
+
+    protected void onLoad(Task task, TaskContext context) {
+
+    }
+
+    protected void reset() {
+
+    }
 
     public void setLoadListener(LoadListener listener) {
         mLoadListener = listener;

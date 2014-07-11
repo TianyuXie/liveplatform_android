@@ -77,14 +77,11 @@ public class UserAdapter extends RefreshAdapter<User> {
             @Override
             public void onClick(View v) {
                 if (R.id.btn_follow == v.getId()) {
-                    boolean selected = v.isSelected();
-                    if (!selected) {
-                        ImageButton btn = (ImageButton) v;
+                    ImageButton btn = (ImageButton) v;
 
-                        btn.setSelected(true);
+                    btn.setImageResource(R.drawable.followed);
 
-                        follow(user);
-                    }
+                    follow(user);
                 }
             }
         });
@@ -92,10 +89,10 @@ public class UserAdapter extends RefreshAdapter<User> {
         int relation = user.getRelation();
         if (1 == relation || 2 == relation) {
             holder.btnFollow.setVisibility(View.VISIBLE);
-            holder.btnFollow.setSelected(true);
+            holder.btnFollow.setImageResource(R.drawable.followed);
         } else if (0 == relation) {
             holder.btnFollow.setVisibility(View.VISIBLE);
-            holder.btnFollow.setSelected(false);
+            holder.btnFollow.setImageResource(R.drawable.btn_follow);
         } else {
             holder.btnFollow.setVisibility(View.GONE);
         }

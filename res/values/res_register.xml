@@ -13,5 +13,6 @@
     <string name="register_phone_number_incorrect">手机号不正确, 请仔细核对</string>
     <string name="phone_number">输入手机号</string>
     <string name="password">输入密码</string>
-
-</resources>
+    <string name="btn_skip">跳过</string>
+    <string name="reg_nick">填写昵称</string>
+</resources>

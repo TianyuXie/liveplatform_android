@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/app_bg"
+    android:orientation="vertical" >
+
+    <com.pplive.liveplatform.widget.TopBarView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/top_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/top_bar_height"
+        android:background="@color/top_bar_bg"
+        live:left_btn_src="@drawable/btn_back"
+        live:show_left_btn="true"
+        live:show_title="true"
+        live:text="@string/my_fans" />
+
+    <com.handmark.pulltorefresh.library.PullToRefreshListView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/user_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:divider="@drawable/list_divider"
+        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
+        ptr:ptrMode="both" />
+
+</LinearLayout>

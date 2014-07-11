@@ -22,6 +22,9 @@ public class UserAPI extends RESTfulAPI {
     private static final String TEMPLATE_GET_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/user/v1/pptv/{username}/info")
             .toString();
 
+    private static final String TEMPLATE_CDN_GET_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST, "/user/v1/pptv/{username}/info")
+            .toString();
+
     private static final String TEMPLATE_UPDATE_USER_INFO = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/user/v1/pptv/{username}/info")
             .toString();
 
@@ -36,15 +39,23 @@ public class UserAPI extends RESTfulAPI {
     }
 
     public User getUserInfo(String coToken, String username) throws LiveHttpException {
+        return getUserInfo(coToken, username, false);
+    }
+
+    public User getUserInfo(String coToken, String username, boolean cdn) throws LiveHttpException {
         Log.d(TAG, "username: " + username);
 
-        UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
-        mHttpHeaders.setAuthorization(coTokenAuthentication);
+        if (!cdn) {
+            UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
+            mHttpHeaders.setAuthorization(coTokenAuthentication);
+        }
+
         HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
         UserResp resp = null;
         try {
-            HttpEntity<UserResp> rep = mRestTemplate.exchange(TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class, username);
+            HttpEntity<UserResp> rep = mRestTemplate.exchange(cdn ? TEMPLATE_CDN_GET_USER_INFO : TEMPLATE_GET_USER_INFO, HttpMethod.GET, req, UserResp.class,
+                    username);
             resp = rep.getBody();
 
             if (0 == resp.getError()) {

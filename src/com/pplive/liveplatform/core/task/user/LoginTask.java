@@ -88,7 +88,7 @@ public class LoginTask extends Task {
         context.set(Extra.KEY_TOKEN, token);
         if (userinfo != null) {
             Log.d(TAG, "UserService OK");
-            context.set(Extra.KEY_USERINFO, userinfo);
+            context.set(Extra.KEY_USER_INFO, userinfo);
         } else {
             Log.w(TAG, "userinfo == null");
         }

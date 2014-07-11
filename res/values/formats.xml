@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!-- Date Format -->
     <string name="fmt_start_time_year">%d年前</string>
     <string name="fmt_start_time_month">%d月前</string>
     <string name="fmt_start_time_day">%d天前</string>
     <string name="fmt_start_time_hour">%d小时前</string>
     <string name="fmt_start_time_minute">%d分钟前</string>
     <string name="fmt_start_time_second">%d秒前</string>
+
+    <!-- Search Title Format -->
+    <string name="fmt_search_program_title" formatted="false">\"%1$s\"相关内容的搜索结果</string>
+    <string name="fmt_search_user_title" formatted="false">\"%1$s\"相关用户的搜索结果</string>
+
+    <!-- Program Title Format -->
+    <string name="fmt_default_program_title" formatted="false">\"%1$s\"的直播</string>
+    <!-- Followers & Fans -->
+    <string name="fmt_followers" formatted="false">%d关注</string>
+    <string name="fmt_fans" formatted="false">%d粉丝</string>
 
 </resources>

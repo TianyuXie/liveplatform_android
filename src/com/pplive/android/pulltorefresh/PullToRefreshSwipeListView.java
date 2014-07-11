@@ -39,18 +39,22 @@ public class PullToRefreshSwipeListView extends PullToRefreshAdapterViewBase<Swi
 
     public PullToRefreshSwipeListView(Context context) {
         super(context);
+
     }
 
     public PullToRefreshSwipeListView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
     }
 
     public PullToRefreshSwipeListView(Context context, Mode mode) {
         super(context, mode);
+
     }
 
     public PullToRefreshSwipeListView(Context context, Mode mode, AnimationStyle style) {
         super(context, mode, style);
+
     }
 
     @Override
@@ -309,6 +313,7 @@ public class PullToRefreshSwipeListView extends PullToRefreshAdapterViewBase<Swi
 
         public InternalSwipeListView(Context context, AttributeSet attrs) {
             super(context, attrs);
+
         }
 
         @Override
