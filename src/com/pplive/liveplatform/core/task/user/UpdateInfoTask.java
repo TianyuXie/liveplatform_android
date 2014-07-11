@@ -72,7 +72,7 @@ public class UpdateInfoTask extends Task {
             }
         }
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(Extra.KEY_USERINFO, userinfo);
+        context.set(Extra.KEY_USER_INFO, userinfo);
         result.setContext(context);
         return result;
     }

@@ -362,7 +362,7 @@ public class FooterBarFragment extends Fragment implements OnClickListener, OnTo
             } else {
                 if (mAttachedActivity != null) {
                     String username = UserManager.getInstance(mAttachedActivity).getNickname();
-                    liveTitle = mAttachedActivity.getResources().getString(R.string.default_live_title_fmt, username);
+                    liveTitle = mAttachedActivity.getResources().getString(R.string.fmt_default_program_title, username);
                 }
             }
 

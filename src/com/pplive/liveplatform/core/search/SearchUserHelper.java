@@ -2,6 +2,7 @@ package com.pplive.liveplatform.core.search;
 
 import android.content.Context;
 
+import com.pplive.android.pulltorefresh.FallListHelper;
 import com.pplive.android.pulltorefresh.RefreshAdapter;
 import com.pplive.android.pulltorefresh.RefreshMode;
 import com.pplive.liveplatform.Extra;
@@ -14,7 +15,7 @@ import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 
-public class SearchUserHelper extends BaseSearchHelper<User> {
+public class SearchUserHelper extends FallListHelper<User> {
 
     private String mKeyword;
 
@@ -23,8 +24,8 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            FallList<User> fallList = (FallList<User>) event.getContext().get(Extra.KEY_RESULT);
-            RefreshMode mode = (RefreshMode) event.getContext().get(Extra.KEY_LOAD_MODE);
+            FallList<User> fallList = (FallList<User>) event.getContext().get(Extra.KEY_SEARCH_RESULT);
+            RefreshMode mode = (RefreshMode) event.getContext().get(Extra.KEY_REFRESH_MODE);
 
             mNextToken = fallList.nextToken();
             mode.loadData(mAdapter, fallList.getList());
@@ -48,25 +49,13 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
     }
 
     @Override
-    public void refresh() {
+    protected void reset() {
         mNextToken = "";
-
-        super.refresh();
     }
 
     @Override
-    void load(RefreshMode mode, int count) {
-        onLoadStart();
-
-        SearchUserTask task = new SearchUserTask();
+    protected void onLoad(Task task, TaskContext context) {
         task.addTaskListener(mLoadTaskListener);
-
-        TaskContext context = new TaskContext();
-
-        context.set(Extra.KEY_LOAD_MODE, mode);
-
-        context.set(Extra.KEY_FALL_COUNT, mFallCount);
-        context.set(Extra.KEY_NEXT_TOKEN, mNextToken);
         context.set(Extra.KEY_KEYWORD, mKeyword);
 
         UserManager mananger = UserManager.getInstance(mContext);
@@ -74,7 +63,10 @@ public class SearchUserHelper extends BaseSearchHelper<User> {
             context.set(Extra.KEY_USERNAME, mananger.getUsernamePlain());
             context.set(Extra.KEY_TOKEN, mananger.getToken());
         }
+    }
 
-        task.execute(context);
+    @Override
+    protected Task createTask() {
+        return new SearchUserTask();
     }
 }

@@ -131,7 +131,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
             mUserManager.login(plainUsername, plainPassword, token);
 
-            User userinfo = (User) event.getContext().get(Extra.KEY_USERINFO);
+            User userinfo = (User) event.getContext().get(Extra.KEY_USER_INFO);
             mUserManager.setUserinfo(userinfo);
 
             boolean fromRegister = getIntent().getBooleanExtra(EXTRA_FROM_REGISTER, false);

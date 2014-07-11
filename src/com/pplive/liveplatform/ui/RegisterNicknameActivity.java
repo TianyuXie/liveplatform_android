@@ -82,7 +82,7 @@ public class RegisterNicknameActivity extends Activity {
             Log.d(TAG, "onTaskFinished");
 
             mRefreshDialog.dismiss();
-            mUserManager.setUserinfo((User) event.getContext().get(Extra.KEY_USERINFO));
+            mUserManager.setUserinfo((User) event.getContext().get(Extra.KEY_USER_INFO));
 
             //            Toast.makeText(mContext, R.string.toast_nickname_changed, Toast.LENGTH_SHORT).show();
 

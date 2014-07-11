@@ -16,11 +16,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.pplive.android.pulltorefresh.FallListHelper.LoadListener;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.adapter.UserAdapter;
 import com.pplive.liveplatform.core.api.live.model.Program;
-import com.pplive.liveplatform.core.search.BaseSearchHelper.LoadListener;
 import com.pplive.liveplatform.core.search.SearchProgramHelper;
 import com.pplive.liveplatform.core.search.SearchUserHelper;
 import com.pplive.liveplatform.widget.TopBarView;
@@ -211,12 +211,12 @@ public class SearchResultActivity extends Activity {
 
     private int mapViewIdToResId(int id) {
         if (R.id.radio_btn_program == id) {
-            return R.string.search_program_title_fmt;
+            return R.string.fmt_search_program_title;
         } else if (R.id.radio_btn_user == id) {
-            return R.string.search_user_title_fmt;
+            return R.string.fmt_search_user_title;
         }
 
-        return R.string.search_program_title_fmt;
+        return R.string.fmt_search_program_title;
     }
 
     private void search() {

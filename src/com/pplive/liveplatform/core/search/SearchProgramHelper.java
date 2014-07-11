@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 
 import com.pplive.android.pulltorefresh.RefreshAdapter;
+import com.pplive.android.pulltorefresh.FallListHelper;
 import com.pplive.android.pulltorefresh.RefreshMode;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.live.SearchAPI.LiveStatusKeyword;
@@ -18,9 +19,7 @@ import com.pplive.liveplatform.core.task.TaskContext;
 import com.pplive.liveplatform.core.task.TaskFailedEvent;
 import com.pplive.liveplatform.core.task.TaskSucceedEvent;
 
-public class SearchProgramHelper extends BaseSearchHelper<Program> {
-
-    private static final int DEFAULT_FALL_COUNT = 16;
+public class SearchProgramHelper extends FallListHelper<Program> {
 
     private String mKeyword = "";
 
@@ -39,19 +38,19 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
         @SuppressWarnings("unchecked")
         @Override
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
-            FallList<Program> fallList = (FallList<Program>) event.getContext().get(Extra.KEY_RESULT);
+            FallList<Program> fallList = (FallList<Program>) event.getContext().get(Extra.KEY_SEARCH_RESULT);
             List<Program> tempPrograms = fallList.getList();
-            RefreshMode mode = (RefreshMode) event.getContext().get(Extra.KEY_LOAD_MODE);
+            RefreshMode mode = (RefreshMode) event.getContext().get(Extra.KEY_REFRESH_MODE);
 
             mNextToken = fallList.nextToken();
             mLoadedData.addAll(tempPrograms);
 
-            if (mLoadedData.size() < DEFAULT_FALL_COUNT && LiveStatusKeyword.LIVING == mLiveStatusKeyword) {
+            if (mLoadedData.size() < mFallCount && LiveStatusKeyword.LIVING == mLiveStatusKeyword) {
                 mLiveStatusKeyword = LiveStatusKeyword.VOD;
                 mSortKeyword = SortKeyword.VV;
                 mNextToken = "";
 
-                int count = DEFAULT_FALL_COUNT - tempPrograms.size();
+                int count = mFallCount - tempPrograms.size();
 
                 if (RefreshMode.REFRESH == mode) {
                     refresh(count);
@@ -59,7 +58,7 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
                     append(count);
                 }
 
-            } else if (mLoadedData.size() >= DEFAULT_FALL_COUNT || LiveStatusKeyword.VOD == mLiveStatusKeyword) {
+            } else if (mLoadedData.size() >= mFallCount || LiveStatusKeyword.VOD == mLiveStatusKeyword) {
                 mode.loadData(mAdapter, mLoadedData);
                 mLoadedData.clear();
 
@@ -121,26 +120,16 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
     }
 
     @Override
-    public void refresh() {
-
+    protected void reset() {
         mLiveStatusKeyword = LiveStatusKeyword.LIVING;
         mSortKeyword = SortKeyword.ONLINE;
 
         mNextToken = "";
-
-        super.refresh();
     }
 
     @Override
-    void load(RefreshMode mode, int count) {
-
-        onLoadStart();
-
-        SearchProgramTask task = new SearchProgramTask();
+    protected void onLoad(Task task, TaskContext context) {
         task.addTaskListener(mLoadTaskListener);
-        TaskContext context = new TaskContext();
-
-        context.set(Extra.KEY_LOAD_MODE, mode);
 
         context.set(Extra.KEY_SUBJECT_ID, mSubjectId);
         context.set(Extra.KEY_KEYWORD, mKeyword);
@@ -148,11 +137,11 @@ public class SearchProgramHelper extends BaseSearchHelper<Program> {
 
         context.set(Extra.KEY_LIVE_STATUS, mLiveStatusKeyword);
         context.set(Extra.KEY_SORT, mSortKeyword);
+    }
 
-        context.set(Extra.KEY_FALL_COUNT, count);
-        context.set(Extra.KEY_NEXT_TOKEN, mNextToken);
-
-        task.execute(context);
+    @Override
+    protected Task createTask() {
+        return new SearchProgramTask();
     }
 
 }

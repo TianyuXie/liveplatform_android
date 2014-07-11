@@ -128,7 +128,6 @@
         <activity
             android:name="com.pplive.liveplatform.ui.WebviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:hardwareAccelerated="false"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar" >
         </activity>
@@ -167,6 +166,14 @@
             android:name="com.pplive.liveplatform.ui.UserpageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.pplive.liveplatform.ui.MyFollowersActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name="com.pplive.liveplatform.ui.MyFansActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity

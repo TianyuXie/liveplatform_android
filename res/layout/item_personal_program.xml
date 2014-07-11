@@ -36,9 +36,9 @@
             android:layout_height="106dp"
             android:layout_marginRight="20dp"
             android:adjustViewBounds="true"
+            android:background="@drawable/program_default_image"
             android:contentDescription="@string/blank"
-            android:scaleType="fitXY"
-            android:src="@drawable/program_default_image" />
+            android:scaleType="fitXY" />
 
         <TextView
             android:id="@+id/text_program_title"
@@ -69,7 +69,6 @@
             android:drawableLeft="@drawable/icon_viewer"
             android:drawablePadding="5dp"
             android:gravity="center_vertical"
-            android:text="@string/userpage_default_vv"
             android:textColor="@color/gray"
             android:textSize="18sp" />
 

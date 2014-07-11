@@ -11,10 +11,14 @@ import com.pplive.liveplatform.Constants;
 import com.pplive.liveplatform.core.api.BaseURL;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.auth.UserTokenAuthentication;
+import com.pplive.liveplatform.core.api.live.model.FallList;
 import com.pplive.liveplatform.core.api.live.model.Follow;
 import com.pplive.liveplatform.core.api.live.model.User;
+import com.pplive.liveplatform.core.api.live.model.UserFriendCount;
 import com.pplive.liveplatform.core.api.live.model.UserRelation;
 import com.pplive.liveplatform.core.api.live.resp.MessageResp;
+import com.pplive.liveplatform.core.api.live.resp.UserFallListResp;
+import com.pplive.liveplatform.core.api.live.resp.UserFriendCountResp;
 import com.pplive.liveplatform.core.api.live.resp.UserRelationListResp;
 import com.pplive.liveplatform.util.URL.Protocol;
 
@@ -27,6 +31,15 @@ public class FollowAPI extends RESTfulAPI {
 
     private static final String TEMPLATE_FOLLOW = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST, "/ft/v1/follow/pptv/user/{username}/follow")
             .toString();
+
+    private static final String TEMPLATE_GET_USER_FRIEND_COUNT = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+            "/ft/v1/follow/pptv/user/{username}/friendcount").toString();
+
+    private static final String TEMPLATE_GET_FANS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+            "/ft/v1/follow/pptv/user/{username}/fans?nexttk={nexttk}&fallcount={fallcount}").toString();
+
+    private static final String TEMPLATE_GET_FOLLOWERS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+            "/ft/v1/follow/pptv/user/{username}/followers?nexttk={nexttk}&fallcount={fallcount}").toString();
 
     private static FollowAPI sInstance = new FollowAPI();
 
@@ -78,10 +91,20 @@ public class FollowAPI extends RESTfulAPI {
         }
     }
 
-    public boolean follow(String coToken, String username, long id) throws LiveHttpException {
+    public boolean follow(String coToken, String username, long addId) throws LiveHttpException {
+
+        return follow(coToken, username, new long[] { addId }, null /* delIds */);
+    }
+
+    public boolean unfollow(String coToken, String username, long delIds) throws LiveHttpException {
+
+        return follow(coToken, username, null /* addIds */, new long[] { delIds });
+    }
+
+    public boolean follow(String coToken, String username, long[] addIds, long[] delIds) throws LiveHttpException {
         UserTokenAuthentication coTokenAuthentication = new UserTokenAuthentication(coToken);
         mHttpHeaders.setAuthorization(coTokenAuthentication);
-        HttpEntity<Follow> req = new HttpEntity<Follow>(new Follow(new long[] { id }, null), mHttpHeaders);
+        HttpEntity<Follow> req = new HttpEntity<Follow>(new Follow(addIds, delIds), mHttpHeaders);
 
         MessageResp resp = null;
         try {
@@ -99,5 +122,67 @@ public class FollowAPI extends RESTfulAPI {
         } else {
             throw new LiveHttpException();
         }
+    }
+
+    public UserFriendCount getUserFriendCount(String username) throws LiveHttpException {
+
+        UserFriendCountResp resp = null;
+        try {
+
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_USER_FRIEND_COUNT, UserFriendCountResp.class, username);
+
+            if (0 == resp.getError()) {
+                return resp.getData();
+            }
+
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public FallList<User> getFans(String username, String nextToken, int fallCount) throws LiveHttpException {
+        UserFallListResp resp = null;
+        try {
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_FANS, UserFallListResp.class, username, nextToken, fallCount);
+
+            if (0 == resp.getError()) {
+                return resp.getData();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+
+    }
+
+    public FallList<User> getFollowers(String username, String nextToken, int fallCount) throws LiveHttpException {
+        UserFallListResp resp = null;
+        try {
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_FOLLOWERS, UserFallListResp.class, username, nextToken, fallCount);
+
+            if (0 == resp.getError()) {
+                return resp.getData();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+
     }
 }

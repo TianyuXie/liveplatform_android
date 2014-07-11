@@ -31,6 +31,11 @@ public class AsyncImageView extends ImageView {
         super(context, attrs, defStyle);
     }
 
+    @Override
+    public void setImageResource(int resId) {
+        setImageAsync("drawable://" + resId);
+    }
+
     public void setImageAsync(String imageUri) {
         setImageAsync(imageUri, DEFALUT_DISPLAY_OPTIONS);
     }
@@ -45,7 +50,8 @@ public class AsyncImageView extends ImageView {
 
     public void setImageAsync(String imageUri, DisplayImageOptions options, ImageLoadingListener listener) {
         boolean cacheOnDisk = imageUri != null && !imageUri.startsWith(Constants.LIVE_IMGAE_PREFIX);
-        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).cacheInMemory(true).cacheOnDisk(cacheOnDisk);
+        DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).cacheInMemory(true).cacheOnDisk(cacheOnDisk)
+                .resetViewBeforeLoading(true);
 
         if (!TextUtils.isEmpty(imageUri)) {
             mImageLoader.displayImage(imageUri, this, builder.build(), listener);
