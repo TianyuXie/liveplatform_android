@@ -363,7 +363,6 @@ public class PersonalFragment extends Fragment {
 
         mCameraIcon = layout.findViewById(R.id.image_camera);
         mCameraIcon.setOnClickListener(mOnIconClickListener);
-        //init views
 
         return layout;
     }
@@ -399,7 +398,14 @@ public class PersonalFragment extends Fragment {
 
         mProgramContainer.closeOpenedItem();
     }
-
+    
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        
+        Log.d(TAG, "onHiddenChanged: " + hidden);
+    }
+    
     @Override
     public void onStop() {
         super.onStop();

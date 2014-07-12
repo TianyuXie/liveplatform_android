@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.ui.live;
+package com.pplive.liveplatform.core.record;
 
 import android.content.Context;
 import android.hardware.Camera;
@@ -6,14 +6,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.pplive.liveplatform.core.record.MediaRecorderListener;
-import com.pplive.liveplatform.core.record.PPboxSink;
-import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.sdk.MediaSDK;
 import com.pplive.sdk.MediaSDK.Download_Callback;
 import com.pplive.sdk.MediaSDK.Upload_Statistic;
 
-public class LiveMediaRecorder implements Handler.Callback {
+public class LiveMediaRecorder implements Handler.Callback, IMediaRecorder {
 
     private static final String TAG = LiveMediaRecorder.class.getSimpleName();
 
@@ -52,7 +49,7 @@ public class LiveMediaRecorder implements Handler.Callback {
             }
         }
     };
-    
+
     public LiveMediaRecorder(Context ctx, Camera camera, Quality quality) {
 
         PPboxSink.init(ctx.getApplicationContext());

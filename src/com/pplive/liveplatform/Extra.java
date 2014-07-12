@@ -26,6 +26,8 @@ public interface Extra {
     public static final String KEY_ICON_URL = "icon_url";
 
     public static final String KEY_NICKNAME = "nickname";
+    
+    public static final String KEY_FROM_REG = "from_register";
 
     // Search
     public static final String KEY_SUBJECT = "subject";
