@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.pplive.android.image.RoundedImageView
+        xmlns:live="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/image_user_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/navbar_personal_act"
+        android:contentDescription="@null"
+        android:scaleType="fitXY"
+        live:corner_radius="10dp" />
+
+</RelativeLayout>

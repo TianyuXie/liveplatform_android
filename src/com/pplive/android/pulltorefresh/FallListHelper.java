@@ -31,6 +31,9 @@ public abstract class FallListHelper<T> {
     }
 
     protected final void refresh(int count) {
+
+        mNextToken = "";
+
         load(RefreshMode.REFRESH, count);
     }
 

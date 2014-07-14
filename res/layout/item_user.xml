@@ -15,7 +15,7 @@
         android:layout_centerVertical="true"
         android:contentDescription="@null"
         android:scaleType="fitXY"
-        android:src="@drawable/navbar_personal_act"
+        android:background="@drawable/navbar_personal_act"
         live:corner_radius="10dp" />
 
     <TextView

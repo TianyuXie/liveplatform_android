@@ -59,7 +59,9 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@+id/radio_group"
-        android:divider="@drawable/list_divider"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@color/list_divider"
+        android:dividerHeight="1dp"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
         ptr:ptrMode="both" />
 

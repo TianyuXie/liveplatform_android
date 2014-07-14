@@ -13,10 +13,10 @@ public class FallList<T> extends List<T> {
     }
 
     public String nextToken() {
-        return nexttk;
+        return null != nexttk ? nexttk : "";
     }
 
     public String previousToken() {
-        return previoustk;
+        return null != previoustk ? previoustk : "";
     }
 }
