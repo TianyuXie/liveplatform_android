@@ -131,9 +131,9 @@ public class RegisterActivity extends Activity {
 
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
 
-            intent.putExtra(LoginActivity.EXTRA_USERNAME, event.getContext().getString(RegisterTask.KEY_PHONE_NUMBER));
-            intent.putExtra(LoginActivity.EXTRA_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
-            intent.putExtra(LoginActivity.EXTRA_FROM_REGISTER, true);
+            intent.putExtra(Extra.KEY_USERNAME, event.getContext().getString(RegisterTask.KEY_PHONE_NUMBER));
+            intent.putExtra(Extra.KEY_PASSWORD, event.getContext().getString(RegisterTask.KEY_PASSWORD));
+            intent.putExtra(Extra.KEY_FROM_REG, true);
 
             setResult(REGISTER_SUCCESS, intent);
 

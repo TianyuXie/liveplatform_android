@@ -67,15 +67,40 @@
             android:visibility="gone" />
 
         <ImageButton
+            android:id="@+id/btn_back"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="15dp"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_back"
+            android:visibility="gone" />
+
+        <ImageButton
             android:id="@+id/btn_settings"
             style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_margin="15dp"
             android:contentDescription="@null"
             android:src="@drawable/btn_settings"
             android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/btn_notification"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/btn_settings"
+            android:layout_toLeftOf="@+id/btn_settings"
+            android:contentDescription="@null"
+            android:src="@drawable/btn_notification"
+            android:visibility="gone" >
+        </ImageButton>
     </RelativeLayout>
 
     <com.pplive.android.pulltorefresh.PullToRefreshSwipeListView

@@ -49,11 +49,6 @@ public class SearchUserHelper extends FallListHelper<User> {
     }
 
     @Override
-    protected void reset() {
-        mNextToken = "";
-    }
-
-    @Override
     protected void onLoad(Task task, TaskContext context) {
         task.addTaskListener(mLoadTaskListener);
         context.set(Extra.KEY_KEYWORD, mKeyword);

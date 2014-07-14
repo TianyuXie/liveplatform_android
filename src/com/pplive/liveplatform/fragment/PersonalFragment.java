@@ -74,7 +74,10 @@ public class PersonalFragment extends Fragment {
 
     private TextView mTextFans;
 
+    private ImageButton mBtnBack;
     private ImageButton mBtnSettings;
+
+    private ImageButton mBtnNotification;
 
     private PullToRefreshSwipeListView mProgramContainer;
 
@@ -95,6 +98,8 @@ public class PersonalFragment extends Fragment {
     private UserFriendCount mUserFriendCount;
 
     private boolean mOwner = false;
+
+    private UserType mUserType;
 
     private SwipeListViewListener mSwipeListViewListener = new SwipeListViewListener() {
 
@@ -333,8 +338,19 @@ public class PersonalFragment extends Fragment {
         mRefreshDialog = new RefreshDialog(mActivity);
         mIconDialog = new IconDialog(mActivity, R.style.icon_dialog);
 
+        mBtnBack = (ImageButton) layout.findViewById(R.id.btn_back);
+        mBtnBack.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mActivity.finish();
+            }
+        });
+
         mBtnSettings = (ImageButton) layout.findViewById(R.id.btn_settings);
         mBtnSettings.setOnClickListener(mOnSettingsBtnClickListener);
+
+        mBtnNotification = (ImageButton) layout.findViewById(R.id.btn_notification);
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
 
@@ -363,7 +379,6 @@ public class PersonalFragment extends Fragment {
 
         mCameraIcon = layout.findViewById(R.id.image_camera);
         mCameraIcon.setOnClickListener(mOnIconClickListener);
-        //init views
 
         return layout;
     }
@@ -375,8 +390,8 @@ public class PersonalFragment extends Fragment {
         Log.d(TAG, "onStart");
 
         Bundle bundle = getArguments();
-        UserType type = (UserType) bundle.getSerializable(Extra.KEY_USER_TYPE);
-        if (UserType.OWNER == type) {
+        mUserType = (UserType) bundle.getSerializable(Extra.KEY_USER_TYPE);
+        if (UserType.OWNER == mUserType) {
             mUsername = UserManager.getInstance(getActivity()).getUsernamePlain();
             mIconUrl = UserManager.getInstance(getActivity()).getIcon();
             mNickName = UserManager.getInstance(getActivity()).getNickname();
@@ -388,6 +403,7 @@ public class PersonalFragment extends Fragment {
             mNickName = intent.getStringExtra(Extra.KEY_NICKNAME);
         }
 
+        resetView();
         init();
     }
 
@@ -401,6 +417,13 @@ public class PersonalFragment extends Fragment {
     }
 
     @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        Log.d(TAG, "onHiddenChanged: " + hidden);
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
 
@@ -410,11 +433,26 @@ public class PersonalFragment extends Fragment {
 
     }
 
+    private void resetView() {
+        mBtnBack.setVisibility(UserType.USER == mUserType ? View.VISIBLE : View.GONE);
+
+        mCameraIcon.setVisibility(View.GONE);
+        mBtnSettings.setVisibility(View.GONE);
+        mBtnNotification.setVisibility(View.GONE);
+        mTextNickName.setText("");
+        mTextFollowers.setText("");
+        mTextFans.setText("");
+        mImageUserIcon.setImageAsync(null);
+        mAdapter.clear();
+    }
+
     private void updateView() {
         mOwner = isLogin(mUsername);
 
         mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
         mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
+        mBtnNotification.setVisibility(mOwner ? View.VISIBLE : View.GONE);
+
         mTextNickName.setText(mNickName);
         mTextFollowers.setText(getString(R.string.fmt_followers, mUserFriendCount.getFollowsCount()));
         mTextFans.setText(getString(R.string.fmt_fans, mUserFriendCount.getFansCount()));

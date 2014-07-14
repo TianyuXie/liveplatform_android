@@ -123,8 +123,6 @@ public class SearchProgramHelper extends FallListHelper<Program> {
     protected void reset() {
         mLiveStatusKeyword = LiveStatusKeyword.LIVING;
         mSortKeyword = SortKeyword.ONLINE;
-
-        mNextToken = "";
     }
 
     @Override

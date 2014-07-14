@@ -212,6 +212,31 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
     private Dialog mAlertDialog;
 
     @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        mAttached = true;
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        mAttached = false;
+        super.onDetachedFromWindow();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && mAttached && !mOpened) {
+            Log.d(TAG, "Open Door");
+
+            mOpened = true;
+            mStatusButton.startLoading();
+            mInnerHandler.sendEmptyMessage(WHAT_INVALIDATE_DOOR);
+            mInnerHandler.sendEmptyMessageDelayed(WHAT_OPEN_DOOR, 2000);
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -373,31 +398,6 @@ public class LiveRecordActivity extends FragmentActivity implements View.OnClick
         stopPreview();
 
         EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        mAttached = true;
-    }
-
-    @Override
-    public void onDetachedFromWindow() {
-        mAttached = false;
-        super.onDetachedFromWindow();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && mAttached && !mOpened) {
-            Log.d(TAG, "Open Door");
-
-            mOpened = true;
-            mStatusButton.startLoading();
-            mInnerHandler.sendEmptyMessage(WHAT_INVALIDATE_DOOR);
-            mInnerHandler.sendEmptyMessageDelayed(WHAT_OPEN_DOOR, 2000);
-        }
     }
 
     private void moveButton() {

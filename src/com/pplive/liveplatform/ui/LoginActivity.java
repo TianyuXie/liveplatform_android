@@ -42,12 +42,6 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
     static final String TAG = LoginActivity.class.getSimpleName();
 
-    public static final String EXTRA_USERNAME = "username";
-
-    public static final String EXTRA_PASSWORD = "password";
-
-    public static final String EXTRA_FROM_REGISTER = "from_register";
-
     private static final int MSG_THIRDPARTY_ERROR = 2301;
 
     private static final int DELAY_LOGIN = 3000;
@@ -134,7 +128,7 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
             User userinfo = (User) event.getContext().get(Extra.KEY_USER_INFO);
             mUserManager.setUserinfo(userinfo);
 
-            boolean fromRegister = getIntent().getBooleanExtra(EXTRA_FROM_REGISTER, false);
+            boolean fromRegister = getIntent().getBooleanExtra(Extra.KEY_FROM_REG, false);
 
             if (fromRegister) {
                 Intent intent = new Intent(mContext, RegisterNicknameActivity.class);
@@ -254,8 +248,8 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
         Intent intent = getIntent();
 
         if (null != intent) {
-            String username = intent.getStringExtra(EXTRA_USERNAME);
-            String password = intent.getStringExtra(EXTRA_PASSWORD);
+            String username = intent.getStringExtra(Extra.KEY_USERNAME);
+            String password = intent.getStringExtra(Extra.KEY_PASSWORD);
 
             Serializable obj = intent.getSerializableExtra(Extra.KEY_REDIRECT);
             if (null != obj && obj instanceof Class<?>) {
@@ -279,8 +273,8 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RegisterActivity.REGISTER_SUCCESS) {
-            String username = data.getStringExtra(EXTRA_USERNAME);
-            String password = data.getStringExtra(EXTRA_PASSWORD);
+            String username = data.getStringExtra(Extra.KEY_USERNAME);
+            String password = data.getStringExtra(Extra.KEY_PASSWORD);
 
             login(username, password, DELAY_LOGIN);
         } else if (WeiboPassport.getInstance().mSsoHandler != null) {

@@ -2,7 +2,6 @@ package com.pplive.android.image;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
@@ -53,8 +52,6 @@ public class AsyncImageView extends ImageView {
         DisplayImageOptions.Builder builder = new DisplayImageOptions.Builder().cloneFrom(options).cacheInMemory(true).cacheOnDisk(cacheOnDisk)
                 .resetViewBeforeLoading(true);
 
-        if (!TextUtils.isEmpty(imageUri)) {
-            mImageLoader.displayImage(imageUri, this, builder.build(), listener);
-        }
+        mImageLoader.displayImage(imageUri, this, builder.build(), listener);
     }
 }

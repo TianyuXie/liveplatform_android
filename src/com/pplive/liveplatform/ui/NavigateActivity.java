@@ -102,12 +102,6 @@ public class NavigateActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onResumeFragments() {
-        super.onResumeFragments();
-
-    }
-
-    @Override
     public void onBackPressed() {
         long now = System.currentTimeMillis();
         if (now - mExitTime > 2000) {
