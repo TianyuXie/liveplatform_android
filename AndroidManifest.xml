@@ -169,6 +169,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name="com.pplive.liveplatform.ui.MyNotificationActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name="com.pplive.liveplatform.ui.MyFollowersActivity"
             android:screenOrientation="portrait" >
         </activity>

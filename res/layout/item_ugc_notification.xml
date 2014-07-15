@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <RelativeLayout
+        android:id="@+id/back"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:tag="back" >
+
+        <Button
+            android:id="@+id/btn_delete"
+            style="@style/Widget.Button.Transparent"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginLeft="@dimen/swipe_offset_left"
+            android:background="#8d1d1c"
+            android:gravity="center"
+            android:text="@string/btn_delete"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/front"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFFFF"
+        android:padding="10dp"
+        android:tag="front" >
+
+        <com.pplive.android.image.AsyncImageView
+            android:id="@+id/image_icon"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
+            android:layout_marginRight="20dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/program_default_image"
+            android:contentDescription="@string/blank"
+            android:scaleType="fitXY" />
+
+        <TextView
+            android:id="@+id/text_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/image_icon"
+            android:textColor="@color/black"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/text_action"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/text_subject"
+            android:textColor="#0090e1"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/text_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+    </RelativeLayout>
+
+</FrameLayout>

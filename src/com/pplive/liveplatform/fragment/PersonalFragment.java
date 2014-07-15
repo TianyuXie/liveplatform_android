@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fortysevendeg.swipelistview.BaseSwipeListViewListener;
 import com.fortysevendeg.swipelistview.SwipeListView;
 import com.fortysevendeg.swipelistview.SwipeListViewListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -44,6 +45,7 @@ import com.pplive.liveplatform.core.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.MyFansActivity;
 import com.pplive.liveplatform.ui.MyFollowersActivity;
+import com.pplive.liveplatform.ui.MyNotificationActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
@@ -75,6 +77,7 @@ public class PersonalFragment extends Fragment {
     private TextView mTextFans;
 
     private ImageButton mBtnBack;
+
     private ImageButton mBtnSettings;
 
     private ImageButton mBtnNotification;
@@ -101,86 +104,12 @@ public class PersonalFragment extends Fragment {
 
     private UserType mUserType;
 
-    private SwipeListViewListener mSwipeListViewListener = new SwipeListViewListener() {
-
-        @Override
-        public void onStartOpen(int position, int action, boolean right) {
-            Log.d(TAG, "onStartOpen");
-            mProgramContainer.closeOpenedItem();
-        }
-
-        @Override
-        public void onStartClose(int position, boolean right) {
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public void onOpened(int position, boolean toRight) {
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public void onMove(int position, float x) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onListChanged() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onLastListItem() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onFirstListItem() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onDismiss(int[] reverseSortedPositions) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onClosed(int position, boolean fromRight) {
-            // TODO Auto-generated method stub
-        }
+    private SwipeListViewListener mSwipeListViewListener = new BaseSwipeListViewListener() {
 
         @Override
         public void onClickFrontView(int position) {
             Log.d(TAG, "onClickFrontView");
             goPlayerActivity(mAdapter.getItem(position));
-        }
-
-        @Override
-        public void onClickBackView(int position) {
-            // TODO Auto-generated method stub
-        }
-
-        @Override
-        public void onChoiceStarted() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onChoiceEnded() {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onChoiceChanged(int position, boolean selected) {
-            // TODO Auto-generated method stub
-
         }
 
         @Override
@@ -351,6 +280,14 @@ public class PersonalFragment extends Fragment {
         mBtnSettings.setOnClickListener(mOnSettingsBtnClickListener);
 
         mBtnNotification = (ImageButton) layout.findViewById(R.id.btn_notification);
+        mBtnNotification.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mActivity, MyNotificationActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mTextNickName = (TextView) layout.findViewById(R.id.text_nickname);
 
