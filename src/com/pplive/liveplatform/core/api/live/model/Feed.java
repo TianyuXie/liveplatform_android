@@ -51,9 +51,13 @@ public class Feed {
 
     FeedType feedtype;
 
-    long createtime;
+    long create_time;
 
     String feed_text;
+
+    public long getCreateTime() {
+        return create_time;
+    }
 
     public FeedType getFeedType() {
         return feedtype;
@@ -66,4 +70,5 @@ public class Feed {
     public User getFans() {
         return null != extend ? extend.fans : null;
     }
+
 }
