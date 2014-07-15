@@ -31,7 +31,7 @@
         swipe:swipeBackView="@+id/back"
         swipe:swipeCloseAllItemsWhenMoveList="true"
         swipe:swipeFrontView="@+id/front"
-        swipe:swipeMode="none"
+        swipe:swipeMode="left"
         swipe:swipeOffsetLeft="@dimen/swipe_offset_left" />
 
 </LinearLayout>

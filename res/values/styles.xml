@@ -114,4 +114,10 @@
         <item name="android:paddingRight">40dp</item>
     </style>
 
+    <style name="Widget.TextView.SingleLine" parent="@android:style/Widget.TextView">
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxWidth">100dp</item>
+    </style>
+
 </resources>

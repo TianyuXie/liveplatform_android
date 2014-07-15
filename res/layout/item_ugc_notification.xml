@@ -42,6 +42,7 @@
 
         <TextView
             android:id="@+id/text_subject"
+            style="@style/Widget.TextView.SingleLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
