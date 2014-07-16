@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.pplive.android.view.TopBarView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
+import com.pplive.liveplatform.Code;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.api.passport.model.LoginResult;
@@ -142,10 +143,10 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
                 intent.putExtra(Extra.KEY_ICON_URL, UserManager.getInstance(mContext).getIcon());
                 intent.putExtra(Extra.KEY_NICKNAME, UserManager.getInstance(mContext).getNickname());
 
-                setResult(999, intent);
-
                 mContext.startActivity(intent);
             }
+
+            setResult(Code.RESULT_LOGIN_SUCCESS);
 
             finish();
         }

@@ -22,7 +22,7 @@ public class GetFriendsHelper extends FallListHelper<User> {
 
     private FriendType mFriendType;
 
-    private Task.TaskListener mGetFriendsListener = new Task.BaseTaskListener() {
+    private Task.TaskListener mTaskListener = new Task.BaseTaskListener() {
 
         @SuppressWarnings("unchecked")
         public void onTaskSucceed(Task sender, TaskSucceedEvent event) {
@@ -59,7 +59,7 @@ public class GetFriendsHelper extends FallListHelper<User> {
 
     @Override
     protected void onLoad(Task task, TaskContext context) {
-        task.addTaskListener(mGetFriendsListener);
+        task.addTaskListener(mTaskListener);
 
         context.set(Extra.KEY_USERNAME, mUsername);
         context.set(Extra.KEY_FRIEND_TYPE, mFriendType);

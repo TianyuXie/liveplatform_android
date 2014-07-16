@@ -6,6 +6,16 @@ public class TaskContext {
 
     private ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<String, Object>();
 
+    public TaskContext() {
+        this(null);
+    }
+
+    public TaskContext(TaskContext context) {
+        if (null != context) {
+            map.putAll(context.map);
+        }
+    }
+
     public Object get(String key) {
         return map.get(key);
     }

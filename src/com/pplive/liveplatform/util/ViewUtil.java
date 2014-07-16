@@ -1,7 +1,7 @@
-
 package com.pplive.liveplatform.util;
 
 import android.view.View;
+import android.widget.RadioGroup;
 
 public class ViewUtil {
 
@@ -51,6 +51,13 @@ public class ViewUtil {
                 v.requestLayout();
             }
         }, timeout);
+    }
+
+    public static void check(RadioGroup group, int id) {
+        View view = group.findViewById(id);
+        if (null != view) {
+            view.performClick();
+        }
     }
 
     private ViewUtil() {
