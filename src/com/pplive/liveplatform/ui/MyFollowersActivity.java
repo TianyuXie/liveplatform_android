@@ -7,7 +7,7 @@ import com.pplive.android.pulltorefresh.FallListHelper.LoadListener;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.UserAdapter;
-import com.pplive.liveplatform.core.user.GetFriendsHelper;
+import com.pplive.liveplatform.task.user.GetFriendsHelper;
 import com.pplive.liveplatform.widget.TopBarView;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 

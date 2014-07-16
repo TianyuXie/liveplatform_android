@@ -19,10 +19,10 @@ import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.Program;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.user.RemoveProgramTask;
 import com.pplive.liveplatform.dialog.DialogManager;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.user.RemoveProgramTask;
 import com.pplive.liveplatform.util.DisplayUtil;
 import com.pplive.liveplatform.util.TimeHelper;
 

@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/image_program_preview"
             android:layout_alignParentRight="true"
-            android:textColor="@color/gray"
+            android:textColor="@color/program_date_color"
             android:textSize="18sp" />
 
         <TextView
@@ -69,7 +69,7 @@
             android:drawableLeft="@drawable/icon_viewer"
             android:drawablePadding="5dp"
             android:gravity="center_vertical"
-            android:textColor="@color/gray"
+            android:textColor="#b0b0b0"
             android:textSize="18sp" />
 
         <TextView
@@ -81,7 +81,7 @@
             android:layout_toRightOf="@+id/image_program_preview"
             android:ellipsize="end"
             android:singleLine="true"
-            android:textColor="@color/gray"
+            android:textColor="@color/program_tags_color"
             android:textSize="18sp" />
 
         <ImageView

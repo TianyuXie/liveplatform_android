@@ -32,7 +32,7 @@ public class HomeFragment extends Fragment {
 
     private PullToRefreshGridView mContainer;
 
-    private ProgramAdapter mAdapter;
+    private ProgramAdapter mRecommendPorgramAdapter;
 
     private View mEmptyNoNetwork;
 
@@ -60,8 +60,8 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (null != mAdapter) {
-                    Program program = mAdapter.getItem(position);
+                if (null != mRecommendPorgramAdapter) {
+                    Program program = mRecommendPorgramAdapter.getItem(position);
 
                     Intent intent = new Intent(getActivity(), LivePlayerActivity.class);
                     intent.putExtra(LivePlayerActivity.EXTRA_PROGRAM, program);
@@ -84,8 +84,8 @@ public class HomeFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new ProgramAdapter(getActivity());
-        mContainer.setAdapter(mAdapter);
+        mRecommendPorgramAdapter = new ProgramAdapter(getActivity());
+        mContainer.setAdapter(mRecommendPorgramAdapter);
 
     }
 
@@ -139,7 +139,7 @@ public class HomeFragment extends Fragment {
             mContainer.onRefreshComplete();
 
             if (null != programs) {
-                mAdapter.refreshData(programs);
+                mRecommendPorgramAdapter.refreshData(programs);
             } else {
                 if (NetworkState.DISCONNECTED == NetworkManager.getCurrentNetworkState()) {
                     mContainer.setEmptyView(mEmptyNoNetwork);

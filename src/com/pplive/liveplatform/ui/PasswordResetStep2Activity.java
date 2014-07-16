@@ -13,12 +13,12 @@ import android.widget.TextView;
 
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.user.ResetPasswordTask;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.TaskFailedEvent;
+import com.pplive.liveplatform.task.TaskSucceedEvent;
+import com.pplive.liveplatform.task.Task.BaseTaskListener;
+import com.pplive.liveplatform.task.passport.ResetPasswordTask;
 import com.pplive.liveplatform.widget.TopBarView;
 
 public class PasswordResetStep2Activity extends Activity {

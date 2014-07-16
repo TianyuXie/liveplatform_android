@@ -61,12 +61,14 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
 
         ViewHolder holder = (ViewHolder) convertView.getTag();
 
-        updateView(holder, getItem(position));
+        updateView(holder, position);
 
         return convertView;
     }
 
-    private void updateView(ViewHolder holder, Program data) {
+    private void updateView(ViewHolder holder, int position) {
+
+        Program data = getItem(position);
 
         holder.textTags.setText(data.getTags());
         holder.textTitle.setText(data.getTitle());

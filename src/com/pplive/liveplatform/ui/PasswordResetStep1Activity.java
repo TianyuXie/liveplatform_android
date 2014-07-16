@@ -15,13 +15,13 @@ import android.widget.TextView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.passport.PassportAPI.CheckCodeType;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.user.CheckCodeTask;
-import com.pplive.liveplatform.core.task.user.GetCheckCodeTask;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.TaskFailedEvent;
+import com.pplive.liveplatform.task.TaskSucceedEvent;
+import com.pplive.liveplatform.task.Task.BaseTaskListener;
+import com.pplive.liveplatform.task.passport.CheckCodeTask;
+import com.pplive.liveplatform.task.passport.GetCheckCodeTask;
 import com.pplive.liveplatform.widget.TopBarView;
 
 public class PasswordResetStep1Activity extends Activity {

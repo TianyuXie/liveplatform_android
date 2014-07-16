@@ -12,7 +12,7 @@ import com.pplive.android.pulltorefresh.PullToRefreshSwipeListView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.NotivicationAdapter;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.user.GetNotificatioinHelper;
+import com.pplive.liveplatform.task.user.GetNotificatioinHelper;
 import com.pplive.liveplatform.widget.TopBarView;
 
 public class MyNotificationActivity extends Activity {

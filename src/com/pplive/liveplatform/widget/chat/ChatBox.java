@@ -23,15 +23,15 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.comment.model.FeedDetailList;
 import com.pplive.liveplatform.core.api.comment.model.FeedItem;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.Task.BaseTaskListener;
-import com.pplive.liveplatform.core.task.Task.TaskListener;
-import com.pplive.liveplatform.core.task.TaskCancelEvent;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.player.GetFeedTask;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskCancelEvent;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.TaskFailedEvent;
+import com.pplive.liveplatform.task.TaskSucceedEvent;
+import com.pplive.liveplatform.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.task.Task.BaseTaskListener;
+import com.pplive.liveplatform.task.Task.TaskListener;
+import com.pplive.liveplatform.task.feed.GetFeedTask;
 
 public class ChatBox extends RelativeLayout implements Handler.Callback {
     static final String TAG = "_ChatBox";

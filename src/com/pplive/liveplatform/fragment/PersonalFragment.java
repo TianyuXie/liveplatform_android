@@ -34,14 +34,14 @@ import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.api.live.model.UserFriendCount;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.TaskContext;
-import com.pplive.liveplatform.core.task.TaskFailedEvent;
-import com.pplive.liveplatform.core.task.TaskSucceedEvent;
-import com.pplive.liveplatform.core.task.TaskTimeoutEvent;
-import com.pplive.liveplatform.core.task.user.GetUserDetailInfoTask;
-import com.pplive.liveplatform.core.task.user.GetUserProgramsTask;
-import com.pplive.liveplatform.core.task.user.UploadIconTask;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.TaskFailedEvent;
+import com.pplive.liveplatform.task.TaskSucceedEvent;
+import com.pplive.liveplatform.task.TaskTimeoutEvent;
+import com.pplive.liveplatform.task.program.GetUserProgramsTask;
+import com.pplive.liveplatform.task.user.GetUserDetailInfoTask;
+import com.pplive.liveplatform.task.user.UploadIconTask;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
 import com.pplive.liveplatform.ui.MyFansActivity;
 import com.pplive.liveplatform.ui.MyFollowersActivity;
@@ -372,10 +372,11 @@ public class PersonalFragment extends Fragment {
 
     private void resetView() {
         mBtnBack.setVisibility(UserType.USER == mUserType ? View.VISIBLE : View.GONE);
+        mBtnSettings.setVisibility(UserType.OWNER == mUserType ? View.VISIBLE : View.GONE);
+        mBtnNotification.setVisibility(UserType.OWNER == mUserType ? View.VISIBLE : View.GONE);
 
         mCameraIcon.setVisibility(View.GONE);
-        mBtnSettings.setVisibility(View.GONE);
-        mBtnNotification.setVisibility(View.GONE);
+
         mTextNickName.setText("");
         mTextFollowers.setText("");
         mTextFans.setText("");
@@ -387,8 +388,6 @@ public class PersonalFragment extends Fragment {
         mOwner = isLogin(mUsername);
 
         mCameraIcon.setVisibility(mOwner ? View.VISIBLE : View.GONE);
-        mBtnSettings.setVisibility(mOwner ? View.VISIBLE : View.GONE);
-        mBtnNotification.setVisibility(mOwner ? View.VISIBLE : View.GONE);
 
         mTextNickName.setText(mNickName);
         mTextFollowers.setText(getString(R.string.fmt_followers, mUserFriendCount.getFollowsCount()));

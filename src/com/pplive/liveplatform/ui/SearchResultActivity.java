@@ -21,8 +21,8 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.adapter.UserAdapter;
 import com.pplive.liveplatform.core.api.live.model.Program;
-import com.pplive.liveplatform.core.search.SearchProgramHelper;
-import com.pplive.liveplatform.core.search.SearchUserHelper;
+import com.pplive.liveplatform.task.search.SearchProgramHelper;
+import com.pplive.liveplatform.task.search.SearchUserHelper;
 import com.pplive.liveplatform.widget.TopBarView;
 import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
