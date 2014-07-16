@@ -23,8 +23,8 @@ import com.pplive.liveplatform.core.api.live.SearchAPI;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.NetworkManager.NetworkState;
+import com.pplive.liveplatform.dialog.RefreshDialog;
 import com.pplive.liveplatform.ui.LivePlayerActivity;
-import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class HomeFragment extends Fragment {
 

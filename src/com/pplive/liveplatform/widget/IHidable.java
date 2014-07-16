@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.widget.attr;
+package com.pplive.liveplatform.widget;
 
 public interface IHidable {
     public void hide(boolean gone);

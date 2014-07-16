@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.widget;
+package com.pplive.android.view;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.widget.dialog;
+package com.pplive.liveplatform.dialog;
 
 import java.io.File;
 

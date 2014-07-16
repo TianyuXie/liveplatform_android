@@ -45,6 +45,7 @@ import com.pplive.liveplatform.core.dac.stat.WatchDacStat;
 import com.pplive.liveplatform.core.network.NetworkManager;
 import com.pplive.liveplatform.core.network.event.EventNetworkChanged;
 import com.pplive.liveplatform.dialog.DialogManager;
+import com.pplive.liveplatform.dialog.ShareDialog;
 import com.pplive.liveplatform.task.Task;
 import com.pplive.liveplatform.task.TaskCancelEvent;
 import com.pplive.liveplatform.task.TaskContext;
@@ -65,7 +66,6 @@ import com.pplive.liveplatform.widget.DetectableRelativeLayout;
 import com.pplive.liveplatform.widget.EnterSendEditText;
 import com.pplive.liveplatform.widget.LoadingButton;
 import com.pplive.liveplatform.widget.chat.ChatBox;
-import com.pplive.liveplatform.widget.dialog.ShareDialog;
 
 import de.greenrobot.event.EventBus;
 

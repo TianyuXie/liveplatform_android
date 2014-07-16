@@ -13,10 +13,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.pplive.android.view.TopBarView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.User;
+import com.pplive.liveplatform.dialog.RefreshDialog;
 import com.pplive.liveplatform.task.Task;
 import com.pplive.liveplatform.task.TaskCancelEvent;
 import com.pplive.liveplatform.task.TaskContext;
@@ -24,8 +26,6 @@ import com.pplive.liveplatform.task.TaskFailedEvent;
 import com.pplive.liveplatform.task.TaskSucceedEvent;
 import com.pplive.liveplatform.task.TaskTimeoutEvent;
 import com.pplive.liveplatform.task.user.UpdateInfoTask;
-import com.pplive.liveplatform.widget.TopBarView;
-import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class NicknameActivity extends Activity {
 

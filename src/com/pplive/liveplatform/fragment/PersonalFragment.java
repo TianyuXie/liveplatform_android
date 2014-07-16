@@ -34,6 +34,8 @@ import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.api.live.model.UserFriendCount;
+import com.pplive.liveplatform.dialog.IconDialog;
+import com.pplive.liveplatform.dialog.RefreshDialog;
 import com.pplive.liveplatform.task.Task;
 import com.pplive.liveplatform.task.TaskContext;
 import com.pplive.liveplatform.task.TaskFailedEvent;
@@ -49,8 +51,6 @@ import com.pplive.liveplatform.ui.MyNotificationActivity;
 import com.pplive.liveplatform.ui.SettingsActivity;
 import com.pplive.liveplatform.util.DirManager;
 import com.pplive.liveplatform.util.ImageUtil;
-import com.pplive.liveplatform.widget.dialog.IconDialog;
-import com.pplive.liveplatform.widget.dialog.RefreshDialog;
 
 public class PersonalFragment extends Fragment {
 

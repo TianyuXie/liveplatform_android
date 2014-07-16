@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.widget.image;
+package com.pplive.android.image;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
@@ -9,16 +9,16 @@ import android.widget.ImageView;
 import android.widget.RemoteViews.RemoteView;
 
 @RemoteView
-public class AnimatedImageView extends ImageView {
+public class AnimationImageView extends ImageView {
     AnimationDrawable mAnim;
 
     boolean mAttached;
 
-    public AnimatedImageView(Context context) {
+    public AnimationImageView(Context context) {
         super(context);
     }
 
-    public AnimatedImageView(Context context, AttributeSet attrs) {
+    public AnimationImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

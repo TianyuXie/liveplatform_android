@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 
+import com.pplive.android.view.TopBarView;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.widget.TopBarView;
 
 public class AboutActivity extends Activity {
 
