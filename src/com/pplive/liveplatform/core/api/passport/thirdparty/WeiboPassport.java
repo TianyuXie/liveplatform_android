@@ -1,8 +1,5 @@
 package com.pplive.liveplatform.core.api.passport.thirdparty;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,7 +30,7 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 import com.sina.weibo.sdk.exception.WeiboException;
 import com.sina.weibo.sdk.net.RequestListener;
 import com.sina.weibo.sdk.openapi.LogoutAPI;
-import com.sina.weibo.sdk.openapi.legacy.UsersAPI;
+import com.sina.weibo.sdk.openapi.UsersAPI;
 import com.sina.weibo.sdk.utils.Utility;
 
 public class WeiboPassport {
@@ -136,19 +133,12 @@ public class WeiboPassport {
     abstract class BasicRequestListener implements RequestListener {
 
         @Override
-        public void onComplete4binary(ByteArrayOutputStream responseOS) {
+        public void onComplete(String responseOS) {
+
         }
 
         @Override
-        public void onIOException(IOException e) {
-            Log.e(TAG, "RequestListener IOException: " + e.getMessage());
-            if (mLoginListener != null) {
-                mLoginListener.onLoginFailed(StringManager.getRes(R.string.error_weibo_io));
-            }
-        }
-
-        @Override
-        public void onError(WeiboException e) {
+        public void onWeiboException(WeiboException e) {
             Log.e(TAG, "RequestListener WeiboException: " + e.getMessage());
             if (mLoginListener != null) {
                 mLoginListener.onLoginFailed(StringManager.getRes(R.string.error_weibo_internal));
@@ -157,50 +147,65 @@ public class WeiboPassport {
     };
 
     private BasicRequestListener mLoginRequestListener = new BasicRequestListener() {
-        @Override
-        public void onComplete(String response) {
-            LoginResult tempresult = null;
-            try {
-                JSONObject res = new JSONObject(response);
-                mLoginResult.setThirdPartyNickName(res.getString("name"));
-                mLoginResult.setThirdPartyID(res.getString("id"));
-                mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
-                mLoginResult.setThirdPartyToken(mAccessToken.toString());
-                tempresult = PassportAPI.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
-                        mLoginResult.getThirdPartyNickName(), "sina");
-            } catch (JSONException e) {
-                if (mLoginListener != null) {
-                    mLoginListener.onLoginFailed(StringManager.getRes(R.string.error_pptv_format));
-                }
-            } catch (LiveHttpException e) {
-                if (mLoginListener != null) {
-                    mLoginListener.onLoginFailed(URLUtil.decode(e.getMessage()));
-                }
-            }
-            if (tempresult != null) {
-                String token = tempresult.getToken();
-                String username = tempresult.getUsername();
-                mLoginResult.setToken(token);
-                mLoginResult.setUsername(username);
-                mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
-                User userinfo = null;
-                try {
-                    userinfo = UserAPI.getInstance().getUserInfo(token, username);
-                } catch (LiveHttpException e) {
-                }
-                if (userinfo != null) {
-                    mLoginResult.setFaceUrl(userinfo.getIcon());
-                    mLoginResult.setNickName(userinfo.getDisplayName());
-                }
-            } else {
-                if (mLoginListener != null) {
-                    mLoginListener.onLoginFailed(StringManager.getRes(R.string.error_pptv_data));
-                }
-            }
 
-            if (mLoginListener != null) {
-                mLoginListener.onLoginSuccess(mLoginResult);
-            }
+        @Override
+        public void onComplete(final String response) {
+
+            Thread t = new Thread() {
+                public void run() {
+                    LoginResult tempresult = null;
+                    try {
+                        JSONObject res = new JSONObject(response);
+                        mLoginResult.setThirdPartyNickName(res.getString("name"));
+                        mLoginResult.setThirdPartyID(res.getString("id"));
+                        mLoginResult.setThirdPartyFaceUrl(res.getString("avatar_large"));
+                        mLoginResult.setThirdPartyToken(mAccessToken.toString());
+                        tempresult = PassportAPI.getInstance().thirdpartyRegister(mLoginResult.getThirdPartyID(), mLoginResult.getThirdPartyFaceUrl(),
+                                mLoginResult.getThirdPartyNickName(), "sina");
+                    } catch (JSONException e) {
+                        if (mLoginListener != null) {
+                            mLoginListener.onLoginFailed(StringManager.getRes(R.string.error_pptv_format));
+                        }
+                    } catch (LiveHttpException e) {
+                        if (mLoginListener != null) {
+                            mLoginListener.onLoginFailed(URLUtil.decode(e.getMessage()));
+                        }
+                    }
+
+                    if (tempresult != null) {
+                        String token = tempresult.getToken();
+                        String username = tempresult.getUsername();
+
+                        mLoginResult.setToken(token);
+                        mLoginResult.setUsername(username);
+                        mLoginResult.setThirdPartySource(LoginResult.FROM_SINA);
+
+                        User userinfo = null;
+
+                        try {
+                            userinfo = UserAPI.getInstance().getUserInfo(token, username);
+                        } catch (LiveHttpException e) {
+                            Log.w(TAG, e.toString());
+                        }
+
+                        if (userinfo != null) {
+                            mLoginResult.setFaceUrl(userinfo.getIcon());
+                            mLoginResult.setNickName(userinfo.getDisplayName());
+                        }
+
+                    } else {
+                        if (mLoginListener != null) {
+                            mLoginListener.onLoginFailed(StringManager.getRes(R.string.error_pptv_data));
+                        }
+                    }
+
+                    if (mLoginListener != null) {
+                        mLoginListener.onLoginSuccess(mLoginResult);
+                    }
+                };
+            };
+
+            t.start();
         }
     };
 

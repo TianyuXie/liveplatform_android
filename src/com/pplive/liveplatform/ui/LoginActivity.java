@@ -305,8 +305,9 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
 
     public void loginByWeibo(View v) {
         mRefreshDialog.show();
-        WeiboPassport.getInstance().setLoginListener(this);
-        WeiboPassport.getInstance().login(this);
+
+        WeiboPassport.getInstance().setLoginListener(LoginActivity.this);
+        WeiboPassport.getInstance().login(LoginActivity.this);
     }
 
     private void login(String username, String password, int dalay) {
