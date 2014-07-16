@@ -111,10 +111,10 @@
                 android:layout_toLeftOf="@id/umeng_fb_send"
                 android:background="@drawable/umeng_fb_reply_content_bg"
                 android:hint="@string/umeng_fb_reply_content_hint"
-                android:paddingBottom="5dp"
+                android:paddingBottom="10dp"
                 android:paddingLeft="25dp"
                 android:paddingRight="5dp"
-                android:paddingTop="5dp"
+                android:paddingTop="10dp"
                 android:textColor="#000000" />
         </RelativeLayout>
     </RelativeLayout>

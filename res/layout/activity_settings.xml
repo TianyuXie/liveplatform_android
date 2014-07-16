@@ -22,7 +22,6 @@
         android:background="@color/settings_bg"
         android:overScrollMode="never"
         android:paddingTop="30dp"
-        android:requiresFadingEdge="vertical"
         android:scrollbars="none" >
 
         <LinearLayout

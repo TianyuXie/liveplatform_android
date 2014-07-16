@@ -23,15 +23,13 @@
 
         <TextView
             android:id="@+id/text_nickname"
+            style="@style/Widget.TextView.SingleLine"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/image_user_icon"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="30dp"
             android:layout_toRightOf="@+id/image_user_icon"
-            android:ellipsize="end"
-            android:maxWidth="100dp"
-            android:singleLine="true"
             android:textColor="@color/white"
             android:textSize="18sp" />
 

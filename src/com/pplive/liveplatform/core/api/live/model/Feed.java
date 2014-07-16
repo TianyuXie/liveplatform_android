@@ -6,33 +6,55 @@ public class Feed {
 
     public enum FeedType {
         @SerializedName("FollowFriend")
-        FOLLOW_FRIEND,
+        FOLLOW_FRIEND("FollowFriend"),
 
         @SerializedName("Upload")
-        UPLOAD,
+        UPLOAD("Upload"),
 
         @SerializedName("CreateProgram")
-        CREATE_PROGRAM,
+        CREATE_PROGRAM("CreateProgram"),
 
         @SerializedName("AuditProgram")
-        AUDIT_PROGRAM;
+        AUDIT_PROGRAM("AuditProgram");
+
+        private FeedType(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     public enum SnsType {
         @SerializedName("user")
-        USER,
+        USER("user"),
 
         @SerializedName("user_private")
-        USER_PRIVATE,
+        USER_PRIVATE("user_private"),
 
         @SerializedName("follow_circle")
-        FOLLOW_CIRCLE,
+        FOLLOW_CIRCLE("follow_circle"),
 
         @SerializedName("user_msg")
-        USER_MSG,
+        USER_MSG("user_msg"),
 
         @SerializedName("user_fans")
-        USER_FANS;
+        USER_FANS("user_fans");
+
+        private SnsType(String name) {
+            this.name = name;
+        }
+
+        private String name;
+
+        @Override
+        public String toString() {
+            return name;
+        }
     }
 
     static class Extend {
@@ -57,6 +79,10 @@ public class Feed {
 
     public long getCreateTime() {
         return create_time;
+    }
+
+    public SnsType getSnsType() {
+        return snstype;
     }
 
     public FeedType getFeedType() {
