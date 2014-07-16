@@ -34,11 +34,6 @@ public class LocalMediaRecorder implements IMediaRecorder {
     }
 
     @Override
-    public void setQuality(Quality quality) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     public void setMediaRecorderListener(MediaRecorderListener listener) {
         mMediaRecorderListener = listener;
     }
