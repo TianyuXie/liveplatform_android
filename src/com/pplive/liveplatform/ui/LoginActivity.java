@@ -205,6 +205,8 @@ public class LoginActivity extends Activity implements Handler.Callback, Thirdpa
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
+
+                finish();
             }
         });
 

@@ -1,7 +1,6 @@
 package com.pplive.liveplatform.ui.navigate;
 
 import android.app.Activity;
-import android.app.DownloadManager.Request;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,8 +18,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.android.pulltorefresh.FallListHelper.LoadListener;
-import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.Code;
+import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.core.api.live.model.Program;
@@ -72,8 +71,6 @@ public class HomeFragment extends Fragment implements OnCheckedChangeListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        mUserManager = UserManager.getInstance(mActivity);
 
         View layout = inflater.inflate(R.layout.fragment_home2, container, false);
 
@@ -141,6 +138,8 @@ public class HomeFragment extends Fragment implements OnCheckedChangeListener {
 
         mRefreshDialog = new RefreshDialog(mActivity);
 
+        mUserManager = UserManager.getInstance(mActivity);
+
         return layout;
     }
 
@@ -152,6 +151,8 @@ public class HomeFragment extends Fragment implements OnCheckedChangeListener {
         if (!isLogin()) {
             ViewUtil.check(mRadioGroup, R.id.radio_btn_recommend);
         }
+
+        showContent(mRadioGroup.getCheckedRadioButtonId());
     }
 
     @Override
@@ -165,6 +166,7 @@ public class HomeFragment extends Fragment implements OnCheckedChangeListener {
 
             mInited = true;
         }
+
     }
 
     @Override
@@ -178,39 +180,34 @@ public class HomeFragment extends Fragment implements OnCheckedChangeListener {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        Log.d(TAG, "onActivityResult " + "resquestCode: " + requestCode + "; resultCode: " + resultCode);
-
-        if (Code.REQUEST_GET_FEED == requestCode) {
-            if (!isLogin()) {
-                ViewUtil.check(mRadioGroup, R.id.radio_btn_recommend);
-            }
-        }
-    }
-
-    @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
 
-        if (checkedId == R.id.radio_btn_recommend) {
-            Log.d(TAG, "checked: R.id.radio_btn_recommend");
-            mRecommendProgramContainer.setVisibility(View.VISIBLE);
-            mFeedProgramContainer.setVisibility(View.GONE);
-        } else if (checkedId == R.id.radio_btn_focuson) {
-            Log.d(TAG, "checked: R.id.radio_btn_focuson");
+        if (checkedId == R.id.radio_btn_recommend || (checkedId == R.id.radio_btn_focuson && isLogin())) {
 
-            if (isLogin()) {
-                mRecommendProgramContainer.setVisibility(View.GONE);
-                mFeedProgramContainer.setVisibility(View.VISIBLE);
-            } else {
-                Intent intent = new Intent(mActivity, LoginActivity.class);
-                startActivityForResult(intent, Code.REQUEST_GET_FEED);
-            }
+            showContent(checkedId);
+        } else {
+
+            Intent intent = new Intent(mActivity, LoginActivity.class);
+            startActivityForResult(intent, Code.REQUEST_GET_FEED);
         }
     }
 
     private boolean isLogin() {
         return mUserManager.isLogin();
+    }
+
+    private void showContent(int checkedId) {
+        if (R.id.radio_btn_recommend == checkedId) {
+            Log.d(TAG, "checked: R.id.radio_btn_recommend");
+
+            mRecommendProgramContainer.setVisibility(View.VISIBLE);
+            mFeedProgramContainer.setVisibility(View.GONE);
+        } else if (R.id.radio_btn_focuson == checkedId) {
+            Log.d(TAG, "checked: R.id.radio_btn_focuson");
+
+            mRecommendProgramContainer.setVisibility(View.GONE);
+            mFeedProgramContainer.setVisibility(View.VISIBLE);
+        }
     }
 
 }

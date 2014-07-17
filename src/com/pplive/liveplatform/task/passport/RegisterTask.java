@@ -22,9 +22,7 @@ public class RegisterTask extends Task {
         if (params == null || params.length <= 0) {
             return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
-        if (isCancelled()) {
-            return new TaskResult(TaskStatus.CHANCEL, "Cancelled");
-        }
+
         TaskContext context = params[0];
 
         String phoneNumber = context.getString(KEY_PHONE_NUMBER);
@@ -32,15 +30,17 @@ public class RegisterTask extends Task {
 
         String checkCode = context.getString(KEY_CHECK_CODE);
 
-        boolean status = false;
+        boolean ret = false;
         try {
-            status = PassportAPI.getInstance().registerByPhoneNumSimple(phoneNumber, password, checkCode);
+            ret = PassportAPI.getInstance().registerByPhoneNumSimple(phoneNumber, password, checkCode);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, e.getMessage());
         }
-        if (!status) {
+
+        if (!ret) {
             return new TaskResult(TaskStatus.FAILED);
         }
+
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
         result.setContext(context);
         return result;

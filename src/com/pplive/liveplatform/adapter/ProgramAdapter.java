@@ -83,7 +83,7 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
         } else if (data.isVOD()) {
             holder.textDate.setVisibility(View.VISIBLE);
             holder.textDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            holder.textDate.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getRealStartTime()));
+            holder.textDate.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getStartTime()));
             holder.imageLive.setVisibility(View.GONE);
         } else {
             holder.imageLive.setVisibility(View.VISIBLE);
