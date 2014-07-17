@@ -205,11 +205,7 @@ public class PassportAPI {
             Log.w(TAG, e.toString());
         }
 
-        Log.d(TAG, "infovalue: " + infovalue);
-
         UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_PASSPORT_REGISTER_PHONENUM_SIMPLE).buildAndExpand(index, infovalue);
-
-        Log.d(TAG, components.toString());
 
         URI uri = URI.create(components.toString());
 

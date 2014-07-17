@@ -34,7 +34,6 @@
         android:layout_alignRight="@+id/image_prelive"
         android:layout_alignTop="@+id/image_prelive"
         android:layout_marginTop="10dp"
-        android:background="@drawable/program_tag_bg"
         android:drawableLeft="@drawable/program_coming_icon"
         android:drawablePadding="10dp"
         android:paddingBottom="3dp"

@@ -52,6 +52,7 @@ import com.pplive.liveplatform.core.record.MediaRecorderListener;
 import com.pplive.liveplatform.core.record.MediaRecorderView;
 import com.pplive.liveplatform.core.record.Quality;
 import com.pplive.liveplatform.dialog.DialogManager;
+import com.pplive.liveplatform.dialog.ShareDialog;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation;
 import com.pplive.liveplatform.ui.anim.Rotate3dAnimation.RotateListener;
 import com.pplive.liveplatform.ui.live.FooterBarFragment;
@@ -65,7 +66,6 @@ import com.pplive.liveplatform.util.TimeUtil;
 import com.pplive.liveplatform.widget.AnimDoor;
 import com.pplive.liveplatform.widget.LoadingButton;
 import com.pplive.liveplatform.widget.chat.ChatBox;
-import com.pplive.liveplatform.widget.dialog.ShareDialog;
 
 import de.greenrobot.event.EventBus;
 

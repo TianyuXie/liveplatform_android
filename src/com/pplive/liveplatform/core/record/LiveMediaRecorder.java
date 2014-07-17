@@ -16,21 +16,15 @@ public class LiveMediaRecorder implements Handler.Callback, IMediaRecorder {
 
     private static final int WHAT_CHECK_UPLOAD_INFO = 9001;
 
-    private static final int WHAT_CHECK_REMAINING_TIME = 9002;
-
     private static final int WHAT_ERROR = 9009;
 
     private static final int DELAY_CHECK_UPLOAD_INFO = 500; // millisecond
-
-    private static final int DELAY_CHECK_REMAINING_TIME = 30000; // millisecond
 
     private PPboxSink mCapture;
 
     private String mOutputPath;
 
     private boolean mRecording = false;
-
-    private Quality mQuality = Quality.Normal;
 
     private Handler mInnerHandler = new Handler(this);
 
@@ -60,10 +54,6 @@ public class LiveMediaRecorder implements Handler.Callback, IMediaRecorder {
         mOutputPath = url;
         //        mOutputPath = "rtmp://172.16.205.53:1936/push/test?ts=1386312842&token=44b3f8302518eb86b1f16b3cb3c05f63";
         //        mOutputPath = "/sdcard/test.flv";
-    }
-
-    public void setQuality(Quality quality) {
-        mQuality = quality;
     }
 
     public void setMediaRecorderListener(MediaRecorderListener listener) {
@@ -143,36 +133,6 @@ public class LiveMediaRecorder implements Handler.Callback, IMediaRecorder {
                 } else {
                     mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_UPLOAD_INFO, DELAY_CHECK_UPLOAD_INFO);
                 }
-            }
-        }
-    }
-
-    private void onCheckRemainingTime() {
-        Log.d(TAG, "onCheckRemainingtime");
-        if (null != mCapture) {
-            mUploadStatistic.remaining_time = 0;
-            long ret = MediaSDK.CaptureStatInfo(mCapture.getCaptureId(), mUploadStatistic);
-
-            Log.d(TAG, "ret: " + ret);
-            if (0 == ret) {
-                int remaining_time = mUploadStatistic.remaining_time;
-
-                Log.d(TAG, "mUploadStatistic.remaining_time: " + remaining_time);
-
-                if (remaining_time >= 0 && remaining_time <= 500 /* millisecond */) {
-
-                    mQuality = mQuality.next();
-
-                } else if (remaining_time >= 2500 /* millisecond */) {
-
-                    mQuality = mQuality.previous();
-                }
-
-                Log.d(TAG, "interval: " + mQuality.getInterval());
-            }
-
-            if (mRecording) {
-                //                mInnerHandler.sendEmptyMessageDelayed(WHAT_CHECK_REMAINING_TIME, DELAY_CHECK_REMAINING_TIME);
             }
         }
     }

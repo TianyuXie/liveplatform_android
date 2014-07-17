@@ -3,8 +3,8 @@ package com.pplive.android.pulltorefresh;
 import android.content.Context;
 
 import com.pplive.liveplatform.Extra;
-import com.pplive.liveplatform.core.task.Task;
-import com.pplive.liveplatform.core.task.TaskContext;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
 
 public abstract class FallListHelper<T> {
 

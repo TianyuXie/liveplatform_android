@@ -5,6 +5,7 @@
     android:orientation="vertical" >
 
     <RadioGroup
+        android:id="@+id/radio_group"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
         android:background="@color/top_bar_bg"
@@ -31,12 +32,23 @@
 
     <com.handmark.pulltorefresh.library.PullToRefreshGridView
         xmlns:ptr="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/program_container"
+        android:id="@+id/recommend_program_container"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@color/app_bg"
         android:listSelector="@android:color/transparent"
         android:numColumns="2"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg" />
+
+    <com.handmark.pulltorefresh.library.PullToRefreshGridView
+        xmlns:ptr="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/feed_program_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@color/app_bg"
+        android:listSelector="@android:color/transparent"
+        android:numColumns="2"
+        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
+        ptr:ptrMode="both" />
 
 </LinearLayout>

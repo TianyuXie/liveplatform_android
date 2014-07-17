@@ -1,9 +1,12 @@
 package com.pplive.liveplatform.core.api.live;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.util.UriComponents;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import android.util.Log;
 
@@ -59,7 +62,7 @@ public class FollowAPI extends RESTfulAPI {
         for (int i = 0; i < users.size(); ++i) {
             User user = users.get(i);
 
-            sb.append(String.format(i == 0 ? "%d" : ", %d", user.getId()));
+            sb.append(String.format(i == 0 ? "%d" : ",%d", user.getId()));
         }
 
         return getRelations(coToken, username, sb.toString());
@@ -70,10 +73,13 @@ public class FollowAPI extends RESTfulAPI {
         mHttpHeaders.setAuthorization(coTokenAuthentication);
         HttpEntity<String> req = new HttpEntity<String>(mHttpHeaders);
 
+        UriComponents components = UriComponentsBuilder.fromUriString(TEMPLATE_GET_RELATIONS).buildAndExpand(username, userids);
+
+        URI uri = URI.create(components.toString());
+
         UserRelationListResp resp = null;
         try {
-            HttpEntity<UserRelationListResp> rep = mRestTemplate.exchange(TEMPLATE_GET_RELATIONS, HttpMethod.GET, req, UserRelationListResp.class, username,
-                    userids);
+            HttpEntity<UserRelationListResp> rep = mRestTemplate.exchange(uri, HttpMethod.GET, req, UserRelationListResp.class);
 
             resp = rep.getBody();
             if (0 == resp.getError()) {

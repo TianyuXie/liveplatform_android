@@ -71,8 +71,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="15dp"
             android:contentDescription="@null"
+            android:padding="15dp"
             android:src="@drawable/btn_back"
             android:visibility="gone" />
 
@@ -83,8 +83,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:layout_margin="15dp"
             android:contentDescription="@null"
+            android:padding="15dp"
             android:src="@drawable/btn_settings"
             android:visibility="gone" />
 
@@ -93,9 +93,10 @@
             style="@style/Widget.Button.Transparent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:layout_alignTop="@+id/btn_settings"
-            android:layout_toLeftOf="@+id/btn_settings"
             android:contentDescription="@null"
+            android:padding="15dp"
             android:src="@drawable/btn_notification"
             android:visibility="gone" >
         </ImageButton>

@@ -9,11 +9,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.pplive.android.pulltorefresh.FallListHelper.LoadListener;
 import com.pplive.android.pulltorefresh.PullToRefreshSwipeListView;
+import com.pplive.android.view.TopBarView;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.NotivicationAdapter;
 import com.pplive.liveplatform.core.UserManager;
-import com.pplive.liveplatform.core.user.GetNotificatioinHelper;
-import com.pplive.liveplatform.widget.TopBarView;
+import com.pplive.liveplatform.task.user.GetNotificatioinHelper;
 
 public class MyNotificationActivity extends Activity {
 

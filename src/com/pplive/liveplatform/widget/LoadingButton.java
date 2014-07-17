@@ -16,7 +16,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.widget.attr.IHidable;
 
 public class LoadingButton extends RelativeLayout implements IHidable {
     static final String TAG = "LoadingButton";

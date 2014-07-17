@@ -61,12 +61,14 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
 
         ViewHolder holder = (ViewHolder) convertView.getTag();
 
-        updateView(holder, getItem(position));
+        updateView(holder, position);
 
         return convertView;
     }
 
-    private void updateView(ViewHolder holder, Program data) {
+    private void updateView(ViewHolder holder, int position) {
+
+        Program data = getItem(position);
 
         holder.textTags.setText(data.getTags());
         holder.textTitle.setText(data.getTitle());
@@ -81,7 +83,7 @@ public class ProgramAdapter extends RefreshAdapter<Program> {
         } else if (data.isVOD()) {
             holder.textDate.setVisibility(View.VISIBLE);
             holder.textDate.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
-            holder.textDate.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getRealStartTime()));
+            holder.textDate.setText(TimeHelper.getAboutStartTime(mContext.getResources(), data.getStartTime()));
             holder.imageLive.setVisibility(View.GONE);
         } else {
             holder.imageLive.setVisibility(View.VISIBLE);

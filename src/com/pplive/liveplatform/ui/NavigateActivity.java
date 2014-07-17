@@ -113,13 +113,6 @@ public class NavigateActivity extends FragmentActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "resultCode: " + resultCode);
-
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
     private void switchFragment(Fragment to) {
         switchFragment(mCurrentFragment, to);
     }

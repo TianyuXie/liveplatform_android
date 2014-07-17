@@ -13,14 +13,14 @@ import android.widget.GridView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshGridView;
 import com.pplive.android.pulltorefresh.FallListHelper.LoadListener;
+import com.pplive.android.view.TopBarView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.api.live.model.Subject;
-import com.pplive.liveplatform.core.search.SearchProgramHelper;
-import com.pplive.liveplatform.widget.TopBarView;
-import com.pplive.liveplatform.widget.dialog.RefreshDialog;
+import com.pplive.liveplatform.dialog.RefreshDialog;
+import com.pplive.liveplatform.task.search.SearchProgramHelper;
 
 public class ChannelActivity extends Activity {
 

@@ -36,7 +36,7 @@ public class SearchAPI extends RESTfulAPI {
             "/search/v2/c/pptv/recommend/searchwords").toString();
 
     private static final String TEMPLATE_GET_RECOMMEND_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
-            "/search/v2/c/pptv/recommend/publicuser").toString();
+            "/search/v2/c/pptv/recommend/publicuser?count=10").toString();
 
     public static SearchAPI getInstance() {
         return sInstance;
