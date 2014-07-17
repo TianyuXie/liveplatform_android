@@ -297,7 +297,7 @@ public class PersonalFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mActivity, MyFollowersActivity.class);
-                intent.putExtra(Extra.KEY_USERNAME, mUsername);
+                intent.putExtra(Extra.KEY_QUERY_USERNAME, mUsername);
                 startActivity(intent);
             }
         });
@@ -307,7 +307,7 @@ public class PersonalFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mActivity, MyFansActivity.class);
-                intent.putExtra(Extra.KEY_USERNAME, mUsername);
+                intent.putExtra(Extra.KEY_QUERY_USERNAME, mUsername);
                 startActivity(intent);
             }
         });

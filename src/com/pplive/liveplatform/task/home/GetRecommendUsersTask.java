@@ -1,4 +1,4 @@
-package com.pplive.liveplatform.task.search;
+package com.pplive.liveplatform.task.home;
 
 import java.util.List;
 
@@ -9,7 +9,6 @@ import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.FollowAPI;
 import com.pplive.liveplatform.core.api.live.SearchAPI;
-import com.pplive.liveplatform.core.api.live.model.FallList;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.api.live.model.UserRelation;
 import com.pplive.liveplatform.task.Task;
@@ -17,48 +16,45 @@ import com.pplive.liveplatform.task.TaskContext;
 import com.pplive.liveplatform.task.TaskResult;
 import com.pplive.liveplatform.task.TaskResult.TaskStatus;
 
-public class SearchUserTask extends Task {
+public class GetRecommendUsersTask extends Task {
 
-    static final String TAG = SearchUserTask.class.getSimpleName();
+    static final String TAG = GetRecommendUsersTask.class.getSimpleName();
 
     @Override
     protected TaskResult doInBackground(TaskContext... params) {
-        if (params == null || params.length <= 0) {
+        if (null == params || 0 == params.length) {
             return new TaskResult(TaskStatus.FAILED, "TaskContext is null");
         }
 
         TaskContext context = params[0];
-        String keyword = context.getString(Extra.KEY_KEYWORD);
-        String nextToken = context.getString(Extra.KEY_NEXT_TOKEN);
-        int fallCount = (Integer) context.get(Extra.KEY_FALL_COUNT);
-
         String username = context.getString(Extra.KEY_USERNAME);
-        String cotoken = context.getString(Extra.KEY_TOKEN);
+        String token = context.getString(Extra.KEY_TOKEN);
 
-        FallList<User> data = null;
+        List<User> users = null;
         try {
-            data = SearchAPI.getInstance().searchUser(keyword, nextToken, fallCount);
-        } catch (Exception e) {
+            users = SearchAPI.getInstance().recommendUser();
+        } catch (LiveHttpException e) {
             Log.w(TAG, e.toString());
+            return new TaskResult(TaskStatus.FAILED, e.toString());
         }
 
-        if (null == data) {
+        if (users == null) {
             return new TaskResult(TaskStatus.FAILED, "No data");
         }
 
-        updateUserRelation(cotoken, username, data.getList());
+        updateRelation(token, username, users);
 
         TaskResult result = new TaskResult(TaskStatus.SUCCEED);
-        context.set(Extra.KEY_SEARCH_RESULT, data);
+        context.set(Extra.KEY_RESULT, users);
         result.setContext(context);
         return result;
     }
 
-    private void updateUserRelation(String cotoken, String username, List<User> users) {
+    private void updateRelation(String coToken, String username, List<User> users) {
         List<UserRelation> relations = null;
-        if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(cotoken)) {
+        if (!TextUtils.isEmpty(username) && !TextUtils.isEmpty(coToken)) {
             try {
-                relations = FollowAPI.getInstance().getRelations(cotoken, username, users);
+                relations = FollowAPI.getInstance().getRelations(coToken, username, users);
             } catch (LiveHttpException e) {
                 Log.w(TAG, e.toString());
             }
@@ -74,6 +70,5 @@ public class SearchUserTask extends Task {
             }
             users.get(i).setRelation(relation);
         }
-
     }
 }

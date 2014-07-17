@@ -48,6 +48,7 @@
         android:background="@color/app_bg"
         android:listSelector="@android:color/transparent"
         android:numColumns="2"
-        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg" />
+        ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg"
+        ptr:ptrMode="both" />
 
 </LinearLayout>

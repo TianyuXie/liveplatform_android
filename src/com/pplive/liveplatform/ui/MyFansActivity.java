@@ -13,6 +13,7 @@ import com.pplive.android.view.TopBarView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.UserAdapter;
+import com.pplive.liveplatform.core.UserManager;
 import com.pplive.liveplatform.dialog.RefreshDialog;
 import com.pplive.liveplatform.task.user.GetFriendsHelper;
 
@@ -87,9 +88,14 @@ public class MyFansActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        String username = getIntent().getStringExtra(Extra.KEY_USERNAME);
+        String queryUsername = getIntent().getStringExtra(Extra.KEY_QUERY_USERNAME);
 
-        mGetFriendsHelper.loadFans(username);
+        UserManager manager = UserManager.getInstance(this);
+
+        String username = manager.getUsernamePlain();
+        String token = manager.getToken();
+
+        mGetFriendsHelper.loadFans(token, username, queryUsername);
     }
 
     @Override

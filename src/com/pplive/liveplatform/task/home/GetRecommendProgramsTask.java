@@ -20,7 +20,7 @@ public class GetRecommendProgramsTask extends Task {
         try {
             programs = SearchAPI.getInstance().recommendProgram();
         } catch (LiveHttpException e) {
-            return new TaskResult(TaskStatus.FAILED, "RecommendService error");
+            return new TaskResult(TaskStatus.FAILED, e.toString());
         }
 
         if (programs == null) {

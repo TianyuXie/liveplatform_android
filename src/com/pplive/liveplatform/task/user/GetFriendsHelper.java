@@ -18,7 +18,11 @@ public class GetFriendsHelper extends FallListHelper<User> {
 
     static final String TAG = GetFriendsHelper.class.getSimpleName();
 
+    private String mQueryUsername;
+
     private String mUsername;
+
+    private String mCoToken;
 
     private FriendType mFriendType;
 
@@ -45,15 +49,19 @@ public class GetFriendsHelper extends FallListHelper<User> {
         super(context, adapter);
     }
 
-    public void loadFollowers(String username) {
-        mUsername = username;
-        mFriendType = FriendType.FOLLOWER;
-        refresh();
+    public void loadFollowers(String coToken, String username, String queryUsername) {
+        loadFriends(coToken, username, queryUsername, FriendType.FOLLOWER);
     }
 
-    public void loadFans(String username) {
+    public void loadFans(String coToken, String username, String queryUsername) {
+        loadFriends(coToken, username, queryUsername, FriendType.FAN);
+    }
+
+    private void loadFriends(String coToken, String username, String queryUsername, FriendType type) {
+        mCoToken = coToken;
         mUsername = username;
-        mFriendType = FriendType.FAN;
+        mQueryUsername = queryUsername;
+        mFriendType = type;
         refresh();
     }
 
@@ -62,6 +70,8 @@ public class GetFriendsHelper extends FallListHelper<User> {
         task.addTaskListener(mTaskListener);
 
         context.set(Extra.KEY_USERNAME, mUsername);
+        context.set(Extra.KEY_TOKEN, mCoToken);
+        context.set(Extra.KEY_QUERY_USERNAME, mQueryUsername);
         context.set(Extra.KEY_FRIEND_TYPE, mFriendType);
     }
 
