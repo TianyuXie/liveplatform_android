@@ -90,7 +90,7 @@ public class SearchActivity extends Activity {
             }
         });
 
-        mExpandableListView = (ExpandableListView) findViewById(R.id.expandable_list_view);
+        mExpandableListView = (ExpandableListView) findViewById(R.id.expandable_listview);
         mExpandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
             @Override

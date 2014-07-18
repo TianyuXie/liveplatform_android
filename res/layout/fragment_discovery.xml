@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/home_fragment_body_bg" >
+    android:background="@color/app_bg"
+    android:orientation="vertical" >
 
     <RelativeLayout
         android:id="@+id/search_top_bar"
@@ -34,15 +35,14 @@
             android:src="@drawable/btn_search" />
     </RelativeLayout>
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
+    <com.handmark.pulltorefresh.library.PullToRefreshExpandableListView
         xmlns:ptr="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/listview_channel"
-        android:layout_width="wrap_content"
+        android:id="@+id/expandable_listview"
+        android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/search_top_bar"
-        android:layout_centerHorizontal="true"
-        android:divider="@null"
+        android:childDivider="@android:color/transparent"
+        android:groupIndicator="@null"
         android:listSelector="@android:color/transparent"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg" />
 
-</RelativeLayout>
+</LinearLayout>

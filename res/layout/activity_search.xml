@@ -47,7 +47,7 @@
     </RelativeLayout>
 
     <ExpandableListView
-        android:id="@+id/expandable_list_view"
+        android:id="@+id/expandable_listview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:childDivider="@color/search_keyword_divider_color"

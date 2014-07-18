@@ -25,6 +25,7 @@
         android:layout_centerVertical="true"
         android:contentDescription="@null"
         android:padding="10dp"
-        android:src="@drawable/search_group_btn_clear" />
+        android:src="@drawable/search_group_btn_clear"
+        android:visibility="gone" />
 
 </RelativeLayout>

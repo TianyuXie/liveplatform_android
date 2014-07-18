@@ -30,11 +30,6 @@ public class AsyncImageView extends ImageView {
         super(context, attrs, defStyle);
     }
 
-    @Override
-    public void setImageResource(int resId) {
-        setImageAsync("drawable://" + resId);
-    }
-
     public void setImageAsync(String imageUri) {
         setImageAsync(imageUri, DEFALUT_DISPLAY_OPTIONS);
     }
