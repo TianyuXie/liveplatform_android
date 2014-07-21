@@ -19,6 +19,7 @@ import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.ProgramAdapter;
 import com.pplive.liveplatform.core.api.live.model.Program;
 import com.pplive.liveplatform.core.api.live.model.Subject;
+import com.pplive.liveplatform.core.api.live.model.Tag;
 import com.pplive.liveplatform.dialog.RefreshDialog;
 import com.pplive.liveplatform.task.search.SearchProgramHelper;
 
@@ -33,8 +34,6 @@ public class ChannelActivity extends Activity {
     private ProgramAdapter mAdapter;
 
     private SearchProgramHelper mProgramLoader;
-
-    private Subject mSubject;
 
     private boolean mInit;
 
@@ -127,12 +126,14 @@ public class ChannelActivity extends Activity {
         Intent intent = getIntent();
 
         Subject subject = (Subject) intent.getSerializableExtra(Extra.KEY_SUBJECT);
-        updateSubject(subject);
+        Tag tag = (Tag) intent.getSerializableExtra(Extra.KEY_TAG);
 
-        if (!mInit) {
-            mInit = true;
+        if (null != subject) {
+            updateSubject(subject);
+        }
 
-            mProgramLoader.searchBySubjectId(mSubject.getId());
+        if (null != tag) {
+            updateTag(tag);
         }
     }
 
@@ -145,11 +146,29 @@ public class ChannelActivity extends Activity {
         }
     }
 
-    public void updateSubject(Subject subject) {
+    private void updateSubject(Subject subject) {
         if (null != subject) {
 
-            mSubject = subject;
-            mTopBarView.setTitle(mSubject.getSubjectName());
+            mTopBarView.setTitle(subject.getSubjectName());
+        }
+
+        if (!mInit) {
+            mInit = true;
+
+            mProgramLoader.searchBySubjectId(subject.getId());
+        }
+    }
+
+    private void updateTag(Tag tag) {
+        if (null != tag) {
+
+            mTopBarView.setTitle(tag.getTagName());
+        }
+
+        if (!mInit) {
+            mInit = true;
+
+            mProgramLoader.searchByTag(tag.getTagName());
         }
     }
 

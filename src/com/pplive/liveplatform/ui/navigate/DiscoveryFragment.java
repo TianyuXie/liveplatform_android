@@ -4,7 +4,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -23,8 +22,11 @@ import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.adapter.DiscoveryAdapter;
-import com.pplive.liveplatform.core.api.live.ProgramAPI;
 import com.pplive.liveplatform.core.api.live.model.Subject;
+import com.pplive.liveplatform.core.api.live.model.Tag;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.search.DiscoveryPageInitTask;
 import com.pplive.liveplatform.ui.ChannelActivity;
 import com.pplive.liveplatform.ui.SearchActivity;
 
@@ -37,6 +39,20 @@ public class DiscoveryFragment extends Fragment {
     private PullToRefreshExpandableListView mListViewChannel;
 
     private DiscoveryAdapter mAdapter;
+
+    private Task.TaskListener mTaskListener = new Task.BaseTaskListener() {
+
+        @SuppressWarnings("unchecked")
+        public void onTaskSucceed(Task sender, com.pplive.liveplatform.task.TaskSucceedEvent event) {
+            TaskContext context = event.getContext();
+
+            List<Subject> subjects = (List<Subject>) context.get(Extra.KEY_RESULT_SUBJECTS);
+            List<Tag> tags = (List<Tag>) context.get(Extra.KEY_RESULT_TAGS);
+
+            mAdapter.setData(subjects, tags);
+
+        };
+    };
 
     @Override
     public void onAttach(Activity activity) {
@@ -114,13 +130,16 @@ public class DiscoveryFragment extends Fragment {
         mAdapter = new DiscoveryAdapter(mActivity);
         mListViewChannel.getRefreshableView().setAdapter(mAdapter);
         mListViewChannel.getRefreshableView().expandGroup(0);
+        mListViewChannel.getRefreshableView().expandGroup(1);
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        AsyncTaskGetSubjects task = new AsyncTaskGetSubjects();
+        DiscoveryPageInitTask task = new DiscoveryPageInitTask();
+        task.addTaskListener(mTaskListener);
         task.execute();
     }
 
@@ -130,28 +149,4 @@ public class DiscoveryFragment extends Fragment {
 
     }
 
-    class AsyncTaskGetSubjects extends AsyncTask<Void, Void, List<Subject>> {
-
-        @Override
-        protected List<Subject> doInBackground(Void... params) {
-            List<Subject> list = null;
-
-            try {
-                list = ProgramAPI.getInstance().getSubjects();
-            } catch (Exception e) {
-                Log.w(TAG, e.toString());
-            }
-
-            return list;
-        }
-
-        @Override
-        protected void onPostExecute(List<Subject> result) {
-
-            if (null != result) {
-                mAdapter.setData(result, null);
-            }
-
-        }
-    }
 }

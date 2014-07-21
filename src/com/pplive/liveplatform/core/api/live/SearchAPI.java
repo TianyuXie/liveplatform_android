@@ -8,10 +8,12 @@ import com.pplive.liveplatform.core.api.BaseURL;
 import com.pplive.liveplatform.core.api.exception.LiveHttpException;
 import com.pplive.liveplatform.core.api.live.model.FallList;
 import com.pplive.liveplatform.core.api.live.model.Program;
+import com.pplive.liveplatform.core.api.live.model.Tag;
 import com.pplive.liveplatform.core.api.live.model.User;
 import com.pplive.liveplatform.core.api.live.resp.ProgramFallListResp;
 import com.pplive.liveplatform.core.api.live.resp.ProgramListResp;
 import com.pplive.liveplatform.core.api.live.resp.SearchWordsListResp;
+import com.pplive.liveplatform.core.api.live.resp.TagListResp;
 import com.pplive.liveplatform.core.api.live.resp.UserFallListResp;
 import com.pplive.liveplatform.core.api.live.resp.UserListResp;
 import com.pplive.liveplatform.util.URL.Protocol;
@@ -38,12 +40,14 @@ public class SearchAPI extends RESTfulAPI {
     private static final String TEMPLATE_GET_RECOMMEND_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
             "/search/v2/c/pptv/recommend/publicuser?count=10").toString();
 
+    private static final String TEMPLATE_GET_RECOMMEND_TAG = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+            "/search/v2/pptv/tags/statistics?count=10").toString();
+
     public static SearchAPI getInstance() {
         return sInstance;
     }
 
     private SearchAPI() {
-
     }
 
     public FallList<Program> searchProgram(int subjectId, SortKeyword sort, LiveStatusKeyword liveStatus, String nextToken, int fallCount)
@@ -160,6 +164,26 @@ public class SearchAPI extends RESTfulAPI {
         UserListResp resp = null;
         try {
             resp = mRestTemplate.getForObject(TEMPLATE_GET_RECOMMEND_USER, UserListResp.class);
+
+            if (0 == resp.getError()) {
+                return resp.getList();
+            }
+        } catch (Exception e) {
+            Log.w(TAG, e.toString());
+        }
+
+        if (null != resp) {
+            throw new LiveHttpException(resp.getError());
+        } else {
+            throw new LiveHttpException();
+        }
+    }
+
+    public java.util.List<Tag> recommendTag() throws LiveHttpException {
+
+        TagListResp resp = null;
+        try {
+            resp = mRestTemplate.getForObject(TEMPLATE_GET_RECOMMEND_TAG, TagListResp.class);
 
             if (0 == resp.getError()) {
                 return resp.getList();
