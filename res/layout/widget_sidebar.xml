@@ -33,36 +33,31 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_marginTop="10dp"
-            android:button="@drawable/sidebar_original_btn_bg"
             android:checked="true" />
 
         <RadioButton
             android:id="@+id/btn_sidebar_tv"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:button="@drawable/sidebar_tv_btn_bg" />
+            android:layout_marginTop="10dp" />
 
         <RadioButton
             android:id="@+id/btn_sidebar_game"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:button="@drawable/sidebar_game_btn_bg" />
+            android:layout_marginTop="10dp" />
 
         <RadioButton
             android:id="@+id/btn_sidebar_sport"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:button="@drawable/sidebar_sport_btn_bg" />
+            android:layout_marginTop="10dp" />
 
         <RadioButton
             android:id="@+id/btn_sidebar_finance"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:button="@drawable/sidebar_finance_btn_bg" />
+            android:layout_marginTop="10dp" />
     </RadioGroup>
 
     <Button
@@ -70,8 +65,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/sidebar_settings_btn_bg" />
+        android:layout_centerHorizontal="true" />
 
     <LinearLayout
         android:id="@+id/layout_block_layer"

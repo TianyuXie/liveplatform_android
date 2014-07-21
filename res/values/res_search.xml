@@ -23,4 +23,6 @@
     <string name="search_program">内容</string>
     <string name="search_user">用户</string>
 
+    <string name="channel">频道</string>
+    <string name="tag">标签</string>
 </resources>

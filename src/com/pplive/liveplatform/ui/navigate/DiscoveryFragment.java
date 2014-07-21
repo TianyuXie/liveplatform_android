@@ -1,36 +1,32 @@
 package com.pplive.liveplatform.ui.navigate;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.pplive.android.image.AsyncImageView;
+import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
-import com.pplive.liveplatform.core.api.live.ProgramAPI;
+import com.pplive.liveplatform.adapter.DiscoveryAdapter;
 import com.pplive.liveplatform.core.api.live.model.Subject;
+import com.pplive.liveplatform.core.api.live.model.Tag;
+import com.pplive.liveplatform.task.Task;
+import com.pplive.liveplatform.task.TaskContext;
+import com.pplive.liveplatform.task.search.DiscoveryPageInitTask;
 import com.pplive.liveplatform.ui.ChannelActivity;
 import com.pplive.liveplatform.ui.SearchActivity;
 
@@ -40,9 +36,23 @@ public class DiscoveryFragment extends Fragment {
 
     private Activity mActivity;
 
-    private PullToRefreshListView mListViewChannel;
+    private PullToRefreshExpandableListView mListViewChannel;
 
-    private SubjectAdapter mAdapter;
+    private DiscoveryAdapter mAdapter;
+
+    private Task.TaskListener mTaskListener = new Task.BaseTaskListener() {
+
+        @SuppressWarnings("unchecked")
+        public void onTaskSucceed(Task sender, com.pplive.liveplatform.task.TaskSucceedEvent event) {
+            TaskContext context = event.getContext();
+
+            List<Subject> subjects = (List<Subject>) context.get(Extra.KEY_RESULT_SUBJECTS);
+            List<Tag> tags = (List<Tag>) context.get(Extra.KEY_RESULT_TAGS);
+
+            mAdapter.setData(subjects, tags);
+
+        };
+    };
 
     @Override
     public void onAttach(Activity activity) {
@@ -63,24 +73,40 @@ public class DiscoveryFragment extends Fragment {
 
         View layout = inflater.inflate(R.layout.fragment_discovery, container, false);
 
-        mListViewChannel = (PullToRefreshListView) layout.findViewById(R.id.listview_channel);
+        mListViewChannel = (PullToRefreshExpandableListView) layout.findViewById(R.id.expandable_listview);
 
-        mListViewChannel.setOnPullEventListener(new OnPullEventListener<ListView>() {
+        mListViewChannel.setOnPullEventListener(new OnPullEventListener<ExpandableListView>() {
 
             @Override
-            public void onPullEvent(PullToRefreshBase<ListView> refreshView, State state, Mode direction) {
+            public void onPullEvent(PullToRefreshBase<ExpandableListView> refreshView, State state, Mode direction) {
                 Log.d(TAG, "direction: " + direction);
             }
 
         });
 
-        mListViewChannel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListViewChannel.getRefreshableView().setOnChildClickListener(new OnChildClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(mActivity, ChannelActivity.class);
-                intent.putExtra(Extra.KEY_SUBJECT, mAdapter.getItem(position));
-                startActivity(intent);
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Log.d(TAG, "onChildClick");
+
+                if (0 == groupPosition) {
+                    Intent intent = new Intent(mActivity, ChannelActivity.class);
+                    intent.putExtra(Extra.KEY_SUBJECT, (Subject) mAdapter.getChild(groupPosition, childPosition));
+                    startActivity(intent);
+
+                    return true;
+                }
+
+                return false;
+            }
+        });
+
+        mListViewChannel.getRefreshableView().setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                return true;
             }
         });
 
@@ -101,8 +127,10 @@ public class DiscoveryFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mAdapter = new SubjectAdapter(getActivity());
-        mListViewChannel.setAdapter(mAdapter);
+        mAdapter = new DiscoveryAdapter(mActivity);
+        mListViewChannel.getRefreshableView().setAdapter(mAdapter);
+        mListViewChannel.getRefreshableView().expandGroup(0);
+        mListViewChannel.getRefreshableView().expandGroup(1);
 
     }
 
@@ -110,111 +138,15 @@ public class DiscoveryFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        AsyncTaskGetSubjects task = new AsyncTaskGetSubjects();
+        DiscoveryPageInitTask task = new DiscoveryPageInitTask();
+        task.addTaskListener(mTaskListener);
         task.execute();
     }
 
-    class AsyncTaskGetSubjects extends AsyncTask<Void, Void, List<Subject>> {
-
-        @Override
-        protected List<Subject> doInBackground(Void... params) {
-            List<Subject> list = null;
-
-            try {
-                list = ProgramAPI.getInstance().getSubjects();
-            } catch (Exception e) {
-
-            }
-
-            return list;
-        }
-
-        @Override
-        protected void onPostExecute(List<Subject> result) {
-
-            if (null != result) {
-                mAdapter.setSubjects(result);
-            }
-
-        }
-    }
-}
-
-class SubjectAdapter extends BaseAdapter {
-
-    static final int CHANNEL_ORIGINAL_ID = 1;
-
-    private LayoutInflater mInflater;
-
-    private List<Subject> mSubjects;
-
-    public SubjectAdapter(Context context) {
-        mInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-    }
-
-    public void setSubjects(List<Subject> list) {
-        if (null == list) {
-            return;
-        }
-
-        for (int index = 0; index < list.size(); ++index) {
-            if (CHANNEL_ORIGINAL_ID == list.get(index).getId()) {
-                list.remove(index);
-            }
-        }
-
-        Collections.sort(list, new Comparator<Subject>() {
-
-            @Override
-            public int compare(Subject lhs, Subject rhs) {
-                return lhs.getSeq() - rhs.getSeq();
-            }
-        });
-
-        mSubjects = list;
-
-        notifyDataSetChanged();
-    }
-
     @Override
-    public int getCount() {
-        return null != mSubjects ? mSubjects.size() : 0;
+    public void onResume() {
+        super.onResume();
+
     }
 
-    @Override
-    public Subject getItem(int position) {
-        return null != mSubjects ? mSubjects.get(position - 1) : null;
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (null == convertView) {
-            convertView = mInflater.inflate(R.layout.item_channel_list, null, false);
-
-            ViewHolder holder = new ViewHolder();
-
-            holder.icon = (AsyncImageView) convertView.findViewById(R.id.channel_icon);
-
-            convertView.setTag(holder);
-        }
-
-        ViewHolder holder = (ViewHolder) convertView.getTag();
-
-        String imageUrl = mSubjects.get(position).getImageUrl();
-        if (!TextUtils.isEmpty(imageUrl)) {
-            holder.icon.setImageAsync(mSubjects.get(position).getImageUrl());
-        }
-
-        return convertView;
-    }
-
-    static class ViewHolder {
-        AsyncImageView icon;
-    }
 }
