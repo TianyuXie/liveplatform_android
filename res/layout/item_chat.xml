@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginRight="5dp"
         android:layout_toLeftOf="@+id/text_chat_time"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="16sp" />
 
     <TextView
@@ -22,7 +22,7 @@
         android:layout_alignParentRight="true"
         android:gravity="right"
         android:singleLine="true"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="16sp" />
 
 </RelativeLayout>

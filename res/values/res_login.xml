@@ -23,8 +23,4 @@
     <string name="pwd_reset">重置密码</string>
     <string name="pwd_forget"><u>忘记密码</u></string>
 
-    <!-- Color -->
-    <color name="input_text_color">#FF919191</color>
-    <color name="login_input_bg">#FF191919</color>
-
 </resources>

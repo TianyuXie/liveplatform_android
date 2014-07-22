@@ -63,8 +63,7 @@
     <RelativeLayout
         android:id="@+id/layout_home_help"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@color/home_help_bg" >
+        android:layout_height="fill_parent" >
 
         <ImageView
             android:layout_width="210dp"

@@ -26,8 +26,4 @@
     <string name="toast_userpage_delete_fail">删除失败</string>
     <string name="toast_userpage_delete_timeout">请求超时</string>
 
-    <!-- Color -->
-    <color name="userpage_icon_choose_normal">#FF333333</color>
-    <color name="userpage_icon_choose_pressed">#FF222222</color>
-
 </resources>

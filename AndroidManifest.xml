@@ -165,7 +165,6 @@
         <activity
             android:name="com.pplive.liveplatform.ui.UserpageActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
         <activity

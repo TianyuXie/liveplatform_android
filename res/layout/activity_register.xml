@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/edit_checkcode"
             android:layout_marginTop="10dp"
-            android:textColor="@color/red"
+            android:textColor="@color/color_error"
             android:textSize="18sp" />
 
         <Button

@@ -56,7 +56,7 @@
 
     <style name="settings_tablerow">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@android:color/white</item>
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:paddingBottom">15dp</item>
         <item name="android:paddingTop">15dp</item>
@@ -64,7 +64,7 @@
 
     <style name="settings_tablerow_switcher">
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@android:color/white</item>
         <item name="android:layout_marginBottom">1dp</item>
         <item name="android:paddingBottom">8dp</item>
         <item name="android:paddingTop">8dp</item>
@@ -94,7 +94,7 @@
         <item name="android:gravity">left</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/settings_text_color</item>
-        <item name="android:background">@color/white</item>
+        <item name="android:background">@android:color/white</item>
     </style>
 
 </resources>

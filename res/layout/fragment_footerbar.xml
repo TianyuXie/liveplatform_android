@@ -147,7 +147,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/toolbar_container"
-        android:background="@color/black"
+        android:background="@android:color/black"
         android:contentDescription="@null"
         android:padding="20dp"
         android:scaleType="fitXY"
@@ -162,7 +162,7 @@
         android:layout_alignTop="@+id/btn_add_prelive"
         android:layout_below="@+id/toolbar_container"
         android:layout_toRightOf="@+id/btn_add_prelive"
-        android:background="@color/black"
+        android:background="@android:color/black"
         android:visibility="gone" />
 
 </RelativeLayout>

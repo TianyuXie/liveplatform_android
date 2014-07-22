@@ -10,7 +10,7 @@
         android:paddingLeft="80dp"
         android:paddingRight="80dp"
         android:singleLine="true"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="24sp" />
 
     <ImageButton
@@ -34,7 +34,7 @@
         android:background="@drawable/top_bar_register_btn"
         android:contentDescription="@null"
         android:text="@string/btn_skip"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="18sp"
         android:visibility="gone" />
 

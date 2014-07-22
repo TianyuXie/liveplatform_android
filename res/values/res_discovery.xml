@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="channel">频道</string>
+    <string name="tag">标签</string>
+    <!-- Channel -->
+    <string name="channel_origin">原创\u0020\u0020\u0020LIVE</string>
+    <string name="channel_tv">电视\u0020\u0020\u0020TV SHOWS</string>
+    <string name="channel_game">游戏\u0020\u0020\u0020GAMES</string>
+    <string name="channel_sports">体育\u0020\u0020\u0020SPORTS</string>
+    <string name="channel_stocks">财经\u0020\u0020\u0020STOCKS</string>
+    <string name="channel_activity">热门活动\u0020\u0020\u0020ACTIVITY</string>
+
+</resources>

@@ -27,7 +27,7 @@
             android:layout_above="@+id/edit_login_username"
             android:layout_marginBottom="20dp"
             android:text="@string/login_nav"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:textSize="20sp" />
 
         <EditText
@@ -59,7 +59,7 @@
             android:layout_marginTop="20dp"
             android:layout_toRightOf="@+id/text_forget_password"
             android:padding="10dp"
-            android:textColor="@color/red"
+            android:textColor="@android:color/white"
             android:textSize="18sp" />
 
         <TextView
@@ -93,7 +93,7 @@
             android:layout_below="@+id/btn_login"
             android:layout_marginTop="30dp"
             android:text="@string/login_third_party"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:textSize="20sp" />
 
         <LinearLayout

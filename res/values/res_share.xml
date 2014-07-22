@@ -7,7 +7,6 @@
     <string name="share_record_default_title">爱播分享</string>
     <string name="share_record_default_text">我正在使用\"爱播\", 快来关注我吧!</string>
     <string name="share_failed">分享失败</string>
-    
     <string name="share_wechat">微信</string>
     <string name="share_wechat_sns">朋友圈</string>
     <string name="share_weibo">微博</string>
@@ -18,8 +17,6 @@
     <string name="share_general_not_install">分享客户端异常</string>
     <string name="share_weibo_not_install">未安装新浪微博客户端</string>
     <string name="share_qq_not_install">未安装腾讯QQ客户端</string>
-
-    <color name="share_dialog_bg">#FFFFFFFF</color>
 
     <style name="share_dialog" parent="@android:Theme.Dialog">
         <item name="android:windowFrame">@null</item>

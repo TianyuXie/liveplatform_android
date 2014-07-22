@@ -15,9 +15,7 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnPullEventListener;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.State;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshExpandableListView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
@@ -44,12 +42,18 @@ public class DiscoveryFragment extends Fragment {
 
         @SuppressWarnings("unchecked")
         public void onTaskSucceed(Task sender, com.pplive.liveplatform.task.TaskSucceedEvent event) {
+            mListViewChannel.onRefreshComplete();
+
             TaskContext context = event.getContext();
 
             List<Subject> subjects = (List<Subject>) context.get(Extra.KEY_RESULT_SUBJECTS);
             List<Tag> tags = (List<Tag>) context.get(Extra.KEY_RESULT_TAGS);
 
             mAdapter.setData(subjects, tags);
+        };
+
+        public void onTaskFailed(Task sender, com.pplive.liveplatform.task.TaskFailedEvent event) {
+            mListViewChannel.onRefreshComplete();
 
         };
     };
@@ -75,11 +79,11 @@ public class DiscoveryFragment extends Fragment {
 
         mListViewChannel = (PullToRefreshExpandableListView) layout.findViewById(R.id.expandable_listview);
 
-        mListViewChannel.setOnPullEventListener(new OnPullEventListener<ExpandableListView>() {
+        mListViewChannel.setOnRefreshListener(new OnRefreshListener<ExpandableListView>() {
 
             @Override
-            public void onPullEvent(PullToRefreshBase<ExpandableListView> refreshView, State state, Mode direction) {
-                Log.d(TAG, "direction: " + direction);
+            public void onRefresh(PullToRefreshBase<ExpandableListView> refreshView) {
+                load();
             }
 
         });
@@ -88,7 +92,6 @@ public class DiscoveryFragment extends Fragment {
 
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Log.d(TAG, "onChildClick");
 
                 if (0 == groupPosition) {
                     Intent intent = new Intent(mActivity, ChannelActivity.class);
@@ -131,22 +134,25 @@ public class DiscoveryFragment extends Fragment {
         mListViewChannel.getRefreshableView().setAdapter(mAdapter);
         mListViewChannel.getRefreshableView().expandGroup(0);
         mListViewChannel.getRefreshableView().expandGroup(1);
-
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        DiscoveryPageInitTask task = new DiscoveryPageInitTask();
-        task.addTaskListener(mTaskListener);
-        task.execute();
+        load();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+    }
+
+    private void load() {
+        DiscoveryPageInitTask task = new DiscoveryPageInitTask();
+        task.addTaskListener(mTaskListener);
+        task.execute();
     }
 
 }

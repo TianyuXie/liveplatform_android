@@ -41,6 +41,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:childDivider="@android:color/transparent"
+        android:divider="@android:color/transparent"
         android:groupIndicator="@null"
         android:listSelector="@android:color/transparent"
         ptr:ptrHeaderBackground="@color/pull_to_refresh_header_bg" />

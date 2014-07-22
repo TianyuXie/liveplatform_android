@@ -3,6 +3,7 @@ package com.pplive.liveplatform.widget.chat;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Handler;
@@ -126,7 +127,8 @@ public class ChatBox extends RelativeLayout implements Handler.Callback {
     };
 
     private View.OnTouchListener mOnTouchListener = new View.OnTouchListener() {
-        @Override
+        @SuppressLint("ClickableViewAccessibility")
+		@Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (mSingleTapListener != null) {
@@ -199,13 +201,13 @@ public class ChatBox extends RelativeLayout implements Handler.Callback {
                 }
                 break;
             case R.styleable.ChatBox_userColor:
-                mUserColor = a.getColor(attr, getResources().getColor(R.color.white));
+                mUserColor = a.getColor(attr, getResources().getColor(android.R.color.white));
                 break;
             case R.styleable.ChatBox_contentColor:
-                mContentColor = a.getColor(attr, getResources().getColor(R.color.white));
+                mContentColor = a.getColor(attr, getResources().getColor(android.R.color.white));
                 break;
             case R.styleable.ChatBox_ownerColor:
-                mOwnerColor = a.getColor(attr, getResources().getColor(R.color.white));
+                mOwnerColor = a.getColor(attr, getResources().getColor(android.R.color.white));
                 break;
             case R.styleable.ChatBox_defaultText:
                 mNoContentInfo.setText(a.getString(attr));

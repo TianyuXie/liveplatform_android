@@ -18,7 +18,7 @@
             android:background="#8d1d1c"
             android:gravity="center"
             android:text="@string/btn_delete"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:textSize="20sp" />
     </RelativeLayout>
 
@@ -48,7 +48,7 @@
             android:layout_toRightOf="@id/image_program_preview"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:textSize="20sp" />
 
         <TextView

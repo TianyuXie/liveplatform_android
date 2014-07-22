@@ -29,7 +29,7 @@
         android:paddingRight="6dp"
         android:paddingTop="1dp"
         android:text="@string/program_live"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="12sp" />
 
     <ImageView
@@ -54,7 +54,7 @@
         android:ellipsize="end"
         android:padding="5dp"
         android:singleLine="true"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
 

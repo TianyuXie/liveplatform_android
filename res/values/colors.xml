@@ -2,28 +2,27 @@
 <resources>
 
     <!-- Basic -->
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="red">#FFFF0000</color>
-    <color name="green">#FF008000</color>
-    <color name="yellow">#FFFFFF00</color>
-    <color name="saffron_yellow">#FF9900</color>
-    <color name="dim_gray">#FF545454</color>
-    <color name="dark_gray">#FF333333</color>
-    <color name="true_gray">#FF919191</color>
-    <color name="title_blue">#FF36a0ec</color>
-    <color name="fancy_blue">#FF00ACFF</color>
-    <color name="light_blue">#FF0090FF</color>
-    <color name="light_white">#FF9D9D9D</color>
-    <color name="orange">#FFA500</color>
-    <color name="nav_bg">#FF19A0FF</color>
-    <color name="nav_text_bg">#FF191919</color>
+    <color name="list_divider">#ffd6dae0</color>
+    <color name="app_bg">#ffffffff</color>
+    <color name="top_bar_bg">#ff0090e1</color>
+    <color name="settings_bg">#fffafafa</color>
+    <color name="border_bg">#fff2f2f2</color>
+    <color name="color_error">#ffff0000</color>
+    <color name="pull_to_refresh_header_bg">#ff272727</color>
+    <!-- Intro -->
     <color name="intro_bg">#FF1a1a1a</color>
 
     <!-- Program -->
     <color name="program_viewer_color">#B0B0B0</color>
     <color name="program_tags_color">#5F6463</color>
     <color name="program_date_color">#5F6463</color>
-    <color name="list_divider">#D6DAE0</color>
+
+    <!-- Login -->
+    <color name="input_text_color">#FF919191</color>
+    <color name="login_input_bg">#FF191919</color>
+
+    <!-- Userpage -->
+    <color name="userpage_icon_choose_normal">#FF333333</color>
+    <color name="userpage_icon_choose_pressed">#FF222222</color>
 
 </resources>

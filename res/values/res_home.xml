@@ -24,23 +24,4 @@
     <string name="no_follow_user">您还未关注任何用户</string>
     <string name="recommend_user">下面可能有你感兴趣的</string>
 
-    <!-- color -->
-    <color name="home_fragment_body_bg">#FF1A1A1A</color>
-    <color name="home_program_item_bg">#FF272727</color>
-    <color name="home_livestate_btn_checked">#FF272727</color>
-    <color name="home_livestate_text_checked">#FFAAAAAA</color>
-    <color name="home_pull_header_bg">#FFAAAAAA</color>
-    <color name="home_help_bg">#AA000000</color>
-
-    <style name="home_retry_button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:background">@drawable/home_retry_btn_bg</item>
-        <item name="android:padding">5dp</item>
-    </style>
-
-
 </resources>

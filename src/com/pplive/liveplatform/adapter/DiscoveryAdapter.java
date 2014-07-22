@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
 
-import com.pplive.android.image.AsyncImageView;
 import com.pplive.liveplatform.Extra;
 import com.pplive.liveplatform.R;
 import com.pplive.liveplatform.core.api.live.model.Subject;
@@ -152,7 +151,7 @@ public class DiscoveryAdapter extends BaseExpandableListAdapter {
         return 0 == groupPosition;
     }
 
-    private int mapToResIdByChannelId(int channelId) {
+    private int mapToDrawableByChannelId(int channelId) {
         switch (channelId) {
         case ORIGIN:
             return R.drawable.discovery_origin;
@@ -171,6 +170,25 @@ public class DiscoveryAdapter extends BaseExpandableListAdapter {
         return -1;
     }
 
+    private int mapToStringByChannelId(int channelId) {
+        switch (channelId) {
+        case ORIGIN:
+            return R.string.channel_origin;
+        case TV:
+            return R.string.channel_tv;
+        case GAME:
+            return R.string.channel_game;
+        case SPORTS:
+            return R.string.channel_sports;
+        case STOCKS:
+            return R.string.channel_stocks;
+        case ACTIVITY:
+            return R.string.channel_activity;
+        }
+
+        return -1;
+    }
+
     private View getChannelView(int position, View convertView, ViewGroup parent) {
         if (null == convertView) {
 
@@ -178,14 +196,16 @@ public class DiscoveryAdapter extends BaseExpandableListAdapter {
 
             ChannelViewHolder holder = new ChannelViewHolder();
 
-            holder.icon = (AsyncImageView) convertView.findViewById(R.id.channel_icon);
+            holder.textChannel = (TextView) convertView.findViewById(R.id.channel_icon);
 
             convertView.setTag(holder);
         }
 
         ChannelViewHolder holder = (ChannelViewHolder) convertView.getTag();
 
-        holder.icon.setImageResource(mapToResIdByChannelId(mSubjects.get(position).getId()));
+        Subject subject = mSubjects.get(position);
+        holder.textChannel.setBackgroundResource(mapToDrawableByChannelId(subject.getId()));
+        holder.textChannel.setText(mapToStringByChannelId(subject.getId()));
 
         return convertView;
     }
@@ -261,7 +281,7 @@ public class DiscoveryAdapter extends BaseExpandableListAdapter {
     }
 
     static class ChannelViewHolder {
-        AsyncImageView icon;
+        TextView textChannel;
     }
 
     static class TagsViewHolder {

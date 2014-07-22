@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.pplive.liveplatform.widget.intercept.InterceptableRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/home_fragment_body_bg" >
+    android:layout_height="fill_parent" >
 
     <RelativeLayout
         android:id="@+id/layout_titlebar_home"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/top_bar_height"
         android:layout_alignParentTop="true"
-        android:background="@color/black" >
+        android:background="@android:color/black" >
 
         <ToggleButton
             android:id="@+id/btn_home_menu"
@@ -27,7 +26,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:text="@string/home_title"
-            android:textColor="@color/white"
+            android:textColor="@android:color/white"
             android:textSize="22sp" />
 
         <Button
@@ -52,7 +51,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
-            android:textColor="@color/nav_text_bg"
             android:textSize="14sp" />
     </LinearLayout>
 
@@ -60,8 +58,7 @@
         android:id="@+id/layout_home_body"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/layout_home_nav"
-        android:background="@color/home_fragment_body_bg" />
+        android:layout_below="@id/layout_home_nav" />
 
     <LinearLayout
         android:id="@+id/layout_home_retry"
@@ -88,7 +85,7 @@
             android:gravity="center_horizontal"
             android:lineSpacingMultiplier="1.2"
             android:text="@string/home_nodata_text"
-            android:textColor="@color/true_gray"
+            android:textColor="@android:color/darker_gray"
             android:textSize="18sp" />
     </LinearLayout>
 

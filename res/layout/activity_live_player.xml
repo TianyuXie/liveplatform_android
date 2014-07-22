@@ -3,7 +3,7 @@
     xmlns:live="http://schemas.android.com/apk/res/com.pplive.liveplatform"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@color/black"
+    android:background="@android:color/black"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -60,7 +60,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/black"
+        android:background="@android:color/black"
         android:gravity="center_vertical"
         android:paddingBottom="10dp"
         android:paddingTop="10dp"
@@ -94,7 +94,7 @@
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
             android:paddingTop="6dp"
-            android:textColor="@color/black"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <Button
@@ -117,7 +117,7 @@
             android:layout_height="200dp"
             android:layout_below="@+id/edit_player_comment"
             android:layout_marginTop="10dp"
-            android:background="@color/white"
+            android:background="@android:color/white"
             android:listSelector="#00000000"
             android:numColumns="8"
             android:padding="10dp"

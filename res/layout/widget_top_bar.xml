@@ -10,7 +10,7 @@
         android:paddingLeft="80dp"
         android:paddingRight="80dp"
         android:singleLine="true"
-        android:textColor="@color/white"
+        android:textColor="@android:color/white"
         android:textSize="24sp"
         android:visibility="gone" />
 

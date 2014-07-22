@@ -23,7 +23,7 @@
         style="@style/Widget.EditText.Input"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@android:color/white"
         android:hint="@string/settings_hint_nickname"
         android:inputType="text"
         android:paddingLeft="30dp" />
@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginTop="10dp"
-            android:textColor="@color/red"
+            android:textColor="@color/color_error"
             android:textSize="18sp" />
     </RelativeLayout>
 
