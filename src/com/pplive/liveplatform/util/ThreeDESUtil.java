@@ -9,6 +9,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
 
+import com.google.common.io.BaseEncoding;
+
 public class ThreeDESUtil {
 
     private static final String KEY[] = { "70706C6976656F6B", "15B9FDAEDA40F86BF71C73292516924A294FC8BA31B6E9EA",
@@ -39,8 +41,8 @@ public class ThreeDESUtil {
 
         try {
             String key = KEY[keyIndex];
-            byte[] byteIV = hex2byte(hexIv);
-            byte input[] = Hex.decode(key);
+            byte[] byteIV = BaseEncoding.base16().decode(hexIv);
+            byte input[] = BaseEncoding.base16().decode(key);
             Cipher cipher = Cipher.getInstance(CRYPT_ALGORITHM);
             DESedeKeySpec desKeySpec = new DESedeKeySpec(input);
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
@@ -48,9 +50,8 @@ public class ThreeDESUtil {
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivGenerator(byteIV));
 
             byte[] output = cipher.doFinal(param.getBytes(ENCODING_TYPE));
-            String strDesEnc = new String(Base64.encode(output), ENCODING_TYPE);
 
-            return strDesEnc;
+            return BaseEncoding.base64Url().encode(output);
         } catch (Exception e) {
             throw new EncryptException();
         }
@@ -61,7 +62,7 @@ public class ThreeDESUtil {
             throw new InvalidParameterException();
         }
         String key = KEY[keyIndex];
-        byte[] byteIV = hex2byte(KEY[0]);
+        byte[] byteIV = BaseEncoding.base16().decode(KEY[0]);
         String reponseDecrpt = decrypt(param, key, byteIV);
 
         return reponseDecrpt;
@@ -77,7 +78,7 @@ public class ThreeDESUtil {
     }
 
     private static Key keyGenerator(String keyStr) throws Exception {
-        byte input[] = Hex.decode(keyStr);
+        byte input[] = BaseEncoding.base16().decode(keyStr);
         DESedeKeySpec keySpec = new DESedeKeySpec(input);
         SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
         return keyFactory.generateSecret(keySpec);
@@ -89,7 +90,7 @@ public class ThreeDESUtil {
     }
 
     private static byte[] base64Decode(String s) throws Exception {
-        return Base64.decode(s);
+        return BaseEncoding.base64Url().decode(s);
     }
 
     private static String decrypt(String strTobeDeCrypted, String strKey, byte byteIV[]) throws Exception {
@@ -100,21 +101,6 @@ public class ThreeDESUtil {
         c.init(2, k, ivSpec);
         byte output[] = c.doFinal(input);
         return new String(output, ENCODING_TYPE);
-    }
-
-    private static byte[] hex2byte(String hex) throws IllegalArgumentException {
-        if (hex.length() % 2 != 0) {
-            throw new IllegalArgumentException();
-        }
-
-        char[] arr = hex.toCharArray();
-        byte[] b = new byte[hex.length() / 2];
-        for (int i = 0, j = 0, l = hex.length(); i < l; i++, j++) {
-            String swap = "" + arr[i++] + arr[i];
-            int byteint = Integer.parseInt(swap, 16) & 0xFF;
-            b[j] = Integer.valueOf(byteint).byteValue();
-        }
-        return b;
     }
 
     public static class EncryptException extends Exception {
