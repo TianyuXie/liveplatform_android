@@ -19,13 +19,13 @@ public class FeedAPI extends RESTfulAPI {
 
     static final String TAG = FeedAPI.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_FOLLOW_CICLE_FEEDS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_GET_FOLLOW_CICLE_FEEDS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/feed/v3/pptv/user/{username}/followcicle/feeds?nexttk={nexttk}&fallcount={fallcount}").toString();
 
-    private static final String TEMPLATE_GET_SYS_MSG = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_GET_SYS_MSG = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/feed/v3/pptv/user/{username}/sysmsgs?nexttk={nexttk}&fallcount={fallcount}").toString();
 
-    private static final String TEMPLATE_DELETE_FEED = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_DELETE_FEED = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/feed/v3/pptv/user/{username}/{snstype}/{feedtype}").toString();
 
     private static final FeedAPI sInstance = new FeedAPI();

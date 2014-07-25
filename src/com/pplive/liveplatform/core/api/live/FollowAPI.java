@@ -29,19 +29,28 @@ public class FollowAPI extends RESTfulAPI {
 
     static final String TAG = FollowAPI.class.getSimpleName();
 
-    private static final String TEMPLATE_GET_RELATIONS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_GET_RELATIONS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/follow/pptv/user/{username}/relations?userids={userids}").toString();
 
-    private static final String TEMPLATE_FOLLOW = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST, "/ft/v1/follow/pptv/user/{username}/follow")
+    private static final String TEMPLATE_FOLLOW = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST, "/ft/v1/follow/pptv/user/{username}/follow")
             .toString();
 
-    private static final String TEMPLATE_GET_USER_FRIEND_COUNT = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_GET_USER_FRIEND_COUNT = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/follow/pptv/user/{username}/friendcount").toString();
 
-    private static final String TEMPLATE_GET_FANS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_CDN_GET_USER_FRIEND_COUNT = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/ft/v1/follow/pptv/user/{username}/friendcount").toString();
+
+    private static final String TEMPLATE_GET_FANS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
             "/ft/v1/follow/pptv/user/{username}/fans?nexttk={nexttk}&fallcount={fallcount}").toString();
 
-    private static final String TEMPLATE_GET_FOLLOWERS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_CDN_GET_FANS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
+            "/ft/v1/follow/pptv/user/{username}/fans?nexttk={nexttk}&fallcount={fallcount}").toString();
+
+    private static final String TEMPLATE_GET_FOLLOWERS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_HOST,
+            "/ft/v1/follow/pptv/user/{username}/followers?nexttk={nexttk}&fallcount={fallcount}").toString();
+
+    private static final String TEMPLATE_CDN_GET_FOLLOWERS = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/ft/v1/follow/pptv/user/{username}/followers?nexttk={nexttk}&fallcount={fallcount}").toString();
 
     private static FollowAPI sInstance = new FollowAPI();
@@ -130,12 +139,12 @@ public class FollowAPI extends RESTfulAPI {
         }
     }
 
-    public UserFriendCount getUserFriendCount(String username) throws LiveHttpException {
+    public UserFriendCount getUserFriendCount(boolean cdn, String username) throws LiveHttpException {
 
         UserFriendCountResp resp = null;
         try {
 
-            resp = mRestTemplate.getForObject(TEMPLATE_GET_USER_FRIEND_COUNT, UserFriendCountResp.class, username);
+            resp = mRestTemplate.getForObject(cdn ? TEMPLATE_CDN_GET_USER_FRIEND_COUNT : TEMPLATE_GET_USER_FRIEND_COUNT, UserFriendCountResp.class, username);
 
             if (0 == resp.getError()) {
                 return resp.getData();
@@ -152,10 +161,10 @@ public class FollowAPI extends RESTfulAPI {
         }
     }
 
-    public FallList<User> getFans(String username, String nextToken, int fallCount) throws LiveHttpException {
+    public FallList<User> getFans(boolean cdn, String username, String nextToken, int fallCount) throws LiveHttpException {
         UserFallListResp resp = null;
         try {
-            resp = mRestTemplate.getForObject(TEMPLATE_GET_FANS, UserFallListResp.class, username, nextToken, fallCount);
+            resp = mRestTemplate.getForObject(cdn ? TEMPLATE_CDN_GET_FANS : TEMPLATE_GET_FANS, UserFallListResp.class, username, nextToken, fallCount);
 
             if (0 == resp.getError()) {
                 return resp.getData();
@@ -172,10 +181,11 @@ public class FollowAPI extends RESTfulAPI {
 
     }
 
-    public FallList<User> getFollowers(String username, String nextToken, int fallCount) throws LiveHttpException {
+    public FallList<User> getFollowers(boolean cdn, String username, String nextToken, int fallCount) throws LiveHttpException {
         UserFallListResp resp = null;
         try {
-            resp = mRestTemplate.getForObject(TEMPLATE_GET_FOLLOWERS, UserFallListResp.class, username, nextToken, fallCount);
+            resp = mRestTemplate
+                    .getForObject(cdn ? TEMPLATE_CDN_GET_FOLLOWERS : TEMPLATE_GET_FOLLOWERS, UserFallListResp.class, username, nextToken, fallCount);
 
             if (0 == resp.getError()) {
                 return resp.getData();

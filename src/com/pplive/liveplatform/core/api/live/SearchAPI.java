@@ -28,7 +28,7 @@ public class SearchAPI extends RESTfulAPI {
             "/search/v2/pptv/searchcommon?key={keywords}&tag={tag}&subjectid={subjectid}&sort={sort}&livestatus={livestatus}&nexttk={nexttk}&fallcount={fallcount}")
             .toString();
 
-    private static final String TEMPLATE_SEARCH_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_SEARCH_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/search/user/v2/pptv/usersearch?key={key}&nexttk={nexttk}&fallcount={fallcount}").toString();
 
     private static final String TEMPLATE_GET_RECOMMEND_PROGRAM = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
@@ -37,10 +37,10 @@ public class SearchAPI extends RESTfulAPI {
     private static final String TEMPLATE_GET_RECOMMEND_KEYWORD = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/search/v2/c/pptv/recommend/searchwords").toString();
 
-    private static final String TEMPLATE_GET_RECOMMEND_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_GET_RECOMMEND_USER = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/search/v2/c/pptv/recommend/publicuser?count=10").toString();
 
-    private static final String TEMPLATE_GET_RECOMMEND_TAG = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_TEST_HOST,
+    private static final String TEMPLATE_GET_RECOMMEND_TAG = new BaseURL(Protocol.HTTP, Constants.LIVEPLATFORM_API_CDN_HOST,
             "/search/v2/pptv/tags/statistics?count=10").toString();
 
     public static SearchAPI getInstance() {

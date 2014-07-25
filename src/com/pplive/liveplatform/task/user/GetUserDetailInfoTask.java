@@ -96,7 +96,8 @@ public class GetUserDetailInfoTask extends Task {
 
         UserFriendCount friendCount = null;
         try {
-            friendCount = FollowAPI.getInstance().getUserFriendCount(username);
+            boolean cdn = TextUtils.isEmpty(username) || TextUtils.isEmpty(coToken);
+            friendCount = FollowAPI.getInstance().getUserFriendCount(cdn, username);
         } catch (LiveHttpException e) {
             Log.w(TAG, e.toString());
             return new TaskResult(TaskStatus.FAILED, "FollowService error");

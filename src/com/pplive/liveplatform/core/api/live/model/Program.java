@@ -62,7 +62,7 @@ public class Program implements Serializable {
         this(owner, LiveModeEnum.CAMERA, title, starttime);
     }
 
-    public Program(String owner, LiveModeEnum mode, String title, long starttime) {
+    private Program(String owner, LiveModeEnum mode, String title, long starttime) {
         this.owner = owner;
         this.mode = mode;
         this.title = title;

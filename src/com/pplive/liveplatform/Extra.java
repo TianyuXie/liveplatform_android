@@ -7,6 +7,8 @@ public interface Extra {
 
     public static final String KEY_RESULT = "result";
 
+    public static final String KEY_CDN = "cdn";
+
     // Sign up
     public static final String KEY_PHONE_NUMBER = "phone_number";
 

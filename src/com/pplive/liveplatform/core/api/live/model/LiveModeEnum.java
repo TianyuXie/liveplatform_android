@@ -4,6 +4,9 @@ import com.google.gson.annotations.SerializedName;
 
 public enum LiveModeEnum {
 
+    @SerializedName("ugc")
+    UGC,
+
     @SerializedName("camera")
     CAMERA,
 

@@ -32,13 +32,14 @@ public class GetFriendsTask extends Task {
 
         String nextToken = context.getString(Extra.KEY_NEXT_TOKEN);
         int fallCount = (Integer) context.get(Extra.KEY_FALL_COUNT);
-        
+
         String username = context.getString(Extra.KEY_USERNAME);
         String coToken = context.getString(Extra.KEY_TOKEN);
 
         FallList<User> users = null;
         try {
-            users = type.getFriends(queryUsername, nextToken, fallCount);
+            boolean cdn = TextUtils.isEmpty(username) || TextUtils.isEmpty(coToken);
+            users = type.getFriends(cdn, queryUsername, nextToken, fallCount);
         } catch (LiveHttpException e) {
             return new TaskResult(TaskStatus.FAILED, e.toString());
         }
@@ -81,20 +82,20 @@ public class GetFriendsTask extends Task {
         FOLLOWER {
 
             @Override
-            public FallList<User> getFriends(String username, String nextToken, int fallCount) throws LiveHttpException {
-                return FollowAPI.getInstance().getFollowers(username, nextToken, fallCount);
+            public FallList<User> getFriends(boolean cdn, String username, String nextToken, int fallCount) throws LiveHttpException {
+                return FollowAPI.getInstance().getFollowers(cdn, username, nextToken, fallCount);
             }
 
         },
         FAN {
 
             @Override
-            public FallList<User> getFriends(String username, String nextToken, int fallCount) throws LiveHttpException {
-                return FollowAPI.getInstance().getFans(username, nextToken, fallCount);
+            public FallList<User> getFriends(boolean cdn, String username, String nextToken, int fallCount) throws LiveHttpException {
+                return FollowAPI.getInstance().getFans(cdn, username, nextToken, fallCount);
             }
 
         };
 
-        public abstract FallList<User> getFriends(String username, String nextToken, int fallCount) throws LiveHttpException;
+        public abstract FallList<User> getFriends(boolean cdn, String username, String nextToken, int fallCount) throws LiveHttpException;
     }
 }
